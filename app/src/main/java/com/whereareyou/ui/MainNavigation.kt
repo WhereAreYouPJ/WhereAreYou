@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.whereareyou.constants.Constants
+import com.whereareyou.ui.signin.ComposableA
 
 @Composable
 fun MainNavigation(
@@ -20,7 +21,7 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_A
         ) {
-
+            ComposableA()
         }
 
         composable(
