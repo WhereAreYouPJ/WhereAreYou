@@ -21,7 +21,20 @@ class HomeViewModel @Inject constructor(
     private val navigationItemContent = listOf(
         NavigationItemContent(
             viewType = ViewType.Calendar,
-            icon = R.drawable.calendar,
+            iconSelected = R.drawable.calendar_filled,
+            iconUnselected = R.drawable.calendar_outlined,
+            text = ""
+        ),
+        NavigationItemContent(
+            viewType = ViewType.Friends,
+            iconSelected = R.drawable.friends_filled,
+            iconUnselected = R.drawable.friends_outlined,
+            text = ""
+        ),
+        NavigationItemContent(
+            viewType = ViewType.MyPage,
+            iconSelected = R.drawable.mypage_filled,
+            iconUnselected = R.drawable.mypage_outlined,
             text = ""
         )
     )
@@ -37,7 +50,9 @@ class HomeViewModel @Inject constructor(
     data class NavigationItemContent(
         val viewType: ViewType,
         @DrawableRes
-        val icon: Int,
+        val iconSelected: Int,
+        @DrawableRes
+        val iconUnselected: Int,
         val text: String
     )
 }
