@@ -16,7 +16,7 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier,
         navController = navController,
-        startDestination = ""
+        startDestination = Constants.ROUTE_B
     ) {
         composable(
             route = Constants.ROUTE_A
