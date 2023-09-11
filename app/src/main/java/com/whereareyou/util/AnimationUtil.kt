@@ -11,24 +11,15 @@ import androidx.compose.ui.unit.IntOffset
 
 object AnimationUtil {
     val enterTransition = fadeIn(
-        animationSpec = TweenSpec(500)
+        animationSpec = TweenSpec(
+            durationMillis = 300,
+            delay = 300
+        )
     )
 
     val exitTransition = fadeOut(
-        animationSpec = TweenSpec(durationMillis = 500)
+        animationSpec = TweenSpec(
+            durationMillis = 300
+        )
     )
-
-//    val exitTransition = slideOut(
-//        animationSpec = TweenSpec(durationMillis = 500),
-//        targetOffset = { IntOffset(-150, 0) }
-//    ) + fadeOut(
-//        animationSpec = TweenSpec(durationMillis = 500)
-//    )
-//
-//    val popExitTransition = slideOut(
-//        animationSpec = TweenSpec(durationMillis = 500),
-//        targetOffset = { IntOffset(150, 0) }
-//    ) + fadeOut(
-//        animationSpec = TweenSpec(durationMillis = 500)
-//    )
 }

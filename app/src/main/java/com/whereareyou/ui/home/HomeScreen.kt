@@ -23,9 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -80,8 +82,12 @@ fun HomeNavigationBar(
 
     NavigationBar(
         modifier = Modifier
-            .height((screenHeight / 15).dp),
-        containerColor = Color(0xFFBBDEFB)
+            .height((screenHeight / 15).dp)
+            .shadow(
+                elevation = 40.dp,
+                spotColor = Color.Blue
+            ),
+        containerColor = Color(0xFFFFFFFF)
     ) {
         navigationItemContentList.forEachIndexed { _, navItem ->
             NavigationBarItem(
@@ -97,15 +103,15 @@ fun HomeNavigationBar(
                         ),
                         contentDescription = null,
                         modifier = Modifier
-                            .fillMaxHeight(1.0f)
+                            .fillMaxHeight(0.7f)
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF1976D2),
-                    selectedTextColor = Color(0xFF1976D2),
-                    indicatorColor = Color(0xFFBBDEFB),
-                    unselectedIconColor = Color(0xFF1976D2),
-                    unselectedTextColor = Color(0xFF1976D2)
+                    selectedIconColor = Color(0xFF8C9EFF),
+                    selectedTextColor = Color(0xFF8C9EFF),
+                    indicatorColor = Color(0x00FFFFFF),
+                    unselectedIconColor = Color(0xFFDDDDDD),
+                    unselectedTextColor = Color(0xFFDDDDDD)
                 ),
                 interactionSource = NoRippleInteractionSource()
             )
@@ -117,5 +123,5 @@ class NoRippleInteractionSource : MutableInteractionSource {
 
     override val interactions = emptyFlow<Interaction>()
     override suspend fun emit(interaction: Interaction) {}
-    override fun tryEmit(interaction: Interaction) = true
+    override fun tryEmit(interaction: Interaction) = false
 }

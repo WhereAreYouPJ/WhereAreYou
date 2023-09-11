@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     val systemUiController = rememberSystemUiController()
 
                     systemUiController.setStatusBarColor(
-                        color = Color(0xFFFFFFFF),
+                        color = Color(0xFFFAFAFA),
                         darkIcons = true
                     )
                     MainNavigation()

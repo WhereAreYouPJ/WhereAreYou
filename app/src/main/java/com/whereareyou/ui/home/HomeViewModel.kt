@@ -22,19 +22,19 @@ class HomeViewModel @Inject constructor(
         NavigationItemContent(
             viewType = ViewType.Calendar,
             iconSelected = R.drawable.calendar_filled,
-            iconUnselected = R.drawable.calendar_outlined,
+            iconUnselected = R.drawable.calendar_filled,
             text = ""
         ),
         NavigationItemContent(
             viewType = ViewType.Friends,
             iconSelected = R.drawable.friends_filled,
-            iconUnselected = R.drawable.friends_outlined,
+            iconUnselected = R.drawable.friends_filled,
             text = ""
         ),
         NavigationItemContent(
             viewType = ViewType.MyPage,
             iconSelected = R.drawable.mypage_filled,
-            iconUnselected = R.drawable.mypage_outlined,
+            iconUnselected = R.drawable.mypage_filled,
             text = ""
         )
     )

@@ -2,14 +2,25 @@ package com.whereareyou.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.whereareyou.R
+
+
+val fontFamily = FontFamily(
+    Font(R.font.nanumsquareneo_light, FontWeight.Light),
+    Font(R.font.nanumsquareneo_regular, FontWeight.Normal),
+    Font(R.font.nanumsquareneo_bold, FontWeight.Bold),
+    Font(R.font.nanumsquareneo_extrabold, FontWeight.ExtraBold),
+    Font(R.font.nanumsquareneo_heavy, FontWeight.Black),
+)
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = fontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
