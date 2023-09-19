@@ -24,7 +24,7 @@ object CalendarUtil {
         return calendar.get(Calendar.DAY_OF_WEEK)
     }
 
-    fun getCalendarInfo(year: Int, month: Int): ArrayList<String> {
+    fun getCalendarInfo(year: Int, month: Int): ArrayList<Int> {
         val calendar = Calendar.getInstance()
         // 첫 날 요일
         val firstDayOfWeek = getDayOfWeek(year, month, 1)
@@ -35,9 +35,9 @@ object CalendarUtil {
         val weekCount = calendar.get(Calendar.WEEK_OF_MONTH)
 
         calendar.set(Calendar.DATE, 2 - firstDayOfWeek)
-        val arrList = ArrayList<String>()
+        val arrList = ArrayList<Int>()
         for (i in 1..(7 * weekCount)) {
-            arrList.add(calendar.time.toString())
+            arrList.add(calendar.time.toString().split(" ")[2].toInt())
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 1)
         }
         return arrList
@@ -54,5 +54,10 @@ object CalendarUtil {
         for (i in currentYear - 100..currentYear + 100) arrList.add(i)
 
         return arrList
+    }
+
+    fun getTodayInfo(): List<Int> {
+        val calendar = Calendar.getInstance()
+        return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE))
     }
 }
