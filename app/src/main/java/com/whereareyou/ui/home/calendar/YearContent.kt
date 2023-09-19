@@ -23,7 +23,7 @@ import com.whereareyou.util.CalendarUtil
 
 @Composable
 fun YearContent(
-    topBarHeight: Int = LocalConfiguration.current.screenHeightDp / 10,
+    hideDetailContent: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
 
@@ -46,6 +46,7 @@ fun YearContent(
                     modifier = Modifier
                         .height(100.dp)
                         .clickable {
+                            hideDetailContent()
                             viewModel.updateYear(year)
                             viewModel.updateCalendarState(CalendarViewModel.CalendarState.MONTH)
                         },

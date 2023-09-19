@@ -1,5 +1,6 @@
 package com.whereareyou.ui.home.calendar
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,12 +26,14 @@ import com.whereareyou.util.AnimationUtil
 
 @Composable
 fun DateContent(
+    expandDetailContent: () -> Unit,
     topBarHeight: Int = LocalConfiguration.current.screenHeightDp / 10,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val currMonthCalendarInfo = viewModel.currentMonthDateInfo.collectAsState().value
     val calendarState = viewModel.calendarState.collectAsState().value
 
+    Log.e("composed", "composed")
     // 일자 선택 화면
     AnimatedVisibility(
         visible = calendarState == CalendarViewModel.CalendarState.DATE,
@@ -39,7 +42,7 @@ fun DateContent(
     ) {
         Column() {
             Row(
-                modifier = androidx.compose.ui.Modifier
+                modifier = Modifier
                     .height((topBarHeight / 2).dp),
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -84,7 +87,7 @@ fun DateContent(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clickable {
-
+                                    expandDetailContent()
                                 },
                             contentAlignment = Alignment.TopCenter
                         ) {
