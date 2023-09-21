@@ -27,7 +27,7 @@ import com.whereareyou.util.AnimationUtil
 @Composable
 fun DateContent(
     expandDetailContent: () -> Unit,
-    topBarHeight: Int = LocalConfiguration.current.screenHeightDp / 10,
+    topBarHeight: Int = LocalConfiguration.current.screenHeightDp / 12,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val currMonthCalendarInfo = viewModel.currentMonthDateInfo.collectAsState().value

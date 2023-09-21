@@ -20,7 +20,7 @@ fun MainNavigation(
         modifier = Modifier
             .fillMaxSize(),
         navController = navController,
-        startDestination = Constants.ROUTE_ADD_SCHEDULE
+        startDestination = Constants.ROUTE_MAIN_HOME
     ) {
         composable(
             route = Constants.ROUTE_A
