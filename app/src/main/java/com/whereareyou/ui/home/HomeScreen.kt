@@ -37,7 +37,8 @@ fun HomeScreen(
             if (true) {
                 HomeNavigationBar()
             }
-        }
+        },
+        floatingActionButton = {}
     ) {
         when (viewType) {
             ViewType.Calendar -> {

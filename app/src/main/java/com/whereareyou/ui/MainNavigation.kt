@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.whereareyou.data.Constants
 import com.whereareyou.ui.home.HomeScreen
 import com.whereareyou.ui.home.calendar.AddScheduleScreen
-import com.whereareyou.ui.signin.ComposableA
+import com.whereareyou.ui.signin.SignUpScreen
 
 @Composable
 fun MainNavigation(
@@ -23,9 +23,9 @@ fun MainNavigation(
         startDestination = Constants.ROUTE_MAIN_HOME
     ) {
         composable(
-            route = Constants.ROUTE_A
+            route = Constants.ROUTE_MAIN_SIGNUP
         ) {
-            ComposableA()
+            SignUpScreen()
         }
 
         composable(
