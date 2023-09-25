@@ -13,6 +13,7 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +37,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -64,8 +69,8 @@ fun CalendarContent(
         AnchoredDraggableState(
             initialValue = DetailState.Open,
             positionalThreshold = { it: Float -> it * 0.5f },
-            velocityThreshold = { 0.5f },
-            animationSpec = tween(500)
+            velocityThreshold = { 100f },
+            animationSpec = tween(400)
         )
             .apply {
                 updateAnchors(
@@ -173,27 +178,51 @@ fun CalendarContent(
                 }
             )
         }
-        Column() {
-            Spacer(
-                modifier = Modifier
-                    .height((topBarHeight + (componentHeight - topBarHeight) / 5 * 2).dp)
-            )
+        Column(
+            modifier = Modifier
+                .padding(top = (topBarHeight + (componentHeight - topBarHeight) / 5 * 2).dp)
+                .offset {
+                    IntOffset(
+                        x = 0,
+                        y = state
+                            .requireOffset()
+                            .roundToInt()
+                    )
+                }
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp)
+                .shadow(
+                    elevation = 10.dp,
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                )
+                .background(
+                    color = Color(0xFFFFFFFF),
+                    shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                )
+        ) {
             Box(
                 modifier = Modifier
-                    .size(80.dp)
-//                .height(animatedSize)
-                    .offset {
-                        IntOffset(
-                            x = 0,
-                            y = state
-                                .requireOffset()
-                                .roundToInt()
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .anchoredDraggable(state, Orientation.Vertical),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(4.dp)
+                        .background(
+                            color = Color(0xFF8C9EFF),
+                            shape = RoundedCornerShape(100)
                         )
-                    }
-                    .anchoredDraggable(state, Orientation.Vertical)
-                    .background(
-                        color = Color(0xFF00FF00)
-                    )
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(((componentHeight - topBarHeight) / 5 * 3 - 20).dp)
+//                        .background(
+//                            color = Color(0xFF00FF00)
+//                        )
             )
         }
     }
