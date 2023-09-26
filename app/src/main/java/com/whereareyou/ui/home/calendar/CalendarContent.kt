@@ -143,7 +143,7 @@ fun CalendarContent(
                             (0.4f + 0.6f * (state.offset / density.density / ((componentHeight - topBarHeight) / 5 * 3)))).dp)
 //                .height(state.requireOffset().dp)
             ) {
-                DateContent(
+                DateCalendar(
                     expandDetailContent = {
                         coroutineScope.launch {
                             state.animateTo(DetailState.Open)
@@ -220,9 +220,6 @@ fun CalendarContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(((componentHeight - topBarHeight) / 5 * 3 - 20).dp)
-//                        .background(
-//                            color = Color(0xFF00FF00)
-//                        )
             )
         }
     }

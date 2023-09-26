@@ -1,105 +1,121 @@
 package com.whereareyou.ui.home.calendar
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
+import android.view.RoundedCorner
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.whereareyou.util.AnimationUtil
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun DateContent(
-    expandDetailContent: () -> Unit,
-    topBarHeight: Int = LocalConfiguration.current.screenHeightDp / 12,
-    viewModel: CalendarViewModel = hiltViewModel()
+    date: Int,
+    scheduleNumber: Int,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
-    val currMonthCalendarInfo = viewModel.currentMonthDateInfo.collectAsState().value
-    val calendarState = viewModel.calendarState.collectAsState().value
-
-    Log.e("composed", "composed")
-    // 일자 선택 화면
-    AnimatedVisibility(
-        visible = calendarState == CalendarViewModel.CalendarState.DATE,
-        enter = AnimationUtil.enterTransition,
-        exit = AnimationUtil.exitTransition
+    var componentWidth by remember { mutableStateOf(0) }
+    val density = LocalDensity.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .onGloballyPositioned {
+                componentWidth = (it.size.width / density.density).toInt()
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column() {
-            Row(
-                modifier = Modifier
-                    .height((topBarHeight / 2).dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                for (i in 0..6) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 4.dp),
-                            text = when (i) {
-                                0 -> "일"
-                                1 -> "월"
-                                2 -> "화"
-                                3 -> "수"
-                                4 -> "목"
-                                5 -> "금"
-                                else -> "토"
-                            }
-                        )
-                    }
-                }
-            }
-            for (date in 0 until (currMonthCalendarInfo.size / 7)) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(
-                            color = Color(0xFFDDDDDD)
-                        )
+        Box(
+            modifier = Modifier
+                .width((componentWidth * 0.5).dp)
+                .height((componentWidth * 0.5).dp)
+                .clip(
+                    shape = RoundedCornerShape(25)
                 )
+                .background(
+                    color = Color(0xFF8C9EFF)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = date.toString()
+            )
+        }
+        Spacer(
+            modifier = Modifier
+                .height((componentWidth * 0.05).dp)
+        )
+        Column(
+            modifier = Modifier
+                .width((componentWidth * 0.3).dp)
+                .height((componentWidth * 0.2).dp)
+        ) {
+            for (i in 0..1) {
                 Row(
                     modifier = Modifier
                         .weight(1f)
                 ) {
-                    for (i in 0..6) {
+                    for (j in 0..2) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .fillMaxHeight()
-                                .clickable {
-                                    expandDetailContent()
-                                },
-                            contentAlignment = Alignment.TopCenter
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 4.dp),
-                                text = currMonthCalendarInfo[i + date * 7].toString()
-                            )
+                            if (i * 3 + j < scheduleNumber) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(3.dp)
+                                        .background(
+                                            shape = CircleShape,
+                                            color = Color(0xFF8C9EFF)
+                                        )
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DateContentPreview() {
+    Box(
+        modifier = Modifier
+            .width(50.dp)
+            .height(40.dp)
+            .background(
+                color = Color(0xFFFFFFFF)
+            )
+    ) {
+        DateContent(2, 3)
     }
 }
