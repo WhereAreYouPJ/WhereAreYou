@@ -23,17 +23,17 @@ class CalendarViewModel @Inject constructor(
     private val _date = MutableStateFlow(0)
     val date: StateFlow<Int> = _date
 
+
     private val _calendarState = MutableStateFlow(CalendarState.DATE)
     val calendarState: StateFlow<CalendarState> = _calendarState
 
-    private val _currentMonthDateInfo = MutableStateFlow<List<Int>>(emptyList())
+    private val _currentMonthDateInfo = MutableStateFlow<List<String>>(emptyList())
     val currentMonthDateInfo = _currentMonthDateInfo.asStateFlow()
-
 
 
     private fun updateCurrentMonthDateInfo() {
         _currentMonthDateInfo.update {
-            CalendarUtil.getCalendarInfo(_year.value, _month.value).toList()
+            CalendarUtil.getCalendarInfo(_year.value, _month.value - 1).toList()
         }
     }
 

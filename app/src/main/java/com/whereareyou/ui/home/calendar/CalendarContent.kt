@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -216,11 +217,149 @@ fun CalendarContent(
                         )
                 )
             }
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(((componentHeight - topBarHeight) / 5 * 3 - 20).dp)
-            )
+                    .background(
+                        color = Color(0xFFFFF9C4)
+                    )
+            ) {
+                LazyColumn(
+
+                ) {
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                    item() {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp, end = 20.dp)
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(
+                                    color = Color(0XFF80DEEA)
+                                )
+                        ) {
+
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,8 +36,7 @@ import androidx.compose.ui.unit.sp
 fun DateContent(
     date: Int,
     scheduleNumber: Int,
-    isSelected: Boolean = false,
-    onClick: () -> Unit = {}
+    isSelected: Boolean = false
 ) {
     var componentWidth by remember { mutableStateOf(0) }
     val density = LocalDensity.current
@@ -51,24 +51,30 @@ fun DateContent(
     ) {
         Box(
             modifier = Modifier
-                .width((componentWidth * 0.5).dp)
-                .height((componentWidth * 0.5).dp)
-                .clip(
-                    shape = RoundedCornerShape(25)
-                )
+                .width((componentWidth * 0.45).dp)
+                .height((componentWidth * 0.45).dp)
                 .background(
-                    color = Color(0xFF8C9EFF)
+                    color = when (isSelected) {
+                        true -> Color(0xFF8C9EFF)
+                        false -> Color(0x00000000)
+                    },
+                    shape = RoundedCornerShape(25)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = date.toString()
+                text = date.toString(),
+                fontWeight = when (isSelected) {
+                    true -> FontWeight.Black
+                    false -> FontWeight.Normal
+                },
+                color = when (isSelected) {
+                    true -> Color.White
+                    false -> Color.Black
+                }
             )
         }
-        Spacer(
-            modifier = Modifier
-                .height((componentWidth * 0.05).dp)
-        )
+        Spacer(modifier = Modifier.size(2.dp))
         Column(
             modifier = Modifier
                 .width((componentWidth * 0.3).dp)
@@ -89,7 +95,7 @@ fun DateContent(
                             if (i * 3 + j < scheduleNumber) {
                                 Box(
                                     modifier = Modifier
-                                        .size(3.dp)
+                                        .size(4.dp)
                                         .background(
                                             shape = CircleShape,
                                             color = Color(0xFF8C9EFF)
@@ -116,6 +122,6 @@ fun DateContentPreview() {
                 color = Color(0xFFFFFFFF)
             )
     ) {
-        DateContent(2, 3)
+        DateContent(8, 3, true)
     }
 }

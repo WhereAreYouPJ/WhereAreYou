@@ -5,6 +5,7 @@ import java.util.Calendar
 
 object CalendarUtil {
 
+    // year년 month월에 몇일까지 있는지 return
     private fun getDayOfMonth(year: Int, month: Int, flag: Type = Type.CURRENT): Int {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
@@ -16,6 +17,7 @@ object CalendarUtil {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
     }
 
+    // year년 month월 date일이 무슨요일인지 return
     private fun getDayOfWeek(year: Int, month: Int, date: Int): Int {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
@@ -24,8 +26,10 @@ object CalendarUtil {
         return calendar.get(Calendar.DAY_OF_WEEK)
     }
 
-    fun getCalendarInfo(year: Int, month: Int): ArrayList<Int> {
+
+    fun getCalendarInfo(year: Int, month: Int): ArrayList<String> {
         val calendar = Calendar.getInstance()
+
         // 첫 날 요일
         val firstDayOfWeek = getDayOfWeek(year, month, 1)
 
@@ -35,9 +39,12 @@ object CalendarUtil {
         val weekCount = calendar.get(Calendar.WEEK_OF_MONTH)
 
         calendar.set(Calendar.DATE, 2 - firstDayOfWeek)
-        val arrList = ArrayList<Int>()
+        val arrList = ArrayList<String>()
         for (i in 1..(7 * weekCount)) {
-            arrList.add(calendar.time.toString().split(" ")[2].toInt())
+            val str = "" + calendar.get(Calendar.YEAR) +
+                    "/" + (calendar.get(Calendar.MONTH) + 1) +
+                    "/" + calendar.get(Calendar.DATE)
+            arrList.add(str)
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 1)
         }
         return arrList
@@ -47,6 +54,7 @@ object CalendarUtil {
         PREVIOUS, CURRENT, NEXT
     }
 
+    // 현재 년으로부터 +- 100년의 정보를 리스트로 return
     fun getYearList(): ArrayList<Int> {
         val arrList = ArrayList<Int>()
         val calendar = Calendar.getInstance()
@@ -56,8 +64,9 @@ object CalendarUtil {
         return arrList
     }
 
+    // 오늘의 년월일 정보를 return
     fun getTodayInfo(): List<Int> {
         val calendar = Calendar.getInstance()
-        return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE))
+        return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE))
     }
 }
