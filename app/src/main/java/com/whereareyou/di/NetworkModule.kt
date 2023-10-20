@@ -31,8 +31,9 @@ object NetworkModule {
     fun provideRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
 
         return Retrofit.Builder()
-//            .baseUrl("http://yj2113.iptime.org:8383/app/")
-            .baseUrl("https://a8521a7e-bc2b-436a-8b90-c88148a52ae2.mock.pstmn.io/")
+            .baseUrl("http://yj2113.iptime.org:8383/app/")
+//            .baseUrl("https://a8521a7e-bc2b-436a-8b90-c88148a52ae2.mock.pstmn.io/")
+//            .baseUrl("http://WhereAreYou-env-v11.eba-ex8qguf6.ap-northeast-2.elasticbeanstalk.com/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
 //            .addConverterFactory(ScalarsConverterFactory.create())
