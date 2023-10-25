@@ -1,7 +1,10 @@
 package com.whereareyou.di
 
+import com.whereareyou.BuildConfig
 import com.whereareyou.api.SearchLocationApi
-import com.whereareyou.api.WhereAreYouApi
+import com.whereareyou.api.ScheduleApi
+import com.whereareyou.api.SignInApi
+import com.whereareyou.api.SignUpApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,7 +12,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -28,7 +30,8 @@ object NetworkModule {
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class WhereAreYouApiClass
+    annotation class RemoteApiClass
+
 
     @Singleton
     @Provides
@@ -39,7 +42,7 @@ object NetworkModule {
             .build()
     }
 
-    // 지역 검색 api
+    // 네이버 검색 url
     @Singleton
     @Provides
     @SearchLocationAPIClass
@@ -51,29 +54,44 @@ object NetworkModule {
             .build()
     }
 
+    // 네이버 검색 Api
     @Singleton
     @Provides
     fun provideSearchLocationApi(@SearchLocationAPIClass retrofit: Retrofit): SearchLocationApi {
         return retrofit.create(SearchLocationApi::class.java)
     }
 
-    // 백엔드 서버 api
+    // 백엔드 서버 url
     @Singleton
     @Provides
-    @WhereAreYouApiClass
-    fun provideWhereAreYouRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
+    @RemoteApiClass
+    fun provideRemoteRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://yj2113.iptime.org:8383/app/")
-//            .baseUrl("https://a8521a7e-bc2b-436a-8b90-c88148a52ae2.mock.pstmn.io/")
-//            .baseUrl("http://WhereAreYou-env-v11.eba-ex8qguf6.ap-northeast-2.elasticbeanstalk.com/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
+    // 일정 Api
     @Singleton
     @Provides
-    fun provideWhereAreYouApi(@WhereAreYouApiClass retrofit: Retrofit): WhereAreYouApi {
-        return retrofit.create(WhereAreYouApi::class.java)
+    fun provideScheduleApi(@RemoteApiClass retrofit: Retrofit): ScheduleApi {
+        return retrofit.create(ScheduleApi::class.java)
     }
+
+    // 회원가입 Api
+    @Singleton
+    @Provides
+    fun provideSignUpApi(@RemoteApiClass retrofit: Retrofit): SignUpApi {
+        return retrofit.create(SignUpApi::class.java)
+    }
+
+    // 로그인 Api
+    @Singleton
+    @Provides
+    fun provideSignInApi(@RemoteApiClass retrofit: Retrofit): SignInApi {
+        return retrofit.create(SignInApi::class.java)
+    }
+
 }
