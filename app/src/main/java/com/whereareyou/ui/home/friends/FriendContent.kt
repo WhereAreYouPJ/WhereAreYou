@@ -30,21 +30,21 @@ fun FriendContent() {
             text = "이서영"
         )
     }
-    LazyColumn() {
-        itemsIndexed(FriendProvider.friendList) { index, friend ->
-            Text(
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = friend.name
-            )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-                    .background(
-                        color = Color(0xFFAAAAAA)
-                    )
-            )
-        }
-    }
+//    LazyColumn() {
+//        itemsIndexed(FriendProvider.friendList) { index, friend ->
+//            Text(
+//                modifier = Modifier
+//                    .padding(top = 10.dp, bottom = 10.dp),
+//                text = friend.name
+//            )
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(0.5.dp)
+//                    .background(
+//                        color = Color(0xFFAAAAAA)
+//                    )
+//            )
+//        }
+//    }
 }
