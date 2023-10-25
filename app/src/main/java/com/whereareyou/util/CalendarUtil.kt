@@ -26,7 +26,7 @@ object CalendarUtil {
         return calendar.get(Calendar.DAY_OF_WEEK)
     }
 
-
+    // year년 month월의 달력 정보를 return
     fun getCalendarInfo(year: Int, month: Int): ArrayList<String> {
         val calendar = Calendar.getInstance()
 
@@ -38,6 +38,9 @@ object CalendarUtil {
         calendar.set(Calendar.DATE, getDayOfMonth(year, month))
         val weekCount = calendar.get(Calendar.WEEK_OF_MONTH)
 
+        Log.e("calendar", "$year, $month")
+        Log.e("calendar", calendar.toString())
+
         calendar.set(Calendar.DATE, 2 - firstDayOfWeek)
         val arrList = ArrayList<String>()
         for (i in 1..(7 * weekCount)) {
@@ -47,6 +50,7 @@ object CalendarUtil {
             arrList.add(str)
             calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 1)
         }
+        Log.e("calendar", arrList.toString())
         return arrList
     }
 

@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.Navigator
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.whereareyou.data.Constants
 import com.whereareyou.ui.home.HomeScreen
-import com.whereareyou.ui.home.calendar.AddScheduleScreen
+import com.whereareyou.ui.home.main.detailschedule.DetailScheduleScreen
+import com.whereareyou.ui.home.main.newschedule.NewScheduleContent
 import com.whereareyou.ui.signin.SignUpScreen
 
 @Composable
@@ -43,25 +45,22 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_MAIN_HOME
         ) {
-            HomeScreen()
+            HomeScreen(
+                moveToAddScheduleScreen = { navController.navigate(Constants.ROUTE_NEW_SCHEDULE) },
+                toDetailScreen = { navController.navigate(Constants.ROUTE_DETAIL_SCHEDULE + "/$it") }
+            )
         }
 
         composable(
-            route = Constants.ROUTE_ADD_SCHEDULE
+            route = Constants.ROUTE_NEW_SCHEDULE
         ) {
-            AddScheduleScreen()
+            NewScheduleContent()
         }
 
         composable(
-            route = Constants.ROUTE_ADD_FRIENDS
+            route = Constants.ROUTE_DETAIL_SCHEDULE + "/{scheduleId}"
         ) {
-
-        }
-
-        composable(
-            route = Constants.ROUTE_SEARCH_LOCATION
-        ) {
-
+            DetailScheduleScreen(it.arguments?.getString("scheduleId"))
         }
     }
 }
