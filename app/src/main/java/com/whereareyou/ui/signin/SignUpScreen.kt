@@ -53,13 +53,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.whereareyou.R
 import com.whereareyou.data.Constants
-import com.whereareyou.ui.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
@@ -78,13 +75,8 @@ fun SignUpScreen(navController: NavHostController) {
 
 
 ////////////
-    val context = LocalContext.current
-    val retrofit = Retrofit.Builder()
-        .baseUrl("http://whereareyou-env-v11.eba-ex8qguf6.ap-northeast-2.elasticbeanstalk.com/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
 
-    val apiService = retrofit.create(ApiService::class.java)
+
 
 //////////
 
@@ -223,50 +215,7 @@ fun SignUpScreen(navController: NavHostController) {
                         // username 및 password를 사용하여 로그인을 처리
 
 
-                        // 코루틴 스코프 내에서 비동기로 API 호출
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                val response = apiService.checkUserId(user_id.toString())
 
-                                if (response.isSuccessful) {
-                                    withContext(Dispatchers.Main) {
-
-                                        Toast.makeText(
-                                            context,
-                                            "API 요청 성공",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-
-                                    // 성공적으로 응답을 받았을 때의 처리
-                                    val responseBody = response.body()
-                                    Log.d("API Response", responseBody.toString()) // API 응답 body 로그로 출력
-
-                                    // responseBody를 사용하여 UI 업데이트 등을 수행할 수 있음
-                                } else {
-                                    // 실패했을 때의 처리
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(
-                                            context,
-                                            "API 요청 실패",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                // 네트워크 오류 또는 기타 예외 발생 시의 처리
-
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        context,
-                                        "네트워크 오류",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                Log.e("API Request", "API 요청 오류", e)
-
-                            }
-                        }
                     },
 
                     shape = RoundedCornerShape(3.dp),
