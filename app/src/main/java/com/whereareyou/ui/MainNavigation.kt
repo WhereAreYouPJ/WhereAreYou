@@ -18,6 +18,7 @@ import com.whereareyou.ui.signin.LoginScreen
 import com.whereareyou.ui.signin.SignUpScreen
 import com.whereareyou.ui.signin.SuccessScreen
 import com.whereareyou.ui.signin.SuccessScreenPw
+import com.whereareyou.ui.start.StartScreen
 import test
 
 @Composable
