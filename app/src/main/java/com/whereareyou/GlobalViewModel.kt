@@ -3,24 +3,46 @@ package com.whereareyou
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.data.GlobalValue
+import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.SignInUseCase
+import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.repository.SharedPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class GlobalViewModel @Inject constructor(
-    private val sharedPreferencesRepository: SharedPreferencesRepository,
+    private val signInUseCase: SignInUseCase,
+    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
-
-    fun setMyMemberId(myId: String) {
+    // 임시 로그인
+    private fun signIn() {
         viewModelScope.launch {
-            sharedPreferencesRepository.updateMyMemberId(myId)
+            val signInResult = signInUseCase("wnstjd00", "00")
+            when (signInResult) {
+                is NetworkResult.Success -> {
+                    Log.e("GlobalViewModel", signInResult.data.toString())
+                    saveAccessTokenUseCase("Bearer " + signInResult.data.accessToken)
+                }
+                is NetworkResult.Error -> {
+                    Log.e("GlobalViewModel", "error")
+                }
+                is NetworkResult.Exception -> {
+                    Log.e("GlobalViewModel", "${signInResult.e.message}")
+                }
+            }
+            val tmp = getAccessTokenUseCase().first()
+            Log.e("GlobalViewModel", tmp)
         }
     }
 
@@ -42,5 +64,9 @@ class GlobalViewModel @Inject constructor(
         GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
         GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
         GlobalValue.density = metrics.density
+    }
+
+    init {
+        signIn()
     }
 }
