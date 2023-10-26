@@ -1,5 +1,6 @@
 package com.whereareyou
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.whereareyou.ui.MainNavigation
@@ -21,10 +25,10 @@ class MainActivity : ComponentActivity() {
         ViewModelProvider(this)[GlobalViewModel::class.java]
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.setMyMemberId("1ee27e79-c410-44b2-86ef-a2d2b0f17bf3")
         viewModel.updateGlobalValue()
 
         setContent {
