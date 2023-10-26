@@ -1,5 +1,10 @@
 package com.whereareyou.di.repository
 
+import android.content.Context
+import android.preference.PreferenceDataStore
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.whereareyou.datasource.RemoteDataSource
 import com.whereareyou.datasource.SearchLocationDataSource
 import com.whereareyou.datasource.SharedPreferencesDataSource
@@ -15,6 +20,7 @@ import com.whereareyou.repository.SignUpRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -35,11 +41,17 @@ object RepositoryModule {
         return SignUpRepositoryImpl(dataSource)
     }
 
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
+
     @Provides
     fun provideSignInRepository(
-        dataSource: RemoteDataSource
+        dataSource: RemoteDataSource,
+        @ApplicationContext context: Context
     ): SignInRepository {
-        return SignInRepositoryImpl(dataSource)
+        return SignInRepositoryImpl(
+            dataSource,
+            context.dataStore
+        )
     }
 
     @Provides
