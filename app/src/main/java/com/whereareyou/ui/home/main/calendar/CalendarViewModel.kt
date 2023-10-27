@@ -10,10 +10,13 @@ import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.domain.entity.schedule.ScheduleCountByDay
 import com.whereareyou.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetMonthlyScheduleUseCase
+import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.util.CalendarUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +25,8 @@ import javax.inject.Inject
 class CalendarViewModel @Inject constructor(
     application: Application,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
-    private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase
+    private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase
 ) : AndroidViewModel(application) {
 
     private val _year = MutableStateFlow(0)
@@ -48,6 +52,9 @@ class CalendarViewModel @Inject constructor(
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
         var monthlySchedule = emptyList<ScheduleCountByDay>()
         viewModelScope.launch {
+            delay(1000)
+            val accessToken = getAccessTokenUseCase().first()
+            Log.e("getAccessToken", accessToken)
             var currYear = -1
             var currMonth = -1
             for (i in 0 until calendarArrList.size) {
@@ -56,7 +63,7 @@ class CalendarViewModel @Inject constructor(
                     currMonth = calendarArrList[i].split("/")[1].toInt()
 
                     val getMonthlyScheduleResult = getMonthlyScheduleUseCase(
-                        BuildConfig.ACCESS_TOKEN, BuildConfig.MEMBER_ID, currYear, 20
+                        accessToken, "1ee27e79-c410-44b2-86ef-a2d2b0f17bf3", currYear, currMonth
                     )
                     when (getMonthlyScheduleResult) {
                         is NetworkResult.Success -> {
