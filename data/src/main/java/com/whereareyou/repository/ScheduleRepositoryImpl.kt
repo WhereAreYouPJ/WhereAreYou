@@ -1,5 +1,6 @@
 package com.whereareyou.repository
 
+import android.util.Log
 import com.whereareyou.datasource.RemoteDataSource
 import com.whereareyou.domain.entity.schedule.BriefSchedule
 import com.whereareyou.domain.entity.schedule.DetailSchedule
@@ -21,6 +22,7 @@ class ScheduleRepositoryImpl(
         month: Int
     ): NetworkResult<List<ScheduleCountByDay>> {
         val response = dataSource.getMonthlySchedule(token, memberId, year, month)
+        Log.e("getMonthlySchedule", "getMonthlySchedule")
         return withContext(Dispatchers.IO) {
             handleResult(response) { body ->
                 body.schedules
