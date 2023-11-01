@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.whereareyou.vo.Constants
 
-class SharedPreferencesDataSource constructor(
+class SharedPreferencesDataSource (
     private val context: Context
 ) {
     private val pref: SharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
