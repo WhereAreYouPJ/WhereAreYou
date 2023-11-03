@@ -26,9 +26,6 @@ android {
         }
 
         buildConfigField "String", "BASE_URL", properties["baseUrl"]
-        resValue "string", "BASE_URL", properties["baseUrl"]
-        buildConfigField "String", "MEMBER_ID", properties["memberId"]
-        buildConfigField "String", "ACCESS_TOKEN", properties["accessToken"]
     }
 
     buildTypes {
