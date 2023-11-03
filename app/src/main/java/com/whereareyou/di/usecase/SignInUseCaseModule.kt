@@ -2,7 +2,9 @@ package com.whereareyou.di.usecase
 
 import com.whereareyou.domain.repository.SignInRepository
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SignInUseCase
 import dagger.Module
 import dagger.Provides
@@ -32,5 +34,19 @@ object SignInUseCaseModule {
         repository: SignInRepository
     ): GetAccessTokenUseCase {
         return GetAccessTokenUseCase(repository)
+    }
+
+    @Provides
+    fun provideSaveMemberIdUseCase(
+        repository: SignInRepository
+    ): SaveMemberIdUseCase {
+        return SaveMemberIdUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetMemberIdUseCase(
+        repository: SignInRepository
+    ): GetMemberIdUseCase {
+        return GetMemberIdUseCase(repository)
     }
 }
