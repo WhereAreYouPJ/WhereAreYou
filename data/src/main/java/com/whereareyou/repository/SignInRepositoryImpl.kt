@@ -43,4 +43,18 @@ class SignInRepositoryImpl(
             it[key] ?: ""
         }
     }
+
+    override suspend fun saveMemberId(id: String) {
+        val key = stringPreferencesKey("memberId")
+        preferencesDataStore.edit {
+            it[key] = id
+        }
+    }
+
+    override suspend fun getMemberId(): Flow<String> {
+        val key = stringPreferencesKey("memberId")
+        return preferencesDataStore.data.map {
+            it[key] ?: ""
+        }
+    }
 }
