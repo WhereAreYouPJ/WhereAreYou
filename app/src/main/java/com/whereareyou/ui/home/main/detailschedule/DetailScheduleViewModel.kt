@@ -6,10 +6,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.BuildConfig
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
+import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +20,9 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailScheduleViewModel @Inject constructor(
     application: Application,
-    private val getDetailScheduleUseCase: GetDetailScheduleUseCase
+    private val getDetailScheduleUseCase: GetDetailScheduleUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
 
 
@@ -27,6 +32,8 @@ class DetailScheduleViewModel @Inject constructor(
     val start: StateFlow<String> = _start
     private val _end = MutableStateFlow("")
     val end: StateFlow<String> = _end
+    private val _place = MutableStateFlow("")
+    val place: StateFlow<String> = _place
     private val _memo = MutableStateFlow("")
     val memo: StateFlow<String> = _memo
 
@@ -40,11 +47,9 @@ class DetailScheduleViewModel @Inject constructor(
 
     fun getDetailSchedule(id: String) {
         viewModelScope.launch {
-            val getDetailScheduleResult = getDetailScheduleUseCase(
-                BuildConfig.ACCESS_TOKEN,
-                BuildConfig.MEMBER_ID,
-                id
-            )
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val getDetailScheduleResult = getDetailScheduleUseCase(accessToken, memberId, id)
             when (getDetailScheduleResult) {
                 is NetworkResult.Success -> {
                     Log.e("success", "${getDetailScheduleResult.data}")
@@ -52,6 +57,7 @@ class DetailScheduleViewModel @Inject constructor(
                     _title.update { detailSchedule.title }
                     _start.update { detailSchedule.start }
                     _end.update { detailSchedule.end }
+                    _place.update { detailSchedule.place }
                     _memo.update { detailSchedule.memo }
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDetailScheduleResult.errorData}") }
