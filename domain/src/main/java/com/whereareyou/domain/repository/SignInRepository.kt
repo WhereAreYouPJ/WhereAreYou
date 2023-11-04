@@ -16,4 +16,10 @@ interface SignInRepository {
     )
 
     suspend fun getAccessToken(): Flow<String>
+
+    suspend fun saveMemberId(
+        id: String
+    )
+
+    suspend fun getMemberId(): Flow<String>
 }
