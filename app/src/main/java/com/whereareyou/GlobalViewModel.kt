@@ -6,15 +6,20 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.whereareyou.data.GlobalValue
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SignInUseCase
 import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.repository.SharedPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +27,8 @@ class GlobalViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val saveMemberIdUseCase: SaveMemberIdUseCase,
+    private val getMemberIdUseCase: GetMemberIdUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -33,6 +40,7 @@ class GlobalViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     Log.e("GlobalViewModel", signInResult.data.toString())
                     saveAccessTokenUseCase("Bearer " + signInResult.data.accessToken)
+                    saveMemberIdUseCase(signInResult.data.memberId)
                 }
                 is NetworkResult.Error -> {
                     Log.e("GlobalViewModel", "error")
@@ -41,8 +49,9 @@ class GlobalViewModel @Inject constructor(
                     Log.e("GlobalViewModel", "${signInResult.e.message}")
                 }
             }
-            val tmp = getAccessTokenUseCase().first()
-            Log.e("GlobalViewModel", tmp)
+            val accessToken = getAccessTokenUseCase().first()
+            val memberid = getMemberIdUseCase().first()
+            Log.e("GlobalViewModel", "$memberid $accessToken")
         }
     }
 
@@ -64,6 +73,17 @@ class GlobalViewModel @Inject constructor(
         GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
         GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
         GlobalValue.density = metrics.density
+    }
+
+    fun checkIsSignedIn(): Boolean {
+        var isSignedIn = false
+        runBlocking {
+            delay(2000)
+            if (getMemberIdUseCase().first().isNotEmpty()) {
+                isSignedIn = true
+            }
+        }
+        return isSignedIn
     }
 
     init {
