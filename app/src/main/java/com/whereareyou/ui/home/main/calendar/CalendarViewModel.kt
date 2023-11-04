@@ -11,6 +11,7 @@ import com.whereareyou.domain.entity.schedule.ScheduleCountByDay
 import com.whereareyou.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.util.CalendarUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -26,7 +27,8 @@ class CalendarViewModel @Inject constructor(
     application: Application,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
     private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
 
     private val _year = MutableStateFlow(0)
@@ -52,29 +54,31 @@ class CalendarViewModel @Inject constructor(
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
         var monthlySchedule = emptyList<ScheduleCountByDay>()
         viewModelScope.launch {
-            delay(1000)
             val accessToken = getAccessTokenUseCase().first()
-            Log.e("getAccessToken", accessToken)
-            var currYear = -1
-            var currMonth = -1
+            val memberId = getMemberIdUseCase().first()
+            var currYear = calendarArrList[0].split("/")[0].toInt()
+            var currMonth = calendarArrList[0].split("/")[1].toInt()
+            var getMonthlyScheduleResult = getMonthlyScheduleUseCase(
+                accessToken, memberId, currYear, currMonth
+            )
             for (i in 0 until calendarArrList.size) {
                 if (currMonth != calendarArrList[i].split("/")[1].toInt()) {
                     currYear = calendarArrList[i].split("/")[0].toInt()
                     currMonth = calendarArrList[i].split("/")[1].toInt()
 
-                    val getMonthlyScheduleResult = getMonthlyScheduleUseCase(
-                        accessToken, "1ee27e79-c410-44b2-86ef-a2d2b0f17bf3", currYear, currMonth
+                    getMonthlyScheduleResult = getMonthlyScheduleUseCase(
+                        accessToken, memberId, currYear, currMonth
                     )
-                    when (getMonthlyScheduleResult) {
-                        is NetworkResult.Success -> {
-                            Log.e("success", "${currYear}, ${currMonth}")
-                            monthlySchedule = getMonthlyScheduleResult.data
+                }
+                when (getMonthlyScheduleResult) {
+                    is NetworkResult.Success -> {
+                        Log.e("success", "${currYear}, ${currMonth}")
+                        monthlySchedule = getMonthlyScheduleResult.data
 
-                            calendarArrList[i] = calendarArrList[i] + "/" + monthlySchedule[calendarArrList[i].split("/")[2].toInt() - 1].scheduleCount
-                        }
-                        is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResult.code}, ${getMonthlyScheduleResult.errorData}") }
-                        is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                        calendarArrList[i] = calendarArrList[i] + "/" + monthlySchedule[calendarArrList[i].split("/")[2].toInt() - 1].scheduleCount
                     }
+                    is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResult.code}, ${getMonthlyScheduleResult.errorData}") }
+                    is NetworkResult.Exception -> { Log.e("exception", "exception") }
                 }
             }
             _currentMonthDateInfo.update {
@@ -102,8 +106,10 @@ class CalendarViewModel @Inject constructor(
     fun updateDate(date: Int) {
         _date.update { date }
         viewModelScope.launch {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
             val getDailyBriefScheduleResult = getDailyBriefScheduleUseCase(
-                BuildConfig.ACCESS_TOKEN, BuildConfig.MEMBER_ID, _year.value, _month.value + 1, _date.value
+                accessToken, memberId, _year.value, _month.value + 1, _date.value
             )
             when (getDailyBriefScheduleResult) {
                 is NetworkResult.Success -> {
