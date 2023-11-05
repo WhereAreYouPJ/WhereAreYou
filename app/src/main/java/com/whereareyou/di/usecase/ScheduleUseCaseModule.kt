@@ -2,9 +2,10 @@ package com.whereareyou.di.usecase
 
 import com.whereareyou.domain.repository.ScheduleRepository
 import com.whereareyou.domain.repository.SearchLocationRepository
+import com.whereareyou.domain.usecase.location.GetLocationAddressUseCase
+import com.whereareyou.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
-import com.whereareyou.domain.usecase.location.GetLocationAddressUseCase
 import com.whereareyou.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import dagger.Module
 import dagger.Provides
@@ -37,9 +38,16 @@ object ScheduleUseCaseModule {
     }
 
     @Provides
-    fun getLocationAddressUseCase(
+    fun provideGetLocationAddressUseCase(
         repository: SearchLocationRepository
     ): GetLocationAddressUseCase {
         return GetLocationAddressUseCase(repository)
+    }
+
+    @Provides
+    fun provideAddNewScheduleUseCase(
+        repository: ScheduleRepository
+    ): AddNewScheduleUseCase {
+        return AddNewScheduleUseCase(repository)
     }
 }
