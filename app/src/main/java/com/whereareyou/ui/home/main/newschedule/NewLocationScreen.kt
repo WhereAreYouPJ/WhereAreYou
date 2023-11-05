@@ -39,15 +39,15 @@ import com.whereareyou.data.GlobalValue
 @Composable
 fun NewLocationScreen(
     updateDestinationInformation: (String, String) -> Unit,
-    toNewScheduleScreen: () -> Unit,
-    toMapScreen: () -> Unit,
+    moveToNewScheduleScreen: () -> Unit,
+    moveToMapScreen: () -> Unit,
     viewModel: NewLocationViewModel = hiltViewModel()
 ) {
     val uriHandler = LocalUriHandler.current
     val density = LocalDensity.current
 
     BackHandler() {
-        toNewScheduleScreen()
+        moveToNewScheduleScreen()
     }
     Column() {
         Box(
@@ -65,7 +65,7 @@ fun NewLocationScreen(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                     ) {
-                        toNewScheduleScreen()
+                        moveToNewScheduleScreen()
                     },
                 painter = painterResource(id = R.drawable.arrow_back_ios_new_fill0_wght100_grad0_opsz24),
                 contentDescription = null
@@ -141,7 +141,7 @@ fun NewLocationScreen(
                         .height(80.dp)
                         .clickable {
                             updateDestinationInformation(item.title, item.roadAddress)
-                            toNewScheduleScreen()
+                            moveToNewScheduleScreen()
                         },
                     contentAlignment = Alignment.CenterStart
                 ) {
@@ -167,7 +167,7 @@ fun NewLocationScreen(
                 .padding(top = 20.dp)
                 .align(Alignment.CenterHorizontally)
                 .clickable {
-                    toMapScreen()
+                    moveToMapScreen()
                 },
             text = "지도에서 위치 보기",
             color = Color.Blue
