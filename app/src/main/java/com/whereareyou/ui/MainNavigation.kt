@@ -14,6 +14,7 @@ import com.whereareyou.data.Constants
 import com.whereareyou.ui.home.HomeScreen
 import com.whereareyou.ui.home.main.detailschedule.DetailScheduleScreen
 import com.whereareyou.ui.home.main.newschedule.NewScheduleContent
+import com.whereareyou.ui.home.main.newschedule.NewScheduleScreen
 import com.whereareyou.ui.signin.SignUpScreen
 import com.whereareyou.ui.splash.SplashScreen
 
@@ -71,7 +72,9 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_NEW_SCHEDULE
         ) {
-            NewScheduleContent()
+            NewScheduleScreen(
+                moveToCalendarScreen = { navController.navigate(Constants.ROUTE_MAIN_HOME) },
+            )
         }
 
         composable(
