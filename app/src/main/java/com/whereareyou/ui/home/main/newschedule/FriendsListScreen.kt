@@ -35,11 +35,11 @@ import com.whereareyou.data.GlobalValue
 @Composable
 fun FriendsListScreen(
     updateFriendsList: (List<Friend>) -> Unit,
-    toNewScheduleScreen: () -> Unit,
+    moveToNewScheduleScreen: () -> Unit,
     viewModel: FriendsListScreenViewModel = hiltViewModel()
 ) {
     BackHandler() {
-        toNewScheduleScreen()
+        moveToNewScheduleScreen()
     }
     val density = LocalDensity.current
     val selectedFriendsList = viewModel.selectedFriendsList.collectAsState().value
@@ -62,7 +62,7 @@ fun FriendsListScreen(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .clickable {
-                        toNewScheduleScreen()
+                        moveToNewScheduleScreen()
                     },
                 painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                 contentDescription = null
@@ -75,7 +75,7 @@ fun FriendsListScreen(
                     .align(Alignment.CenterEnd)
                     .clickable {
                         updateFriendsList(selectedFriendsList)
-                        toNewScheduleScreen()
+                        moveToNewScheduleScreen()
                     },
                 text = "완료"
             )
