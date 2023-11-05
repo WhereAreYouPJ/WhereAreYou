@@ -1,7 +1,7 @@
 package com.whereareyou.datasource
 
 import com.whereareyou.api.SearchLocationApi
-import com.whereareyou.apimessage.schedule.GetLocationAddressResponse
+import com.whereareyou.domain.entity.apimessage.schedule.GetLocationAddressResponse
 import retrofit2.Response
 
 class SearchLocationDataSource(
@@ -9,7 +9,7 @@ class SearchLocationDataSource(
 ) {
     suspend fun getLocationAddress(
         query: String,
-    ): Response<GetLocationAddressResponse> {
+    ): Response<com.whereareyou.domain.entity.apimessage.schedule.GetLocationAddressResponse> {
         return api.getLocationAddress(
                 query = query
             )
