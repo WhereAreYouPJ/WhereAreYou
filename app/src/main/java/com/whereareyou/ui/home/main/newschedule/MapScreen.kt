@@ -20,11 +20,11 @@ import com.naver.maps.map.util.MarkerIcons
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun MapScreen(
-    toSearchLocationScreen: () -> Unit,
+    moveToSearchLocationScreen: () -> Unit,
     newLocationViewModel: NewLocationViewModel = hiltViewModel()
 ) {
     BackHandler() {
-        toSearchLocationScreen()
+        moveToSearchLocationScreen()
     }
     NaverMap(
         modifier = Modifier.
