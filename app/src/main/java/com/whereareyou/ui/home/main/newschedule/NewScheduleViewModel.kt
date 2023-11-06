@@ -1,22 +1,29 @@
 package com.whereareyou.ui.home.main.newschedule
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.data.Friend
 import com.whereareyou.domain.repository.ScheduleRepository
+import com.whereareyou.domain.usecase.schedule.AddNewScheduleUseCase
+import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.repository.SharedPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class NewScheduleViewModel @Inject constructor(
-    sharedPreferencesRepository: SharedPreferencesRepository,
-    remoteRepository: ScheduleRepository,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val getMemberIdUseCase: GetMemberIdUseCase,
+    private val addNewScheduleUseCase: AddNewScheduleUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -83,9 +90,18 @@ class NewScheduleViewModel @Inject constructor(
         _destinationAddress.update { address }
     }
 
-    fun addSchedule() {
+    fun addNewSchedule() {
         viewModelScope.launch {
-
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val addNewScheduleResult = addNewScheduleUseCase(accessToken, memberId, startDate.value + "T" + startTime.value + ":00", endDate.value + "T" + endTime.value + ":00", "tmpTitle", destinationName.value, destinationAddress.value, listOf("4c9632d9-391c-4e91-945a-bf48ea1d557d"))
+            when (addNewScheduleResult) {
+                is NetworkResult.Success -> {
+                    Log.e("success", "${addNewScheduleResult.data}")
+                }
+                is NetworkResult.Error -> { Log.e("error", "${addNewScheduleResult.code}, ${addNewScheduleResult.errorData}") }
+                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+            }
         }
     }
 

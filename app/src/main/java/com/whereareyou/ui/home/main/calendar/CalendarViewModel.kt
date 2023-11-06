@@ -72,7 +72,6 @@ class CalendarViewModel @Inject constructor(
                 }
                 when (getMonthlyScheduleResult) {
                     is NetworkResult.Success -> {
-                        Log.e("success", "${currYear}, ${currMonth}")
                         monthlySchedule = getMonthlyScheduleResult.data
 
                         calendarArrList[i] = calendarArrList[i] + "/" + monthlySchedule[calendarArrList[i].split("/")[2].toInt() - 1].scheduleCount
