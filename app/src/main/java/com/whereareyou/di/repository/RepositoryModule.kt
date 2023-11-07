@@ -8,10 +8,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.whereareyou.datasource.RemoteDataSource
 import com.whereareyou.datasource.SearchLocationDataSource
 import com.whereareyou.datasource.SharedPreferencesDataSource
+import com.whereareyou.domain.repository.LocationRepository
 import com.whereareyou.domain.repository.ScheduleRepository
 import com.whereareyou.domain.repository.SearchLocationRepository
 import com.whereareyou.domain.repository.SignInRepository
 import com.whereareyou.domain.repository.SignUpRepository
+import com.whereareyou.repository.LocationRepositoryImpl
 import com.whereareyou.repository.ScheduleRepositoryImpl
 import com.whereareyou.repository.SearchLocationRepositoryImpl
 import com.whereareyou.repository.SharedPreferencesRepository
@@ -52,6 +54,20 @@ object RepositoryModule {
             dataSource,
             context.dataStore
         )
+    }
+
+//    @Provides
+//    fun provideFriendRepository(
+//        dataSource: RemoteDataSource
+//    ): FriendRepository {
+//        return FriendRepositoryImpl(dataSource)
+//    }
+
+    @Provides
+    fun provideLocationRepository(
+        dataSource: RemoteDataSource
+    ): LocationRepository {
+        return LocationRepositoryImpl(dataSource)
     }
 
     @Provides

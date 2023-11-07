@@ -1,6 +1,8 @@
 package com.whereareyou.di
 
 import com.whereareyou.BuildConfig
+import com.whereareyou.api.FriendApi
+import com.whereareyou.api.LocationApi
 import com.whereareyou.api.SearchLocationApi
 import com.whereareyou.api.ScheduleApi
 import com.whereareyou.api.SignInApi
@@ -94,4 +96,17 @@ object NetworkModule {
         return retrofit.create(SignInApi::class.java)
     }
 
+    // 친구 Api
+    @Singleton
+    @Provides
+    fun provideFriendApi(@RemoteApiClass retrofit: Retrofit): FriendApi {
+        return retrofit.create(FriendApi::class.java)
+    }
+
+    // 위치 공유 Api
+    @Singleton
+    @Provides
+    fun provideLocationApi(@RemoteApiClass retrofit: Retrofit): LocationApi {
+        return retrofit.create(LocationApi::class.java)
+    }
 }

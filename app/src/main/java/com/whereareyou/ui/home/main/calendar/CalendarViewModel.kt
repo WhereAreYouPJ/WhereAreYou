@@ -72,7 +72,7 @@ class CalendarViewModel @Inject constructor(
                 }
                 when (getMonthlyScheduleResult) {
                     is NetworkResult.Success -> {
-                        monthlySchedule = getMonthlyScheduleResult.data
+                        monthlySchedule = getMonthlyScheduleResult.data.schedules
 
                         calendarArrList[i] = calendarArrList[i] + "/" + monthlySchedule[calendarArrList[i].split("/")[2].toInt() - 1].scheduleCount
                     }
@@ -113,7 +113,7 @@ class CalendarViewModel @Inject constructor(
             when (getDailyBriefScheduleResult) {
                 is NetworkResult.Success -> {
                     _currentDateBriefSchedule.update {
-                        getDailyBriefScheduleResult.data
+                        getDailyBriefScheduleResult.data.schedules
                     }
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResult.errorData}") }
