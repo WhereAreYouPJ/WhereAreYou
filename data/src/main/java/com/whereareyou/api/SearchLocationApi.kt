@@ -1,7 +1,7 @@
 package com.whereareyou.api
 
 import com.whereareyou.data.BuildConfig
-import com.whereareyou.apimessage.schedule.GetLocationAddressResponse
+import com.whereareyou.domain.entity.apimessage.schedule.GetLocationAddressResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header

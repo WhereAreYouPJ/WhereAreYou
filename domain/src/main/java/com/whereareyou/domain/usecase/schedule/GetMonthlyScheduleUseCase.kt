@@ -1,5 +1,6 @@
 package com.whereareyou.domain.usecase.schedule
 
+import com.whereareyou.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.domain.entity.schedule.ScheduleCountByDay
 import com.whereareyou.domain.repository.ScheduleRepository
@@ -12,7 +13,7 @@ class GetMonthlyScheduleUseCase(
         memberId: String,
         year: Int,
         month: Int
-    ): NetworkResult<List<ScheduleCountByDay>> {
+    ): NetworkResult<GetMonthlyScheduleResponse> {
         return repository.getMonthlySchedule(token, memberId, year, month)
     }
 }

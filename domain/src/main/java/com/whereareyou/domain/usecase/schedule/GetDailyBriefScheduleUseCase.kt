@@ -1,5 +1,6 @@
 package com.whereareyou.domain.usecase.schedule
 
+import com.whereareyou.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
 import com.whereareyou.domain.entity.schedule.BriefSchedule
 import com.whereareyou.domain.repository.ScheduleRepository
 import com.whereareyou.domain.util.NetworkResult
@@ -13,7 +14,7 @@ class GetDailyBriefScheduleUseCase(
         year: Int,
         month: Int,
         date: Int
-    ): NetworkResult<List<BriefSchedule>> {
+    ): NetworkResult<GetDailyBriefScheduleResponse> {
         return repository.getDailyBriefSchedule(token, memberId, year, month, date)
     }
 }
