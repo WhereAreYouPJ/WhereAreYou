@@ -1,13 +1,13 @@
 package com.whereareyou.api
 
-import com.whereareyou.apimessage.signup.AuthenticateEmailCodeRequest
-import com.whereareyou.apimessage.signup.AuthenticateEmailCodeResponse
-import com.whereareyou.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyou.apimessage.signup.AuthenticateEmailResponse
-import com.whereareyou.apimessage.signup.CheckEmailDuplicateResponse
-import com.whereareyou.apimessage.signup.CheckIdDuplicateResponse
-import com.whereareyou.apimessage.signup.SignUpRequest
-import com.whereareyou.apimessage.signup.SignUpResponse
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeResponse
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailRequest
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailResponse
+import com.whereareyou.domain.entity.apimessage.signup.CheckEmailDuplicateResponse
+import com.whereareyou.domain.entity.apimessage.signup.CheckIdDuplicateResponse
+import com.whereareyou.domain.entity.apimessage.signup.SignUpRequest
+import com.whereareyou.domain.entity.apimessage.signup.SignUpResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
