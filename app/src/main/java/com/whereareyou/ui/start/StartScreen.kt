@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.whereareyou.data.Constants
-import com.whereareyou.ui.home.calendar.CalendarViewModel
 
 @Composable
 fun StartScreen(navController: NavHostController) {

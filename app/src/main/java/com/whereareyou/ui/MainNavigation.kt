@@ -19,6 +19,7 @@ import com.whereareyou.ui.home.main.newschedule.NewScheduleScreen
 import com.whereareyou.ui.signin.SignUpScreen
 import com.whereareyou.ui.signin.SuccessScreen
 import com.whereareyou.ui.signin.SuccessScreenPw
+import com.whereareyou.ui.splash.SplashScreen
 import com.whereareyou.ui.start.StartScreen
 import test
 
@@ -34,6 +35,19 @@ fun MainNavigation(
         startDestination = Constants.ROUTE_MAIN_SPLASH
     ) {
 
+        composable(
+            route = Constants.ROUTE_MAIN_SPLASH
+        ) {
+            SplashScreen(
+                checkIsSignedIn = { viewModel.checkIsSignedIn() },
+                moveToSignInScreen = {
+                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                },
+                moveToMainScreen = {
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+                }
+            )
+        }
 
         composable(
             route = Constants.ROUTE_MAIN_INTRO
@@ -105,14 +119,5 @@ fun MainNavigation(
         composable(route=Constants.ROUTE_TEST){
             test()
         }
-        composable(
-            route = Constants.ROUTE_MAIN_HOME
-        ) {
-            HomeScreen()
-        }
-
-
-
-
     }
 }

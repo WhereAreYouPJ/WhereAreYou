@@ -50,6 +50,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.whereareyou.R
 import com.whereareyou.data.Constants
@@ -59,7 +60,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun SignUpScreen(navController: NavHostController) {
+fun SignUpScreen(
+    navController: NavHostController,
+    signInViewModel: SignViewModel = hiltViewModel()
+) {
     var user_id by remember { mutableStateOf(TextFieldValue()) }
     var user_name by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
@@ -79,8 +83,7 @@ fun SignUpScreen(navController: NavHostController) {
 
 
 //////////
-
-
+    //checkauthenticateEmail().
 ////////
 ////////
 
