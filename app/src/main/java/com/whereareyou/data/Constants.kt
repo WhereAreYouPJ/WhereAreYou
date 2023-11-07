@@ -19,7 +19,6 @@ object Constants {
     const val ROUTE_MAIN_FINDPWSUCCESS="main/findpwsuccess"
 
 
-    const val ROUTE_MAIN_SIGNIN = "main/signin"
     const val ROUTE_MAIN_LOGIN = "main/loginin"
     const val ROUTE_MAIN_START="main/start"
     const val ROUTE_MAIN_FINDID="main/findid"

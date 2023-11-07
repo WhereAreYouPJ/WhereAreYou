@@ -22,3 +22,4 @@ rootProject.name = "WhereAreYou"
 include ':app'
 include ':data'
 include ':domain'
+include ':app:domain'
