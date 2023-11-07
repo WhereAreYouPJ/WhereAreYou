@@ -3,9 +3,14 @@ package com.whereareyou.repository
 import com.whereareyou.datasource.RemoteDataSource
 import com.whereareyou.domain.repository.SignUpRepository
 import com.whereareyou.domain.util.NetworkResult
-import com.whereareyou.apimessage.signup.AuthenticateEmailCodeRequest
-import com.whereareyou.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyou.apimessage.signup.SignUpRequest
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeResponse
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailRequest
+import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailResponse
+import com.whereareyou.domain.entity.apimessage.signup.CheckEmailDuplicateResponse
+import com.whereareyou.domain.entity.apimessage.signup.CheckIdDuplicateResponse
+import com.whereareyou.domain.entity.apimessage.signup.SignUpRequest
+import com.whereareyou.domain.entity.apimessage.signup.SignUpResponse
 import com.whereareyou.util.NetworkResultHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,65 +19,68 @@ class SignUpRepositoryImpl(
     private val dataSource: RemoteDataSource
 ) : SignUpRepository, NetworkResultHandler {
 
+    /**
+     * 아이디 중복 검사
+     * implements [SignUpRepository.checkIdDuplicate]
+     */
     override suspend fun checkIdDuplicate(
         id: String
-    ): NetworkResult<String> {
-        val response = dataSource.checkIdDuplicate(id)
+    ): NetworkResult<CheckIdDuplicateResponse> {
         return withContext(Dispatchers.IO) {
-            handleResult(response) { body ->
-                body.userId
-            }
+            val response = dataSource.checkIdDuplicate(id)
+            handleResult(response) { it }
         }
     }
 
+    /**
+     * 이메일 중복 검사
+     * implements [SignUpRepository.checkEmailDuplicate]
+     */
     override suspend fun checkEmailDuplicate(
         email: String
-    ): NetworkResult<String> {
-        val response = dataSource.checkEmailDuplicate(email)
+    ): NetworkResult<CheckEmailDuplicateResponse> {
         return withContext(Dispatchers.IO) {
-            handleResult(response) { body ->
-                body.email
-            }
+            val response = dataSource.checkEmailDuplicate(email)
+            handleResult(response) { it }
         }
     }
 
+    /**
+     * 이메일 인증
+     * implements [SignUpRepository.authenticateEmail]
+     */
     override suspend fun authenticateEmail(
-        email: String
-    ): NetworkResult<String> {
-        val request = AuthenticateEmailRequest(email)
-        val response = dataSource.authenticateEmail(request)
+        body: AuthenticateEmailRequest
+    ): NetworkResult<AuthenticateEmailResponse> {
         return withContext(Dispatchers.IO) {
-            handleResult(response) { body ->
-                body.message
-            }
+            val response = dataSource.authenticateEmail(body)
+            handleResult(response) { it }
         }
     }
 
+    /**
+     * 이메일 인증 코드 입력
+     * implements [SignUpRepository.authenticateEmailCode]
+     */
     override suspend fun authenticateEmailCode(
-        email: String,
-        code: Int
-    ): NetworkResult<String> {
-        val request = AuthenticateEmailCodeRequest(email, code)
-        val response = dataSource.authenticateEmailCode(request)
+        body: AuthenticateEmailCodeRequest
+    ): NetworkResult<AuthenticateEmailCodeResponse> {
         return withContext(Dispatchers.IO) {
-            handleResult(response) { body ->
-                body.message
-            }
+            val response = dataSource.authenticateEmailCode(body)
+            handleResult(response) { it }
         }
     }
 
+    /**
+     * 회원가입 성공
+     * implements [SignUpRepository.signUp]
+     */
     override suspend fun signUp(
-        userName: String,
-        userId: String,
-        password: String,
-        email: String
-    ): NetworkResult<String> {
-        val request = SignUpRequest(userName, userId, password, email)
-        val response = dataSource.signUp(request)
+        body: SignUpRequest
+    ): NetworkResult<SignUpResponse> {
         return withContext(Dispatchers.IO) {
-            handleResult(response) { body ->
-                body.message
-            }
+            val response = dataSource.signUp(body)
+            handleResult(response) { it }
         }
     }
 }
