@@ -1,5 +1,6 @@
 package com.whereareyou.domain.usecase.schedule
 
+import com.whereareyou.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyou.domain.entity.schedule.DetailSchedule
 import com.whereareyou.domain.repository.ScheduleRepository
 import com.whereareyou.domain.util.NetworkResult
@@ -11,7 +12,7 @@ class GetDetailScheduleUseCase(
         token: String,
         memberId: String,
         scheduleId: String
-    ): NetworkResult<DetailSchedule> {
+    ): NetworkResult<GetDetailScheduleResponse> {
         return repository.getDetailSchedule(token, memberId, scheduleId)
     }
 }

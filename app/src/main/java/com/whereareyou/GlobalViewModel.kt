@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.whereareyou.data.GlobalValue
+import com.whereareyou.domain.entity.apimessage.signin.SignInRequest
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
@@ -35,7 +36,8 @@ class GlobalViewModel @Inject constructor(
     // 임시 로그인
     private fun signIn() {
         viewModelScope.launch {
-            val signInResult = signInUseCase("wnstjd00", "00")
+            val request = SignInRequest("wnstjd00", "00")
+            val signInResult = signInUseCase(request)
             when (signInResult) {
                 is NetworkResult.Success -> {
                     Log.e("GlobalViewModel", signInResult.data.toString())
