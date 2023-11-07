@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.data.Friend
+import com.whereareyou.domain.entity.apimessage.schedule.AddNewScheduleRequest
 import com.whereareyou.domain.repository.ScheduleRepository
 import com.whereareyou.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
@@ -94,7 +95,8 @@ class NewScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val addNewScheduleResult = addNewScheduleUseCase(accessToken, memberId, startDate.value + "T" + startTime.value + ":00", endDate.value + "T" + endTime.value + ":00", "tmpTitle", destinationName.value, destinationAddress.value, listOf("4c9632d9-391c-4e91-945a-bf48ea1d557d"))
+            val body = AddNewScheduleRequest(memberId, startDate.value + "T" + startTime.value + ":00", endDate.value + "T" + endTime.value + ":00", "tmpTitle", destinationName.value, destinationAddress.value, listOf("4c9632d9-391c-4e91-945a-bf48ea1d557d"))
+            val addNewScheduleResult = addNewScheduleUseCase(accessToken, body)
             when (addNewScheduleResult) {
                 is NetworkResult.Success -> {
                     Log.e("success", "${addNewScheduleResult.data}")
