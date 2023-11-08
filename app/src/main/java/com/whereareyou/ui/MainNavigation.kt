@@ -13,9 +13,9 @@ import com.whereareyou.data.Constants
 import com.whereareyou.ui.home.HomeScreen
 import com.whereareyou.ui.home.Tablayout
 import com.whereareyou.ui.home.main.detailschedule.DetailScheduleScreen
+import com.whereareyou.ui.home.main.newschedule.NewScheduleScreen
 import com.whereareyou.ui.signin.AgreeScreen
 import com.whereareyou.ui.signin.LoginScreen
-import com.whereareyou.ui.home.main.newschedule.NewScheduleScreen
 import com.whereareyou.ui.signin.SignUpScreen
 import com.whereareyou.ui.signin.SuccessScreen
 import com.whereareyou.ui.signin.SuccessScreenPw
