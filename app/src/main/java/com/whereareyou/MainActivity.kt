@@ -25,6 +25,9 @@ class MainActivity : ComponentActivity() {
         ViewModelProvider(this)[GlobalViewModel::class.java]
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
