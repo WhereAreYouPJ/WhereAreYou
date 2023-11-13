@@ -2,7 +2,10 @@ package com.whereareyou.ui.signin
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.domain.entity.apimessage.signin.SignInRequest
 import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
@@ -20,6 +23,7 @@ import com.whereareyou.domain.usecase.signup.CheckIdDuplicateUseCase
 import com.whereareyou.domain.usecase.signup.SignUpUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -47,34 +51,69 @@ class SignViewModel @Inject constructor(
     // 회원가입 성공시 바로 로그인 되도록?(access token 저장 ) -> 아니면 다시 로그인 화면 ?
 
 ) : AndroidViewModel(application) {
+    private val _loginResult = MutableLiveData<Boolean>()
+    val loginResult: LiveData<Boolean> get() = _loginResult
+
+    // 아이디 중복여부 체크
+    fun checkIsSignedIn(user_id: TextFieldValue): Boolean {
+        var isSignedIn = false // 초기값 false
+        runBlocking {
+            delay(2000)
+            if (getMemberIdUseCase().first().isNotEmpty()) {
+                isSignedIn = true
+            }
+        }
+        return isSignedIn
+    }
+
     //  로그인
-    private fun LogIn() {
-        viewModelScope.launch {
-            val body = SignInRequest("chanue467", "123123@@")
+
+     fun LogIn(user_name: String, user_password: String,onLoginResult: (Boolean) -> Unit // 콜백 함수
+     ){
+        var isLoginSuccess = false // 초기값 false
+
+        viewModelScope.launch() {
+            val body = SignInRequest(user_name, user_password)
             val signInResult = signInUseCase(body)
+
             when (signInResult) {
                 is NetworkResult.Success -> {
+                    Log.e("SignViewModel", "성공")
+
                     Log.e("SignViewModel", signInResult.data.toString())
                     saveAccessTokenUseCase("Bearer " + signInResult.data.accessToken)
                     saveMemberIdUseCase(signInResult.data.memberId)
+                    isLoginSuccess=true
+
                 }
 
                 is NetworkResult.Error -> {
                     Log.e("SignViewModel", "error")
+                    Log.e("SignViewModel", "Error: ${signInResult.code}")
+                    Log.e("SignViewModel", "Error: ${signInResult.errorData}")
+                    isLoginSuccess=false
+
+
                 }
 
                 is NetworkResult.Exception -> {
                     Log.e("SignViewModel", "${signInResult.e.message}")
+                    isLoginSuccess=false
+
                 }
             }
+
             val accessToken = getAccessTokenUseCase().first()
             val memberid = getMemberIdUseCase().first()
             Log.e("GlobalViewModel", "$memberid $accessToken")
+            onLoginResult(isLoginSuccess)
         }
+         Log.e("SignViewModel", isLoginSuccess.toString())
+
     }
 
     // 이메일 중복 여부 체크 함수
-    private fun checkEmailDuplicate() {
+     fun checkEmailDuplicate() {
         viewModelScope.launch {
             val result = checkEmailDuplicateUseCase("chanhue467@gmail.com")
             when (result) {
@@ -95,7 +134,7 @@ class SignViewModel @Inject constructor(
 
     }
     // 이메일 인증요청 함수
-    private fun checkauthenticateEmail(email: String) {
+     fun checkauthenticateEmail(email: String) {
         viewModelScope.launch {
             val body = AuthenticateEmailRequest(email)
             val result = authenticateEmailUseCase(body)
@@ -117,7 +156,8 @@ class SignViewModel @Inject constructor(
     }
 
     // 이메일 코드 인증
-    private fun checkauthenticateEmailCode(email: String, code: Int) {
+     fun checkauthenticateEmailCode(email: String, code: Int) {
+
         viewModelScope.launch {
             val body = AuthenticateEmailCodeRequest(email, code)
             val result = authenticateEmailCodeUseCase(body)
@@ -176,17 +216,7 @@ class SignViewModel @Inject constructor(
         }
     }
 
-    // 아이디 중복여부 체크
-    fun checkIsSignedIn(): Boolean {
-        var isSignedIn = false // 초기값 false
-        runBlocking {
-            delay(2000)
-            if (getMemberIdUseCase().first().isNotEmpty()) {
-                isSignedIn = true
-            }
-        }
-        return isSignedIn
-    }
+
 
 
 
