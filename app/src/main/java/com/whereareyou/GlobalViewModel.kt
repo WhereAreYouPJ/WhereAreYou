@@ -1,14 +1,27 @@
 package com.whereareyou
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.os.Looper
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.naver.maps.geometry.LatLng
 import com.whereareyou.data.GlobalValue
+import com.whereareyou.domain.entity.apimessage.location.SendUserLocationRequest
 import com.whereareyou.domain.entity.apimessage.signin.SignInRequest
+import com.whereareyou.domain.usecase.location.SendUserLocationUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
@@ -30,6 +43,7 @@ class GlobalViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val saveMemberIdUseCase: SaveMemberIdUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
+    private val sendUserLocationUseCase: SendUserLocationUseCase,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -44,16 +58,12 @@ class GlobalViewModel @Inject constructor(
                     saveAccessTokenUseCase("Bearer " + signInResult.data.accessToken)
                     saveMemberIdUseCase(signInResult.data.memberId)
                 }
-                is NetworkResult.Error -> {
-                    Log.e("GlobalViewModel", "error")
-                }
-                is NetworkResult.Exception -> {
-                    Log.e("GlobalViewModel", "${signInResult.e.message}")
-                }
+                is NetworkResult.Error -> { Log.e("GlobalViewModel", "error") }
+                is NetworkResult.Exception -> { Log.e("GlobalViewModel", "${signInResult.e.message}") }
             }
             val accessToken = getAccessTokenUseCase().first()
-            val memberid = getMemberIdUseCase().first()
-            Log.e("GlobalViewModel", "$memberid $accessToken")
+            val memberId = getMemberIdUseCase().first()
+            Log.e("GlobalViewModel", "$memberId $accessToken")
         }
     }
 
@@ -88,7 +98,63 @@ class GlobalViewModel @Inject constructor(
         return isSignedIn
     }
 
+    fun getLocation() {
+        val request = LocationRequest.Builder(10000L)
+            .setIntervalMillis(10000L)
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .build()
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult.locations.lastOrNull()?.let {
+                    LatLng(it.latitude, it.longitude)
+                    sendUserLocation(it)
+//                    Log.e("location", "$it")
+                }
+            }
+        }
+        if (ActivityCompat.checkSelfPermission(
+                getApplication(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                getApplication(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        LocationServices.getFusedLocationProviderClient(getApplication<Application>().applicationContext).requestLocationUpdates(
+            request,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    fun sendUserLocation(location: Location) {
+        viewModelScope.launch {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val request = SendUserLocationRequest(memberId, location.latitude, location.longitude)
+            val result = sendUserLocationUseCase(accessToken, request)
+            when (result) {
+                is NetworkResult.Success -> {
+//                    Log.e("GlobalViewModel", result.data.toString())
+                }
+                is NetworkResult.Error -> { Log.e("GlobalViewModel", "error") }
+                is NetworkResult.Exception -> { Log.e("GlobalViewModel", "${result.e.message}") }
+            }
+        }
+    }
+
     init {
         signIn()
+        getLocation()
     }
 }
