@@ -8,8 +8,8 @@ class CheckIdDuplicateUseCase(
     private val repository: SignUpRepository
 ) {
     suspend operator fun invoke(
-        id: String
+        userId: String
     ): NetworkResult<CheckIdDuplicateResponse> {
-        return repository.checkIdDuplicate(id)
+        return repository.checkIdDuplicate(userId)
     }
 }

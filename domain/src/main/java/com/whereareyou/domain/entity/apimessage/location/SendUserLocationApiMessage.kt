@@ -6,7 +6,7 @@ data class SendUserLocationRequest(
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("latitude")
-    val latitude: String,
+    val latitude: Double,
     @SerializedName("longitude")
-    val longitude: String
+    val longitude: Double
 )

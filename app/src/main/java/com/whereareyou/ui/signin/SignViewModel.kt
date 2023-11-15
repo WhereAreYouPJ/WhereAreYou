@@ -97,7 +97,10 @@ class SignViewModel @Inject constructor(
 
         viewModelScope.launch() {
             val body = SignInRequest(user_name, user_password)
+            Log.e("SignVIewModel",body.toString())
+
             val signInResult = signInUseCase(body)
+            Log.e("SignVIewModel",signInResult.toString())
 
             when (signInResult) {
                 is NetworkResult.Success -> {
@@ -161,8 +164,14 @@ class SignViewModel @Inject constructor(
     // 이메일 인증요청 함수
      fun checkauthenticateEmail(email: String) {
         viewModelScope.launch {
+            Log.d("authenticateEmail",email)
+
             val body = AuthenticateEmailRequest(email)
+            Log.d("authenticateEmail", body.toString())
+
             val result = authenticateEmailUseCase(body)
+            Log.d("authenticateEmail", result.toString())
+
             when (result) {
                 is NetworkResult.Success -> {
                     // 이메일이 성공적으로 인증되었을 때
@@ -171,6 +180,9 @@ class SignViewModel @Inject constructor(
 
                 is NetworkResult.Error -> {
                     Log.e("authenticateEmail", "error")
+                    Log.e("authenticateEmail", "Error: ${result.code}")
+                    Log.e("authenticateEmail", "Error: ${result.errorData}")
+
                 }
 
                 is NetworkResult.Exception -> {

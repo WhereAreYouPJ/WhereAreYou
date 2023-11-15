@@ -358,7 +358,7 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         // 여기에 로그인 로직을s 추가
-                              signInViewModel.checkauthenticateEmail("chanhue467@gmail.com")
+                              signInViewModel.checkauthenticateEmail("chanhue4671@naver.com")
                     },
                     shape = RoundedCornerShape(3.dp),
 
