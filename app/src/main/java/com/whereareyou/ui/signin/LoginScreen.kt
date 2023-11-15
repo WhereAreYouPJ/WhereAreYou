@@ -197,11 +197,10 @@ fun LoginScreen(navController: NavHostController,
                         navController.navigate(Constants.ROUTE_MAIN_HOME)
                     } else {
                         Log.d("sign","error!!")
-// 토스트 메세지 안 띄워짐
                         Toast.makeText(
                             context,
                             "아이디 또는 비밀번호가 일치하지 않습니다.",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_LONG
                         ).show()
 
                     }

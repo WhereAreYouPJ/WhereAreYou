@@ -41,10 +41,10 @@ fun MainNavigation(
             SplashScreen(
                 checkIsSignedIn = { viewModel.checkIsSignedIn() },
                 moveToSignInScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
                 },
                 moveToMainScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
 //                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 }
             )

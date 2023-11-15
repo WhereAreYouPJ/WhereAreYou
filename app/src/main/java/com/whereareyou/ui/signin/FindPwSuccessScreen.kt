@@ -145,10 +145,12 @@ fun FindPwSuccessScreen(navController: NavController) {
                 .height(15.dp)
         )
 
-        // 로그인 버튼
+        // 확인 버튼
         Button(
             onClick = {
-                navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
+                //navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
+
+
             },
             shape = RoundedCornerShape(3.dp),
 

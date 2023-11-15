@@ -42,7 +42,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.whereareyou.R
 import com.whereareyou.data.Constants
-
+fun isValidUserId(input: String): Boolean {
+    val regex = Regex("^[a-z][a-z0-9]{4,11}$")
+    return regex.matches(input)
+}
 @Composable
 fun SignUpScreen(
     navController: NavHostController,
@@ -60,6 +63,8 @@ fun SignUpScreen(
     var isInvalidId by remember { mutableStateOf(false) }
     var isInvalidPassword by remember { mutableStateOf(false) }
 
+    // 버튼 클릭 가능 여부를 저장할 변수
+    var isButtonEnabled by remember { mutableStateOf(false) }
 
 
 ////////////
@@ -170,7 +175,8 @@ fun SignUpScreen(
                     value = user_id.text,
                     onValueChange = {
                         user_id = user_id.copy(text = it)
-                        isInvalidId = it.length < 10
+                        isInvalidId = !isValidUserId(it)
+                        isButtonEnabled = isValidUserId(it)
                     },
                     singleLine = true,
                     textStyle = TextStyle(
@@ -198,14 +204,18 @@ fun SignUpScreen(
 
                 Button(
                     onClick = {
-                        // 여기에 로그인 로직을 추가
-                        // username 및 password를 사용하여 로그인을 처리
-                        val response=signInViewModel.checkIsSignedIn(user_id) // 중복 아닐경우 true
+                        if (isButtonEnabled) {
 
-                        Log.d("login",response.toString())
+                            // 여기에 로그인 로직을 추가
+                            // username 및 password를 사용하여 로그인을 처리
+                            Log.d("checkid",user_id.text)
+                            // 오류떄문에 임시로 string 값 넣어 놈.
+                            val response = signInViewModel.checkIdDuplicated("chanhue12323") // 중복 아닐경우 true
 
+                        }
 
                     },
+                    enabled = isButtonEnabled, // 버튼 활성/비활성 상태 변경
 
                     shape = RoundedCornerShape(3.dp),
                     modifier = Modifier
@@ -218,7 +228,7 @@ fun SignUpScreen(
 
             if (isInvalidId) {
                 Text(
-                    text = "아이디는 10자 이상이어야 합니다.",
+                    text = "영문 소문자로 시작하는 5~12자의 아이디를 입력해주세요.",
                     color = Color.Red
                 )
             }
@@ -347,7 +357,8 @@ fun SignUpScreen(
                 )
                 Button(
                     onClick = {
-                        // 여기에 로그인 로직을 추가
+                        // 여기에 로그인 로직을s 추가
+                              signInViewModel.checkauthenticateEmail("chanhue467@gmail.com")
                     },
                     shape = RoundedCornerShape(3.dp),
 

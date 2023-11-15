@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyou.domain.entity.apimessage.signin.SignInRequest
 import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
 import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailRequest
+import com.whereareyou.domain.entity.apimessage.signup.CheckIdDuplicateResponse
 import com.whereareyou.domain.entity.apimessage.signup.SignUpRequest
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
@@ -65,9 +66,31 @@ class SignViewModel @Inject constructor(
         }
         return isSignedIn
     }
+    fun checkIdDuplicated(user_id:String) {
+        viewModelScope.launch {
+            Log.e("checkid++",user_id)
+            val result = checkIdDuplicateUseCase(user_id)
+            when (result) {
+                is NetworkResult.Success -> {
+                    // 이메일이 중복되지 않았을 때
+                }
+
+                is NetworkResult.Error -> {
+                    Log.e("checkid", "error")
+                    Log.e("checkid", "Error: ${result.code}")
+                    Log.e("checkid", "Error: ${result.errorData}")
+                }
+
+                is NetworkResult.Exception -> {
+                    Log.e("checkEmail", "${result.e.message}")
+                }
+            }
+        }
+    }
+
+
 
     //  로그인
-
      fun LogIn(user_name: String, user_password: String,onLoginResult: (Boolean) -> Unit // 콜백 함수
      ){
         var isLoginSuccess = false // 초기값 false
@@ -133,6 +156,8 @@ class SignViewModel @Inject constructor(
         }
 
     }
+
+
     // 이메일 인증요청 함수
      fun checkauthenticateEmail(email: String) {
         viewModelScope.launch {
@@ -154,6 +179,8 @@ class SignViewModel @Inject constructor(
             }
         }
     }
+
+
 
     // 이메일 코드 인증
      fun checkauthenticateEmailCode(email: String, code: Int) {
@@ -179,6 +206,8 @@ class SignViewModel @Inject constructor(
             }
         }
     }
+
+
 
     // 회원가입 함수
     private fun signup(userName: String, userId: String, password: String, email: String) {
