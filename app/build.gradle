@@ -116,9 +116,11 @@ dependencies {
 
     // datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    // LiveData 사용 위함
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-beta01"
 
+
+
+    // GMS - Google Mobile Services
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }
 
 kapt {

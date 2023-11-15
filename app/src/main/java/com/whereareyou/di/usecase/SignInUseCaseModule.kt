@@ -1,11 +1,18 @@
 package com.whereareyou.di.usecase
 
 import com.whereareyou.domain.repository.SignInRepository
+import com.whereareyou.domain.usecase.signin.DeleteMemberUseCase
+import com.whereareyou.domain.usecase.signin.FindIdUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyou.domain.usecase.signin.ModifyMyInfoUseCase
+import com.whereareyou.domain.usecase.signin.ReissueTokenUseCase
+import com.whereareyou.domain.usecase.signin.ResetPasswordUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SignInUseCase
+import com.whereareyou.domain.usecase.signin.VerifyPasswordResetCodeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,5 +55,54 @@ object SignInUseCaseModule {
         repository: SignInRepository
     ): GetMemberIdUseCase {
         return GetMemberIdUseCase(repository)
+    }
+
+    @Provides
+    fun provideDeleteMemberUseCase(
+        repository: SignInRepository
+    ): DeleteMemberUseCase {
+        return DeleteMemberUseCase(repository)
+    }
+
+    @Provides
+    fun provideFindIdUseCase(
+        repository: SignInRepository
+    ): FindIdUseCase {
+        return FindIdUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetMemberDetailsUseCase(
+        repository: SignInRepository
+    ): GetMemberDetailsUseCase {
+        return GetMemberDetailsUseCase(repository)
+    }
+
+    @Provides
+    fun provideModifyMyInfoUseCase(
+        repository: SignInRepository
+    ): ModifyMyInfoUseCase {
+        return ModifyMyInfoUseCase(repository)
+    }
+
+    @Provides
+    fun provideReissueTokenUseCase(
+        repository: SignInRepository
+    ): ReissueTokenUseCase {
+        return ReissueTokenUseCase(repository)
+    }
+
+    @Provides
+    fun provideResetPasswordUseCase(
+        repository: SignInRepository
+    ): ResetPasswordUseCase {
+        return ResetPasswordUseCase(repository)
+    }
+
+    @Provides
+    fun provideVerifyPasswordResetCodeUseCase(
+        repository: SignInRepository
+    ): VerifyPasswordResetCodeUseCase {
+        return VerifyPasswordResetCodeUseCase(repository)
     }
 }

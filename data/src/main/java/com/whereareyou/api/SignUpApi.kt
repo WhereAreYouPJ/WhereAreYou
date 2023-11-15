@@ -19,7 +19,7 @@ interface SignUpApi {
     // 아이디 중복 검사
     @GET("member/checkId")
     suspend fun checkIdDuplicate(
-        @Query("id") id: String
+        @Query("userId") id: String
     ): Response<CheckIdDuplicateResponse>
 
     // 이메일 중복 검사
