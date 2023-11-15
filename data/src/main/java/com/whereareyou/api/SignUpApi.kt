@@ -29,7 +29,7 @@ interface SignUpApi {
     ): Response<CheckEmailDuplicateResponse>
 
     // 이메일 인증
-    @POST("member/email")
+    @POST("member/email/send")
     suspend fun authenticateEmail(
         @Body body: AuthenticateEmailRequest
     ): Response<AuthenticateEmailResponse>
