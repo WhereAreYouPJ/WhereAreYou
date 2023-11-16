@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.BuildConfig
+import com.whereareyou.domain.usecase.location.GetUserLocationUseCase
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
@@ -22,7 +23,8 @@ class DetailScheduleViewModel @Inject constructor(
     application: Application,
     private val getDetailScheduleUseCase: GetDetailScheduleUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getMemberIdUseCase: GetMemberIdUseCase
+    private val getMemberIdUseCase: GetMemberIdUseCase,
+    private val getUserLocationUseCase: GetUserLocationUseCase
 ) : AndroidViewModel(application) {
 
 
@@ -36,6 +38,10 @@ class DetailScheduleViewModel @Inject constructor(
     val place: StateFlow<String> = _place
     private val _memo = MutableStateFlow("")
     val memo: StateFlow<String> = _memo
+    private val _memberIds = MutableStateFlow(listOf<String>())
+    val memberIds: StateFlow<List<String>> = _memberIds
+    private val _userLocations = MutableStateFlow(listOf<Pair<Double, Double>>())
+    val userLocations: StateFlow<List<Pair<Double, Double>>> = _userLocations
 
     fun updateScheduleId(id: String?) {
         if (id == null) {
@@ -45,7 +51,7 @@ class DetailScheduleViewModel @Inject constructor(
         }
     }
 
-    fun getDetailSchedule(id: String) {
+    private fun getDetailSchedule(id: String) {
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
@@ -59,9 +65,28 @@ class DetailScheduleViewModel @Inject constructor(
                     _end.update { detailSchedule.end }
                     _place.update { detailSchedule.place }
                     _memo.update { detailSchedule.memo }
+                    _memberIds.update { detailSchedule.friendsIdList }
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDetailScheduleResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }
+            }
+            getUserLocation()
+        }
+    }
+
+    private fun getUserLocation() {
+        viewModelScope.launch {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            for (id in memberIds.value) {
+                val response = getUserLocationUseCase(accessToken, id)
+                when (response) {
+                    is NetworkResult.Success -> {
+                        Log.e("success", "${response.data}")
+                    }
+                    is NetworkResult.Error -> { Log.e("error", "${response.code}, ${response.errorData}") }
+                    is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                }
             }
         }
     }
