@@ -28,11 +28,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.whereareyou.data.Constants
 
 @Composable
-fun FindIdScreen(navController: NavHostController) {
+fun FindIdScreen(
+    navController: NavHostController,
+    signInViewModel: SignViewModel = hiltViewModel()
+) {
     var user_email by remember { mutableStateOf(TextFieldValue()) }
     var user_email_code by remember { mutableStateOf(TextFieldValue()) }
     // 아이디 비밀번호 입력 필드N
@@ -47,7 +50,6 @@ fun FindIdScreen(navController: NavHostController) {
 
 
         Row() {
-
 
 
             OutlinedTextField(
@@ -65,7 +67,7 @@ fun FindIdScreen(navController: NavHostController) {
                 modifier = Modifier
                     .size(width = 280.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
 
-,
+                ,
                 placeholder = {
                     Text(
                         text = "이메일 주소",
@@ -80,7 +82,8 @@ fun FindIdScreen(navController: NavHostController) {
             )
             Button(
                 onClick = {
-                    // 여기에 로그인 로직을 추가
+                          signInViewModel.checkauthenticateEmail("chanhue467@gmail.com")
+
                 },
                 shape = RoundedCornerShape(3.dp),
 
@@ -101,7 +104,6 @@ fun FindIdScreen(navController: NavHostController) {
             onValueChange = {
                 user_email_code = user_email_code.copy(text = it)
 
-                // 필요한 로직 추가
             },
             singleLine = true,
             textStyle = TextStyle(fontSize = 13.sp, textAlign = TextAlign.Left),
@@ -129,7 +131,8 @@ fun FindIdScreen(navController: NavHostController) {
         // 로그인 버튼
         Button(
             onClick = {
-                navController.navigate(Constants.ROUTE_MAIN_FINDIDSUCCESS)
+
+                //navController.navigate(Constants.ROUTE_MAIN_FINDIDSUCCESS)
 
 
             },

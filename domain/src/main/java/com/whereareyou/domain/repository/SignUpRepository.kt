@@ -15,7 +15,7 @@ interface SignUpRepository {
 
     // 아이디 중복 검사
     suspend fun checkIdDuplicate(
-        id: String
+        userId: String
     ): NetworkResult<CheckIdDuplicateResponse>
 
     // 이메일 중복 검사

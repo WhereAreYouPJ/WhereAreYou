@@ -32,11 +32,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.whereareyou.data.Constants
 
 @Composable
-fun FindPwSuccessScreen(navController: NavController) {
+fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewModel = hiltViewModel()) {
     var user_pw by remember { mutableStateOf(TextFieldValue()) }
     var user_pw_check by remember { mutableStateOf(TextFieldValue()) }
 
@@ -145,10 +146,13 @@ fun FindPwSuccessScreen(navController: NavController) {
                 .height(15.dp)
         )
 
-        // 로그인 버튼
+        // 확인 버튼
         Button(
             onClick = {
-                navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
+                //navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
+                      signInViewModel.resetPassword("user2","user2221","user2221")
+
+
             },
             shape = RoundedCornerShape(3.dp),
 
