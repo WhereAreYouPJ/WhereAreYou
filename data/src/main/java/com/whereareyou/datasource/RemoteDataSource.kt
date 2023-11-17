@@ -25,6 +25,7 @@ import com.whereareyou.domain.entity.apimessage.schedule.EndScheduleRequest
 import com.whereareyou.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
+import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyou.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyou.domain.entity.apimessage.signin.FindIdRequest
@@ -95,12 +96,20 @@ class RemoteDataSource(
         return scheduleApi.addNewSchedule(token, body)
     }
 
-    // 일정 수정
+    // 일정 내용 수정
     suspend fun modifySchedule(
         token: String,
         body: ModifyScheduleRequest
     ): Response<Nothing> {
         return scheduleApi.modifySchedule(token, body)
+    }
+
+    // 일정 멤버 수정
+    suspend fun modifyScheduleMember(
+        token: String,
+        body: ModifyScheduleMemberRequest
+    ): Response<Nothing> {
+        return scheduleApi.modifyScheduleMember(token, body)
     }
 
     // 일정 삭제
