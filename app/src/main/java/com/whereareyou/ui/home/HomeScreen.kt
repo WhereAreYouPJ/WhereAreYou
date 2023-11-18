@@ -25,8 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyou.R
 import com.whereareyou.data.ViewType
 import com.whereareyou.ui.home.friends.CommunityScreen
-import com.whereareyou.ui.home.main.calendar.CalendarScreen
 import com.whereareyou.ui.home.mypage.MyPageScreen
+import com.whereareyou.ui.home.schedule.calendar.ScheduleScreen
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
@@ -59,7 +59,7 @@ fun HomeScreen(
     ) {
         when (viewType) {
             ViewType.Calendar -> {
-                CalendarScreen(
+                ScheduleScreen(
                     paddingValues = it,
                     toDetailScreen = toDetailScreen
                 )
@@ -68,7 +68,6 @@ fun HomeScreen(
             ViewType.MyPage -> { MyPageScreen(paddingValues = it) }
         }
     }
-
 }
 
 @Composable
