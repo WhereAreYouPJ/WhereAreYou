@@ -26,6 +26,7 @@ fun DateCalendar(
 ) {
     val currMonthCalendarInfo = viewModel.currentMonthDateInfo.collectAsState().value
     val calendarState = viewModel.calendarState.collectAsState().value
+    val selectedYear = viewModel.year.collectAsState().value
     val selectedMonth = viewModel.month.collectAsState().value
     val selectedDate = viewModel.date.collectAsState().value
 
@@ -78,21 +79,19 @@ fun DateCalendar(
 //                                    indication = null,
 //                                    interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    viewModel.updateDate(currMonthCalendarInfo[i + date * 7].split("/")[2].toInt())
-                                    viewModel.updateMonth(currMonthCalendarInfo[i + date * 7].split("/")[1].toInt() - 1)
-                                    viewModel.updateYear(currMonthCalendarInfo[i + date * 7].split("/")[0].toInt())
+                                    viewModel.updateDate(currMonthCalendarInfo[i + date * 7].date)
+                                    viewModel.updateMonth(currMonthCalendarInfo[i + date * 7].month)
+                                    viewModel.updateYear(currMonthCalendarInfo[i + date * 7].year)
                                     expandDetailContent()
                                 },
                             contentAlignment = Alignment.TopCenter
                         ) {
                             DateContent(
-                                date = currMonthCalendarInfo[i + date * 7].split("/")[2].toInt(),
-                                scheduleNumber = when (currMonthCalendarInfo[i + date * 7].split("/").size) {
-                                    3 -> 0
-                                    else -> currMonthCalendarInfo[i + date * 7].split("/")[3].toInt()
-                                },
-                                isSelected = selectedDate == currMonthCalendarInfo[i + date * 7].split("/")[2].toInt() &&
-                                        selectedMonth == currMonthCalendarInfo[i + date * 7].split("/")[1].toInt() - 1
+                                date = currMonthCalendarInfo[i + date * 7].date,
+                                scheduleNumber = currMonthCalendarInfo[i + date * 7].scheduleCount,
+                                isSelected = selectedYear == currMonthCalendarInfo[i + date * 7].year &&
+                                        selectedDate == currMonthCalendarInfo[i + date * 7].date &&
+                                        selectedMonth == currMonthCalendarInfo[i + date * 7].month
                             )
                         }
                     }
