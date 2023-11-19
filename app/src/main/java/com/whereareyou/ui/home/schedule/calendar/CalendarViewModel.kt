@@ -2,6 +2,7 @@ package com.whereareyou.ui.home.schedule.calendar
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.data.Schedule
@@ -15,6 +16,7 @@ import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.util.CalendarUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -41,19 +43,20 @@ class CalendarViewModel @Inject constructor(
     val calendarState: StateFlow<CalendarState> = _calendarState
 
     // 2023/11/11/3: 년/월/일/일정 개수
-    private val _currentMonthDateInfo = MutableStateFlow<List<Schedule>>(emptyList())
-    val currentMonthDateInfo: StateFlow<List<Schedule>> = _currentMonthDateInfo
+    private val _currentMonthDateInfo = mutableStateListOf<Schedule>()
+    val currentMonthDateInfo: List<Schedule> = _currentMonthDateInfo
 
     // 일별 일정 간략 정보
-    private val _currentDateBriefSchedule = MutableStateFlow<List<BriefSchedule>>(emptyList())
-    val currentDateBriefSchedule: StateFlow<List<BriefSchedule>> = _currentDateBriefSchedule
+    private val _currentDateBriefSchedule = mutableStateListOf<BriefSchedule>()
+    val currentDateBriefSchedule: List<BriefSchedule> = _currentDateBriefSchedule
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다
     private fun updateCurrentMonthDateInfo() {
+        Log.e("CalendarViewModel", "updateCurrentMonthDateInfo")
         // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
         var monthlySchedule = emptyList<ScheduleCountByDay>()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             var currYear: Int
@@ -75,13 +78,9 @@ class CalendarViewModel @Inject constructor(
                 }
                 calendarArrList[i].scheduleCount = monthlySchedule[calendarArrList[i].date - 1].scheduleCount
             }
-            _currentMonthDateInfo.update {
-                calendarArrList.toList()
-            }
+            _currentMonthDateInfo.clear()
+            _currentMonthDateInfo.addAll(calendarArrList)
             Log.e("MonthlySchedule", calendarArrList.toString())
-        }
-        _currentMonthDateInfo.update {
-            calendarArrList.toList()
         }
     }
 
@@ -107,9 +106,7 @@ class CalendarViewModel @Inject constructor(
             )
             when (getDailyBriefScheduleResult) {
                 is NetworkResult.Success -> {
-                    _currentDateBriefSchedule.update {
-                        getDailyBriefScheduleResult.data.schedules
-                    }
+                    _currentDateBriefSchedule.addAll(getDailyBriefScheduleResult.data.schedules)
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }
