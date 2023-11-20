@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
         val statusBarHeight = resources.getDimension(statusBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
         GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
+        GlobalValue.screenWidth = screenWidth.toFloat()
         // 하단 네비게이션 바 높이는 전체 화면의 1/15
         GlobalValue.bottomNavBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15
         // 상단 영역 높이는 전체 화면의 1/15
@@ -78,6 +79,7 @@ class MainActivity : ComponentActivity() {
         // 일별 간략 정보 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 3/5
         GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
         GlobalValue.density = metrics.density
+        Log.e("GlobalValue", "${GlobalValue.screenHeightWithoutStatusBar}, ${GlobalValue.screenWidth}, ${GlobalValue.bottomNavBarHeight}, ${GlobalValue.topAppBarHeight}, ${GlobalValue.calendarViewHeight}, ${GlobalValue.dailyScheduleViewHeight}")
     }
 }
 
