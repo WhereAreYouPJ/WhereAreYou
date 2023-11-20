@@ -3,7 +3,9 @@ package com.whereareyou.data
 object GlobalValue {
 
     // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
-    var screenHeightWithoutStatusBar = 1f
+    var screenHeightWithoutStatusBar = 1464f
+    // 화면 가로 너비
+    var screenWidth = 720f
     // 상단 영역 높이
     var topAppBarHeight = 1f
     // 하단 네비게이션 바 높이
