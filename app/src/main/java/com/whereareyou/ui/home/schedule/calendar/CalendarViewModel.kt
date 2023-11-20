@@ -52,11 +52,10 @@ class CalendarViewModel @Inject constructor(
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다
     private fun updateCurrentMonthDateInfo() {
-        Log.e("CalendarViewModel", "updateCurrentMonthDateInfo")
         // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
-        val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
-        var monthlySchedule = emptyList<ScheduleCountByDay>()
         viewModelScope.launch(Dispatchers.IO) {
+            val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
+            var monthlySchedule = emptyList<ScheduleCountByDay>()
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             var currYear: Int
@@ -99,6 +98,7 @@ class CalendarViewModel @Inject constructor(
     fun updateDate(date: Int) {
         _date.update { date }
         viewModelScope.launch {
+            _currentDateBriefSchedule.clear()
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val getDailyBriefScheduleResult = getDailyBriefScheduleUseCase(
@@ -124,6 +124,8 @@ class CalendarViewModel @Inject constructor(
         _year.update { todayInfo[0] }
         _month.update { todayInfo[1] }
         _date.update { todayInfo[2] }
+        updateCurrentMonthDateInfo()
+        updateDate(todayInfo[2])
     }
 
     enum class CalendarState {
@@ -132,6 +134,5 @@ class CalendarViewModel @Inject constructor(
 
     init {
         initCalendarInfo()
-        updateCurrentMonthDateInfo()
     }
 }
