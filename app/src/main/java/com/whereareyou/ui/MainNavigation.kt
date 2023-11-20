@@ -12,8 +12,8 @@ import com.whereareyou.GlobalViewModel
 import com.whereareyou.data.Constants
 import com.whereareyou.ui.home.HomeScreen
 import com.whereareyou.ui.home.Tablayout
-import com.whereareyou.ui.home.main.detailschedule.DetailScheduleScreen
-import com.whereareyou.ui.home.main.newschedule.NewScheduleScreen
+import com.whereareyou.ui.home.schedule.detailschedule.DetailScheduleScreen
+import com.whereareyou.ui.home.schedule.newschedule.NewScheduleScreen
 import com.whereareyou.ui.signin.AgreeScreen
 import com.whereareyou.ui.signin.LoginScreen
 import com.whereareyou.ui.signin.SignUpScreen
@@ -41,11 +41,12 @@ fun MainNavigation(
             SplashScreen(
                 checkIsSignedIn = { viewModel.checkIsSignedIn() },
                 moveToSignInScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
+//                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 },
                 moveToMainScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
-//                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+//                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 }
             )
         }
