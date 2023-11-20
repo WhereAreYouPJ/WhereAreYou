@@ -1,5 +1,6 @@
 package com.whereareyou.ui.home.schedule.calendar
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,12 +27,11 @@ fun DateCalendar(
     expandDetailContent: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
-    val currMonthCalendarInfo = viewModel.currentMonthDateInfo.collectAsState().value
+    val currMonthCalendarInfo = viewModel.currentMonthDateInfo
     val calendarState = viewModel.calendarState.collectAsState().value
     val selectedYear = viewModel.year.collectAsState().value
     val selectedMonth = viewModel.month.collectAsState().value
     val selectedDate = viewModel.date.collectAsState().value
-
     // 일자 선택 화면
     AnimatedVisibility(
         visible = calendarState == CalendarViewModel.CalendarState.DATE,
