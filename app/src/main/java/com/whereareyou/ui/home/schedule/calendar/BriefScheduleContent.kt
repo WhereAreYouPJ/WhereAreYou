@@ -108,7 +108,7 @@ fun BriefScheduleList(
     toDetailScreen: (String) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
-    val currentDateBriefSchedule = viewModel.currentDateBriefSchedule.collectAsState().value
+    val currentDateBriefSchedule = viewModel.currentDateBriefSchedule
     LazyColumn(
         contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
     ) {
