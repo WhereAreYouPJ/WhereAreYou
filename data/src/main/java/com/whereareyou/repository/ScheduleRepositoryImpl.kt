@@ -11,6 +11,7 @@ import com.whereareyou.domain.entity.apimessage.schedule.EndScheduleRequest
 import com.whereareyou.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
+import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyou.domain.entity.schedule.BriefSchedule
 import com.whereareyou.domain.entity.schedule.DetailSchedule
@@ -88,7 +89,7 @@ class ScheduleRepositoryImpl(
     }
 
     /**
-     * 일정 수정
+     * 일정 내용 수정
      * implements [ScheduleRepository.modifySchedule]
      */
     override suspend fun modifySchedule(
@@ -97,6 +98,20 @@ class ScheduleRepositoryImpl(
     ): NetworkResult<Nothing> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.modifySchedule(token, body)
+            handleResult(response) { it }
+        }
+    }
+
+    /**
+     * 일정 멤버 수정
+     * implements [ScheduleRepository.modifyScheduleMember]
+     */
+    override suspend fun modifyScheduleMember(
+        token: String,
+        body: ModifyScheduleMemberRequest
+    ): NetworkResult<Nothing> {
+        return withContext(Dispatchers.IO) {
+            val response = dataSource.modifyScheduleMember(token, body)
             handleResult(response) { it }
         }
     }
