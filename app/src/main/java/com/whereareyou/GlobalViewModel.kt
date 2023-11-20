@@ -51,7 +51,7 @@ class GlobalViewModel @Inject constructor(
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val sendUserLocationUseCase: SendUserLocationUseCase,
     private val locationUtil: LocationUtil,
-    application: Application
+    private val application: Application
 ) : AndroidViewModel(application) {
 
     private var currentLocation = Coordinate(0.0, 0.0)
@@ -123,7 +123,7 @@ class GlobalViewModel @Inject constructor(
             Log.e("GlobalViewModel-token", token)
 
             val msg = token.toString()
-            Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT).show()
+            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
         })
     }
 
