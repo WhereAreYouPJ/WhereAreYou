@@ -62,9 +62,11 @@ class GlobalViewModel @Inject constructor(
             val signInResult = signInUseCase(request)
             when (signInResult) {
                 is NetworkResult.Success -> {
-                    Log.e("GlobalViewModel", signInResult.data.toString())
-                    saveAccessTokenUseCase("Bearer " + signInResult.data.accessToken)
-                    saveMemberIdUseCase(signInResult.data.memberId)
+                    if (signInResult.data != null) {
+                        Log.e("GlobalViewModel", signInResult.data.toString())
+                        saveAccessTokenUseCase("Bearer " + signInResult.data!!.accessToken)
+                        saveMemberIdUseCase(signInResult.data!!.memberId)
+                    }
                 }
                 is NetworkResult.Error -> { Log.e("GlobalViewModel", "error") }
                 is NetworkResult.Exception -> { Log.e("GlobalViewModel", "${signInResult.e.message}") }

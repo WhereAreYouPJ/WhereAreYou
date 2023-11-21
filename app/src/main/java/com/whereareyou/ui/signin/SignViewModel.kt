@@ -110,8 +110,8 @@ class SignViewModel @Inject constructor(
                     Log.e("SignViewModel", "성공")
 
                     Log.e("SignViewModel", signInResult.data.toString())
-                    saveAccessTokenUseCase("Bearer " + signInResult.data.accessToken)
-                    saveMemberIdUseCase(signInResult.data.memberId)
+                    saveAccessTokenUseCase("Bearer " + signInResult.data!!.accessToken)
+                    saveMemberIdUseCase(signInResult.data!!.memberId)
                     isLoginSuccess=true
 
                 }
@@ -190,7 +190,7 @@ class SignViewModel @Inject constructor(
             when (result) {
                 is NetworkResult.Success -> {
                     // 이메일이 중복되지 않았을 때
-                    Log.e("checkEmail", result.data.message) // 로그찍기
+                    Log.e("checkEmail", result.data!!.message) // 로그찍기
                 }
 
                 is NetworkResult.Error -> {
@@ -217,7 +217,7 @@ class SignViewModel @Inject constructor(
             when (result) {
                 is NetworkResult.Success -> {
                     // 이메일이 성공적으로 인증되었을 때
-                    Log.e("authenticateEmail", result.data.message) // 로그찍기
+                    Log.e("authenticateEmail", result.data!!.message) // 로그찍기
                     Log.e("authen","성공")
                 }
 
@@ -251,7 +251,7 @@ class SignViewModel @Inject constructor(
             when (result) {
                 is NetworkResult.Success -> {
                     // 이메일 코드가 올바를 때
-                    Log.e("checkEmailCode1", result.data.message) // 로그찍기
+                    Log.e("checkEmailCode1", result.data!!.message) // 로그찍기
 
                 }
 
@@ -282,7 +282,7 @@ class SignViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     // 회원가입이 성공적으로 완료되었을 때의 로직을 여기에 추가
                     // 예: 회원가입 성공 메시지 표시, 화면 전환 등
-                    Log.e("signup", result.data.message) // 로그찍기
+                    Log.e("signup", result.data!!.message) // 로그찍기
                     Log.e("signup", "성공") // 로그찍기
 
                 }

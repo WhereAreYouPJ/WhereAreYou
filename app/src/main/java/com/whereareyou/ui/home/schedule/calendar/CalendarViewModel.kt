@@ -70,7 +70,11 @@ class CalendarViewModel @Inject constructor(
                         accessToken, memberId, currYear, currMonth
                     )
                     when (getMonthlyScheduleResult) {
-                        is NetworkResult.Success -> { monthlySchedule = getMonthlyScheduleResult.data.schedules }
+                        is NetworkResult.Success -> {
+                            if (getMonthlyScheduleResult.data != null) {
+                                monthlySchedule = getMonthlyScheduleResult.data!!.schedules
+                            }
+                        }
                         is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResult.code}, ${getMonthlyScheduleResult.errorData}") }
                         is NetworkResult.Exception -> { Log.e("exception", "exception") }
                     }
@@ -106,7 +110,7 @@ class CalendarViewModel @Inject constructor(
             )
             when (getDailyBriefScheduleResult) {
                 is NetworkResult.Success -> {
-                    _currentDateBriefSchedule.addAll(getDailyBriefScheduleResult.data.schedules)
+                    _currentDateBriefSchedule.addAll(getDailyBriefScheduleResult.data!!.schedules)
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }

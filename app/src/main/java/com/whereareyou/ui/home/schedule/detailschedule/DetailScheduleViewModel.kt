@@ -68,14 +68,16 @@ class DetailScheduleViewModel @Inject constructor(
             val getDetailScheduleResult = getDetailScheduleUseCase(accessToken, memberId, id)
             when (getDetailScheduleResult) {
                 is NetworkResult.Success -> {
-                    Log.e("success", "${getDetailScheduleResult.data}")
-                    val detailSchedule = getDetailScheduleResult.data
-                    _title.update { detailSchedule.title }
-                    _start.update { detailSchedule.start }
-                    _end.update { detailSchedule.end }
-                    _place.update { detailSchedule.place }
-                    _memo.update { detailSchedule.memo }
-                    _memberIds.update { detailSchedule.friendsIdList }
+                    if (getDetailScheduleResult.data != null) {
+                        Log.e("success", "${getDetailScheduleResult.data}")
+                        val detailSchedule = getDetailScheduleResult.data!!
+                        _title.update { detailSchedule.title }
+                        _start.update { detailSchedule.start }
+                        _end.update { detailSchedule.end }
+                        _place.update { detailSchedule.place }
+                        _memo.update { detailSchedule.memo }
+                        _memberIds.update { detailSchedule.friendsIdList }
+                    }
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDetailScheduleResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }
@@ -90,25 +92,29 @@ class DetailScheduleViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             for (id in memberIds.value) {
                 val userInfo = UserInfo()
-                val userInfoRequest = getMemberDetailsUseCase(accessToken, id)
-                when (userInfoRequest) {
+                val userInfoResult = getMemberDetailsUseCase(accessToken, id)
+                when (userInfoResult) {
                     is NetworkResult.Success -> {
-                        userInfo.name = userInfoRequest.data.userName
-                        userInfo.userId = userInfoRequest.data.userId
-                        userInfo.email = userInfoRequest.data.email
-                        userInfo.profileImage = userInfoRequest.data.profileImage
+                        if (userInfoResult.data != null) {
+                            userInfo.name = userInfoResult.data!!.userName
+                            userInfo.userId = userInfoResult.data!!.userId
+                            userInfo.email = userInfoResult.data!!.email
+                            userInfo.profileImage = userInfoResult.data!!.profileImage
+                        }
 
                         Log.e("success", "${userInfo}")
                     }
-                    is NetworkResult.Error -> { Log.e("error", "${userInfoRequest.code}, ${userInfoRequest.errorData}") }
+                    is NetworkResult.Error -> { Log.e("error", "${userInfoResult.code}, ${userInfoResult.errorData}") }
                     is NetworkResult.Exception -> { Log.e("exception", "exception") }
                 }
 
                 val response = getUserLocationUseCase(accessToken, id)
                 when (response) {
                     is NetworkResult.Success -> {
-                        userInfo.latitude = response.data.latitude
-                        userInfo.longitude = response.data.longitude
+                        if (response.data != null) {
+                            userInfo.latitude = response.data!!.latitude
+                            userInfo.longitude = response.data!!.longitude
+                        }
                         if (userInfo.userId == "user1" && userInfo.latitude != null && userInfo.longitude != null) {
                             _myLocation.update { LatLng(userInfo.latitude!!, userInfo.longitude!!) }
                         }

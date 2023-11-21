@@ -35,7 +35,11 @@ class NewLocationViewModel @Inject constructor(
             when (val getLocationAddressResult = getLocationAddressUseCase.getLocationAddress(inputLocationText.value)) {
                 is NetworkResult.Success -> {
                     _locationInformationList.update {
-                        getLocationAddressResult.data
+                        if (getLocationAddressResult.data != null) {
+                            getLocationAddressResult.data!!
+                        } else {
+                            listOf()
+                        }
                     }
                 }
                 is NetworkResult.Error -> {
