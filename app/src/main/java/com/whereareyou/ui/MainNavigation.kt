@@ -12,6 +12,7 @@ import com.whereareyou.GlobalViewModel
 import com.whereareyou.data.Constants
 import com.whereareyou.ui.home.HomeScreen
 import com.whereareyou.ui.home.Tablayout
+import com.whereareyou.ui.home.friends.addfriend.AddFriendScreen
 import com.whereareyou.ui.home.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyou.ui.home.schedule.newschedule.NewScheduleScreen
 import com.whereareyou.ui.signin.AgreeScreen
@@ -32,7 +33,7 @@ fun MainNavigation(
         modifier = Modifier
             .fillMaxSize(),
         navController = navController,
-        startDestination = Constants.ROUTE_MAIN_SPLASH
+        startDestination = Constants.ROUTE_ADD_FRIEND
     ) {
 
         composable(
@@ -57,6 +58,7 @@ fun MainNavigation(
 
         }
 
+        // 홈 화면
         composable(
             route = Constants.ROUTE_MAIN_HOME
         ) {
@@ -66,6 +68,7 @@ fun MainNavigation(
             )
         }
 
+        // 일정 추가 화면
         composable(
             route = Constants.ROUTE_NEW_SCHEDULE
         ) {
@@ -74,13 +77,19 @@ fun MainNavigation(
             )
         }
 
+        // 상세 일정 정보 화면
         composable(
             route = Constants.ROUTE_DETAIL_SCHEDULE + "/{scheduleId}"
         ) {
             DetailScheduleScreen(it.arguments?.getString("scheduleId"))
         }
 
-
+        // 친구 추가 화면
+        composable(
+            route = Constants.ROUTE_ADD_FRIEND
+        ) {
+            AddFriendScreen()
+        }
 
         composable(
             route = Constants.ROUTE_MAIN_SIGNUP

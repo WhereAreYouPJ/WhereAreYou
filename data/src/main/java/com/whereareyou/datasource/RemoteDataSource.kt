@@ -53,7 +53,7 @@ class RemoteDataSource(
     private val scheduleApi: ScheduleApi,
     private val signUpApi: SignUpApi,
     private val signInApi: SignInApi,
-//    private val friendApi: FriendApi,
+    private val friendApi: FriendApi,
 //    private val groupApi: GroupApi,
     private val locationApi: LocationApi
 ) {
@@ -240,7 +240,7 @@ class RemoteDataSource(
     ): Response<Nothing> {
         return signInApi.deleteMember(token, body)
     }
-/*
+
     // 친구 관련
     // 친구 MemberId 목록
     suspend fun getFriendIdsList(
@@ -289,7 +289,7 @@ class RemoteDataSource(
     ): Response<Nothing> {
         return friendApi.refuseFriendRequest(token, body)
     }
-*/
+
     // 친구 삭제
 
 
