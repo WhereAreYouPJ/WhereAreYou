@@ -9,6 +9,7 @@ object Constants {
     const val ROUTE_MAIN_HOME = "main/home"
     const val ROUTE_NEW_SCHEDULE = "main/home/new_schedule"
     const val ROUTE_DETAIL_SCHEDULE = "main/home/detail_schedule"
+    const val ROUTE_ADD_FRIEND = "main/home/friend/add_friend"
 
 
 
