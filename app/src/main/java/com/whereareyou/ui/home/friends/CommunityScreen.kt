@@ -17,13 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.whereareyou.data.GlobalValue
 
 @Composable
 fun CommunityScreen(
     paddingValues: PaddingValues,
-    topBarHeight: Int = LocalConfiguration.current.screenHeightDp / 12
 ) {
+    val density = LocalDensity.current
+    val isFriendPage = remember { mutableStateOf(true) }
     Column(
         modifier = Modifier
             .padding(paddingValues)
@@ -34,13 +38,12 @@ fun CommunityScreen(
             )
 
     ) {
-        val isFriendPage = remember { mutableStateOf(true) }
 
         // 상단바
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(topBarHeight.dp)
+                .height((GlobalValue.topAppBarHeight / density.density).dp)
                 .background(
                     color = Color(0xFFCE93D8)
                 ),
@@ -69,4 +72,10 @@ fun CommunityScreen(
             GroupContent()
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CommunityScreenPreview() {
+    CommunityScreen(PaddingValues(0.dp))
 }
