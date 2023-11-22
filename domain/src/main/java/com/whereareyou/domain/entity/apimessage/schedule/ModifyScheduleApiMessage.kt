@@ -16,7 +16,5 @@ data class ModifyScheduleRequest(
     @SerializedName("place")
     val place: String,
     @SerializedName("memo")
-    val memo: String,
-    @SerializedName("memberIdList")
-    val memberIdList: List<String>
+    val memo: String
 )

@@ -7,6 +7,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.text.SimpleDateFormat
 
+class EmptyBody : Any()
 
 interface NetworkResultHandler {
     suspend fun <T : Any, K : Any> handleResult(
@@ -15,7 +16,11 @@ interface NetworkResultHandler {
     ): NetworkResult<K> {
         return try {
             if (response.isSuccessful) {
-                NetworkResult.Success(response.code(), processResponse(response.body()!!))
+                if (response.body() == null) {
+                    NetworkResult.Success(response.code(), null)
+                } else {
+                    NetworkResult.Success(response.code(), processResponse(response.body()!!))
+                }
             } else {
                 val gson = GsonBuilder().create()
                 val errorBody = gson.fromJson(response.errorBody()?.string(), ErrorBody::class.java)

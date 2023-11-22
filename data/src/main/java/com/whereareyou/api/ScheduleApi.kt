@@ -9,6 +9,7 @@ import com.whereareyou.domain.entity.apimessage.schedule.EndScheduleRequest
 import com.whereareyou.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
+import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -54,11 +55,18 @@ interface ScheduleApi {
         @Body body: AddNewScheduleRequest
     ): Response<AddNewScheduleResponse>
 
-    // 일정 수정
+    // 일정 내용 수정
     @PUT("schedule")
     suspend fun modifySchedule(
         @Header("Authorization") token: String,
         @Body body: ModifyScheduleRequest
+    ): Response<Nothing>
+
+    // 일정 멤버 수정
+    @PUT("memberschedule")
+    suspend fun modifyScheduleMember(
+        @Header("Authorization") token: String,
+        @Body body: ModifyScheduleMemberRequest
     ): Response<Nothing>
 
     // 일정 삭제

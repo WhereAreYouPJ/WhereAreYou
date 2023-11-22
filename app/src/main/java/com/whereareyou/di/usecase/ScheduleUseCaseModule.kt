@@ -11,6 +11,7 @@ import com.whereareyou.domain.usecase.schedule.EndScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetMonthlyScheduleUseCase
+import com.whereareyou.domain.usecase.schedule.ModifyScheduleMemberUseCase
 import com.whereareyou.domain.usecase.schedule.ModifyScheduleUseCase
 import dagger.Module
 import dagger.Provides
@@ -82,5 +83,12 @@ object ScheduleUseCaseModule {
         repository: ScheduleRepository
     ): ModifyScheduleUseCase {
         return ModifyScheduleUseCase(repository)
+    }
+
+    @Provides
+    fun provideModifyScheduleMemberUseCase(
+        repository: ScheduleRepository
+    ): ModifyScheduleMemberUseCase {
+        return ModifyScheduleMemberUseCase(repository)
     }
 }

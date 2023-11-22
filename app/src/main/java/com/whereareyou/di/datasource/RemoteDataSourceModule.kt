@@ -28,11 +28,11 @@ object RemoteDataSourceModule {
         scheduleApi: ScheduleApi,
         signUpApi: SignUpApi,
         signInApi: SignInApi,
-//        friendApi: FriendApi,
+        friendApi: FriendApi,
 //        groupApi: GroupApi,
         locationApi: LocationApi
     ): RemoteDataSource {
-        return RemoteDataSource(scheduleApi, signUpApi, signInApi, locationApi)
+        return RemoteDataSource(scheduleApi, signUpApi, signInApi, friendApi, locationApi)
     }
 
     @Provides

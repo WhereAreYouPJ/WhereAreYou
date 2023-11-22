@@ -9,6 +9,7 @@ import com.whereareyou.domain.entity.apimessage.schedule.EndScheduleRequest
 import com.whereareyou.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyou.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
+import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyou.domain.entity.schedule.BriefSchedule
 import com.whereareyou.domain.entity.schedule.DetailSchedule
@@ -47,10 +48,16 @@ interface ScheduleRepository {
         body: AddNewScheduleRequest
     ): NetworkResult<AddNewScheduleResponse>
 
-    // 일정 수정
+    // 일정 내용 수정
     suspend fun modifySchedule(
         token: String,
         body: ModifyScheduleRequest
+    ): NetworkResult<Nothing>
+
+    // 일정 멤버 수정
+    suspend fun modifyScheduleMember(
+        token: String,
+        body: ModifyScheduleMemberRequest
     ): NetworkResult<Nothing>
 
     // 일정 삭제

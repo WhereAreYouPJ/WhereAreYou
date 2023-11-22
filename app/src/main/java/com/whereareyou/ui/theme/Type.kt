@@ -9,12 +9,20 @@ import androidx.compose.ui.unit.sp
 import com.whereareyou.R
 
 
+//val fontFamily = FontFamily(
+//    Font(R.font.nanumsquareneo_light, FontWeight.Light),
+//    Font(R.font.nanumsquareneo_regular, FontWeight.Normal),
+//    Font(R.font.nanumsquareneo_bold, FontWeight.Bold),
+//    Font(R.font.nanumsquareneo_extrabold, FontWeight.ExtraBold),
+//    Font(R.font.nanumsquareneo_heavy, FontWeight.Black),
+//)
+
 val fontFamily = FontFamily(
-    Font(R.font.nanumsquareneo_light, FontWeight.Light),
-    Font(R.font.nanumsquareneo_regular, FontWeight.Normal),
-    Font(R.font.nanumsquareneo_bold, FontWeight.Bold),
-    Font(R.font.nanumsquareneo_extrabold, FontWeight.ExtraBold),
-    Font(R.font.nanumsquareneo_heavy, FontWeight.Black),
+    Font(R.font.lato_thin, FontWeight.Thin),
+    Font(R.font.lato_light, FontWeight.Light),
+    Font(R.font.lato_regular, FontWeight.Normal),
+    Font(R.font.lato_bold, FontWeight.Bold),
+    Font(R.font.lato_black, FontWeight.Black),
 )
 
 // Set of Material typography styles to start with
