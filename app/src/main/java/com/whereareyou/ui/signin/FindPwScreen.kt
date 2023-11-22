@@ -29,11 +29,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.whereareyou.data.Constants
 
 @Composable
-fun FindPasswordScreen(navController: NavHostController) {
+fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignViewModel = hiltViewModel()
+) {
 
     var user_id by remember{ mutableStateOf(TextFieldValue()) }
     var user_email by remember { mutableStateOf(TextFieldValue()) }
@@ -101,7 +103,7 @@ fun FindPasswordScreen(navController: NavHostController) {
             )
             Button(
                 onClick = {
-                    // 여기에 로그인 로직을 추가
+                          signInViewModel.checkauthenticateEmail(user_email.text)
                 },
                 shape = RoundedCornerShape(3.dp),
 
@@ -150,6 +152,8 @@ fun FindPasswordScreen(navController: NavHostController) {
         // 로그인 버튼
         Button(
             onClick = {
+
+                signInViewModel.verifyPasswordResetCode(user_id.text,user_email.text,user_email_code.text)
                 navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
 
 

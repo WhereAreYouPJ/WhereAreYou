@@ -1,5 +1,6 @@
 package com.whereareyou.repository
 
+import android.util.Log
 import com.whereareyou.datasource.RemoteDataSource
 import com.whereareyou.domain.repository.SignUpRepository
 import com.whereareyou.domain.util.NetworkResult
@@ -54,6 +55,7 @@ class SignUpRepositoryImpl(
     ): NetworkResult<AuthenticateEmailResponse> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.authenticateEmail(body)
+            Log.e("authenticateEmail", "${response}")
             handleResult(response) { it }
         }
     }

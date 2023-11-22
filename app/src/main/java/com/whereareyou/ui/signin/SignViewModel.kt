@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyou.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyou.domain.entity.apimessage.signin.ResetPasswordRequest
 import com.whereareyou.domain.entity.apimessage.signin.SignInRequest
+import com.whereareyou.domain.entity.apimessage.signin.VerifyPasswordResetCodeRequest
 import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
 import com.whereareyou.domain.entity.apimessage.signup.AuthenticateEmailRequest
 import com.whereareyou.domain.entity.apimessage.signup.SignUpRequest
@@ -64,13 +65,39 @@ class SignViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> get() = _loginResult
+    fun verifyPasswordResetCode(userId: String, email: String, code: String) {
+        viewModelScope.launch {
+            val body = VerifyPasswordResetCodeRequest(userId, email, code)
 
+            val verifyCodeResult = verifyPasswordResetCodeUseCase(body)
+            when (verifyCodeResult) {
+                is NetworkResult.Success -> {
+                    // 비밀번호 재설정 인증 성공 시 처리
+                    Log.d("verify", "Password reset code verified")
+                    Log.d("verify",verifyCodeResult.toString())
+                    // 이후 비밀번호 재설정 로직 수행
+                    // resetPassword(userId, newPassword, newPasswordCheck)
+                }
+                is NetworkResult.Error -> {
+                    // 비밀번호 재설정 인증 실패 시 처리
+                    Log.e("verify", "Password reset code verification failed: ${verifyCodeResult.errorData}")
+                }
+                is NetworkResult.Exception -> {
+                    // 예외 처리 로직
+                    Log.e("verify", "Password reset code verification exception: ${verifyCodeResult.e.message}")
+                }
+            }
+        }
+    }
 
     fun resetPassword(userId: String, password: String, checkPassword: String) {
         viewModelScope.launch {
-            val body = ResetPasswordRequest(userId, password, checkPassword)
 
-            val resetPasswordResult = resetPasswordUseCase(body)
+
+            val body = ResetPasswordRequest(userId, password, checkPassword)
+            Log.d("resetPassword",body.toString())
+
+           Log.d("resetpassword",resetPasswordUseCase(body).toString())
 /*
             when (resetPasswordResult) {
                 is NetworkResult.Success -> {
@@ -93,7 +120,7 @@ class SignViewModel @Inject constructor(
     }
 
 
-    //  로그인
+    //  로그인 함수
     fun LogIn(user_name: String, user_password: String,onLoginResult: (Boolean) -> Unit // 콜백 함수
     ){
         var isLoginSuccess = false // 초기값 false
@@ -140,7 +167,7 @@ class SignViewModel @Inject constructor(
         Log.e("SignViewModel", isLoginSuccess.toString())
 
     }
-
+    // 아이디 중복여부 체크 함수
     fun checkIdDuplicated(user_id:String,onidDuplicatedresult: (Boolean) -> Unit ) {
 
         var isIdDuplicated = false // 초기값 false
@@ -178,9 +205,6 @@ class SignViewModel @Inject constructor(
             onidDuplicatedresult(isIdDuplicated)
         }
     }
-
-
-
 
 
     // 이메일 중복 여부 체크 함수
@@ -246,6 +270,8 @@ class SignViewModel @Inject constructor(
 
         viewModelScope.launch {
             val body = AuthenticateEmailCodeRequest(email, code)
+            Log.e("checkEmailCode",body.toString())
+
             val result = authenticateEmailCodeUseCase(body)
             Log.e("checkEmailCode",result.toString())
             when (result) {
@@ -260,7 +286,6 @@ class SignViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Exception -> {
-
                     Log.e("checkEmailCode3", "${result.e.message}")
                 }
             }

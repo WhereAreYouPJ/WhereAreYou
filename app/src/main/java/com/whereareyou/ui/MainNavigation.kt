@@ -44,7 +44,7 @@ fun MainNavigation(
                     navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
                 },
                 moveToMainScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
+                    navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
 //                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 }
             )
