@@ -65,31 +65,16 @@ fun ScheduleScreen(
     viewModel: CalendarViewModel = hiltViewModel(),
     notificationViewModel: DrawerNotificationViewModel = hiltViewModel(),
 ) {
+    // 사이드바가 오른쪽에서 열리게 하기 위한 Rtl
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         ModalNavigationDrawer(
-            drawerContent = {
-                DrawerNotification()
-            },
+            drawerContent = { DrawerNotification() },
             drawerState = drawerState,
         ) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                val topBarState = remember {
-                    AnchoredDraggableState(
-                        initialValue = DetailState.Open,
-                        positionalThreshold = { it: Float -> it * 0.5f },
-                        velocityThreshold = { 100f },
-                        animationSpec = tween(400)
-                    )
-                        .apply {
-                            updateAnchors(
-                                DraggableAnchors {
-                                    DetailState.Open at 0f
-                                    DetailState.Close at GlobalValue.dailyScheduleViewHeight
-                                }
-                            )
-                        }
-                }
+                // 하단 콘텐츠 상태
+                val bottomContentState = remember { anchoredDraggableState }
                 Column(
                     modifier = Modifier
                         .padding(paddingValues)
@@ -100,18 +85,34 @@ fun ScheduleScreen(
                     // 상단바
                     TopBar(
                         drawerState = drawerState,
-                        bottomContentState = topBarState,
+                        bottomContentState = bottomContentState,
                         onNotificationClicked = {}
                     )
                     // 달력 뷰
-                    CalendarContent(topBarState)
+                    CalendarContent(bottomContentState)
                 }
                 // 일별 간략한 일정
                 BriefScheduleContent(
                     toDetailScreen = toDetailScreen,
-                    state = topBarState
+                    state = bottomContentState
                 )
             }
         }
     }
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+val anchoredDraggableState = AnchoredDraggableState(
+    initialValue = DetailState.Open,
+    positionalThreshold = { it: Float -> it * 0.5f },
+    velocityThreshold = { 100f },
+    animationSpec = tween(400)
+)
+    .apply {
+        updateAnchors(
+            DraggableAnchors {
+                DetailState.Open at 0f
+                DetailState.Close at GlobalValue.dailyScheduleViewHeight
+            }
+        )
+    }

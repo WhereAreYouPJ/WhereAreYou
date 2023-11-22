@@ -14,37 +14,44 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereareyou.R
 import com.whereareyou.data.FriendProvider
 
 @Composable
 fun FriendContent() {
-    Row(
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.mypage_filled),
-            contentDescription = null
-        )
-        Text(
-            text = "이서영"
-        )
-    }
-//    LazyColumn() {
-//        itemsIndexed(FriendProvider.friendList) { index, friend ->
-//            Text(
-//                modifier = Modifier
-//                    .padding(top = 10.dp, bottom = 10.dp),
-//                text = friend.name
-//            )
-//            Spacer(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(0.5.dp)
-//                    .background(
-//                        color = Color(0xFFAAAAAA)
-//                    )
-//            )
-//        }
+//    Row(
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.mypage_filled),
+//            contentDescription = null
+//        )
+//        Text(
+//            text = "이서영"
+//        )
 //    }
+    LazyColumn() {
+        itemsIndexed(FriendProvider.friendsList) { index, friend ->
+            Text(
+                modifier = Modifier
+                    .padding(top = 10.dp, bottom = 10.dp),
+                text = friend.name
+            )
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .background(
+                        color = Color(0xFFAAAAAA)
+                    )
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FriendContentPreview() {
+    FriendContent()
 }
