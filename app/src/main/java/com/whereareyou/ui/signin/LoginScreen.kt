@@ -47,8 +47,13 @@ import androidx.compose.runtime.*
 
 
 @Composable
-fun LoginScreen(navController: NavHostController,
-                signInViewModel: SignViewModel = hiltViewModel()
+fun LoginScreen(
+    moveToStartScreen: () -> Unit,
+    moveToMainHomeScreen: () -> Unit,
+    moveToFindIdScreen: () -> Unit,
+    moveToFindPWScreen: () -> Unit,
+    moveToBackScreen: () -> Unit,
+    signInViewModel: SignViewModel = hiltViewModel()
 ) {
     var user_name by remember { mutableStateOf(TextFieldValue()) }
     var user_password by remember { mutableStateOf(TextFieldValue()) }
@@ -70,10 +75,7 @@ fun LoginScreen(navController: NavHostController,
                 .width(30.dp)
                 .height(30.dp)
                 .background(Color.White)
-                .clickable {
-                    navController.navigate(Constants.ROUTE_MAIN_AGREE)
-
-                }
+                .clickable { moveToBackScreen() }
 
         ) {
             Icon(
@@ -194,7 +196,7 @@ fun LoginScreen(navController: NavHostController,
                 signInViewModel.LogIn(user_name.text, user_password.text) { isLoginSuccess ->
                     Log.d("sign",isLoginSuccess.toString())
                     if (isLoginSuccess) {
-                        navController.navigate(Constants.ROUTE_MAIN_HOME)
+                        moveToMainHomeScreen()
                     } else {
                         Log.d("sign","error!!")
                         Toast.makeText(
@@ -232,9 +234,7 @@ fun LoginScreen(navController: NavHostController,
 
             ClickableText(
                 text = AnnotatedString(" 아이디 찾기"),
-                onClick = { offset ->
-                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
-                },
+                onClick = { moveToFindIdScreen() },
                 style = TextStyle(fontSize = 16.sp)
             )
 
@@ -246,10 +246,7 @@ fun LoginScreen(navController: NavHostController,
 
             ClickableText(
                 text = AnnotatedString("비밀번호 찾기"),
-                onClick = { offset ->
-
-                    navController.navigate(Constants.ROUTE_MAIN_FINDPW)
-                },
+                onClick = { moveToFindPWScreen() },
                 style = TextStyle(
                     fontSize = 16.sp,
                 )
