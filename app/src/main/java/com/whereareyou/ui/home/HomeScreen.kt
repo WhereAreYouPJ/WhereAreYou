@@ -32,7 +32,9 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun HomeScreen(
     moveToAddScheduleScreen: () -> Unit,
-    toDetailScreen: (String) -> Unit,
+    moveToDetailScreen: (String) -> Unit,
+    moveToAddFriendScreen: () -> Unit,
+    moveToAddGroupScreen: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val viewType = viewModel.viewType.collectAsState().value
@@ -61,10 +63,16 @@ fun HomeScreen(
             ViewType.Calendar -> {
                 ScheduleScreen(
                     paddingValues = it,
-                    toDetailScreen = toDetailScreen
+                    moveToDetailScreen = moveToDetailScreen
                 )
             }
-            ViewType.Friends -> { CommunityScreen(paddingValues = it) }
+            ViewType.Friends -> {
+                CommunityScreen(
+                    paddingValues = it,
+                    moveToAddFriendScreen = moveToAddFriendScreen,
+                    moveToAddGroupScreen = moveToAddGroupScreen
+                )
+            }
             ViewType.MyPage -> { MyPageScreen(paddingValues = it) }
         }
     }
