@@ -36,12 +36,12 @@ import kotlin.math.roundToInt
 
 @Composable
 fun BriefScheduleContent(
-    toDetailScreen: (String) -> Unit,
+    moveToDetailScreen: (String) -> Unit,
     state: AnchoredDraggableState<DetailState>
 ) {
     BriefScheduleContainer(state) {
         BriefScheduleList(
-            toDetailScreen = toDetailScreen
+            moveToDetailScreen = moveToDetailScreen
         )
     }
 }
@@ -105,7 +105,7 @@ fun BriefScheduleContainer(
 
 @Composable
 fun BriefScheduleList(
-    toDetailScreen: (String) -> Unit,
+    moveToDetailScreen: (String) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val currentDateBriefSchedule = viewModel.currentDateBriefSchedule
@@ -121,7 +121,7 @@ fun BriefScheduleList(
                     .clip(RoundedCornerShape(4.dp))
                     .background(color = Color(0XFF80DEEA))
                     .clickable {
-                        toDetailScreen(item.scheduleId)
+                        moveToDetailScreen(item.scheduleId)
                     }
             ) {
                 Text(
