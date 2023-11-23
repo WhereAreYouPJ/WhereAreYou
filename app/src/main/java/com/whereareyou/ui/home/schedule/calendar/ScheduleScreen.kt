@@ -61,7 +61,7 @@ enum class DetailState {
 @Composable
 fun ScheduleScreen(
     paddingValues: PaddingValues,
-    toDetailScreen: (String) -> Unit,
+    moveToDetailScreen: (String) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
     notificationViewModel: DrawerNotificationViewModel = hiltViewModel(),
 ) {
@@ -93,7 +93,7 @@ fun ScheduleScreen(
                 }
                 // 일별 간략한 일정
                 BriefScheduleContent(
-                    toDetailScreen = toDetailScreen,
+                    moveToDetailScreen = moveToDetailScreen,
                     state = bottomContentState
                 )
             }
