@@ -33,7 +33,7 @@ fun MainNavigation(
         modifier = Modifier
             .fillMaxSize(),
         navController = navController,
-        startDestination = Constants.ROUTE_MAIN_SPLASH
+        startDestination = Constants.ROUTE_MAIN_HOME
     ) {
 
         composable(
@@ -43,12 +43,11 @@ fun MainNavigation(
                 checkIsSignedIn = { viewModel.checkIsSignedIn() },
                 moveToSignInScreen = {
 //                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
-                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 },
                 moveToMainScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
-//                    navController.navigate(Constants.ROUTE_MAIN_HOME)
 //                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 }
             )
         }
@@ -65,7 +64,9 @@ fun MainNavigation(
         ) {
             HomeScreen(
                 moveToAddScheduleScreen = { navController.navigate(Constants.ROUTE_NEW_SCHEDULE) },
-                toDetailScreen = { navController.navigate(Constants.ROUTE_DETAIL_SCHEDULE + "/$it") }
+                moveToDetailScreen = { navController.navigate(Constants.ROUTE_DETAIL_SCHEDULE + "/$it") },
+                moveToAddFriendScreen = { navController.navigate(Constants.ROUTE_ADD_FRIEND) },
+                moveToAddGroupScreen = {  }
             )
         }
 

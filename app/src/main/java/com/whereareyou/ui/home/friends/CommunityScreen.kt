@@ -25,8 +25,9 @@ import com.whereareyou.data.GlobalValue
 @Composable
 fun CommunityScreen(
     paddingValues: PaddingValues,
+    moveToAddFriendScreen: () -> Unit,
+    moveToAddGroupScreen: () -> Unit,
 ) {
-    val density = LocalDensity.current
     val isFriendPage = remember { mutableStateOf(true) }
     Column(
         modifier = Modifier
@@ -38,34 +39,12 @@ fun CommunityScreen(
             )
 
     ) {
-
         // 상단바
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height((GlobalValue.topAppBarHeight / density.density).dp)
-                .background(
-                    color = Color(0xFFCE93D8)
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(end = 20.dp)
-                    .clickable {
-                        isFriendPage.value = true
-                    },
-                text = "친구"
-            )
-            Text(
-                modifier = Modifier
-                    .padding(start = 20.dp)
-                    .clickable {
-                        isFriendPage.value = false
-                    },
-                text = "그룹"
-            )
-        }
+        CommunityScreenTopBar(
+            isFriendPage = isFriendPage,
+            moveToAddFriendScreen = moveToAddFriendScreen,
+            moveToAddGroupScreen = moveToAddGroupScreen
+        )
         if (isFriendPage.value) {
             FriendContent()
         } else {
@@ -77,5 +56,5 @@ fun CommunityScreen(
 @Preview(showBackground = true)
 @Composable
 fun CommunityScreenPreview() {
-    CommunityScreen(PaddingValues(0.dp))
+    CommunityScreen(PaddingValues(0.dp), {}, {})
 }
