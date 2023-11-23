@@ -33,7 +33,11 @@ import com.whereareyou.ui.signin.FindPasswordScreen
 import com.whereareyou.ui.signin.FindPwSuccessScreen
 
 @Composable
-fun Tablayout(navController: NavHostController, num: Int) {
+fun Tablayout(
+    moveToSignInScreen: () -> Unit,
+    navController: NavHostController,
+    num: Int
+) {
     var selectedTabIndex by remember { mutableStateOf(0) }
 // delete C:\Users\Owner\.android\avd\Pixel_2_API_30.avd\*.lock and try again.
     val tabs = listOf("아이디 찾기", "비밀번호 재설정")
@@ -55,8 +59,7 @@ fun Tablayout(navController: NavHostController, num: Int) {
                 .height(30.dp)
                 .background(Color.White)
                 .clickable {
-                    navController.navigate(Constants.ROUTE_MAIN_AGREE)
-
+                    moveToSignInScreen()
                 }
 
         ) {
@@ -106,14 +109,10 @@ fun Tablayout(navController: NavHostController, num: Int) {
         when (selectedTabIndex) {
             0 -> {
                 FindIdScreen(navController = navController)
-
             }
-
             1 -> {
                 FindPasswordScreen(navController = navController)
-
             }
-
             2 -> {
                 FindIdSuccessScreen(navController = navController)
             }
