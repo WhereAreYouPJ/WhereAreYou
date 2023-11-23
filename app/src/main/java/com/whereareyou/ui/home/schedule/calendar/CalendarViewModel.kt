@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,8 +54,8 @@ class CalendarViewModel @Inject constructor(
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다
     private fun updateCurrentMonthDateInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
+        val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
         viewModelScope.launch(Dispatchers.IO) {
-            val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
             var monthlySchedule = emptyList<ScheduleCountByDay>()
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
@@ -81,10 +82,13 @@ class CalendarViewModel @Inject constructor(
                 }
                 calendarArrList[i].scheduleCount = monthlySchedule[calendarArrList[i].date - 1].scheduleCount
             }
-            _currentMonthDateInfo.clear()
-            _currentMonthDateInfo.addAll(calendarArrList)
+            withContext(Dispatchers.Main) {
+                _currentMonthDateInfo.clear()
+                _currentMonthDateInfo.addAll(calendarArrList)
+            }
             Log.e("MonthlySchedule", calendarArrList.toString())
         }
+        _currentMonthDateInfo.addAll(calendarArrList)
     }
 
     fun updateYear(year: Int) {
