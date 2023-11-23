@@ -33,7 +33,7 @@ fun MainNavigation(
         modifier = Modifier
             .fillMaxSize(),
         navController = navController,
-        startDestination = Constants.ROUTE_ADD_FRIEND
+        startDestination = Constants.ROUTE_MAIN_HOME
     ) {
 
         composable(
@@ -64,7 +64,9 @@ fun MainNavigation(
         ) {
             HomeScreen(
                 moveToAddScheduleScreen = { navController.navigate(Constants.ROUTE_NEW_SCHEDULE) },
-                toDetailScreen = { navController.navigate(Constants.ROUTE_DETAIL_SCHEDULE + "/$it") }
+                moveToDetailScreen = { navController.navigate(Constants.ROUTE_DETAIL_SCHEDULE + "/$it") },
+                moveToAddFriendScreen = { navController.navigate(Constants.ROUTE_ADD_FRIEND) },
+                moveToAddGroupScreen = {  }
             )
         }
 
