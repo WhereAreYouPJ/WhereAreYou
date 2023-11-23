@@ -107,7 +107,10 @@ fun CommunityScreenTopBar(
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
                                 .background(Color.Cyan)
-                                .clickable {  }
+                                .clickable {
+                                    popupState.isVisible = false
+                                    moveToAddGroupScreen()
+                                }
                         ) {
                             Text(
                                 modifier = Modifier
