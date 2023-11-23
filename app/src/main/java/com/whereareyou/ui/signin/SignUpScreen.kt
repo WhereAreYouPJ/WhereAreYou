@@ -50,6 +50,28 @@ fun isValidUserId(input: String): Boolean {
     return regex.matches(input)
 }
 
+fun checkPasswordConditions(password: String): Boolean {
+    val lengthCondition = password.length in 6..20
+    val lowercaseRegex = Regex(".*[a-z].*")
+    val uppercaseRegex = Regex(".*[A-Z].*")
+    val digitRegex = Regex(".*\\d.*")
+    val specialCharRegex = Regex("[!@#\$%^&*()\\-_=+\\\\|\\[{\\]};:'\",<.>/?].*")
+
+    val containsLowercase = lowercaseRegex.matches(password)
+    val containsUppercase = uppercaseRegex.matches(password)
+    val containsDigit = digitRegex.matches(password)
+    val containsSpecialChar = specialCharRegex.matches(password)
+
+    val conditionsMet = listOf(
+        containsLowercase,
+        containsUppercase,
+        containsDigit,
+        containsSpecialChar
+    ).count { it } >= 2
+
+    return lengthCondition && conditionsMet
+}
+
 @Composable
 fun SignUpScreen(
     navController: NavHostController,
@@ -57,8 +79,11 @@ fun SignUpScreen(
 ) {
     var user_id by remember { mutableStateOf(TextFieldValue()) }
     var user_name by remember { mutableStateOf(TextFieldValue()) }
-    var password by remember { mutableStateOf(TextFieldValue()) }
     var check_password by remember { mutableStateOf(TextFieldValue()) }
+
+    var password by remember { mutableStateOf(TextFieldValue()) }
+    var confirmPassword by remember { mutableStateOf(TextFieldValue()) }
+    var isPasswordValid by remember { mutableStateOf(false) }
 
     var email by remember { mutableStateOf(TextFieldValue()) }
     var email_code by remember { mutableStateOf(TextFieldValue()) }
@@ -111,7 +136,7 @@ fun SignUpScreen(
                     .height(30.dp)
                     .background(Color.White)
                     .clickable {
-                        navController.navigate(Constants.ROUTE_MAIN_AGREE)
+                        navController.navigate(Constants.ROUTE_MAIN_LOGIN)
 
                     }
 
@@ -250,7 +275,9 @@ fun SignUpScreen(
             if (!user_id.text.isNotEmpty() || (user_id.text.isNotEmpty() && isInvalidId && !isButtonClicked)) {
                 Text(
                     text = "영문 소문자로 시작하는 5~12자의 아이디를 입력해주세요.",
-                    color = Color.Red
+                    color = Color.Red,
+                    fontSize = 15.sp
+
                 )
             }
 
@@ -285,7 +312,8 @@ fun SignUpScreen(
                 value = password.text,
                 onValueChange = {
                     password = password.copy(text = it)
-                    isInvalidPassword = it.length < 10
+                    //isPasswordValid = validatePassword(it, confirmPassword.text)
+
                 },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
@@ -307,7 +335,23 @@ fun SignUpScreen(
                     .padding(start = 16.dp, top = 10.dp)
 
             )
+            if (password.text.isNotEmpty()) {
+                val passwordConditionsMet = checkPasswordConditions(password.text)
+                if (!passwordConditionsMet) {
+                    Text(
+                        text = "영문 대문자와 소문자, 숫자, 특수문자 중 2가지 이상을 조합하여 6~20자로 입력해주세요.",
+                        color = Color.Red
+                    )
+                    password_pass = false
 
+                } else {
+                    Text(
+                        text = "사용가능한 비밀번호입니다.",
+                        color = Color.Green
+                    )
+                }
+
+            }
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -319,16 +363,15 @@ fun SignUpScreen(
             )
 
             BasicTextField(
-                value = check_password.text,
+                value = confirmPassword.text,
                 onValueChange = {
-                    check_password = check_password.copy(text = it)
-                    isInvalidPassword = it.length < 10 || it != password.text
+                    confirmPassword = confirmPassword.copy(text = it)
                 },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 textStyle = TextStyle(
                     fontSize = 20.sp,
-                    textAlign = TextAlign.Left // 텍스트 가운데 정렬
+                    textAlign = TextAlign.Left
                 ),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Password,
@@ -342,8 +385,26 @@ fun SignUpScreen(
                     .size(width = 200.dp, height = 45.dp)
                     .background(Color(0xFFF5F5F6))
                     .padding(start = 16.dp, top = 10.dp)
-
             )
+            if (confirmPassword.text.isNotEmpty()) {
+                val passwordsMatch = password.text == confirmPassword.text
+                if (passwordsMatch) {
+                    Text(
+                        text = "비밀번호가 일치합니다",
+                        color = Color.Green
+
+                    )
+                    password_pass = true
+
+                } else {
+                    Text(
+                        text = "비밀번호가 일치하지 않습니다",
+                        color = Color.Red
+                    )
+                    password_pass = false
+
+                }
+            }
 
             Spacer(
                 modifier = Modifier
@@ -351,16 +412,7 @@ fun SignUpScreen(
                     .height(15.dp)
             )
 
-            if (isInvalidPassword) {
-                Text(
-                    text = "비밀번호는 10자 이상이어야 하며, 확인 비밀번호와 일치해야 합니다.",
-                    color = Color.Red
-                )
-                password_pass = false
-            }
-            if (!isInvalidPassword) {
-                password_pass = true
-            }
+
         }
         // 이메일 입력필드
         Column() {
@@ -368,6 +420,55 @@ fun SignUpScreen(
             Text(
                 text = "이메일"
             )
+
+            Row(
+
+
+            ) {
+                BasicTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        fontSize = 20.sp, // 텍스트 크기 조절
+                        textAlign = TextAlign.Left // 텍스트 왼쪽 정렬
+
+                    ),
+
+                    modifier = Modifier
+
+                        .size(width = 260.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
+
+                        .background(Color(0xFFF5F5F6)) // 배경을 F5F5F6 색상으로 설정
+                        .padding(start = 16.dp, top = 10.dp)
+
+                )
+                Spacer(
+                    modifier = Modifier
+                        .width(10.dp)
+                )
+                Button(
+                    onClick = {
+                        // 여기에 로그인 로직을s 추가
+                        signInViewModel.checkEmailDuplicate(email.text)
+                    },
+                    shape = RoundedCornerShape(3.dp),
+
+                    modifier = Modifier
+                        .size(width = 130.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
+
+
+                ) {
+                    Text("중복확인")
+                }
+            }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(15.dp)
+
+            )
+
             Row(
 
 
@@ -441,10 +542,7 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         Log.d("email_code", email_code.toString())
-                        signInViewModel.checkauthenticateEmailCode(
-                            email.text,
-                            email_code.text.toInt()
-                        )
+                        signInViewModel.checkauthenticateEmailCode(email.text,email_code.text.toInt())
 
                     },
                     shape = RoundedCornerShape(3.dp),
@@ -470,18 +568,22 @@ fun SignUpScreen(
         // 로그인 버튼
         Button(
             onClick = {
-              /*  signInViewModel.signup(user_name.text,user_id.text,check_password.text,email.text)*/
-                signInViewModel.signup("chan1","chan1","abcefghij11","chanhue467@gmail.com")
+                /*  signInViewModel.signup(user_name.text,user_id.text,check_password.text,email.text)*/
 
-                /*if (name_pass && id_pass && password_pass && email_pass) {
-                    Log.d("pass1",name_pass.toString())
-                    Log.d("pass2",id_pass.toString())
-                    Log.d("pass3",password_pass.toString())
-                    Log.d("pass4",email_pass.toString())
-                    signInViewModel.signup(user_name.text,user_id.text,check_password.text,email.text)
+                if (name_pass && id_pass && password_pass && email_pass) {
+                    Log.d("pass1", name_pass.toString())
+                    Log.d("pass2", id_pass.toString())
+                    Log.d("pass3", password_pass.toString())
+                    Log.d("pass4", email_pass.toString())
+                    signInViewModel.signup(
+                        user_name.text,
+                        user_id.text,
+                        confirmPassword.text,
+                        email.text
+                    )
 
-                    navController.navigate(Constants.ROUTE_MAIN_AGREE)
-                }*/
+                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                }
                 // 여기에 로그인 로직을 추가
             },
             shape = RoundedCornerShape(3.dp),
@@ -490,7 +592,7 @@ fun SignUpScreen(
                 .fillMaxWidth()
                 .size(width = 200.dp, height = 45.dp) // 높이 90dp로 크기 조정
                 .background(color = if (name_pass && id_pass && password_pass && email_pass) Color.Red else Color.Gray), // 조건에 따라 배경색 변경
-            //enabled = name_pass && id_pass && password_pass && email_pass // 버튼의 활성/비활성 상태 설정
+            enabled = name_pass && id_pass && password_pass && email_pass // 버튼의 활성/비활성 상태 설정
 
 
         ) {

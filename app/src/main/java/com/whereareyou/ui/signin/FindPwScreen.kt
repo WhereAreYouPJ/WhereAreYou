@@ -1,5 +1,7 @@
 package com.whereareyou.ui.signin
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,16 +32,19 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.whereareyou.data.Constants
 
 @Composable
-fun FindPasswordScreen(navController: NavHostController) {
+fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignViewModel = hiltViewModel()
+) {
 
     var user_id by remember{ mutableStateOf(TextFieldValue()) }
     var user_email by remember { mutableStateOf(TextFieldValue()) }
     var user_email_code by remember { mutableStateOf(TextFieldValue()) }
     // 아이디 비밀번호 입력 필드N
+    val context = LocalContext.current
 
 
     Column(
@@ -101,7 +107,7 @@ fun FindPasswordScreen(navController: NavHostController) {
             )
             Button(
                 onClick = {
-                    // 여기에 로그인 로직을 추가
+                          signInViewModel.checkauthenticateEmail(user_email.text)
                 },
                 shape = RoundedCornerShape(3.dp),
 
@@ -147,10 +153,27 @@ fun FindPasswordScreen(navController: NavHostController) {
         )
 
 
-        // 로그인 버튼
+        // 확인 버튼
         Button(
             onClick = {
-                navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
+
+                signInViewModel.verifyPasswordResetCode(user_id.text,user_email.text,user_email_code.text) { userId ->
+                    if (userId!="e") {
+                        // userId가 반환되었을 때
+                        Log.d("id!!",userId)
+
+                        navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
+                    } else {
+                        // userId가 null 또는 empty일 때
+                        Toast.makeText(
+                            context,
+                            "인증번호가 일치하지 않습니다",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+
 
 
             },
