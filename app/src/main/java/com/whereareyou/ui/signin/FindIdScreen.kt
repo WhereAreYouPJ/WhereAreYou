@@ -1,5 +1,9 @@
 package com.whereareyou.ui.signin
 
+import android.content.Context
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -30,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.whereareyou.data.Constants
 
 @Composable
 fun FindIdScreen(
@@ -39,7 +45,7 @@ fun FindIdScreen(
     var user_email by remember { mutableStateOf(TextFieldValue()) }
     var user_email_code by remember { mutableStateOf(TextFieldValue()) }
     // 아이디 비밀번호 입력 필드N
-
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -82,7 +88,7 @@ fun FindIdScreen(
             )
             Button(
                 onClick = {
-                          signInViewModel.checkauthenticateEmail("chanhue467@gmail.com")
+                          signInViewModel.checkauthenticateEmail(user_email.text)
 
                 },
                 shape = RoundedCornerShape(3.dp),
@@ -111,7 +117,7 @@ fun FindIdScreen(
                 .fillMaxWidth()
                 .height(45.dp),
             placeholder = {
-                Text("비밀번호를 입력하세요", style = TextStyle(fontSize = 13.sp))
+                Text("인증번호 6자리", style = TextStyle(fontSize = 13.sp))
             },
             visualTransformation = PasswordVisualTransformation()
         )
@@ -128,11 +134,24 @@ fun FindIdScreen(
         )
 
 
-        // 로그인 버튼
+        // 확인
         Button(
             onClick = {
+                signInViewModel.findUserId(user_email.text,user_email_code.text.toInt()) { userId ->
+                    if (userId!="e") {
+                        // userId가 반환되었을 때
+                        Log.d("id!!",userId)
 
-                //navController.navigate(Constants.ROUTE_MAIN_FINDIDSUCCESS)
+                        navController.navigate(Constants.ROUTE_MAIN_FINDIDSUCCESS)
+                    } else {
+                        // userId가 null 또는 empty일 때
+                        Toast.makeText(
+                            context,
+                            "인증번호가 일치하지 않습니다",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
 
 
             },

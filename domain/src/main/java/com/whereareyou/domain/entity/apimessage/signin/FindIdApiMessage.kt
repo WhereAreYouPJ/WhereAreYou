@@ -6,7 +6,7 @@ data class FindIdRequest(
     @SerializedName("email")
     val email: String,
     @SerializedName("code")
-    val code: String
+    val code: Int
 )
 
 data class FindIdResponse(

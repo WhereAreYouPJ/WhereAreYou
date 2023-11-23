@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.whereareyou.data.Constants
 
 @Composable
 fun FindIdSuccessScreen(navController: NavHostController) {
     var user_email by remember { mutableStateOf(TextFieldValue()) }
     // 아이디 비밀번호 입력 필드
-
 
     Column(
         modifier = Modifier
@@ -71,48 +71,12 @@ fun FindIdSuccessScreen(navController: NavHostController) {
 
 
 
-            OutlinedTextField(
-                value = user_email.text,
-                onValueChange = {
-                    user_email = user_email.copy(text = it)
-                    // 필요한 로직 추가
-                },
-                singleLine = true,
-                textStyle = TextStyle(
-                    fontSize = 13.sp,
-                    textAlign = TextAlign.Left
 
-                ),
-                modifier = Modifier
-                    .size(width = 280.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-
-                ,
-                placeholder = {
-                    Text(
-                        text = "이메일 주소",
-                        style = TextStyle(fontSize = 13.sp)
-                    )
-
-                }
-            )
             Spacer(
                 modifier = Modifier
                     .width(10.dp)
             )
-            Button(
-                onClick = {
-                    // 여기에 로그인 로직을 추가
-                },
-                shape = RoundedCornerShape(3.dp),
 
-                modifier = Modifier
-                    .size(width = 140.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-                    .background(Color(0xFFF5F5F6)) // 배경을 F5F5F6 색상으로 설정
-
-
-            ) {
-                Text("인증")
-            }
         }
 
         Spacer(
@@ -162,7 +126,7 @@ fun FindIdSuccessScreen(navController: NavHostController) {
                 .height(60.dp)
                 .background(Color.Gray)
                 .clickable {
-
+                           navController.navigate(Constants.ROUTE_MAIN_FINDPW)
 
                 },
             contentAlignment = Alignment.Center

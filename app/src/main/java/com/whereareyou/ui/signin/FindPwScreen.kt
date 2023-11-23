@@ -1,5 +1,7 @@
 package com.whereareyou.ui.signin
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -41,6 +44,7 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
     var user_email by remember { mutableStateOf(TextFieldValue()) }
     var user_email_code by remember { mutableStateOf(TextFieldValue()) }
     // 아이디 비밀번호 입력 필드N
+    val context = LocalContext.current
 
 
     Column(
@@ -149,12 +153,27 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
         )
 
 
-        // 로그인 버튼
+        // 확인 버튼
         Button(
             onClick = {
 
-                signInViewModel.verifyPasswordResetCode(user_id.text,user_email.text,user_email_code.text)
-                navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
+                signInViewModel.verifyPasswordResetCode(user_id.text,user_email.text,user_email_code.text) { userId ->
+                    if (userId!="e") {
+                        // userId가 반환되었을 때
+                        Log.d("id!!",userId)
+
+                        navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
+                    } else {
+                        // userId가 null 또는 empty일 때
+                        Toast.makeText(
+                            context,
+                            "인증번호가 일치하지 않습니다",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+
 
 
             },

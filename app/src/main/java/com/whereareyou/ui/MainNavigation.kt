@@ -33,7 +33,7 @@ fun MainNavigation(
         modifier = Modifier
             .fillMaxSize(),
         navController = navController,
-        startDestination = Constants.ROUTE_ADD_FRIEND
+        startDestination = Constants.ROUTE_MAIN_SPLASH
     ) {
 
         composable(
@@ -43,10 +43,10 @@ fun MainNavigation(
                 checkIsSignedIn = { viewModel.checkIsSignedIn() },
                 moveToSignInScreen = {
 //                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
-                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
                 },
                 moveToMainScreen = {
-                    navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
 //                    navController.navigate(Constants.ROUTE_MAIN_HOME)
 //                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
                 }
