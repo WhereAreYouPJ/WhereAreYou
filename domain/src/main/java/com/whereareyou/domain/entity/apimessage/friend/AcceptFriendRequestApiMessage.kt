@@ -7,6 +7,6 @@ data class AcceptFriendRequestRequest(
     val friendRequestId: String,
     @SerializedName("memberId")
     val memberId: String,
-    @SerializedName("friendId")
-    val friendId: String
+    @SerializedName("senderId")
+    val senderId: String
 )
