@@ -13,6 +13,10 @@ data class GetDetailScheduleResponse(
     val place: String,
     @SerializedName("memo")
     val memo: String,
+    @SerializedName("destinationLatitude")
+    val destinationLatitude: Double,
+    @SerializedName("destinationLongitude")
+    val destinationLongitude: Double,
     @SerializedName("friendsIdListDTO")
     val friendsIdList: List<String>,
 )
