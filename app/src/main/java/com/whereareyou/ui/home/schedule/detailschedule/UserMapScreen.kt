@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.CameraPositionState
+import com.naver.maps.map.compose.CircleOverlay
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
@@ -48,9 +49,11 @@ fun UserMapScreen(
     BackHandler {
         moveToDetailScheduleScreen()
     }
-    Text(text = "")
+//    Text(text = "")
     val userInfos = viewModel.userInfos.collectAsState().value
     val initLocation = viewModel.myLocation.collectAsState().value
+    val destinationLatitude = viewModel.destinationLatitude.collectAsState().value
+    val destinationLongitude = viewModel.destinationLongitude.collectAsState().value
     val cameraPositionState = rememberCameraPositionState {
         this.position = CameraPosition(
             LatLng(initLocation.latitude, initLocation.longitude),
@@ -86,6 +89,23 @@ fun UserMapScreen(
             properties = mapProperties,
             uiSettings = mapUiSettings
         ) {
+            CircleOverlay(
+                center = LatLng(
+                    destinationLatitude,
+                    destinationLongitude
+                ),
+                color = Color(0x22FF0000),
+                radius = 300.0
+            )
+            Marker(
+                state = rememberMarkerState(
+                    position = LatLng(
+                        destinationLatitude,
+                        destinationLongitude
+                    )
+                ),
+                captionText = "목적지"
+            )
             for (info in userInfos) {
                 if (info.longitude != null && info.latitude != null) {
                     Marker(

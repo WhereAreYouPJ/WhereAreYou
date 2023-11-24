@@ -123,10 +123,11 @@ fun NewScheduleContent(
             }
         }
 
-        Text(
-            modifier = Modifier
-                .padding(top = 20.dp),
-            text = "일정을 입력하세요"
+        val title = viewModel.title.collectAsState().value
+        ScheduleTitleTextField(
+            title = title,
+            updateTitle = viewModel::updateTitle,
+            clearTitle = viewModel::clearTitle
         )
 
         // 날짜, 시간 선택
