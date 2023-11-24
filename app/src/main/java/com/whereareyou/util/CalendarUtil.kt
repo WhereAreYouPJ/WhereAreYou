@@ -75,6 +75,6 @@ object CalendarUtil {
     // 오늘의 년월일 정보를 return
     fun getTodayInfo(): List<Int> {
         val calendar = Calendar.getInstance()
-        return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE))
+        return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE), calendar.get(Calendar.DAY_OF_WEEK))
     }
 }

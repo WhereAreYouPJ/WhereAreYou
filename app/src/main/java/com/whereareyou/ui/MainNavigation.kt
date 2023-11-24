@@ -51,7 +51,7 @@ fun MainNavigation(
                 moveToMainScreen = {
                     navController.popBackStack()
 //                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
-                    navController.navigate(Constants.ROUTE_MAIN_START)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 }
             )
         }
@@ -117,9 +117,6 @@ fun MainNavigation(
 
         // 첫화면
         composable(route=Constants.ROUTE_MAIN_START){
-            for (backstack in navController.currentBackStack.value) {
-                Log.e("route", "${backstack.destination.route}")
-            }
             StartScreen(
                 moveToSignUpScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNUP) },
                 moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) }
