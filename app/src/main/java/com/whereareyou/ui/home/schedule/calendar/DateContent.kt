@@ -33,7 +33,8 @@ import androidx.compose.ui.unit.dp
 fun DateContent(
     date: Int,
     scheduleNumber: Int,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    textColor: Color
 ) {
     var componentWidth by remember { mutableStateOf(0) }
     val density = LocalDensity.current
@@ -67,7 +68,7 @@ fun DateContent(
                 },
                 color = when (isSelected) {
                     true -> Color.White
-                    false -> Color.Black
+                    false -> textColor
                 }
             )
         }
@@ -119,6 +120,6 @@ fun DateContentPreview() {
                 color = Color(0xFFFFFFFF)
             )
     ) {
-        DateContent(8, 3, true)
+        DateContent(8, 3, true, Color.Black)
     }
 }

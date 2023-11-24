@@ -40,6 +40,8 @@ class CalendarViewModel @Inject constructor(
     val month: StateFlow<Int> = _month
     private val _date = MutableStateFlow(0)
     val date: StateFlow<Int> = _date
+    private val _dayOfWeek = MutableStateFlow(0)
+    val dayOfWeek: StateFlow<Int> = _dayOfWeek
     private val _calendarState = MutableStateFlow(CalendarState.DATE)
     val calendarState: StateFlow<CalendarState> = _calendarState
 
@@ -55,7 +57,7 @@ class CalendarViewModel @Inject constructor(
     private fun updateCurrentMonthDateInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             var monthlySchedule = emptyList<ScheduleCountByDay>()
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
@@ -88,7 +90,6 @@ class CalendarViewModel @Inject constructor(
             }
             Log.e("MonthlySchedule", calendarArrList.toString())
         }
-        _currentMonthDateInfo.addAll(calendarArrList)
     }
 
     fun updateYear(year: Int) {
@@ -105,8 +106,8 @@ class CalendarViewModel @Inject constructor(
 
     fun updateDate(date: Int) {
         _date.update { date }
+        _dayOfWeek.update { CalendarUtil.getDayOfWeek(_year.value, _month.value, _date.value) }
         viewModelScope.launch {
-            _currentDateBriefSchedule.clear()
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val getDailyBriefScheduleResult = getDailyBriefScheduleUseCase(
@@ -114,6 +115,7 @@ class CalendarViewModel @Inject constructor(
             )
             when (getDailyBriefScheduleResult) {
                 is NetworkResult.Success -> {
+                    _currentDateBriefSchedule.clear()
                     _currentDateBriefSchedule.addAll(getDailyBriefScheduleResult.data!!.schedules)
                 }
                 is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResult.errorData}") }
@@ -132,6 +134,7 @@ class CalendarViewModel @Inject constructor(
         _year.update { todayInfo[0] }
         _month.update { todayInfo[1] }
         _date.update { todayInfo[2] }
+        _dayOfWeek.update { todayInfo[3] }
         updateCurrentMonthDateInfo()
         updateDate(todayInfo[2])
     }
