@@ -1,6 +1,7 @@
 package com.whereareyou.ui.home.schedule.calendar
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -22,8 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.whereareyou.R
 import com.whereareyou.data.GlobalValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +39,6 @@ import kotlinx.coroutines.launch
 fun TopBar(
     drawerState: DrawerState,
     bottomContentState: AnchoredDraggableState<DetailState>,
-    onNotificationClicked: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val density = LocalDensity.current
@@ -54,7 +59,9 @@ fun TopBar(
                     coroutineScope.launch(Dispatchers.Default) { bottomContentState.animateTo(DetailState.Close) }
                     viewModel.updateCalendarState(CalendarViewModel.CalendarState.YEAR)
                 },
-            text = "${year}년"
+            text = "${year}.",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold
         )
         Spacer(
             modifier = Modifier
@@ -67,7 +74,9 @@ fun TopBar(
                         coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
                         viewModel.updateCalendarState(CalendarViewModel.CalendarState.MONTH)
                     },
-                text = "${month}월"
+                text = "${month}",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
             )
         }
         Box(
@@ -75,12 +84,19 @@ fun TopBar(
                 .fillMaxSize(),
             contentAlignment = Alignment.CenterEnd
         ) {
-            Text(
+//            Text(
+//                modifier = Modifier
+//                    .clickable {
+//                        coroutineScope.launch(Dispatchers.Default) { drawerState.open() }
+//                    },
+//                text = "알림",
+//            )
+            Image(
                 modifier = Modifier
-                    .clickable {
-                        coroutineScope.launch(Dispatchers.Default) { drawerState.open() }
-                    },
-                text = "알림",
+                    .size(30.dp)
+                    .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } },
+                painter = painterResource(id = R.drawable.notifications_fill0_wght300_grad0_opsz24),
+                contentDescription = null
             )
         }
     }
