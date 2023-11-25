@@ -10,7 +10,7 @@ class SendFriendRequestUseCase(
     suspend operator fun invoke(
         token: String,
         body: SendFriendRequestRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.sendFriendRequest(token, body)
     }
 }
