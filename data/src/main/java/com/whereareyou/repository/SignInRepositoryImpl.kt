@@ -132,7 +132,7 @@ class SignInRepositoryImpl(
      */
     override suspend fun resetPassword(
         body: ResetPasswordRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.resetPassword(body)
             handleResult(response) { it }
@@ -161,7 +161,7 @@ class SignInRepositoryImpl(
     override suspend fun modifyMyInfo(
         token: String,
         body: ModifyMyInfoRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.modifyMyInfo(token, body)
             handleResult(response) { it }
@@ -175,7 +175,7 @@ class SignInRepositoryImpl(
     override suspend fun deleteMember(
         token: String,
         body: DeleteMemberRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.deleteMember(token, body)
             handleResult(response) { it }
