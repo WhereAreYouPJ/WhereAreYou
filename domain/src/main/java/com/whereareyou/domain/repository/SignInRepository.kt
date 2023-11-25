@@ -58,7 +58,7 @@ interface SignInRepository {
     // 비밀번호 재설정
     suspend fun resetPassword(
         body: ResetPasswordRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 회원 상세 정보
     suspend fun getMemberDetails(
@@ -70,11 +70,11 @@ interface SignInRepository {
     suspend fun modifyMyInfo(
         token: String,
         body: ModifyMyInfoRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 회원정보 삭제
     suspend fun deleteMember(
         token: String,
         body: DeleteMemberRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 }
