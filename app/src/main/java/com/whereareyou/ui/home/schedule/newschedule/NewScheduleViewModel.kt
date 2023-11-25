@@ -35,7 +35,8 @@ class NewScheduleViewModel @Inject constructor(
 
     private val _friendsList = MutableStateFlow(emptyList<Friend>())
     val friendsList: StateFlow<List<Friend>> = _friendsList
-
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> = _title
 
     private val _startDate = MutableStateFlow("시작 날짜 선택")
     val startDate: StateFlow<String> = _startDate
@@ -51,47 +52,51 @@ class NewScheduleViewModel @Inject constructor(
     val destinationName: StateFlow<String> = _destinationName
     private val _destinationAddress = MutableStateFlow("")
     val destinationAddress: StateFlow<String> = _destinationAddress
+    private val _destinationLatitude = MutableStateFlow(0.0)
+    val destinationLatitude: StateFlow<Double> = _destinationLatitude
+    private val _destinationLongitude = MutableStateFlow(0.0)
+    val destinationLongitude: StateFlow<Double> = _destinationLongitude
 
     fun updateStartDate(date: String) {
-        _startDate.update {
-            date
-        }
+        _startDate.update { date }
+    }
+
+    fun updateTitle(title: String) {
+        _title.update { title }
+    }
+
+    fun clearTitle() {
+        _title.update { "" }
     }
 
     fun updateEndDate(date: String) {
-        _endDate.update {
-            date
-        }
+        _endDate.update { date }
     }
 
     fun updateStartTime(time: String) {
-        _startTime.update {
-            time
-        }
+        _startTime.update { time }
     }
 
     fun updateEndTime(time: String) {
-        _endTime.update {
-            time
-        }
+        _endTime.update { time }
     }
 
     fun updateFriendsList(friends: List<Friend>) {
-        _friendsList.update {
-            friends
-        }
+        _friendsList.update { friends }
     }
 
-    fun updateDestinationInformation(name: String, address: String) {
+    fun updateDestinationInformation(name: String, address: String, lat: Double, lng: Double) {
         _destinationName.update { name }
         _destinationAddress.update { address }
+        _destinationLatitude.update { lat }
+        _destinationLongitude.update { lng }
     }
 
     fun addNewSchedule() {
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val body = AddNewScheduleRequest(memberId, startDate.value + "T" + startTime.value + ":00", endDate.value + "T" + endTime.value + ":00", "tmpTitle", destinationName.value, destinationAddress.value, listOf("4c9632d9-391c-4e91-945a-bf48ea1d557d"))
+            val body = AddNewScheduleRequest(memberId, startDate.value + "T" + startTime.value + ":00", endDate.value + "T" + endTime.value + ":00", _title.value, _destinationName.value, _destinationAddress.value, _destinationLatitude.value, _destinationLongitude.value, listOf("1d92d4e1-cd85-470b-aec2-712914f9f790"))
             val addNewScheduleResult = addNewScheduleUseCase(accessToken, body)
             when (addNewScheduleResult) {
                 is NetworkResult.Success -> {
