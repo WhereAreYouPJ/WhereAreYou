@@ -25,7 +25,7 @@ fun NewScheduleScreen(
         }
         NewScheduleViewModel.ScreenState.SearchLocation -> {
             NewLocationScreen(
-                updateDestinationInformation = { name, address -> viewModel.updateDestinationInformation(name, address) },
+                updateDestinationInformation = { name, address, lat, lng -> viewModel.updateDestinationInformation(name, address, lat, lng) },
                 moveToNewScheduleScreen = { viewModel.updateScreenState(NewScheduleViewModel.ScreenState.NewSchedule) },
                 moveToMapScreen = {  viewModel.updateScreenState(NewScheduleViewModel.ScreenState.Map) }
             )
