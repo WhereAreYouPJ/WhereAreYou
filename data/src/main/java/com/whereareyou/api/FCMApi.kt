@@ -14,11 +14,11 @@ interface FCMApi {
     suspend fun updateFCMToken(
         @Header("Authorization") token: String,
         @Body body: UpdateFCMTokenRequest
-    ): Response<Void>
+    ): Response<Unit>
 
     // FCM 토큰 삭제
     @DELETE("fcm")
     suspend fun deleteFCMToken(
         @Header("Authorization") token: String,
-    ): Response<Void>
+    ): Response<Unit>
 }
