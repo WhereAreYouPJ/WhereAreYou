@@ -10,7 +10,7 @@ class RefuseFriendRequestUseCase(
     suspend operator fun invoke(
         token: String,
         body: RefuseFriendRequestRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.refuseFriendRequest(token, body)
     }
 }
