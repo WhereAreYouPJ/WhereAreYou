@@ -1,8 +1,10 @@
 package com.whereareyou.repository
 
 import com.whereareyou.datasource.RemoteDataSource
+import com.whereareyou.domain.entity.apimessage.location.GetUserLocationRequest
 import com.whereareyou.domain.entity.apimessage.location.GetUserLocationResponse
 import com.whereareyou.domain.entity.apimessage.location.SendUserLocationRequest
+import com.whereareyou.domain.entity.apimessage.location.UserLocation
 import com.whereareyou.domain.repository.LocationRepository
 import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.util.NetworkResultHandler
@@ -19,10 +21,10 @@ class LocationRepositoryImpl(
      */
     override suspend fun getUserLocation(
         token: String,
-        memberId: String
-    ): NetworkResult<GetUserLocationResponse> {
+        body: GetUserLocationRequest
+    ): NetworkResult<List<UserLocation>> {
         return withContext(Dispatchers.IO) {
-            val response = dataSource.getUserLocation(token, memberId)
+            val response = dataSource.getUserLocation(token, body)
             handleResult(response) { it }
         }
     }
