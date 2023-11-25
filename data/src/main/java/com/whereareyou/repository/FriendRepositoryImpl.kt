@@ -68,7 +68,7 @@ class FriendRepositoryImpl(
     override suspend fun sendFriendRequest(
         token: String,
         body: SendFriendRequestRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.sendFriendRequest(token, body)
             handleResult(response) { it }
@@ -82,7 +82,7 @@ class FriendRepositoryImpl(
     override suspend fun acceptFriendRequest(
         token: String,
         body: AcceptFriendRequestRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.acceptFriendRequest(token, body)
             handleResult(response) { it }
@@ -96,7 +96,7 @@ class FriendRepositoryImpl(
     override suspend fun refuseFriendRequest(
         token: String,
         body: RefuseFriendRequestRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.refuseFriendRequest(token, body)
             handleResult(response) { it }
