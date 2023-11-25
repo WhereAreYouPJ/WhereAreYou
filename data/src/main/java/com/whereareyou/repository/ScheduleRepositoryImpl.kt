@@ -95,7 +95,7 @@ class ScheduleRepositoryImpl(
     override suspend fun modifySchedule(
         token: String,
         body: ModifyScheduleRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.modifySchedule(token, body)
             handleResult(response) { it }
@@ -109,7 +109,7 @@ class ScheduleRepositoryImpl(
     override suspend fun modifyScheduleMember(
         token: String,
         body: ModifyScheduleMemberRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.modifyScheduleMember(token, body)
             handleResult(response) { it }
@@ -123,7 +123,7 @@ class ScheduleRepositoryImpl(
     override suspend fun deleteSchedule(
         token: String,
         body: DeleteScheduleRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return withContext(Dispatchers.IO) {
             val response = dataSource.deleteSchedule(token, body)
             handleResult(response) { it }
