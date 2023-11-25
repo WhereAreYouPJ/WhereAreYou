@@ -35,6 +35,7 @@ import com.whereareyou.repository.SharedPreferencesRepository
 import com.whereareyou.util.CalendarUtil
 import com.whereareyou.util.Coordinate
 import com.whereareyou.util.LocationUtil
+import com.whereareyou.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -115,18 +116,31 @@ class GlobalViewModel @Inject constructor(
     }
 
     fun getToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
+//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+//            if (!task.isSuccessful) {
+//                Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
+//                return@OnCompleteListener
+//            }
+//
+//            val token = task.result
+//            Log.e("GlobalViewModel-token", token)
+//
+//            val msg = token.toString()
+//            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
+//        })
+    }
+
+    private fun checkNetworkState() {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                if (!NetworkManager.checkNetworkState()) {
+                    Log.e("checkNetworkState", "네트워크 연결 안됨")
+                } else {
+                    Log.e("checkNetworkState", "네트워크 연결됨")
+                }
             }
-
-            val token = task.result
-            Log.e("GlobalViewModel-token", token)
-
-            val msg = token.toString()
-            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
-        })
+        }
     }
 
     init {
@@ -134,5 +148,6 @@ class GlobalViewModel @Inject constructor(
         signIn()
         getLocation()
         getToken()
+        checkNetworkState()
     }
 }
