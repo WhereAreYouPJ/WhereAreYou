@@ -10,7 +10,7 @@ class ModifyScheduleMemberUseCase(
     suspend operator fun invoke(
         token: String,
         body: ModifyScheduleMemberRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.modifyScheduleMember(token, body)
     }
 }
