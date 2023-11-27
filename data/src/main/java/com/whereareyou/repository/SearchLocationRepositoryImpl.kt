@@ -1,6 +1,7 @@
 package com.whereareyou.repository
 
 import com.whereareyou.datasource.SearchLocationDataSource
+import com.whereareyou.domain.entity.apimessage.schedule.GetLocationAddressResponse
 import com.whereareyou.domain.entity.schedule.LocationInformation
 import com.whereareyou.domain.repository.SearchLocationRepository
 import com.whereareyou.domain.util.NetworkResult
@@ -14,12 +15,7 @@ class SearchLocationRepositoryImpl(
 
     override suspend fun getLocationAddress(
         query: String
-    ): NetworkResult<List<LocationInformation>> {
-        val response = dataSource.getLocationAddress(query)
-        return withContext(Dispatchers.IO) {
-            handleResult(response) { body ->
-                body.items
-            }
-        }
+    ): NetworkResult<GetLocationAddressResponse> {
+        return handleResult { dataSource.getLocationAddress(query) }
     }
 }
