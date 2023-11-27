@@ -27,10 +27,7 @@ class SignUpRepositoryImpl(
     override suspend fun checkIdDuplicate(
         id: String
     ): NetworkResult<CheckIdDuplicateResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.checkIdDuplicate(id)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.checkIdDuplicate(id) }
     }
 
     /**
@@ -40,10 +37,7 @@ class SignUpRepositoryImpl(
     override suspend fun checkEmailDuplicate(
         email: String
     ): NetworkResult<CheckEmailDuplicateResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.checkEmailDuplicate(email)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.checkEmailDuplicate(email) }
     }
 
     /**
@@ -53,11 +47,7 @@ class SignUpRepositoryImpl(
     override suspend fun authenticateEmail(
         body: AuthenticateEmailRequest
     ): NetworkResult<AuthenticateEmailResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.authenticateEmail(body)
-            Log.e("authenticateEmail", "${response}")
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.authenticateEmail(body) }
     }
 
     /**
@@ -67,10 +57,7 @@ class SignUpRepositoryImpl(
     override suspend fun authenticateEmailCode(
         body: AuthenticateEmailCodeRequest
     ): NetworkResult<AuthenticateEmailCodeResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.authenticateEmailCode(body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.authenticateEmailCode(body) }
     }
 
     /**
@@ -80,9 +67,6 @@ class SignUpRepositoryImpl(
     override suspend fun signUp(
         body: SignUpRequest
     ): NetworkResult<SignUpResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.signUp(body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.signUp(body) }
     }
 }
