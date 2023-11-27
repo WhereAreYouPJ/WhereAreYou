@@ -23,10 +23,7 @@ class LocationRepositoryImpl(
         token: String,
         body: GetUserLocationRequest
     ): NetworkResult<List<UserLocation>> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getUserLocation(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getUserLocation(token, body) }
     }
 
     /**
@@ -37,9 +34,6 @@ class LocationRepositoryImpl(
         token: String,
         body: SendUserLocationRequest
     ): NetworkResult<Boolean> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.sendUserLocation(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.sendUserLocation(token, body) }
     }
 }
