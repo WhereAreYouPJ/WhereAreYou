@@ -36,7 +36,7 @@ class NewLocationViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _locationInformationList.update {
                         if (getLocationAddressResult.data != null) {
-                            getLocationAddressResult.data!!
+                            getLocationAddressResult.data!!.items
                         } else {
                             listOf()
                         }
