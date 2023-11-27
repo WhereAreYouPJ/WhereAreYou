@@ -3,6 +3,8 @@ package com.whereareyou.domain.entity.apimessage.schedule
 import com.google.gson.annotations.SerializedName
 
 data class GetDetailScheduleResponse(
+    @SerializedName("creatorId")
+    val creatorId: String,
     @SerializedName("start")
     val start: String,
     @SerializedName("end")
