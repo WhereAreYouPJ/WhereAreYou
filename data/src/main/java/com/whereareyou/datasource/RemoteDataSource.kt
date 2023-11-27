@@ -101,7 +101,7 @@ class RemoteDataSource(
     suspend fun modifySchedule(
         token: String,
         body: ModifyScheduleRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return scheduleApi.modifySchedule(token, body)
     }
 
@@ -109,7 +109,7 @@ class RemoteDataSource(
     suspend fun modifyScheduleMember(
         token: String,
         body: ModifyScheduleMemberRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return scheduleApi.modifyScheduleMember(token, body)
     }
 
@@ -117,7 +117,7 @@ class RemoteDataSource(
     suspend fun deleteSchedule(
         token: String,
         body: DeleteScheduleRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return scheduleApi.deleteSchedule(token, body)
     }
 
@@ -214,7 +214,7 @@ class RemoteDataSource(
     // 비밀번호 재설정
     suspend fun resetPassword(
         body: ResetPasswordRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return signInApi.resetPassword(body)
     }
 
@@ -230,7 +230,7 @@ class RemoteDataSource(
     suspend fun modifyMyInfo(
         token: String,
         body: ModifyMyInfoRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return signInApi.modifyMyInfo(token, body)
     }
 
@@ -238,7 +238,7 @@ class RemoteDataSource(
     suspend fun deleteMember(
         token: String,
         body: DeleteMemberRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return signInApi.deleteMember(token, body)
     }
 
@@ -271,7 +271,7 @@ class RemoteDataSource(
     suspend fun sendFriendRequest(
         token: String,
         body: SendFriendRequestRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return friendApi.sendFriendRequest(token, body)
     }
 
@@ -279,7 +279,7 @@ class RemoteDataSource(
     suspend fun acceptFriendRequest(
         token: String,
         body: AcceptFriendRequestRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return friendApi.acceptFriendRequest(token, body)
     }
 
@@ -287,7 +287,7 @@ class RemoteDataSource(
     suspend fun refuseFriendRequest(
         token: String,
         body: RefuseFriendRequestRequest
-    ): Response<Void> {
+    ): Response<Unit> {
         return friendApi.refuseFriendRequest(token, body)
     }
 
