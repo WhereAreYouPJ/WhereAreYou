@@ -27,10 +27,7 @@ class FriendRepositoryImpl(
         token: String,
         body: GetFriendIdsListRequest
     ): NetworkResult<GetFriendIdsListResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getFriendIdsList(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getFriendIdsList(token, body) }
     }
 
     /**
@@ -41,10 +38,7 @@ class FriendRepositoryImpl(
         token: String,
         body: GetFriendListRequest
     ): NetworkResult<GetFriendListResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getFriendList(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getFriendList(token, body) }
     }
 
     /**
@@ -55,10 +49,7 @@ class FriendRepositoryImpl(
         token: String,
         memberId: String
     ): NetworkResult<GetFriendRequestListResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getFriendRequestList(token, memberId)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getFriendRequestList(token, memberId) }
     }
 
     /**
@@ -69,10 +60,7 @@ class FriendRepositoryImpl(
         token: String,
         body: SendFriendRequestRequest
     ): NetworkResult<Unit> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.sendFriendRequest(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.sendFriendRequest(token, body) }
     }
 
     /**
@@ -83,10 +71,7 @@ class FriendRepositoryImpl(
         token: String,
         body: AcceptFriendRequestRequest
     ): NetworkResult<Unit> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.acceptFriendRequest(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.acceptFriendRequest(token, body) }
     }
 
     /**
@@ -97,9 +82,6 @@ class FriendRepositoryImpl(
         token: String,
         body: RefuseFriendRequestRequest
     ): NetworkResult<Unit> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.refuseFriendRequest(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.refuseFriendRequest(token, body) }
     }
 }
