@@ -34,55 +34,64 @@ class CalendarViewModel @Inject constructor(
     private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
 
+    // 현재 선택된 년도
     private val _year = MutableStateFlow(0)
     val year: StateFlow<Int> = _year
+    // 현재 선택된 월
     private val _month = MutableStateFlow(0)
     val month: StateFlow<Int> = _month
+    // 현재 선택된 일
     private val _date = MutableStateFlow(0)
     val date: StateFlow<Int> = _date
+    // 현재 선택된 요일
     private val _dayOfWeek = MutableStateFlow(0)
     val dayOfWeek: StateFlow<Int> = _dayOfWeek
+    // 보여지고 있는 달력 상태 (년도 or 월 or 일)
     private val _calendarState = MutableStateFlow(CalendarState.DATE)
     val calendarState: StateFlow<CalendarState> = _calendarState
-
-    // 2023/11/11/3: 년/월/일/일정 개수
+    // 선택된 월의 (년/월/일/일정 개수)정보를 담는 리스트
     private val _currentMonthDateInfo = mutableStateListOf<Schedule>()
     val currentMonthDateInfo: List<Schedule> = _currentMonthDateInfo
-
-    // 일별 일정 간략 정보
+    // 일별 일정 간략 정보 리스트
     private val _currentDateBriefSchedule = mutableStateListOf<BriefSchedule>()
     val currentDateBriefSchedule: List<BriefSchedule> = _currentDateBriefSchedule
 
-    // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다
+    // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
     private fun updateCurrentMonthDateInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
-        viewModelScope.launch(Dispatchers.Default) {
-            var monthlySchedule = emptyList<ScheduleCountByDay>()
+        viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             var currYear: Int
             var currMonth = -1
-            var getMonthlyScheduleResult: NetworkResult<GetMonthlyScheduleResponse>
             for (i in calendarArrList.indices) {
                 if (currMonth != calendarArrList[i].month) {
+                    // 월이 바뀔 경우 다음 월의 일정 정보를 가져온다.
                     currYear = calendarArrList[i].year
                     currMonth = calendarArrList[i].month
-
-                    getMonthlyScheduleResult = getMonthlyScheduleUseCase(
+                    val getMonthlyScheduleResult = getMonthlyScheduleUseCase(
                         accessToken, memberId, currYear, currMonth
                     )
                     when (getMonthlyScheduleResult) {
                         is NetworkResult.Success -> {
-                            if (getMonthlyScheduleResult.data != null) {
-                                monthlySchedule = getMonthlyScheduleResult.data!!.schedules
+                            getMonthlyScheduleResult.data?.let { data ->
+                                for (schedule in data.schedules) {
+                                    for (calendarInfo in calendarArrList) {
+                                        if (calendarInfo.year == _year.value &&
+                                            calendarInfo.month == currMonth &&
+                                            calendarInfo.date == schedule.date
+                                        ) {
+                                            calendarInfo.scheduleCount = schedule.scheduleCount
+                                        }
+                                    }
+                                }
                             }
                         }
                         is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResult.code}, ${getMonthlyScheduleResult.errorData}") }
                         is NetworkResult.Exception -> { Log.e("exception", "exception") }
                     }
                 }
-                calendarArrList[i].scheduleCount = monthlySchedule[calendarArrList[i].date - 1].scheduleCount
             }
             withContext(Dispatchers.Main) {
                 _currentMonthDateInfo.clear()
