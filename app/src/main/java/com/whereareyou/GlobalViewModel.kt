@@ -93,7 +93,7 @@ class GlobalViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 delay(20000)
-                Log.e("GlobalViewModel", "${currentLocation.latitude}, ${currentLocation.longitude}")
+//                Log.e("GlobalViewModel", "${currentLocation.latitude}, ${currentLocation.longitude}")
                 sendUserLocation(currentLocation.latitude, currentLocation.longitude)
             }
         }
@@ -116,18 +116,18 @@ class GlobalViewModel @Inject constructor(
     }
 
     fun getToken() {
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-//            if (!task.isSuccessful) {
-//                Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
-//                return@OnCompleteListener
-//            }
-//
-//            val token = task.result
-//            Log.e("GlobalViewModel-token", token)
-//
-//            val msg = token.toString()
-//            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
-//        })
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+            Log.e("GlobalViewModel-token", token)
+
+            val msg = token.toString()
+            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
+        })
     }
 
     private fun checkNetworkState() {
@@ -135,9 +135,9 @@ class GlobalViewModel @Inject constructor(
             while (true) {
                 delay(1000)
                 if (!NetworkManager.checkNetworkState()) {
-                    Log.e("checkNetworkState", "네트워크 연결 안됨")
+//                    Log.e("checkNetworkState", "네트워크 연결 안됨")
                 } else {
-                    Log.e("checkNetworkState", "네트워크 연결됨")
+//                    Log.e("checkNetworkState", "네트워크 연결됨")
                 }
             }
         }
