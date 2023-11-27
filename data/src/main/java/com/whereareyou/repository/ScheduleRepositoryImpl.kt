@@ -36,10 +36,7 @@ class ScheduleRepositoryImpl(
         year: Int,
         month: Int
     ): NetworkResult<GetMonthlyScheduleResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getMonthlySchedule(token, memberId, year, month)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getMonthlySchedule(token, memberId, year, month) }
     }
 
     /**
@@ -53,10 +50,7 @@ class ScheduleRepositoryImpl(
         month: Int,
         date: Int
     ): NetworkResult<GetDailyBriefScheduleResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getDailyBriefSchedule(token, memberId, year, month, date)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getDailyBriefSchedule(token, memberId, year, month, date) }
     }
 
     /**
@@ -68,10 +62,7 @@ class ScheduleRepositoryImpl(
         memberId: String,
         scheduleId: String
     ): NetworkResult<GetDetailScheduleResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getDetailSchedule(token, memberId, scheduleId)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getDetailSchedule(token, memberId, scheduleId) }
     }
 
     /**
@@ -82,10 +73,7 @@ class ScheduleRepositoryImpl(
         token: String,
         body: AddNewScheduleRequest
     ): NetworkResult<AddNewScheduleResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.addNewSchedule(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.addNewSchedule(token, body) }
     }
 
     /**
@@ -96,10 +84,7 @@ class ScheduleRepositoryImpl(
         token: String,
         body: ModifyScheduleRequest
     ): NetworkResult<Unit> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.modifySchedule(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.modifySchedule(token, body) }
     }
 
     /**
@@ -110,10 +95,7 @@ class ScheduleRepositoryImpl(
         token: String,
         body: ModifyScheduleMemberRequest
     ): NetworkResult<Unit> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.modifyScheduleMember(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.modifyScheduleMember(token, body) }
     }
 
     /**
@@ -124,10 +106,7 @@ class ScheduleRepositoryImpl(
         token: String,
         body: DeleteScheduleRequest
     ): NetworkResult<Unit> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.deleteSchedule(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.deleteSchedule(token, body) }
     }
 
     /**
@@ -138,10 +117,7 @@ class ScheduleRepositoryImpl(
         token: String,
         body: AcceptScheduleRequest
     ): NetworkResult<Boolean> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.acceptSchedule(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.acceptSchedule(token, body) }
     }
 
     /**
@@ -152,10 +128,7 @@ class ScheduleRepositoryImpl(
         token: String,
         body: EndScheduleRequest
     ): NetworkResult<Boolean> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.endSchedule(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.endSchedule(token, body) }
     }
 
     /**
@@ -166,9 +139,6 @@ class ScheduleRepositoryImpl(
         token: String,
         body: CheckArrivalRequest
     ): NetworkResult<Boolean> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.checkArrival(token, body)
-            handleResult(response) { it }
-        }
+        return handleResult{ dataSource.checkArrival(token, body) }
     }
 }
