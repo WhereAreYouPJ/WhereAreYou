@@ -70,12 +70,9 @@ class CalendarViewModel @Inject constructor(
                     // 월이 바뀔 경우 다음 월의 일정 정보를 가져온다.
                     currYear = calendarArrList[i].year
                     currMonth = calendarArrList[i].month
-                    val getMonthlyScheduleResult = getMonthlyScheduleUseCase(
-                        accessToken, memberId, currYear, currMonth
-                    )
-                    when (getMonthlyScheduleResult) {
+                    when (val networkResponse = getMonthlyScheduleUseCase(accessToken, memberId, currYear, currMonth)) {
                         is NetworkResult.Success -> {
-                            getMonthlyScheduleResult.data?.let { data ->
+                            networkResponse.data?.let { data ->
                                 for (schedule in data.schedules) {
                                     for (calendarInfo in calendarArrList) {
                                         if (calendarInfo.year == _year.value &&
@@ -88,7 +85,7 @@ class CalendarViewModel @Inject constructor(
                                 }
                             }
                         }
-                        is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResult.code}, ${getMonthlyScheduleResult.errorData}") }
+                        is NetworkResult.Error -> { Log.e("error", "${networkResponse.code}, ${networkResponse.errorData}") }
                         is NetworkResult.Exception -> { Log.e("exception", "exception") }
                     }
                 }
