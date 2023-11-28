@@ -18,9 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereareyou.R
 import com.whereareyou.data.FriendProvider
+import com.whereareyou.domain.entity.schedule.Friend
 
 @Composable
-fun FriendContent() {
+fun FriendContent(
+    friendsList: List<Friend>
+) {
 //    Row(
 //    ) {
 //        Image(
@@ -32,7 +35,7 @@ fun FriendContent() {
 //        )
 //    }
     LazyColumn() {
-        itemsIndexed(FriendProvider.friendsList) { index, friend ->
+        itemsIndexed(friendsList) { _, friend ->
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp, bottom = 10.dp),
@@ -50,8 +53,8 @@ fun FriendContent() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FriendContentPreview() {
-    FriendContent()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FriendContentPreview() {
+//    FriendContent()
+//}
