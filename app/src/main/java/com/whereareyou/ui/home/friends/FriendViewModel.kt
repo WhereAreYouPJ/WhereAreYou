@@ -62,11 +62,15 @@ class FriendViewModel @Inject constructor(
             when (val networkResponse = getFriendListUseCase(accessToken, getFriendListRequest)) {
                 is NetworkResult.Success -> {
                     networkResponse.data?.let { data ->
+                        val sortedList = data.friendsList.sortedBy { it.name }
+                        for (i in sortedList.indices) {
+                            sortedList[i].number = i
+                        }
                         friendsList.clear()
-                        friendsList.addAll(data.friendsList)
+                        friendsList.addAll(sortedList)
                         FriendProvider.friendsList.clear()
-                        FriendProvider.friendsList.addAll(data.friendsList)
-                        Log.e("getFriendIds Success", "${data.friendsList}")
+                        FriendProvider.friendsList.addAll(sortedList)
+                        Log.e("getFriendIds Success", "${sortedList}")
                     }
                 }
                 is NetworkResult.Error -> { Log.e("error", "${networkResponse.code}, ${networkResponse.errorData}") }
