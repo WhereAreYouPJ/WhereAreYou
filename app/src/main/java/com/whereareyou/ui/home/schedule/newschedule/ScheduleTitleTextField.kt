@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,30 +32,24 @@ fun ScheduleTitleTextField(
     updateTitle: (String) -> Unit,
     clearTitle: () -> Unit
 ) {
-    if (title == "") updateTitle("제목을 입력하세요")
     BasicTextField(
         modifier = Modifier
             .onFocusChanged {
-                if (it.isFocused && title == "제목을 입력하세요") { updateTitle("") }
-                else if (!it.isFocused && title == "") { updateTitle("제목을 입력하세요") }
-                Log.e("onFocusChanged", "${it}")
+//                if (it.isFocused && title == "제목을 입력하세요") { updateTitle("") }
+//                else if (!it.isFocused && title == "") { updateTitle("제목을 입력하세요") }
+//                Log.e("onFocusChanged", "${it}")
             },
         value = title,
         onValueChange = {
-            if (title == "제목을 입력하세요") {
-                Log.e("onValueChange", "${it}, $title")
-                updateTitle("")
-            } else {
-                updateTitle(it)
-            }
+            updateTitle(it)
         },
-        textStyle = TextStyle(fontSize = 30.sp),
+        textStyle = TextStyle(fontSize = 30.sp, color = Color(0xFF505050)),
         singleLine = true,
         decorationBox = {
             Box(
                 modifier = Modifier
 //                    .fillMaxWidth()
-                    .width(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Max)
                     .background(color = Color.Cyan)
                     .drawBehind {
                         val borderSize = 1.dp.toPx()
@@ -68,6 +63,13 @@ fun ScheduleTitleTextField(
                 contentAlignment = Alignment.CenterStart
             ) {
                 it()
+                if (title.isEmpty()) {
+                    Text(
+                        text = "제목을 입력하세요",
+                        fontSize = 30.sp,
+                        color = Color(0xFF505050)
+                    )
+                }
 //                Box(
 //                    modifier = Modifier,
 //                        .fillMaxWidth(),
