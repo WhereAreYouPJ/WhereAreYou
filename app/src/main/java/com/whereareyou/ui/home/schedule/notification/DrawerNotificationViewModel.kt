@@ -5,11 +5,10 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyou.data.Friend
 import com.whereareyou.domain.entity.apimessage.friend.AcceptFriendRequestRequest
-import com.whereareyou.domain.entity.apimessage.friend.GetFriendRequestListResponse
 import com.whereareyou.domain.entity.apimessage.friend.RefuseFriendRequestRequest
 import com.whereareyou.domain.entity.friend.FriendRequest
+import com.whereareyou.domain.entity.schedule.Friend
 import com.whereareyou.domain.usecase.friend.AcceptFriendRequestUseCase
 import com.whereareyou.domain.usecase.friend.GetFriendRequestListUseCase
 import com.whereareyou.domain.usecase.friend.RefuseFriendRequestUseCase
