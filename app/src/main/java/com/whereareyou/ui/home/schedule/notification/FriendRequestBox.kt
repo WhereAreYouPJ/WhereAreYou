@@ -5,52 +5,84 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
+import com.whereareyou.R
+import com.whereareyou.domain.entity.friend.FriendRequest
+import com.whereareyou.domain.entity.schedule.Friend
 
 @Composable
 fun FriendRequestBox(
-    name: String,
+    friendRequest: Pair<FriendRequest, Friend>,
+    acceptFriendRequest: () -> Unit,
+    refuseFriendRequest: () -> Unit
 ) {
-    Box(
+    Row(
         modifier = Modifier
-            .width(200.dp)
-            .height(100.dp)
-            .background(
-                color = Color(0xFFCE93D8),
-                shape = RoundedCornerShape(8.dp)
-            )
+            .padding(10.dp)
+            .fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        GlideImage(
+            modifier = Modifier
+                .fillMaxHeight()
+                .clip(shape = RoundedCornerShape(50)),
+            imageModel = {
+                friendRequest.second.profileImgUrl ?: R.drawable.account_circle_fill0_wght100_grad0_opsz24
+            },
+            imageOptions = ImageOptions(
+                contentScale = ContentScale.FillHeight,
+            )
+        )
         Column() {
             Text(
-                text = name
+                text = friendRequest.second.name,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = friendRequest.second.memberId,
+                fontSize = 16.sp,
+                color = Color(0xFF999999)
             )
             Row() {
-                ClickableBox(color = Color.Blue, text = "수락") {}
-                ClickableBox(color = Color.Red, text = "거절") {}
+                ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color.White) { acceptFriendRequest() }
+                Spacer(modifier = Modifier.width(10.dp))
+                ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseFriendRequest() }
             }
         }
     }
 }
 
 @Composable
-fun ClickableBox(
+fun RowScope.ClickableBox(
     color: Color,
     text: String,
+    textColor: Color = Color.Black,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .width(50.dp)
-            .height(30.dp)
+            .fillMaxHeight()
+            .weight(1f)
             .background(
                 color = color,
                 shape = RoundedCornerShape(8.dp)
@@ -59,7 +91,10 @@ fun ClickableBox(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = text
+            text = text,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            color = textColor
         )
     }
 }
@@ -68,6 +103,7 @@ fun ClickableBox(
 @Composable
 fun FriendRequestBoxPreview() {
     FriendRequestBox(
-        name = "이서영"
+        FriendRequest("", "") to Friend(0, "홍길동", "hong", null),
+        {}, {}
     )
 }

@@ -3,8 +3,8 @@ package com.whereareyou.ui.home.schedule.newschedule
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.whereareyou.data.Friend
 import com.whereareyou.data.FriendProvider
+import com.whereareyou.domain.entity.schedule.Friend
 import com.whereareyou.util.SoundSearcherUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

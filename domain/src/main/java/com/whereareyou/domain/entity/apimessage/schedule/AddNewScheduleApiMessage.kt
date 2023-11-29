@@ -15,6 +15,10 @@ data class AddNewScheduleRequest(
     val place: String,
     @SerializedName("memo")
     val memo: String,
+    @SerializedName("destinationLatitude")
+    val destinationLatitude: Double,
+    @SerializedName("destinationLongitude")
+    val destinationLongitude: Double,
     @SerializedName("memberIdList")
     val memberIdList: List<String>
 )

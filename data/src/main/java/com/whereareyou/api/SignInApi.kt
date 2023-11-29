@@ -49,7 +49,7 @@ interface SignInApi {
     @POST("member/resetPassword")
     suspend fun resetPassword(
         @Body body: ResetPasswordRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 회원 상세 정보
     @GET("member/details")
@@ -63,12 +63,12 @@ interface SignInApi {
     suspend fun modifyMyInfo(
         @Header("Authorization") token: String,
         @Body body: ModifyMyInfoRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 회원정보 삭제
     @POST("member/deleteMember")
     suspend fun deleteMember(
         @Header("Authorization") token: String,
         @Body body: DeleteMemberRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 }

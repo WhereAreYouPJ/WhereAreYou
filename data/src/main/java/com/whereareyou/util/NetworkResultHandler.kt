@@ -10,16 +10,16 @@ import java.text.SimpleDateFormat
 class EmptyBody : Any()
 
 interface NetworkResultHandler {
-    suspend fun <T : Any, K : Any> handleResult(
-        response: Response<T>,
-        processResponse: (T) -> K
-    ): NetworkResult<K> {
+    suspend fun <T:Any> handleResult(
+        responseFunction: suspend () -> Response<T>
+    ): NetworkResult<T> {
         return try {
+            val response = responseFunction()
             if (response.isSuccessful) {
                 if (response.body() == null) {
                     NetworkResult.Success(response.code(), null)
                 } else {
-                    NetworkResult.Success(response.code(), processResponse(response.body()!!))
+                    NetworkResult.Success(response.code(), response.body())
                 }
             } else {
                 val gson = GsonBuilder().create()

@@ -240,13 +240,10 @@ class SignViewModel @Inject constructor(
             Log.e("checkEmailCode",body.toString())
 
             val result = authenticateEmailCodeUseCase(body)
-            Log.e("checkEmailCode",result.toString())
-            /*
             when (result) {
                 is NetworkResult.Success -> {
                     // 이메일 코드가 올바를 때
-                    Log.e("checkEmailCode1", result.data!!.message) // 로그찍기
-
+                    Log.e("checkEmailCode", result.toString())
                 }
 
                 is NetworkResult.Error -> {
@@ -258,7 +255,6 @@ class SignViewModel @Inject constructor(
                 }
             }
 
-             */
         }
     }
 
@@ -271,7 +267,7 @@ class SignViewModel @Inject constructor(
             val body = ResetPasswordRequest(userId, password, checkPassword)
             Log.d("resetPassword",body.toString())
 
-           Log.d("resetpassword",resetPasswordUseCase(body).toString())
+            Log.d("resetpassword",resetPasswordUseCase(body).toString())
 /*
             when (resetPasswordResult) {
                 is NetworkResult.Success -> {
@@ -367,15 +363,10 @@ class SignViewModel @Inject constructor(
 
             val result = authenticateEmailUseCase(body)
             Log.e("test2",result.toString())
-
-
-
-            /*
             when (result) {
                 is NetworkResult.Success -> {
                     // 이메일이 성공적으로 인증되었을 때
-                    Log.e("test3", result.data!!.message) // 로그찍기
-                    Log.e("test4","성공")
+                    Log.e("success","${result.code}, ${result.data}")
                 }
 
                 is NetworkResult.Error -> {
@@ -392,7 +383,7 @@ class SignViewModel @Inject constructor(
 
                     Log.e("authenticateEmail", "${result.e.message}")
                 }
-            }*/
+            }
         }
     }
 

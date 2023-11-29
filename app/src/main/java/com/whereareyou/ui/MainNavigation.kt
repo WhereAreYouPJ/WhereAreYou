@@ -1,5 +1,6 @@
 package com.whereareyou.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,23 +30,26 @@ fun MainNavigation(
     navController: NavHostController = rememberNavController(),
     viewModel: GlobalViewModel = hiltViewModel()
 ) {
+    Log.e("MainNav", "MainNav")
     NavHost(
         modifier = Modifier
             .fillMaxSize(),
         navController = navController,
-        startDestination = Constants.ROUTE_MAIN_HOME
+        startDestination = Constants.ROUTE_MAIN_SPLASH
     ) {
-
+        // 스플래시 화면
         composable(
             route = Constants.ROUTE_MAIN_SPLASH
         ) {
             SplashScreen(
                 checkIsSignedIn = { viewModel.checkIsSignedIn() },
                 moveToSignInScreen = {
+                    navController.popBackStack()
 //                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
-                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+                    navController.navigate(Constants.ROUTE_MAIN_START)
                 },
                 moveToMainScreen = {
+                    navController.popBackStack()
 //                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
                     navController.navigate(Constants.ROUTE_MAIN_HOME)
                 }
@@ -93,42 +97,88 @@ fun MainNavigation(
             AddFriendScreen()
         }
 
+        // 회원가입 화면
         composable(
             route = Constants.ROUTE_MAIN_SIGNUP
         ) {
             SignUpScreen(navController = navController)
         }
+
+        // 로그인 화면
         composable(route=Constants.ROUTE_MAIN_LOGIN){
-            LoginScreen(navController = navController)
+            LoginScreen(
+                moveToStartScreen = { navController.navigate(Constants.ROUTE_MAIN_START) },
+                moveToMainHomeScreen = { navController.navigate(Constants.ROUTE_MAIN_HOME) },
+                moveToFindIdScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDID) },
+                moveToFindPWScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDPW) },
+                moveToBackScreen = { navController.popBackStack() }
+            )
         }
+
+        // 첫화면
         composable(route=Constants.ROUTE_MAIN_START){
-            StartScreen(navController = navController)
+            StartScreen(
+                moveToSignUpScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNUP) },
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) }
+            )
         }
 
-
+        // 아이디 찾기(왼쪽)
         composable(route=Constants.ROUTE_MAIN_FINDID){
-            Tablayout(navController = navController,0)
+            Tablayout(
+                moveToSignInScreen = {
+//                    Log.e("moveToSignInScreen", "moveToSignInScreen")
+                    navController.popBackStack()
+                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                },
+                num = 0,
+                navController = navController
+            )
         }
+        // 아이디 찾기(오른쪽)
         composable(route=Constants.ROUTE_MAIN_FINDIDSUCCESS){
-            Tablayout(navController = navController,2)
+            Tablayout(
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) },
+                num = 2,
+                navController = navController
+            )
         }
+
+        // 비밀번호 재설정(왼쪽)
         composable(route=Constants.ROUTE_MAIN_FINDPW){
-            Tablayout(navController = navController,1)
+            Tablayout(
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) },
+                num = 1,
+                navController = navController
+            )
         }
+
+        // 비밀번호 재설정(오른쪽)
         composable(route=Constants.ROUTE_MAIN_FINDPWSUCCESS){
-            Tablayout(navController = navController,3)
+            Tablayout(
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) },
+                num = 3,
+                navController = navController
+            )
         }
 
 
+        // 약관동의
         composable(route=Constants.ROUTE_MAIN_AGREE){
             AgreeScreen(navController = navController)
         }
+
+        // 회원가입 완료
         composable(route=Constants.ROUTE_MAIN_SUCCESS){
             SuccessScreen(navController = navController)
         }
+
+        // 비밀번호 변경 완료
         composable(route=Constants.ROUTE_MAIN_SUCCESSPW){
             SuccessScreenPw(navController = navController)
         }
+
+
         composable(route=Constants.ROUTE_TEST){
             test()
         }

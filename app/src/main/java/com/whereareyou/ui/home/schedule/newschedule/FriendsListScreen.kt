@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyou.R
-import com.whereareyou.data.Friend
 import com.whereareyou.data.GlobalValue
+import com.whereareyou.domain.entity.schedule.Friend
 
 @Composable
 fun FriendsListScreen(

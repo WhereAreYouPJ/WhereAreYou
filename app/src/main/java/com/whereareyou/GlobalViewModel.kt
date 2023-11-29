@@ -35,6 +35,7 @@ import com.whereareyou.repository.SharedPreferencesRepository
 import com.whereareyou.util.CalendarUtil
 import com.whereareyou.util.Coordinate
 import com.whereareyou.util.LocationUtil
+import com.whereareyou.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -92,7 +93,7 @@ class GlobalViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 delay(20000)
-                Log.e("GlobalViewModel", "${currentLocation.latitude}, ${currentLocation.longitude}")
+//                Log.e("GlobalViewModel", "${currentLocation.latitude}, ${currentLocation.longitude}")
                 sendUserLocation(currentLocation.latitude, currentLocation.longitude)
             }
         }
@@ -129,10 +130,24 @@ class GlobalViewModel @Inject constructor(
         })
     }
 
+    private fun checkNetworkState() {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000)
+                if (!NetworkManager.checkNetworkState()) {
+//                    Log.e("checkNetworkState", "네트워크 연결 안됨")
+                } else {
+//                    Log.e("checkNetworkState", "네트워크 연결됨")
+                }
+            }
+        }
+    }
+
     init {
         locationUtil.getCurrentLocation(latLng = currentLocation)
         signIn()
         getLocation()
         getToken()
+        checkNetworkState()
     }
 }

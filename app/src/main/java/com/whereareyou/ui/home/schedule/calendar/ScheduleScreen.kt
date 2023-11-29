@@ -67,7 +67,13 @@ fun ScheduleScreen(
 ) {
     // 사이드바가 오른쪽에서 열리게 하기 위한 Rtl
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val drawerState = rememberDrawerState(
+            initialValue = DrawerValue.Closed,
+            confirmStateChange = {
+//                notificationViewModel.loadFriendRequests()
+                true
+            }
+        )
         ModalNavigationDrawer(
             drawerContent = { DrawerNotification() },
             drawerState = drawerState,
@@ -85,8 +91,7 @@ fun ScheduleScreen(
                     // 상단바
                     TopBar(
                         drawerState = drawerState,
-                        bottomContentState = bottomContentState,
-                        onNotificationClicked = {}
+                        bottomContentState = bottomContentState
                     )
                     // 달력 뷰
                     CalendarContent(bottomContentState)

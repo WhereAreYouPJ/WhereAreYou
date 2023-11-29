@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyou.R
 import com.whereareyou.data.ViewType
-import com.whereareyou.ui.home.friends.CommunityScreen
+import com.whereareyou.ui.home.friends.FriendScreen
 import com.whereareyou.ui.home.mypage.MyPageScreen
 import com.whereareyou.ui.home.schedule.calendar.ScheduleScreen
 import kotlinx.coroutines.flow.emptyFlow
@@ -67,7 +67,7 @@ fun HomeScreen(
                 )
             }
             ViewType.Friends -> {
-                CommunityScreen(
+                FriendScreen(
                     paddingValues = it,
                     moveToAddFriendScreen = moveToAddFriendScreen,
                     moveToAddGroupScreen = moveToAddGroupScreen

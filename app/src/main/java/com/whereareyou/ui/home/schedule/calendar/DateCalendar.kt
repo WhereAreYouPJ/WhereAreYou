@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyou.data.GlobalValue
@@ -61,6 +62,10 @@ fun DateCalendar(
                                 4 -> "목"
                                 5 -> "금"
                                 else -> "토"
+                            },
+                            color = when (i) {
+                                0 -> Color.Red
+                                else -> Color.Black
                             }
                         )
                     }
@@ -93,7 +98,11 @@ fun DateCalendar(
                                 scheduleNumber = currMonthCalendarInfo[i + date * 7].scheduleCount,
                                 isSelected = selectedYear == currMonthCalendarInfo[i + date * 7].year &&
                                         selectedDate == currMonthCalendarInfo[i + date * 7].date &&
-                                        selectedMonth == currMonthCalendarInfo[i + date * 7].month
+                                        selectedMonth == currMonthCalendarInfo[i + date * 7].month,
+                                textColor = when (i) {
+                                    0 -> Color.Red
+                                    else -> Color.Black
+                                }
                             )
                         }
                     }

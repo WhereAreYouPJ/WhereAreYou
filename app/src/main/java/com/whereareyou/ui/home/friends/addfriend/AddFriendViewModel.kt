@@ -68,7 +68,7 @@ class AddFriendViewModel @Inject constructor(
                     }
                     Log.e("error", "${networkResult.code}, ${networkResult.errorData}")
                 }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Exception -> { Log.e("exception", "${networkResult.e.printStackTrace()}") }
             }
         }
     }

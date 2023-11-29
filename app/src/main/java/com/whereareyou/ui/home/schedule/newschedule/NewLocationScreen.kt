@@ -38,7 +38,7 @@ import com.whereareyou.data.GlobalValue
 
 @Composable
 fun NewLocationScreen(
-    updateDestinationInformation: (String, String) -> Unit,
+    updateDestinationInformation: (String, String, Double, Double) -> Unit,
     moveToNewScheduleScreen: () -> Unit,
     moveToMapScreen: () -> Unit,
     viewModel: NewLocationViewModel = hiltViewModel()
@@ -140,7 +140,9 @@ fun NewLocationScreen(
                         .fillMaxWidth()
                         .height(80.dp)
                         .clickable {
-                            updateDestinationInformation(item.title, item.roadAddress)
+                            val lat = (item.mapy.substring(0 until item.mapy.length - 7) + "." + item.mapy.substring(item.mapy.length - 7 until item.mapy.length)).toDouble()
+                            val lng = (item.mapx.substring(0 until item.mapx.length - 7) + "." + item.mapx.substring(item.mapx.length - 7 until item.mapx.length)).toDouble()
+                            updateDestinationInformation(item.title, item.roadAddress, lat, lng)
                             moveToNewScheduleScreen()
                         },
                     contentAlignment = Alignment.CenterStart
@@ -149,7 +151,9 @@ fun NewLocationScreen(
                         modifier = Modifier
                             .padding(start = 20.dp),
                         text = item.title.replace("<b>", "").replace("</b>", "") +
-                                "\n${item.roadAddress}"
+                                "\n${item.roadAddress}" +
+                                "\n${(item.mapx.substring(0 until item.mapx.length - 7) + "." + item.mapx.substring(item.mapx.length - 7 until item.mapx.length)).toDouble()}" +
+                                "\n${(item.mapy.substring(0 until item.mapy.length - 7) + "." + item.mapy.substring(item.mapy.length - 7 until item.mapy.length)).toDouble()}"
                     )
                 }
                 Spacer(

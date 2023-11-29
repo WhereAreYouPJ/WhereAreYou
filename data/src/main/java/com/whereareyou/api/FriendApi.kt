@@ -43,21 +43,21 @@ interface FriendApi {
     suspend fun sendFriendRequest(
         @Header("Authorization") token: String,
         @Body body: SendFriendRequestRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 친구 수락
     @POST("friend/accept")
     suspend fun acceptFriendRequest(
         @Header("Authorization") token: String,
         @Body body: AcceptFriendRequestRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 친구 거절
     @POST("friend/refuse")
     suspend fun refuseFriendRequest(
         @Header("Authorization") token: String,
         @Body body: RefuseFriendRequestRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 친구 삭제
 

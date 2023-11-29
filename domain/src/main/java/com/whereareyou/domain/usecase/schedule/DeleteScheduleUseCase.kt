@@ -10,7 +10,7 @@ class DeleteScheduleUseCase(
     suspend operator fun invoke(
         token: String,
         body: DeleteScheduleRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.deleteSchedule(token, body)
     }
 }

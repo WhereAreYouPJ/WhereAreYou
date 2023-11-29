@@ -10,5 +10,5 @@ data class GetMemberDetailsResponse(
     @SerializedName("email")
     val email: String,
     @SerializedName("profileImage")
-    val profileImage: String
+    val profileImage: String?
 )

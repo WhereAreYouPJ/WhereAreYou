@@ -5,6 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +18,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.CameraPositionState
+import com.naver.maps.map.compose.CircleOverlay
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
@@ -48,9 +53,11 @@ fun UserMapScreen(
     BackHandler {
         moveToDetailScheduleScreen()
     }
-    Text(text = "")
+//    Text(text = "")
     val userInfos = viewModel.userInfos.collectAsState().value
     val initLocation = viewModel.myLocation.collectAsState().value
+    val destinationLatitude = viewModel.destinationLatitude.collectAsState().value
+    val destinationLongitude = viewModel.destinationLongitude.collectAsState().value
     val cameraPositionState = rememberCameraPositionState {
         this.position = CameraPosition(
             LatLng(initLocation.latitude, initLocation.longitude),
@@ -73,6 +80,7 @@ fun UserMapScreen(
             )
         )
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -86,6 +94,23 @@ fun UserMapScreen(
             properties = mapProperties,
             uiSettings = mapUiSettings
         ) {
+            CircleOverlay(
+                center = LatLng(
+                    destinationLatitude,
+                    destinationLongitude
+                ),
+                color = Color(0x22FF0000),
+                radius = 300.0
+            )
+            Marker(
+                state = rememberMarkerState(
+                    position = LatLng(
+                        destinationLatitude,
+                        destinationLongitude
+                    )
+                ),
+                captionText = "목적지"
+            )
             for (info in userInfos) {
                 if (info.longitude != null && info.latitude != null) {
                     Marker(
@@ -101,20 +126,58 @@ fun UserMapScreen(
                 }
             }
         }
+
+        // 유저 선택 버튼
         Box(
             modifier = Modifier
                 .padding(end = 40.dp, bottom = 40.dp)
-                .clip(
-                    RoundedCornerShape(50)
-                )
+                .clip(shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
                 .width(80.dp)
                 .height(40.dp)
                 .background(
                     color = Color(0xffffd97e),
-                    shape = RoundedCornerShape(50)
+                    shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f)
                 )
-                .clickable { isUserListShowing = !isUserListShowing }
+                .clickable { isUserListShowing = !isUserListShowing },
+            contentAlignment = Alignment.Center
+        ) {
+            Text("친구")
+        }
+        Box(
+            modifier = Modifier
+                .padding(end = 120.dp, bottom = 40.dp)
+                .width(1.dp)
+                .height(40.dp)
+                .background(Color.Black)
         )
+        // 목적지 버튼
+        Box(
+            modifier = Modifier
+                .padding(end = 121.dp, bottom = 40.dp)
+                .clip(shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f))
+                .width(80.dp)
+                .height(40.dp)
+                .background(
+                    color = Color(0xffffd97e),
+                    shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f)
+                )
+                .clickable {
+                    isUserListShowing = false
+                    cameraPositionState.position = CameraPosition(
+                        LatLng(
+                            destinationLatitude,
+                            destinationLongitude
+                        ),
+                        NaverMapConstants.DefaultCameraPosition.zoom,
+                        0.0,
+                        0.0
+                    )
+
+                },
+                contentAlignment = Alignment.Center
+        ) {
+            Text("목적지")
+        }
         if (isUserListShowing) {
             UserList(cameraPositionState)
         }

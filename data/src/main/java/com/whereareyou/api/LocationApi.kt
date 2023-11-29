@@ -1,22 +1,22 @@
 package com.whereareyou.api
 
+import com.whereareyou.domain.entity.apimessage.location.GetUserLocationRequest
 import com.whereareyou.domain.entity.apimessage.location.GetUserLocationResponse
 import com.whereareyou.domain.entity.apimessage.location.SendUserLocationRequest
+import com.whereareyou.domain.entity.apimessage.location.UserLocation
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
-import retrofit2.http.Query
 
 interface LocationApi {
 
     // 사용자 실시간 위도 경도
-    @GET("info")
+    @POST("info/realTime")
     suspend fun getUserLocation(
         @Header("Authorization") token: String,
-        @Query("memberId") memberId: String
-    ): Response<GetUserLocationResponse>
+        @Body body: GetUserLocationRequest
+    ): Response<List<UserLocation>>
 
     // 사용자 위도 경도
     @POST("info")

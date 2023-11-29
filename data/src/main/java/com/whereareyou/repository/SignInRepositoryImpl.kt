@@ -39,8 +39,7 @@ class SignInRepositoryImpl(
     override suspend fun signIn(
         body: SignInRequest
     ): NetworkResult<SignInResponse> {
-        val response = dataSource.signIn(body)
-        return handleResult(response) { it }
+        return handleResult { dataSource.signIn(body) }
     }
 
     /**
@@ -94,10 +93,7 @@ class SignInRepositoryImpl(
     override suspend fun reissueToken(
         body: ReissueTokenRequest
     ): NetworkResult<ReissueTokenResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.reissueToken(body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.reissueToken(body) }
     }
 
     /**
@@ -107,10 +103,7 @@ class SignInRepositoryImpl(
     override suspend fun findId(
         body: FindIdRequest
     ): NetworkResult<FindIdResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.findId(body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.findId(body) }
     }
 
     /**
@@ -120,10 +113,7 @@ class SignInRepositoryImpl(
     override suspend fun verifyPasswordResetCode(
         body: VerifyPasswordResetCodeRequest
     ): NetworkResult<VerifyPasswordResetCodeResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.verifyPasswordResetCode(body)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.verifyPasswordResetCode(body) }
     }
 
     /**
@@ -132,11 +122,8 @@ class SignInRepositoryImpl(
      */
     override suspend fun resetPassword(
         body: ResetPasswordRequest
-    ): NetworkResult<Nothing> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.resetPassword(body)
-            handleResult(response) { it }
-        }
+    ): NetworkResult<Unit> {
+        return handleResult { dataSource.resetPassword(body) }
     }
 
 
@@ -148,10 +135,7 @@ class SignInRepositoryImpl(
         token: String,
         memberId: String
     ): NetworkResult<GetMemberDetailsResponse> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.getMemberDetails(token, memberId)
-            handleResult(response) { it }
-        }
+        return handleResult { dataSource.getMemberDetails(token, memberId) }
     }
 
     /**
@@ -161,11 +145,8 @@ class SignInRepositoryImpl(
     override suspend fun modifyMyInfo(
         token: String,
         body: ModifyMyInfoRequest
-    ): NetworkResult<Nothing> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.modifyMyInfo(token, body)
-            handleResult(response) { it }
-        }
+    ): NetworkResult<Unit> {
+        return handleResult { dataSource.modifyMyInfo(token, body) }
     }
 
     /**
@@ -175,10 +156,7 @@ class SignInRepositoryImpl(
     override suspend fun deleteMember(
         token: String,
         body: DeleteMemberRequest
-    ): NetworkResult<Nothing> {
-        return withContext(Dispatchers.IO) {
-            val response = dataSource.deleteMember(token, body)
-            handleResult(response) { it }
-        }
+    ): NetworkResult<Unit> {
+        return handleResult { dataSource.deleteMember(token, body) }
     }
 }

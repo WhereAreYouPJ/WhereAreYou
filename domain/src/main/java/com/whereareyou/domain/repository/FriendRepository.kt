@@ -34,19 +34,19 @@ interface FriendRepository {
     suspend fun sendFriendRequest(
         token: String,
         body: SendFriendRequestRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 친구 수락
     suspend fun acceptFriendRequest(
         token: String,
         body: AcceptFriendRequestRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 친구 거절
     suspend fun refuseFriendRequest(
         token: String,
         body: RefuseFriendRequestRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 친구 삭제
 }

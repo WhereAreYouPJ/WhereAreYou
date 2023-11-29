@@ -1,7 +1,6 @@
 package com.whereareyou.datasource
 
 import com.whereareyou.api.FriendApi
-import com.whereareyou.api.GroupApi
 import com.whereareyou.api.LocationApi
 import com.whereareyou.api.ScheduleApi
 import com.whereareyou.api.SignInApi
@@ -14,8 +13,10 @@ import com.whereareyou.domain.entity.apimessage.friend.GetFriendListResponse
 import com.whereareyou.domain.entity.apimessage.friend.GetFriendRequestListResponse
 import com.whereareyou.domain.entity.apimessage.friend.RefuseFriendRequestRequest
 import com.whereareyou.domain.entity.apimessage.friend.SendFriendRequestRequest
+import com.whereareyou.domain.entity.apimessage.location.GetUserLocationRequest
 import com.whereareyou.domain.entity.apimessage.location.GetUserLocationResponse
 import com.whereareyou.domain.entity.apimessage.location.SendUserLocationRequest
+import com.whereareyou.domain.entity.apimessage.location.UserLocation
 import com.whereareyou.domain.entity.apimessage.schedule.AcceptScheduleRequest
 import com.whereareyou.domain.entity.apimessage.schedule.AddNewScheduleRequest
 import com.whereareyou.domain.entity.apimessage.schedule.AddNewScheduleResponse
@@ -100,7 +101,7 @@ class RemoteDataSource(
     suspend fun modifySchedule(
         token: String,
         body: ModifyScheduleRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return scheduleApi.modifySchedule(token, body)
     }
 
@@ -108,7 +109,7 @@ class RemoteDataSource(
     suspend fun modifyScheduleMember(
         token: String,
         body: ModifyScheduleMemberRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return scheduleApi.modifyScheduleMember(token, body)
     }
 
@@ -116,7 +117,7 @@ class RemoteDataSource(
     suspend fun deleteSchedule(
         token: String,
         body: DeleteScheduleRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return scheduleApi.deleteSchedule(token, body)
     }
 
@@ -213,7 +214,7 @@ class RemoteDataSource(
     // 비밀번호 재설정
     suspend fun resetPassword(
         body: ResetPasswordRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return signInApi.resetPassword(body)
     }
 
@@ -229,7 +230,7 @@ class RemoteDataSource(
     suspend fun modifyMyInfo(
         token: String,
         body: ModifyMyInfoRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return signInApi.modifyMyInfo(token, body)
     }
 
@@ -237,7 +238,7 @@ class RemoteDataSource(
     suspend fun deleteMember(
         token: String,
         body: DeleteMemberRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return signInApi.deleteMember(token, body)
     }
 
@@ -270,7 +271,7 @@ class RemoteDataSource(
     suspend fun sendFriendRequest(
         token: String,
         body: SendFriendRequestRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return friendApi.sendFriendRequest(token, body)
     }
 
@@ -278,7 +279,7 @@ class RemoteDataSource(
     suspend fun acceptFriendRequest(
         token: String,
         body: AcceptFriendRequestRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return friendApi.acceptFriendRequest(token, body)
     }
 
@@ -286,7 +287,7 @@ class RemoteDataSource(
     suspend fun refuseFriendRequest(
         token: String,
         body: RefuseFriendRequestRequest
-    ): Response<Nothing> {
+    ): Response<Unit> {
         return friendApi.refuseFriendRequest(token, body)
     }
 
@@ -300,9 +301,9 @@ class RemoteDataSource(
     // 사용자 실시간 위도 경도
     suspend fun getUserLocation(
         token: String,
-        memberId: String
-    ): Response<GetUserLocationResponse> {
-        return locationApi.getUserLocation(token, memberId)
+        body: GetUserLocationRequest
+    ): Response<List<UserLocation>> {
+        return locationApi.getUserLocation(token, body)
     }
 
     // 사용자 위도 경도

@@ -52,19 +52,19 @@ interface ScheduleRepository {
     suspend fun modifySchedule(
         token: String,
         body: ModifyScheduleRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 일정 멤버 수정
     suspend fun modifyScheduleMember(
         token: String,
         body: ModifyScheduleMemberRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 일정 삭제
     suspend fun deleteSchedule(
         token: String,
         body: DeleteScheduleRequest
-    ): NetworkResult<Nothing>
+    ): NetworkResult<Unit>
 
     // 일정 수락
     suspend fun acceptSchedule(

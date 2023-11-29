@@ -60,21 +60,21 @@ interface ScheduleApi {
     suspend fun modifySchedule(
         @Header("Authorization") token: String,
         @Body body: ModifyScheduleRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 일정 멤버 수정
     @PUT("memberschedule")
     suspend fun modifyScheduleMember(
         @Header("Authorization") token: String,
         @Body body: ModifyScheduleMemberRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 일정 삭제
     @DELETE("schedule")
     suspend fun deleteSchedule(
         @Header("Authorization") token: String,
         @Body body: DeleteScheduleRequest
-    ): Response<Nothing>
+    ): Response<Unit>
 
     // 일정 수락
     @PUT("schedule/accept")

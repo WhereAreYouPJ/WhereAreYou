@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.whereareyou.domain.entity.apimessage.location.GetUserLocationRequest
 import com.whereareyou.domain.usecase.location.GetUserLocationUseCase
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
@@ -36,16 +37,24 @@ class DetailScheduleViewModel @Inject constructor(
         _screenState.update { state }
     }
 
+    private val _scheduleId = MutableStateFlow<String?>(null)
+    val scheduleId: StateFlow<String?> = _scheduleId
+    private val _creatorId = MutableStateFlow<String>("")
+    val creatorId: StateFlow<String> = _creatorId
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title
-    private val _start = MutableStateFlow("")
-    val start: StateFlow<String> = _start
-    private val _end = MutableStateFlow("")
-    val end: StateFlow<String> = _end
+    private val _startTime = MutableStateFlow("")
+    val startTime: StateFlow<String> = _startTime
+    private val _endTime = MutableStateFlow("")
+    val endTime: StateFlow<String> = _endTime
     private val _place = MutableStateFlow("")
     val place: StateFlow<String> = _place
     private val _memo = MutableStateFlow("")
     val memo: StateFlow<String> = _memo
+    private val _destinationLatitude = MutableStateFlow(0.0)
+    val destinationLatitude: StateFlow<Double> = _destinationLatitude
+    private val _destinationLongitude = MutableStateFlow(0.0)
+    val destinationLongitude: StateFlow<Double> = _destinationLongitude
     private val _memberIds = MutableStateFlow(listOf<String>())
     val memberIds: StateFlow<List<String>> = _memberIds
     private val _userInfos = MutableStateFlow(listOf<UserInfo>())
@@ -54,6 +63,7 @@ class DetailScheduleViewModel @Inject constructor(
     val myLocation: StateFlow<LatLng> = _myLocation
 
     fun updateScheduleId(id: String?) {
+        _scheduleId.update { id }
         if (id == null) {
             return
         } else {
@@ -65,68 +75,80 @@ class DetailScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val getDetailScheduleResult = getDetailScheduleUseCase(accessToken, memberId, id)
-            when (getDetailScheduleResult) {
+            when (val networkResult = getDetailScheduleUseCase(accessToken, memberId, id)) {
                 is NetworkResult.Success -> {
-                    if (getDetailScheduleResult.data != null) {
-                        Log.e("success", "${getDetailScheduleResult.data}")
-                        val detailSchedule = getDetailScheduleResult.data!!
-                        _title.update { detailSchedule.title }
-                        _start.update { detailSchedule.start }
-                        _end.update { detailSchedule.end }
-                        _place.update { detailSchedule.place }
-                        _memo.update { detailSchedule.memo }
-                        _memberIds.update { detailSchedule.friendsIdList }
+                    networkResult.data?.let { data ->
+                        _creatorId.update { data.creatorId }
+                        _title.update { data.title }
+                        _startTime.update { data.start }
+                        _endTime.update { data.end }
+                        _place.update { data.place.replace("<b>", "").replace("</b>", "") }
+                        _memo.update { data.memo }
+                        _destinationLatitude.update { data.destinationLatitude }
+                        _destinationLongitude.update { data.destinationLongitude }
+                        _memberIds.update { data.friendsIdList }
+                        Log.e("getDetailSchedule Success", "${networkResult.data}")
+                        getUserLocation()
                     }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${getDetailScheduleResult.errorData}") }
+                is NetworkResult.Error -> { Log.e("error", "${networkResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }
             }
-            getUserLocation()
         }
     }
 
     private fun getUserLocation() {
         viewModelScope.launch {
             val memberId = getMemberIdUseCase().first()
+            var myIdx = 0
             val accessToken = getAccessTokenUseCase().first()
+            val userInfoList = mutableListOf<UserInfo>()
+            // 유저의 정보를 가져온다.
             for (id in memberIds.value) {
                 val userInfo = UserInfo()
-                val userInfoResult = getMemberDetailsUseCase(accessToken, id)
-                when (userInfoResult) {
+                userInfo.memberId = id
+                when (val networkResult = getMemberDetailsUseCase(accessToken, id)) {
                     is NetworkResult.Success -> {
-                        if (userInfoResult.data != null) {
-                            userInfo.name = userInfoResult.data!!.userName
-                            userInfo.userId = userInfoResult.data!!.userId
-                            userInfo.email = userInfoResult.data!!.email
-                            userInfo.profileImage = userInfoResult.data!!.profileImage
+                        networkResult.data?.let { data ->
+                            userInfo.name = data.userName
+                            userInfo.userId = data.userId
+                            userInfo.email = data.email
+                            userInfo.profileImage = data.profileImage
+                            userInfoList.add(userInfo)
                         }
 
-                        Log.e("success", "${userInfo}")
+                        Log.e("getMemberDetailsUseCase Success", "${userInfo}")
                     }
-                    is NetworkResult.Error -> { Log.e("error", "${userInfoResult.code}, ${userInfoResult.errorData}") }
-                    is NetworkResult.Exception -> { Log.e("exception", "exception") }
-                }
-
-                val response = getUserLocationUseCase(accessToken, id)
-                when (response) {
-                    is NetworkResult.Success -> {
-                        if (response.data != null) {
-                            userInfo.latitude = response.data!!.latitude
-                            userInfo.longitude = response.data!!.longitude
-                        }
-                        if (userInfo.userId == "user1" && userInfo.latitude != null && userInfo.longitude != null) {
-                            _myLocation.update { LatLng(userInfo.latitude!!, userInfo.longitude!!) }
-                        }
-                        Log.e("success", "${userInfo}")
-                    }
-                    is NetworkResult.Error -> { Log.e("error", "${response.code}, ${response.errorData}") }
-                    is NetworkResult.Exception -> { Log.e("exception", "exception") }
-                }
-                _userInfos.update {
-                    it + userInfo
+                    is NetworkResult.Error -> { Log.e("getMemberDetailsUseCase Error", "${networkResult.code}, ${networkResult.errorData}") }
+                    is NetworkResult.Exception -> { Log.e("getMemberDetailsUseCase Exception", "exception") }
                 }
             }
+
+            // 유저의 위치를 가져온다.
+            val request = GetUserLocationRequest(memberIds.value, _scheduleId.value!!)
+            when (val networkResult = getUserLocationUseCase(accessToken, request)) {
+                is NetworkResult.Success -> {
+                    networkResult.data?.let { data ->
+                        for (idx in 0 until memberIds.value.size) {
+                            if (memberId == memberIds.value[idx]) {
+                                _myLocation.update {
+//                                    Log.e("updateMyLocation", "UpdateMyLocation")
+                                    LatLng(
+                                        data[idx].latitude,
+                                        data[idx].longitude
+                                    )
+                                }
+                            }
+                            userInfoList[idx].latitude = data[idx].latitude
+                            userInfoList[idx].longitude = data[idx].longitude
+                        }
+                    }
+                }
+                is NetworkResult.Error -> { Log.e("getUserLocationUseCase Error", "${networkResult.code}, ${networkResult.errorData}") }
+                is NetworkResult.Exception -> { Log.e("getUserLocationUseCase Exception", "exception") }
+            }
+            _userInfos.update { userInfoList }
+            Log.e("getMemberDetailsUseCase Success", "${userInfoList}")
         }
     }
 
@@ -135,6 +157,7 @@ class DetailScheduleViewModel @Inject constructor(
     }
 
     data class UserInfo(
+        var memberId: String = "",
         var name: String = "",
         var userId: String = "",
         var email: String = "",

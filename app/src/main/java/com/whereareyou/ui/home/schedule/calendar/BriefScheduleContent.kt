@@ -27,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyou.data.GlobalValue
 import com.whereareyou.domain.entity.schedule.BriefSchedule
@@ -108,28 +110,55 @@ fun BriefScheduleList(
     moveToDetailScreen: (String) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
+    val year = viewModel.year.collectAsState().value
+    val month = viewModel.month.collectAsState().value
+    val date = viewModel.date.collectAsState().value
+    val dayOfWeek = viewModel.dayOfWeek.collectAsState().value
     val currentDateBriefSchedule = viewModel.currentDateBriefSchedule
-    LazyColumn(
-        contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
-    ) {
-        itemsIndexed(currentDateBriefSchedule) { index, item ->
-            Box(
-                modifier = Modifier
-                    .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(color = Color(0XFF80DEEA))
-                    .clickable {
-                        moveToDetailScreen(item.scheduleId)
-                    }
-            ) {
-                Text(
-                    text = "${item.title}" +
-                            "\n${item.scheduleId}" +
-                            "\n${item.start}" +
-                            "\n${item.end}"
-                )
+    Column() {
+        Text(
+            modifier = Modifier
+                .padding(start = 20.dp, top = 20.dp),
+            text = "$year.$month.$date",
+            fontSize = 20.sp
+        )
+        Text(
+            modifier = Modifier
+                .padding(start = 20.dp),
+            text = "" + when (dayOfWeek) {
+                1 -> "일"
+                2 -> "월"
+                3 -> "화"
+                4 -> "수"
+                5 -> "목"
+                6 -> "금"
+                else -> "토"
+            } + "요일",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold
+        )
+        LazyColumn(
+            contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
+        ) {
+            itemsIndexed(currentDateBriefSchedule) { index, item ->
+                Box(
+                    modifier = Modifier
+                        .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(color = Color(0XFF80DEEA))
+                        .clickable {
+                            moveToDetailScreen(item.scheduleId)
+                        }
+                ) {
+                    Text(
+                        text = "${item.title}" +
+                                "\n${item.scheduleId}" +
+                                "\n${item.start}" +
+                                "\n${item.end}"
+                    )
+                }
             }
         }
     }

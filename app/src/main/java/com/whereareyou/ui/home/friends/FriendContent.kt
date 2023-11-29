@@ -18,9 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereareyou.R
 import com.whereareyou.data.FriendProvider
+import com.whereareyou.domain.entity.schedule.Friend
 
 @Composable
-fun FriendContent() {
+fun FriendContent(
+    friendsList: List<Friend>
+) {
 //    Row(
 //    ) {
 //        Image(
@@ -32,12 +35,16 @@ fun FriendContent() {
 //        )
 //    }
     LazyColumn() {
-        itemsIndexed(FriendProvider.friendsList) { index, friend ->
-            Text(
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = friend.name
+        itemsIndexed(friendsList) { _, friend ->
+            FriendBox(
+                imageUrl = "https://c8.alamy.com/comp/GJKAJ6/isolated-abstract-round-shape-green-color-plant-vector-logo-wheat-GJKAJ6.jpg",
+                friendName = friend.name
             )
+//            Text(
+//                modifier = Modifier
+//                    .padding(top = 10.dp, bottom = 10.dp),
+//                text = friend.name
+//            )
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -50,8 +57,8 @@ fun FriendContent() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FriendContentPreview() {
-    FriendContent()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FriendContentPreview() {
+//    FriendContent()
+//}
