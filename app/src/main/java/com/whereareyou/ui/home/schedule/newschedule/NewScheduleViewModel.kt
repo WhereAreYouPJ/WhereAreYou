@@ -2,10 +2,11 @@ package com.whereareyou.ui.home.schedule.newschedule
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyou.data.Friend
 import com.whereareyou.domain.entity.apimessage.schedule.AddNewScheduleRequest
+import com.whereareyou.domain.entity.schedule.Friend
 import com.whereareyou.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
@@ -20,10 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewScheduleViewModel @Inject constructor(
+    private val application: Application,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val addNewScheduleUseCase: AddNewScheduleUseCase,
-    application: Application
 ) : AndroidViewModel(application) {
 
     private val _screenState = MutableStateFlow(ScreenState.NewSchedule)
@@ -57,6 +58,9 @@ class NewScheduleViewModel @Inject constructor(
     private val _destinationLongitude = MutableStateFlow(0.0)
     val destinationLongitude: StateFlow<Double> = _destinationLongitude
 
+    private val _memo = MutableStateFlow("")
+    val memo: StateFlow<String> = _memo
+
     fun updateStartDate(date: String) {
         _startDate.update { date }
     }
@@ -81,6 +85,10 @@ class NewScheduleViewModel @Inject constructor(
         _endTime.update { time }
     }
 
+    fun updateMemo(memo: String) {
+        _memo.update { memo }
+    }
+
     fun updateFriendsList(friends: List<Friend>) {
         _friendsList.update { friends }
     }
@@ -92,7 +100,30 @@ class NewScheduleViewModel @Inject constructor(
         _destinationLongitude.update { lng }
     }
 
-    fun addNewSchedule() {
+    fun addNewSchedule(
+        moveToCalendarScreen: () -> Unit,
+    ) {
+        if (_startDate.value == "시작 날짜 선택") {
+            Toast.makeText(application, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (_endDate.value == "종료 날짜 선택") {
+            Toast.makeText(application, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (_startTime.value == "시작 시간 선택") {
+            Toast.makeText(application, "시작 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (_endTime.value == "종료 시간 선택") {
+            Toast.makeText(application, "종료 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (_destinationName.value == "") {
+            Toast.makeText(application, "목적지를 선택해주세요", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
@@ -101,6 +132,7 @@ class NewScheduleViewModel @Inject constructor(
             when (addNewScheduleResult) {
                 is NetworkResult.Success -> {
                     Log.e("success", "${addNewScheduleResult.data}")
+                    moveToCalendarScreen()
                 }
                 is NetworkResult.Error -> { Log.e("error", "${addNewScheduleResult.code}, ${addNewScheduleResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }
