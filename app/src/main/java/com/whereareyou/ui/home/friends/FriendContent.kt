@@ -36,11 +36,15 @@ fun FriendContent(
 //    }
     LazyColumn() {
         itemsIndexed(friendsList) { _, friend ->
-            Text(
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = friend.name
+            FriendBox(
+                imageUrl = "https://c8.alamy.com/comp/GJKAJ6/isolated-abstract-round-shape-green-color-plant-vector-logo-wheat-GJKAJ6.jpg",
+                friendName = friend.name
             )
+//            Text(
+//                modifier = Modifier
+//                    .padding(top = 10.dp, bottom = 10.dp),
+//                text = friend.name
+//            )
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
