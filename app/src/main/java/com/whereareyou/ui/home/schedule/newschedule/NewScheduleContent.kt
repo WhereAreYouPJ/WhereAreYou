@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,8 +40,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -89,26 +94,37 @@ fun NewScheduleContent(
                 )
             }
             Text(
-                text = "일정"
+                text = "일정",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Medium
             )
         }
 
         // 추가된 친구 리스트
         val friendsList = viewModel.friendsList.collectAsState().value
+        Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(60.dp)
                 .clickable {
                     moveToFriendsListScreen()
-                },
+                }
+                .padding(start = 10.dp, end = 10.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             if (friendsList.isEmpty()) {
-                Text(
+//                Text(
+//                    modifier = Modifier
+//                        .clickable { moveToFriendsListScreen() },
+//                    text = "친구 선택"
+//                )
+                Image(
                     modifier = Modifier
-                        .clickable { moveToFriendsListScreen() },
-                    text = "친구 선택"
+                        .size(30.dp),
+                    painter = painterResource(id = R.drawable.message_add),
+                    contentDescription = null
                 )
             } else {
                 LazyRow {
@@ -122,108 +138,182 @@ fun NewScheduleContent(
                 }
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
 
+        // 제목
         val title = viewModel.title.collectAsState().value
         ScheduleTitleTextField(
             title = title,
             updateTitle = viewModel::updateTitle,
             clearTitle = viewModel::clearTitle
         )
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // 날짜, 시간 선택
+        // 날짜,시간 선택
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.calendar_outlined),
+                modifier = Modifier
+                    .size(30.dp),
+                painter = painterResource(id = R.drawable.baseline_calendar_month_24),
                 contentDescription = null
             )
-            Text(
-                modifier = Modifier
-                    .width(100.dp)
-                    .clickable {
-                        isStartDate.value = true
-                        isDatePickerDialogShowing.value = true
-                    },
-                text = viewModel.startDate.collectAsState().value,
-                textAlign = TextAlign.Center
-            )
+            Column() {
+                // 시작 날짜 선택
+                Text(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clickable {
+                            isStartDate.value = true
+                            isDatePickerDialogShowing.value = true
+                        }
+                        .padding(10.dp),
+                    text = viewModel.startDate.collectAsState().value,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp
+                )
+                // 시작 시간 선택
+                Text(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clickable {
+                            isStartTime.value = true
+                            isTimePickerDialogShowing.value = true
+                        }
+                        .padding(10.dp),
+                    text = viewModel.startTime.collectAsState().value,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp
+                )
+            }
             Image(
                 modifier = Modifier
                     .padding(start = 10.dp, end = 10.dp),
                 painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
                 contentDescription = null
             )
-            Text(
-                modifier = Modifier
-                    .width(100.dp)
-                    .clickable {
-                        isStartDate.value = false
-                        isDatePickerDialogShowing.value = true
-                    },
-                text = viewModel.endDate.collectAsState().value,
-                textAlign = TextAlign.Center
-            )
+            Column() {
+                // 종료 날짜 선택
+                Text(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clickable {
+                            isStartDate.value = false
+                            isDatePickerDialogShowing.value = true
+                        }
+                        .padding(10.dp),
+                    text = viewModel.endDate.collectAsState().value,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp
+                )
+                // 종료 시간 선택
+                Text(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clickable {
+                            isStartTime.value = false
+                            isTimePickerDialogShowing.value = true
+                        }
+                        .padding(10.dp),
+                    text = viewModel.endTime.collectAsState().value,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp
+                )
+            }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.calendar_outlined),
-                contentDescription = null
-            )
-            Text(
-                modifier = Modifier
-                    .width(100.dp)
-                    .clickable {
-                        isStartTime.value = true
-                        isTimePickerDialogShowing.value = true
-                    },
-                text = viewModel.startTime.collectAsState().value,
-                textAlign = TextAlign.Center
-            )
-            Image(
-                modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp),
-                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                contentDescription = null
-            )
-            Text(
-                modifier = Modifier
-                    .width(100.dp)
-                    .clickable {
-                        isStartTime.value = false
-                        isTimePickerDialogShowing.value = true
-                    },
-                text = viewModel.endTime.collectAsState().value,
-                textAlign = TextAlign.Center
-            )
-
-        }
 
         // 위치 선택
         val destinationName = viewModel.destinationName.collectAsState().value
         val destinationAddress = viewModel.destinationAddress.collectAsState().value
-        Text(
+        Spacer(modifier = Modifier.height(20.dp))
+        Box(
             modifier = Modifier
-                .padding(top = 20.dp)
-                .clickable {
-                    moveToSearchLocationScreen()
+                .fillMaxWidth(),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(30.dp),
+                painter = painterResource(id = R.drawable.outline_location_on_24),
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier
+                    .padding(start = 30.dp)
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .fillMaxWidth()
+                    .clickable {
+                        moveToSearchLocationScreen()
+                    }
+                    .padding(10.dp),
+                text = when (destinationName == "") {
+                    true -> "장소 선택"
+                    false -> "${destinationName.replace("<b>", "").replace("</b>", "")}\n$destinationAddress"
                 },
-            text = when (destinationName == "") {
-                true -> "장소 선택"
-                false -> "${destinationName.replace("<b>", "").replace("</b>", "")}\n$destinationAddress"
+                fontSize = 20.sp
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(30.dp),
+                    painter = painterResource(id = R.drawable.arrow_forward_ios_fill0_wght100_grad0_opsz24),
+                    contentDescription = null
+                )
             }
-        )
+        }
         // 알림 선택
 
 
         // 메모
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(30.dp),
+                painter = painterResource(id = R.drawable.outline_article_24),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "메모",
+                fontSize = 20.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        BasicTextField(
+            value = viewModel.memo.collectAsState().value,
+            onValueChange = {
+                viewModel.updateMemo(it)
+            },
+            textStyle = TextStyle(fontSize = 20.sp),
+            decorationBox = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .background(
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(12.dp)
+                ) {
+                    it()
+                }
+            }
+        )
+
 
         if (isDatePickerDialogShowing.value) {
             MyDatePickerDialog(
@@ -249,18 +339,18 @@ fun NewScheduleContent(
                     .fillMaxWidth()
                     .height(80.dp)
                     .background(
-                        color = Color.DarkGray,
+                        color = Color(0xFF2D2573),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
-                        viewModel.addNewSchedule()
-                        moveToCalendarScreen()
+                        viewModel.addNewSchedule(moveToCalendarScreen = moveToCalendarScreen)
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "완료",
-                    color = Color.White
+                    color = Color.White,
+                    fontSize = 30.sp
                 )
             }
         }
