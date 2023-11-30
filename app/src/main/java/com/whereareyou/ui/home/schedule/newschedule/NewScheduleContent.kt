@@ -282,7 +282,7 @@ fun NewScheduleContent(
             Image(
                 modifier = Modifier
                     .size(30.dp),
-                painter = painterResource(id = R.drawable.outline_article_24),
+                painter = painterResource(id = R.drawable.article_fill0_wght200_grad0_opsz24),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(10.dp))
