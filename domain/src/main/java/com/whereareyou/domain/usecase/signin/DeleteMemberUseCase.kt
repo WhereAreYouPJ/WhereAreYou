@@ -10,7 +10,7 @@ class DeleteMemberUseCase(
     suspend operator fun invoke(
         token: String,
         body: DeleteMemberRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.deleteMember(token, body)
     }
 }

@@ -10,7 +10,7 @@ class ModifyMyInfoUseCase(
     suspend operator fun invoke(
         token: String,
         body: ModifyMyInfoRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.modifyMyInfo(token, body)
     }
 }

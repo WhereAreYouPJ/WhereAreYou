@@ -9,7 +9,7 @@ class ResetPasswordUseCase(
 ) {
     suspend operator fun invoke(
         body: ResetPasswordRequest
-    ): NetworkResult<Nothing> {
+    ): NetworkResult<Unit> {
         return repository.resetPassword(body)
     }
 }

@@ -21,4 +21,6 @@ data class GetDetailScheduleResponse(
     val destinationLongitude: Double,
     @SerializedName("friendsIdListDTO")
     val friendsIdList: List<String>,
+    @SerializedName("arrivedFriendsIdList")
+    val arrivedFriendsIdList: List<String>
 )

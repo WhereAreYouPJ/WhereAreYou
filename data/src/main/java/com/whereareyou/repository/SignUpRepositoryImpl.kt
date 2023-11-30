@@ -25,9 +25,9 @@ class SignUpRepositoryImpl(
      * implements [SignUpRepository.checkIdDuplicate]
      */
     override suspend fun checkIdDuplicate(
-        id: String
+        userId: String
     ): NetworkResult<CheckIdDuplicateResponse> {
-        return handleResult { dataSource.checkIdDuplicate(id) }
+        return handleResult { dataSource.checkIdDuplicate(userId) }
     }
 
     /**
