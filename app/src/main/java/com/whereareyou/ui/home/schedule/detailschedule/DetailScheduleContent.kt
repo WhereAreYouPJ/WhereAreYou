@@ -12,14 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -27,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyou.R
 
 @Composable
@@ -78,9 +83,10 @@ fun DetailScheduleContent(
                 Image(
                     modifier = Modifier
                         .size(30.dp),
-                    painter = painterResource(id = R.drawable.baseline_calendar_month_24),
+                    painter = painterResource(id = R.drawable.schedule_fill0_wght200_grad0_opsz24),
                     contentDescription = null
                 )
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = "${viewModel.startTime.collectAsState().value.replace("T", "\n")}",
                     fontSize = 20.sp
@@ -105,15 +111,17 @@ fun DetailScheduleContent(
                 Image(
                     modifier = Modifier
                         .size(30.dp),
-                    painter = painterResource(id = R.drawable.outline_location_on_24),
+                    painter = painterResource(id = R.drawable.location_on_fill0_wght200_grad0_opsz24),
                     contentDescription = null
                 )
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = "${viewModel.place.collectAsState().value}",
                     fontSize = 20.sp
                 )
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
             // 회원 리스트 정보
             val memberList = viewModel.userInfos.collectAsState().value
             Row(
@@ -122,22 +130,69 @@ fun DetailScheduleContent(
                 Image(
                     modifier = Modifier
                         .size(30.dp),
-                    painter = painterResource(id = R.drawable.outline_location_on_24),
+                    painter = painterResource(id = R.drawable.group_fill0_wght200_grad0_opsz24),
                     contentDescription = null
                 )
+                Spacer(modifier = Modifier.width(10.dp))
                 LazyRow() {
                     itemsIndexed(memberList) {_, userInfo ->
-                        Text(
-                            text = "${userInfo.name}"
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            GlideImage(
+                                modifier = Modifier
+                                    .clip(shape = RoundedCornerShape(50))
+                                    .size(30.dp),
+                                imageModel = {
+                                    userInfo.profileImage ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
+                                }
+                            )
+                            Text(
+                                text = "${userInfo.name}",
+                                fontSize = 20.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
                     }
                 }
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 메모
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(30.dp),
+                    painter = painterResource(id = R.drawable.article_fill0_wght200_grad0_opsz24),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "메모",
+                    fontSize = 20.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // 메모 내용
             Text(
-                text = "메모: ${viewModel.memo.collectAsState().value}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(
+                        color = Color.LightGray,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .verticalScroll(rememberScrollState())
+                    .padding(10.dp),
+                text = "${viewModel.memo.collectAsState().value}",
                 fontSize = 20.sp
             )
+
+            // 지도로 넘어가는 버튼
             Box(
                 modifier = Modifier
                     .size(100.dp)
