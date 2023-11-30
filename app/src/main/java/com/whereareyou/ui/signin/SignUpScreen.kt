@@ -86,8 +86,8 @@ fun SignUpScreen(
     var isPasswordValid by remember { mutableStateOf(false) }
 
     var email by remember { mutableStateOf(TextFieldValue()) }
-    var email_code by remember { mutableStateOf(TextFieldValue()) }
-
+    var emailCode by remember { mutableStateOf(TextFieldValue()) }
+    var isEmailChecked by remember { mutableStateOf(false) }
 
     var isInvalidId by remember { mutableStateOf(false) }
     var isInvalidPassword by remember { mutableStateOf(false) }
@@ -416,154 +416,93 @@ fun SignUpScreen(
         }
         // 이메일 입력필드
         Column() {
+            Text(text = "이메일")
 
-            Text(
-                text = "이메일"
-            )
-
-            Row(
-
-
-            ) {
+            Row {
                 BasicTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        email = it
+                    },
                     singleLine = true,
                     textStyle = TextStyle(
-                        fontSize = 20.sp, // 텍스트 크기 조절
-                        textAlign = TextAlign.Left // 텍스트 왼쪽 정렬
-
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Left
                     ),
-
                     modifier = Modifier
-
-                        .size(width = 260.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-
-                        .background(Color(0xFFF5F5F6)) // 배경을 F5F5F6 색상으로 설정
+                        .size(width = 260.dp, height = 45.dp)
+                        .background(Color(0xFFF5F5F6))
                         .padding(start = 16.dp, top = 10.dp)
-
                 )
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
-                Button(
-                    onClick = {
-                        // 여기에 로그인 로직을s 추가
-                        signInViewModel.checkEmailDuplicate(email.text)
-                    },
-                    shape = RoundedCornerShape(3.dp),
 
-                    modifier = Modifier
-                        .size(width = 130.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
+                Spacer(modifier = Modifier.width(10.dp))
 
-
-                ) {
-                    Text("중복확인")
+                if (!isEmailChecked) {
+                    Button(
+                        onClick = {
+                            // 여기에 중복 확인 로직 추가
+                            signInViewModel.checkEmailDuplicate(email.text)
+                            isEmailChecked = true
+                        },
+                        shape = RoundedCornerShape(3.dp),
+                        modifier = Modifier
+                            .size(width = 130.dp, height = 45.dp)
+                    ) {
+                        Text("중복확인")
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            // 여기에 인증 요청 로직 추가
+                            signInViewModel.checkauthenticateEmail(email.text)
+                        },
+                        shape = RoundedCornerShape(3.dp),
+                        modifier = Modifier
+                            .size(width = 130.dp, height = 45.dp)
+                            .background(Color(0xFFF5F5F6))
+                    ) {
+                        Text("인증요청")
+                    }
                 }
             }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
 
-            )
+            Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
-            Row(
+            if (isEmailChecked) {
+                Row {
+                    BasicTextField(
+                        value = emailCode,
+                        onValueChange = {
+                            emailCode = it
+                        },
+                        singleLine = true,
+                        textStyle = TextStyle(
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Left
+                        ),
+                        modifier = Modifier
+                            .size(width = 260.dp, height = 45.dp)
+                            .background(Color(0xFFF5F5F6))
+                            .padding(start = 16.dp, top = 10.dp)
+                    )
 
+                    Spacer(modifier = Modifier.width(10.dp))
 
-            ) {
-                BasicTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp, // 텍스트 크기 조절
-                        textAlign = TextAlign.Left // 텍스트 왼쪽 정렬
-
-                    ),
-
-                    modifier = Modifier
-
-                        .size(width = 260.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-
-                        .background(Color(0xFFF5F5F6)) // 배경을 F5F5F6 색상으로 설정
-                        .padding(start = 16.dp, top = 10.dp)
-
-                )
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
-                Button(
-                    onClick = {
-                        // 여기에 로그인 로직을s 추가
-                        signInViewModel.checkauthenticateEmail(email.text)
-                    },
-                    shape = RoundedCornerShape(3.dp),
-
-                    modifier = Modifier
-                        .size(width = 130.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-
-
-                ) {
-                    Text("인증요청")
+                    Button(
+                        onClick = {
+                            signInViewModel.checkauthenticateEmailCode(email.text, emailCode.text.toInt())
+                        },
+                        shape = RoundedCornerShape(3.dp),
+                        modifier = Modifier
+                            .size(width = 130.dp, height = 45.dp)
+                            .background(Color(0xFFF5F5F6))
+                    ) {
+                        Text("확인")
+                    }
                 }
+                Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
             }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-
-            )
-
-            Row() {
-                BasicTextField(
-                    value = email_code,
-                    onValueChange = { email_code = it },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp, // 텍스트 크기 조절
-                        textAlign = TextAlign.Left // 텍스트 가운데 정렬
-                    ),
-
-                    modifier = Modifier
-
-                        .size(width = 260.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-
-                        .background(Color(0xFFF5F5F6)) // 배경을 F5F5F6 색상으로 설정
-                        .padding(start = 16.dp, top = 10.dp)
-
-                )
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
-                Button(
-                    onClick = {
-                        Log.d("email_code", email_code.toString())
-                        signInViewModel.checkauthenticateEmailCode(email.text,email_code.text.toInt())
-
-                    },
-                    shape = RoundedCornerShape(3.dp),
-
-                    modifier = Modifier
-                        .size(width = 130.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
-                        .background(Color(0xFFF5F5F6)) // 배경을 F5F5F6 색상으로 설정
-
-
-                ) {
-                    Text("확인")
-                }
-            }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-
-            )
         }
-
 
         // 로그인 버튼
         Button(
