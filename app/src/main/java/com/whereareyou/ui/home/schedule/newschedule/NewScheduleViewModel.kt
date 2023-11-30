@@ -127,7 +127,16 @@ class NewScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val body = AddNewScheduleRequest(memberId, startDate.value + "T" + startTime.value + ":00", endDate.value + "T" + endTime.value + ":00", _title.value, _destinationName.value, _destinationAddress.value, _destinationLatitude.value, _destinationLongitude.value, listOf("1d92d4e1-cd85-470b-aec2-712914f9f790"))
+            val body = AddNewScheduleRequest(
+                memberId = memberId,
+                start = startDate.value + "T" + startTime.value + ":00",
+                end = endDate.value + "T" + endTime.value + ":00",
+                title = _title.value,
+                place = _destinationName.value,
+                memo = _memo.value,
+                destinationLatitude = _destinationLatitude.value,
+                destinationLongitude = _destinationLongitude.value,
+                memberIdList = _friendsList.value.map { friend -> friend.memberId },)
             val addNewScheduleResult = addNewScheduleUseCase(accessToken, body)
             when (addNewScheduleResult) {
                 is NetworkResult.Success -> {
