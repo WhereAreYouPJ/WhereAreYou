@@ -95,7 +95,7 @@ fun TopBar(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } },
-                painter = painterResource(id = R.drawable.notifications_fill0_wght300_grad0_opsz24),
+                painter = painterResource(id = R.drawable.notifications_fill0_wght200_grad0_opsz24),
                 contentDescription = null
             )
         }
