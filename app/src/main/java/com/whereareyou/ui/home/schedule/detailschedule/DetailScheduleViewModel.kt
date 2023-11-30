@@ -11,6 +11,7 @@ import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyou.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ class DetailScheduleViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val getUserLocationUseCase: GetUserLocationUseCase,
+    private val modifyMyInfoUseCase: ModifyMyInfoUseCase,
 ) : AndroidViewModel(application) {
 
     private val _screenState = MutableStateFlow(ScreenState.DetailSchedule)
@@ -129,19 +131,28 @@ class DetailScheduleViewModel @Inject constructor(
             when (val networkResult = getUserLocationUseCase(accessToken, request)) {
                 is NetworkResult.Success -> {
                     networkResult.data?.let { data ->
-                        for (idx in 0 until memberIds.value.size) {
-                            if (memberId == memberIds.value[idx]) {
-                                _myLocation.update {
-//                                    Log.e("updateMyLocation", "UpdateMyLocation")
-                                    LatLng(
-                                        data[idx].latitude,
-                                        data[idx].longitude
-                                    )
+                        for (userInfo in userInfoList) {
+                            for (location in data) {
+                                if (userInfo.memberId == location.memberId) {
+                                    userInfo.latitude = location.latitude
+                                    userInfo.longitude = location.longitude
+                                    myIdx = userInfoList.indexOf(userInfo)
                                 }
                             }
-                            userInfoList[idx].latitude = data[idx].latitude
-                            userInfoList[idx].longitude = data[idx].longitude
                         }
+//                        for (idx in 0 until memberIds.value.size) {
+//                            if (memberId == memberIds.value[idx]) {
+//                                _myLocation.update {
+//                                    Log.e("updateMyLocation", "UpdateMyLocation")
+//                                    LatLng(
+//                                        data[idx].latitude,
+//                                        data[idx].longitude
+//                                    )
+//                                }
+//                            }
+//                            userInfoList[idx].latitude = data[idx].latitude
+//                            userInfoList[idx].longitude = data[idx].longitude
+//                        }
                     }
                 }
                 is NetworkResult.Error -> { Log.e("getUserLocationUseCase Error", "${networkResult.code}, ${networkResult.errorData}") }
