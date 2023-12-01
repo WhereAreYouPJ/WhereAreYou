@@ -12,7 +12,6 @@ object Constants {
     const val ROUTE_ADD_FRIEND = "main/home/friend/add_friend"
     const val ROUTE_MAIN_FINDIDSUCCESS="main/findidsuccess"
     const val ROUTE_MAIN_FINDPWSUCCESS="main/findpwsuccess"
-    const val ROUTE_MAIN_LOGIN = "main/loginin"
     const val ROUTE_MAIN_START="main/start"
     const val ROUTE_MAIN_FINDID="main/findid"
     const val ROUTE_MAIN_FINDPW="main/findpw"
