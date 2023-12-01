@@ -47,7 +47,7 @@ fun MainNavigation(
                 },
                 moveToMainScreen = {
                     navController.popBackStack()
-                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+                    navController.navigate(Constants.ROUTE_MAIN_START)
                 },
             )
         }

@@ -40,6 +40,13 @@ import com.whereareyou.data.Constants
 fun FindIdSuccessScreen(navController: NavHostController) {
     var user_email by remember { mutableStateOf(TextFieldValue()) }
     // 아이디 비밀번호 입력 필드
+    val navBackStackEntry = navController.previousBackStackEntry
+    val receivedValue = navBackStackEntry?.savedStateHandle?.get<String>("userId")
+
+
+
+
+
 
     Column(
         modifier = Modifier
@@ -70,6 +77,7 @@ fun FindIdSuccessScreen(navController: NavHostController) {
         Row() {
 
 
+            Text(text = "$receivedValue")
 
 
             Spacer(

@@ -142,6 +142,7 @@ fun FindIdScreen(
                         // userId가 반환되었을 때
                         Log.d("id!!",userId)
 
+                        navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
                         navController.navigate(Constants.ROUTE_MAIN_FINDIDSUCCESS)
                     } else {
                         // userId가 null 또는 empty일 때
