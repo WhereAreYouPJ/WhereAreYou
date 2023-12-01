@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,20 +17,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
+import com.whereareyou.R
 
 @Composable
 fun UserInfoContent(
-    imageUrl: String,
+    imageUrl: String?,
     userName: String
 ) {
     GlideImage(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
+            .size(200.dp)
             .clip(shape = RoundedCornerShape(50)),
-        imageModel = { imageUrl },
+        imageModel = { imageUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
         imageOptions = ImageOptions(
-            contentScale = ContentScale.FillHeight,
+            contentScale = ContentScale.Crop,
         )
     )
     Spacer(modifier = Modifier.height(20.dp))
@@ -45,11 +46,11 @@ fun UserInfoContent(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun UserInfoContentPreview() {
-    UserInfoContent(
-        imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/200px-Apple_logo_black.svg.png",
-        userName = "홍길동"
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun UserInfoContentPreview() {
+//    UserInfoContent(
+//        imageUrl = null,
+//        userName = "홍길동"
+//    )
+//}
