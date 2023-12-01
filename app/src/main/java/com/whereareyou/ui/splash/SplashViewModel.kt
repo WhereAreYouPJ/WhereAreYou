@@ -4,9 +4,14 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyou.domain.usecase.signin.GetRefreshTokenUseCase
 import com.whereareyou.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val application: Application,
+    private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
+    private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
 ) : AndroidViewModel(application) {
 
@@ -46,7 +53,34 @@ class SplashViewModel @Inject constructor(
     }
 
     suspend fun checkIsSignedIn(): Boolean {
-        return getMemberIdUseCase().first().isNotEmpty()
+        val isSignedIn = getRefreshTokenUseCase().first().isNotEmpty()
+        if (isSignedIn) {
+            val init = CoroutineScope(Dispatchers.Default).async {
+                initialize()
+            }
+            init.await()
+        }
+        return isSignedIn
+    }
+
+    private fun initialize() {
+        viewModelScope.launch {
+            reissueToken()
+            getFriendList()
+        }
+    }
+
+    private fun reissueToken() {
+        viewModelScope.launch {
+            Log.e("SplashViewModel", "reissueToken")
+            delay(2000)
+        }
+    }
+
+    private fun getFriendList() {
+        viewModelScope.launch {
+            Log.e("SplashViewModel", "getFriendList")
+        }
     }
 
     enum class CheckingState {

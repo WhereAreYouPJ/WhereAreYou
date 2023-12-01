@@ -86,6 +86,29 @@ class SignInRepositoryImpl(
         }
     }
 
+
+    /**
+     * 리프레시 토큰 저장
+     * implements [SignInRepository.saveRefreshToken]
+     */
+    override suspend fun saveRefreshToken(refreshToken: String) {
+        val key = stringPreferencesKey("refreshToken")
+        preferencesDataStore.edit {
+            it[key] = refreshToken
+        }
+    }
+
+    /**
+     * 리프레시 토큰 가져오기
+     * implements [SignInRepository.getRefreshToken]
+     */
+    override suspend fun getRefreshToken(): Flow<String> {
+        val key = stringPreferencesKey("refreshToken")
+        return preferencesDataStore.data.map {
+            it[key] ?: ""
+        }
+    }
+
     /**
      * 토큰 재발급
      * implements [SignInRepository.reissueToken]
