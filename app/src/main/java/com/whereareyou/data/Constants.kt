@@ -21,4 +21,5 @@ object Constants {
     const val ROUTE_MAIN_SUCCESSPW="main/successpw"
     const val ROUTE_TEST="main/test"
     const val ROUTE_HOME_CALENDAR = "main/home/calendar"
+    const val ROUTE_PERMISSION = "main/permission"
 }
