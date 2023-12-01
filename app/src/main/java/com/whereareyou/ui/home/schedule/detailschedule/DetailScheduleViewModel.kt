@@ -7,13 +7,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.whereareyou.domain.entity.apimessage.location.GetUserLocationRequest
+import com.whereareyou.domain.entity.apimessage.location.SendUserLocationRequest
 import com.whereareyou.domain.usecase.location.GetUserLocationUseCase
+import com.whereareyou.domain.usecase.location.SendUserLocationUseCase
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyou.domain.util.NetworkResult
+import com.whereareyou.util.Coordinate
+import com.whereareyou.util.LocationUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +36,8 @@ class DetailScheduleViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val getUserLocationUseCase: GetUserLocationUseCase,
-    private val modifyMyInfoUseCase: ModifyMyInfoUseCase,
+    private val sendUserLocationUseCase: SendUserLocationUseCase,
+    private val locationUtil: LocationUtil,
 ) : AndroidViewModel(application) {
 
     private val _screenState = MutableStateFlow(ScreenState.DetailSchedule)
@@ -169,6 +174,22 @@ class DetailScheduleViewModel @Inject constructor(
                 _userInfos.addAll(userInfoList)
             }
             Log.e("getMemberDetailsUseCase Success", "${userInfoList}")
+        }
+    }
+
+    fun sendUserLocation() {
+        locationUtil.getCurrentLocation {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val sendUserLocationRequest = SendUserLocationRequest(memberId, it.latitude, it.longitude)
+            when (val sendUserLocationResponse = sendUserLocationUseCase(accessToken, sendUserLocationRequest)) {
+                is NetworkResult.Success -> {
+                    Log.e("sendUserLocation Success", "${sendUserLocationResponse.code}, ${sendUserLocationResponse.data}")
+                    getUserLocation()
+                }
+                is NetworkResult.Error -> { Log.e("sendUserLocation Error", "${sendUserLocationResponse.code}, ${sendUserLocationResponse.errorData}") }
+                is NetworkResult.Exception -> { Log.e("sendUserLocation Exception", "${sendUserLocationResponse.e}") }
+            }
         }
     }
 
