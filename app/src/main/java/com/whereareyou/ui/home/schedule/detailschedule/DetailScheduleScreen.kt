@@ -13,15 +13,10 @@ fun DetailScheduleScreen(
     LaunchedEffect(true) { viewModel.updateScheduleId(scheduleId) }
     when (viewModel.screenState.collectAsState().value) {
         DetailScheduleViewModel.ScreenState.DetailSchedule -> {
-            DetailScheduleContent(
-                moveToUserMapScreen = { viewModel.updateScreenState(DetailScheduleViewModel.ScreenState.UserMap) }
-            )
+            DetailScheduleContent()
         }
         DetailScheduleViewModel.ScreenState.UserMap -> {
-            UserMapScreen(
-                moveToDetailScheduleScreen = { viewModel.updateScreenState(DetailScheduleViewModel.ScreenState.DetailSchedule) },
-                updateUsersLocation = { viewModel.getUserLocation() }
-            )
+            UserMapScreen()
         }
     }
 }
