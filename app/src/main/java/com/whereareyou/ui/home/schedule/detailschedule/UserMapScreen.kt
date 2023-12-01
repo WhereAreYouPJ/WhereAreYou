@@ -1,7 +1,14 @@
 package com.whereareyou.ui.home.schedule.detailschedule
 
+import android.content.Context
+import android.content.Intent
+import android.location.LocationManager
+import android.provider.Settings
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,14 +61,24 @@ import com.whereareyou.R
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun UserMapScreen(
-    moveToDetailScheduleScreen: () -> Unit,
-    updateUsersLocation: () -> Unit,
     viewModel: DetailScheduleViewModel = hiltViewModel()
 ) {
     BackHandler {
-        moveToDetailScheduleScreen()
+        viewModel.updateScreenState(DetailScheduleViewModel.ScreenState.DetailSchedule)
     }
 //    Text(text = "")
+    val context = LocalContext.current
+    val locationServiceRequestLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        activityResult ->
+        if (activityResult.resultCode == ComponentActivity.RESULT_OK)
+            Log.e("locationServiceRequest", "location service accepted")
+        else {
+            Log.e("locationServiceRequest", "location service denied")
+        }
+    }
+
     val userInfos = viewModel.userInfos
     val initLocation = viewModel.myLocation.collectAsState().value
     val destinationLatitude = viewModel.destinationLatitude.collectAsState().value
@@ -155,7 +173,7 @@ fun UserMapScreen(
                         shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f)
                     )
                     .clickable {
-                        updateUsersLocation()
+                        viewModel.getUserLocation()
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -188,7 +206,14 @@ fun UserMapScreen(
                         shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f)
                     )
                     .clickable {
+                        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+                        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            locationServiceRequestLauncher.launch(intent)
+                        } else {
+                            viewModel.sendUserLocation()
+                        }
                     },
                 contentAlignment = Alignment.Center
             ) {
