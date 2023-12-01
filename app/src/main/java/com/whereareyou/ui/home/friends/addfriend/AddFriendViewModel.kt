@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyou.domain.entity.apimessage.friend.SendFriendRequestRequest
 import com.whereareyou.domain.usecase.friend.SendFriendRequestUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberDetailsByUserIdUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.util.NetworkResult
@@ -24,16 +25,17 @@ class AddFriendViewModel @Inject constructor(
     private val application: Application,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
-    private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
+    private val getMemberDetailsByUserIdUseCase: GetMemberDetailsByUserIdUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase
 ) : AndroidViewModel(application) {
 
     private val _inputId = MutableStateFlow("")
     val inputId: StateFlow<String> = _inputId
-    private val _imageUrl = MutableStateFlow("")
-    val imageUrl: StateFlow<String> = _imageUrl
+    private val _imageUrl = MutableStateFlow<String?>("")
+    val imageUrl: StateFlow<String?> = _imageUrl
     private val _userName = MutableStateFlow("")
     val userName: StateFlow<String> = _userName
+    private var friendMemberId: String = ""
     private val _buttonState = MutableStateFlow(ButtonState.SEARCH)
     val buttonState: StateFlow<ButtonState> = _buttonState
 
@@ -55,9 +57,14 @@ class AddFriendViewModel @Inject constructor(
     fun searchFriend() {
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
-            val networkResult = getMemberDetailsUseCase(accessToken, _inputId.value)
-            when (networkResult) {
+            when (val networkResult = getMemberDetailsByUserIdUseCase(accessToken, _inputId.value)) {
                 is NetworkResult.Success -> {
+                    networkResult.data?.let { data ->
+                        _imageUrl.update { data.profileImage }
+                        _userName.update { data.userName }
+                        _buttonState.update { ButtonState.REQUEST }
+                        friendMemberId = data.userId
+                    }
                     Toast.makeText(application, "성공적으로 검색되었습니다", Toast.LENGTH_SHORT).show()
                     _buttonState.update { ButtonState.REQUEST }
                 }
@@ -78,7 +85,7 @@ class AddFriendViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = SendFriendRequestRequest(_inputId.value, memberId)
+            val request = SendFriendRequestRequest(friendMemberId, memberId)
             val networkResult = sendFriendRequestUseCase(accessToken, request)
             when (networkResult) {
                 is NetworkResult.Success -> {
