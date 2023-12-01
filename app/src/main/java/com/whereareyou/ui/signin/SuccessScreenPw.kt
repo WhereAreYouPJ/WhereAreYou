@@ -86,7 +86,7 @@ fun SuccessScreenPw(navController: NavHostController){
 
         Button(
             onClick = {
-                navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
                 // 여기에 로그인 로직을 추가
                 // username 및 password를 사용하여 로그인을 처리
             },
