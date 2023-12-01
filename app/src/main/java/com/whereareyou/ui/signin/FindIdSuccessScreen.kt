@@ -103,7 +103,7 @@ fun FindIdSuccessScreen(navController: NavHostController) {
         // 로그인 버튼
         Button(
             onClick = {
-                navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
 
             },
             shape = RoundedCornerShape(3.dp),
