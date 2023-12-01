@@ -140,23 +140,35 @@ fun BriefScheduleList(
         LazyColumn(
             contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
         ) {
-            itemsIndexed(currentDateBriefSchedule) { index, item ->
-                Box(
+            itemsIndexed(currentDateBriefSchedule) { _, item ->
+                var startHour = item.start.split("T")[1].split(":")[0].toInt()
+                val startMinute = item.start.split("T")[1].split(":")[1].toInt()
+                var endHour = item.end.split("T")[1].split(":")[0].toInt()
+                val endMinute = item.end.split("T")[1].split(":")[1].toInt()
+                var startAMPM: String = if (startHour < 12) "오전" else { startHour -= 12; "오후"}
+                var endAMPM: String = if (endHour < 12) "오전" else {endHour -= 12; "오후"}
+
+                Column(
                     modifier = Modifier
                         .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                         .fillMaxWidth()
                         .height(80.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(color = Color(0XFF80DEEA))
                         .clickable {
                             moveToDetailScreen(item.scheduleId)
                         }
+                        .padding(20.dp)
                 ) {
+
                     Text(
-                        text = "${item.title}" +
-                                "\n${item.scheduleId}" +
-                                "\n${item.start}" +
-                                "\n${item.end}"
+                        text = "${item.title}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = String.format("$startAMPM %02d시 %02d분 - $endAMPM %02d시 %02d분", startHour, startMinute, endHour, endMinute),
+                        fontSize = 20.sp
                     )
                 }
             }
