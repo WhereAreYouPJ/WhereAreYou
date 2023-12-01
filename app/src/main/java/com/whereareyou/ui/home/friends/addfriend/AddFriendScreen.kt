@@ -31,7 +31,8 @@ fun AddFriendScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AddFriendScreenTopBar()
         Spacer(modifier = Modifier.height(20.dp))
