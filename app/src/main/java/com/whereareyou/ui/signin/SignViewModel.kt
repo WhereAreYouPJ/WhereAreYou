@@ -228,7 +228,6 @@ class SignViewModel @Inject constructor(
             onLoginResult(isLoginSuccess)
         }
         Log.e("SignViewModel", isLoginSuccess.toString())
-
     }
 
 

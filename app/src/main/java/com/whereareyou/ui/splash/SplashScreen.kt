@@ -53,16 +53,6 @@ fun SplashScreen(
     val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
     )
-//    val locationServiceRequestLauncher = rememberLauncherForActivityResult(
-//        ActivityResultContracts.StartIntentSenderForResult()
-//    ) {
-//        activityResult ->
-//        if (activityResult.resultCode == ComponentActivity.RESULT_OK)
-//            Log.e("locationServiceRequest", "location service accepted")
-//        else {
-//            Log.e("locationServiceRequest", "location service denied")
-//        }
-//    }
     LaunchedEffect(checkingState) {
         when (checkingState) {
             SplashViewModel.CheckingState.NETWORK -> {

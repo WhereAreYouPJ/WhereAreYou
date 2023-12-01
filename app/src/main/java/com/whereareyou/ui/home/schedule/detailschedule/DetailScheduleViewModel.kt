@@ -2,6 +2,7 @@ package com.whereareyou.ui.home.schedule.detailschedule
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -14,11 +15,13 @@ import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,8 +62,8 @@ class DetailScheduleViewModel @Inject constructor(
     val destinationLongitude: StateFlow<Double> = _destinationLongitude
     private val _memberIds = MutableStateFlow(listOf<String>())
     val memberIds: StateFlow<List<String>> = _memberIds
-    private val _userInfos = MutableStateFlow(listOf<UserInfo>())
-    val userInfos: StateFlow<List<UserInfo>> = _userInfos
+    private val _userInfos = mutableStateListOf<UserInfo>()
+    val userInfos: List<UserInfo> = _userInfos
     private val _myLocation = MutableStateFlow(LatLng(0.0, 0.0))
     val myLocation: StateFlow<LatLng> = _myLocation
 
@@ -99,10 +102,9 @@ class DetailScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun getUserLocation() {
+    fun getUserLocation() {
         viewModelScope.launch {
             val memberId = getMemberIdUseCase().first()
-            var myIdx = 0
             val accessToken = getAccessTokenUseCase().first()
             val userInfoList = mutableListOf<UserInfo>()
             // 유저의 정보를 가져온다.
@@ -133,10 +135,14 @@ class DetailScheduleViewModel @Inject constructor(
                     networkResult.data?.let { data ->
                         for (userInfo in userInfoList) {
                             for (location in data) {
+                                // 멤버별 위치 업데이트
                                 if (userInfo.memberId == location.memberId) {
                                     userInfo.latitude = location.latitude
                                     userInfo.longitude = location.longitude
-                                    myIdx = userInfoList.indexOf(userInfo)
+                                }
+                                // 내 위치 업데이트
+                                if (location.memberId == memberId) {
+                                    _myLocation.update { LatLng(location.latitude, location.longitude) }
                                 }
                             }
                         }
@@ -158,7 +164,10 @@ class DetailScheduleViewModel @Inject constructor(
                 is NetworkResult.Error -> { Log.e("getUserLocationUseCase Error", "${networkResult.code}, ${networkResult.errorData}") }
                 is NetworkResult.Exception -> { Log.e("getUserLocationUseCase Exception", "exception") }
             }
-            _userInfos.update { userInfoList }
+            withContext(Dispatchers.Main) {
+                _userInfos.clear()
+                _userInfos.addAll(userInfoList)
+            }
             Log.e("getMemberDetailsUseCase Success", "${userInfoList}")
         }
     }

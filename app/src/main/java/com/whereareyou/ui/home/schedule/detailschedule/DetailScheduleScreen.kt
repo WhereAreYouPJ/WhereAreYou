@@ -19,7 +19,8 @@ fun DetailScheduleScreen(
         }
         DetailScheduleViewModel.ScreenState.UserMap -> {
             UserMapScreen(
-                moveToDetailScheduleScreen = { viewModel.updateScreenState(DetailScheduleViewModel.ScreenState.DetailSchedule) }
+                moveToDetailScheduleScreen = { viewModel.updateScreenState(DetailScheduleViewModel.ScreenState.DetailSchedule) },
+                updateUsersLocation = { viewModel.getUserLocation() }
             )
         }
     }

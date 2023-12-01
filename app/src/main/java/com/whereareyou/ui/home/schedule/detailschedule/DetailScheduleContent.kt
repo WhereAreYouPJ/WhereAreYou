@@ -1,5 +1,13 @@
 package com.whereareyou.ui.home.schedule.detailschedule
 
+import android.content.Context
+import android.content.Intent
+import android.location.LocationManager
+import android.provider.Settings
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,6 +49,17 @@ fun DetailScheduleContent(
     moveToUserMapScreen: () -> Unit,
     viewModel: DetailScheduleViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val locationServiceRequestLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+            activityResult ->
+        if (activityResult.resultCode == ComponentActivity.RESULT_OK)
+            Log.e("locationServiceRequest", "location service accepted")
+        else {
+            Log.e("locationServiceRequest", "location service denied")
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +77,8 @@ fun DetailScheduleContent(
                     .height(200.dp)
                     .background(
                         brush = Brush.horizontalGradient(listOf(Color.Red, Color.Blue)),
-                        alpha = 0.4f
+                        alpha = 0.4f,
+                        shape = RoundedCornerShape(10.dp)
                     )
             )
         }
@@ -70,10 +92,12 @@ fun DetailScheduleContent(
                 )
                 .padding(20.dp)
         ) {
+            // 일정 제목
             Text(
                 text = "${viewModel.title.collectAsState().value}",
                 fontSize = 30.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF505050)
             )
             Spacer(modifier = Modifier.height(30.dp))
             // 날짜, 시간 정보
@@ -84,9 +108,10 @@ fun DetailScheduleContent(
                     modifier = Modifier
                         .size(30.dp),
                     painter = painterResource(id = R.drawable.schedule_fill0_wght200_grad0_opsz24),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = "${viewModel.startTime.collectAsState().value.replace("T", "\n")}",
                     fontSize = 20.sp
@@ -112,9 +137,10 @@ fun DetailScheduleContent(
                     modifier = Modifier
                         .size(30.dp),
                     painter = painterResource(id = R.drawable.location_on_fill0_wght200_grad0_opsz24),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = "${viewModel.place.collectAsState().value}",
                     fontSize = 20.sp
@@ -123,7 +149,7 @@ fun DetailScheduleContent(
 
             Spacer(modifier = Modifier.height(20.dp))
             // 회원 리스트 정보
-            val memberList = viewModel.userInfos.collectAsState().value
+            val memberList = viewModel.userInfos
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -131,9 +157,10 @@ fun DetailScheduleContent(
                     modifier = Modifier
                         .size(30.dp),
                     painter = painterResource(id = R.drawable.group_fill0_wght200_grad0_opsz24),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 LazyRow() {
                     itemsIndexed(memberList) {_, userInfo ->
                         Column(
@@ -149,14 +176,35 @@ fun DetailScheduleContent(
                             )
                             Text(
                                 text = "${userInfo.name}",
-                                fontSize = 20.sp
+                                fontSize = 16.sp
                             )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                     }
                 }
             }
+            // 지도 이동 버튼
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                modifier = Modifier
+                    .padding(start = 50.dp)
+                    .clip(shape = RoundedCornerShape(50f))
+                    .background(
+                        color = Color(0xFFF9D889),
+                        shape = RoundedCornerShape(50)
+                    )
+                    .clickable {
+                        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+                        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                            locationServiceRequestLauncher.launch(intent)
+                        }
+                        moveToUserMapScreen()
+                    }
+                    .padding(10.dp),
+                text = "네이버 지도"
+            )
             Spacer(modifier = Modifier.height(20.dp))
 
             // 메모
@@ -167,9 +215,10 @@ fun DetailScheduleContent(
                     modifier = Modifier
                         .size(30.dp),
                     painter = painterResource(id = R.drawable.article_fill0_wght200_grad0_opsz24),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = "메모",
                     fontSize = 20.sp
@@ -190,16 +239,6 @@ fun DetailScheduleContent(
                     .padding(10.dp),
                 text = "${viewModel.memo.collectAsState().value}",
                 fontSize = 20.sp
-            )
-
-            // 지도로 넘어가는 버튼
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(color = Color.Blue)
-                    .clickable {
-                        moveToUserMapScreen()
-                    }
             )
         }
     }
