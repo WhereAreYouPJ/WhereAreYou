@@ -20,6 +20,7 @@ import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.ResetPasswordUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
+import com.whereareyou.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyou.domain.usecase.signin.SignInUseCase
 import com.whereareyou.domain.usecase.signin.VerifyPasswordResetCodeUseCase
 import com.whereareyou.domain.usecase.signup.AuthenticateEmailCodeUseCase
@@ -43,6 +44,7 @@ class SignViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val saveMemberIdUseCase: SaveMemberIdUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
+    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
 
 
     private val signUpUseCase: SignUpUseCase, //회원가입
@@ -199,6 +201,7 @@ class SignViewModel @Inject constructor(
                     Log.e("SignViewModel", signInResult.data.toString())
                     saveAccessTokenUseCase("Bearer " + signInResult.data!!.accessToken)
                     saveMemberIdUseCase(signInResult.data!!.memberId)
+                    saveRefreshTokenUseCase(signInResult.data!!.refreshToken)
                     isLoginSuccess=true
 
                 }
