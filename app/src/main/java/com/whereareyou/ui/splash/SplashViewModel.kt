@@ -1,7 +1,9 @@
 package com.whereareyou.ui.splash
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -42,15 +45,8 @@ class SplashViewModel @Inject constructor(
         return NetworkManager.checkNetworkState()
     }
 
-    fun checkIsSignedIn(): Boolean {
-        var isSignedIn = false
-        runBlocking {
-            delay(2000)
-            if (getMemberIdUseCase().first().isNotEmpty()) {
-                isSignedIn = false
-            }
-        }
-        return isSignedIn
+    suspend fun checkIsSignedIn(): Boolean {
+        return getMemberIdUseCase().first().isNotEmpty()
     }
 
     enum class CheckingState {
