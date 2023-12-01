@@ -30,7 +30,6 @@ fun MainNavigation(
     navController: NavHostController = rememberNavController(),
     viewModel: GlobalViewModel = hiltViewModel()
 ) {
-    Log.e("MainNav", "MainNav")
     NavHost(
         modifier = Modifier
             .fillMaxSize(),
@@ -42,24 +41,15 @@ fun MainNavigation(
             route = Constants.ROUTE_MAIN_SPLASH
         ) {
             SplashScreen(
-                checkIsSignedIn = { viewModel.checkIsSignedIn() },
-                moveToSignInScreen = {
+                moveToStartScreen = {
                     navController.popBackStack()
-//                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
                     navController.navigate(Constants.ROUTE_MAIN_START)
                 },
                 moveToMainScreen = {
                     navController.popBackStack()
-//                    navController.navigate(Constants.ROUTE_MAIN_FINDID)
                     navController.navigate(Constants.ROUTE_MAIN_HOME)
-                }
+                },
             )
-        }
-
-        composable(
-            route = Constants.ROUTE_MAIN_INTRO
-        ) {
-
         }
 
         // 홈 화면
