@@ -86,9 +86,9 @@ fun DateCalendar(
 //                                    indication = null,
 //                                    interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    viewModel.updateDate(currMonthCalendarInfo[i + date * 7].date)
-                                    viewModel.updateMonth(currMonthCalendarInfo[i + date * 7].month)
                                     viewModel.updateYear(currMonthCalendarInfo[i + date * 7].year)
+                                    viewModel.updateMonth(currMonthCalendarInfo[i + date * 7].month)
+                                    viewModel.updateDate(currMonthCalendarInfo[i + date * 7].date)
                                     expandDetailContent()
                                 },
                             contentAlignment = Alignment.TopCenter
