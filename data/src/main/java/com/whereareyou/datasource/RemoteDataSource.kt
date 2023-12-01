@@ -31,6 +31,7 @@ import com.whereareyou.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyou.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyou.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyou.domain.entity.apimessage.signin.FindIdResponse
+import com.whereareyou.domain.entity.apimessage.signin.GetMemberDetailsByUserIdResponse
 import com.whereareyou.domain.entity.apimessage.signin.GetMemberDetailsResponse
 import com.whereareyou.domain.entity.apimessage.signin.ModifyMyInfoRequest
 import com.whereareyou.domain.entity.apimessage.signin.ReissueTokenRequest
@@ -48,7 +49,10 @@ import com.whereareyou.domain.entity.apimessage.signup.CheckEmailDuplicateRespon
 import com.whereareyou.domain.entity.apimessage.signup.CheckIdDuplicateResponse
 import com.whereareyou.domain.entity.apimessage.signup.SignUpRequest
 import com.whereareyou.domain.entity.apimessage.signup.SignUpResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Multipart
 
 class RemoteDataSource(
     private val scheduleApi: ScheduleApi,
@@ -218,7 +222,7 @@ class RemoteDataSource(
         return signInApi.resetPassword(body)
     }
 
-    // 회원 상세 정보
+    // 회원 상세 정보(memberId)
     suspend fun getMemberDetails(
         token: String,
         memberId: String
@@ -226,12 +230,21 @@ class RemoteDataSource(
         return signInApi.getMemberDetails(token, memberId)
     }
 
+    // 회원 상세 정보(userId)
+    suspend fun getMemberDetailsByUserId(
+        token: String,
+        userId: String
+    ): Response<GetMemberDetailsByUserIdResponse> {
+        return signInApi.getMemberDetailsByUserId(token, userId)
+    }
+
     // 마이페이지 수정
     suspend fun modifyMyInfo(
         token: String,
-        body: ModifyMyInfoRequest
+        image: MultipartBody.Part,
+        userId: RequestBody
     ): Response<Unit> {
-        return signInApi.modifyMyInfo(token, body)
+        return signInApi.modifyMyInfo(token, image, userId)
     }
 
     // 회원정보 삭제
