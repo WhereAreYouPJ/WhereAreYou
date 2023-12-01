@@ -48,7 +48,7 @@ fun HomeScreen(
             if (viewType == ViewType.Calendar) {
                 FloatingActionButton(
                     contentColor = Color.White,
-                    containerColor = Color.Black,
+                    containerColor = Color(0xFF2D2573),
                     onClick = { moveToAddScheduleScreen() }
                 ) {
                     Icon(

@@ -37,7 +37,7 @@ class DrawerNotificationViewModel @Inject constructor(
     private val _friendRequestList = mutableStateListOf<Pair<FriendRequest, Friend>>()
     val friendRequestList: List<Pair<FriendRequest, Friend>> = _friendRequestList
 
-    private fun loadFriendRequests() {
+    fun loadFriendRequests() {
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()

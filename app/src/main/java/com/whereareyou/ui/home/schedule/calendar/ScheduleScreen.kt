@@ -70,7 +70,7 @@ fun ScheduleScreen(
         val drawerState = rememberDrawerState(
             initialValue = DrawerValue.Closed,
             confirmStateChange = {
-//                notificationViewModel.loadFriendRequests()
+                notificationViewModel.loadFriendRequests()
                 true
             }
         )

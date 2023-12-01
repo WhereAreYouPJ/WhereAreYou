@@ -40,6 +40,14 @@ interface SignInRepository {
     // memberId 가져오기
     suspend fun getMemberId(): Flow<String>
 
+    // 리프레시 토큰 저장
+    suspend fun saveRefreshToken(
+        refreshToken: String
+    )
+
+    // 리프레시 토큰 가져오기
+    suspend fun getRefreshToken(): Flow<String>
+
     // 토큰 재발급
     suspend fun reissueToken(
         body: ReissueTokenRequest

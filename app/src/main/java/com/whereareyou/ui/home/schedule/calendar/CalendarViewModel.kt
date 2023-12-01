@@ -100,7 +100,6 @@ class CalendarViewModel @Inject constructor(
 
     fun updateYear(year: Int) {
         _year.update { year }
-        updateCurrentMonthDateInfo()
     }
 
     fun updateMonth(month: Int) {

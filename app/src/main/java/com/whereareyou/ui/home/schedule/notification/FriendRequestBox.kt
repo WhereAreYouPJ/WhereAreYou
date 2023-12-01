@@ -46,7 +46,7 @@ fun FriendRequestBox(
                 .fillMaxHeight()
                 .clip(shape = RoundedCornerShape(50)),
             imageModel = {
-                friendRequest.second.profileImgUrl ?: R.drawable.account_circle_fill0_wght100_grad0_opsz24
+                friendRequest.second.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
             },
             imageOptions = ImageOptions(
                 contentScale = ContentScale.FillHeight,

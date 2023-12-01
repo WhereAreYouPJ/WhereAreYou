@@ -151,9 +151,7 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
             onClick = {
                 //navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
                 // signInViewModel.resetPassword("user1","user1","user1")
-                      signInViewModel.resetPassword("user1","user1","user1")
-
-
+                signInViewModel.resetPassword("user1","user1","user1")
             },
             shape = RoundedCornerShape(3.dp),
 

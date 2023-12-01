@@ -6,11 +6,13 @@ import com.whereareyou.domain.usecase.signin.FindIdUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyou.domain.usecase.signin.GetRefreshTokenUseCase
 import com.whereareyou.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyou.domain.usecase.signin.ReissueTokenUseCase
 import com.whereareyou.domain.usecase.signin.ResetPasswordUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
+import com.whereareyou.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyou.domain.usecase.signin.SignInUseCase
 import com.whereareyou.domain.usecase.signin.VerifyPasswordResetCodeUseCase
 import dagger.Module
@@ -55,6 +57,20 @@ object SignInUseCaseModule {
         repository: SignInRepository
     ): GetMemberIdUseCase {
         return GetMemberIdUseCase(repository)
+    }
+
+    @Provides
+    fun provideSaveRefreshTokenUseCase(
+        repository: SignInRepository
+    ): SaveRefreshTokenUseCase {
+        return SaveRefreshTokenUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetRefreshTokenUseCase(
+        repository: SignInRepository
+    ): GetRefreshTokenUseCase {
+        return GetRefreshTokenUseCase(repository)
     }
 
     @Provides

@@ -136,7 +136,7 @@ fun SignUpScreen(
                     .height(30.dp)
                     .background(Color.White)
                     .clickable {
-                        navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                        navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
 
                     }
 
@@ -521,7 +521,7 @@ fun SignUpScreen(
                         email.text
                     )
 
-                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
                 }
                 // 여기에 로그인 로직을 추가
             },
