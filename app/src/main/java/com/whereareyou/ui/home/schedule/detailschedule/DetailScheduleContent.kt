@@ -46,20 +46,8 @@ import com.whereareyou.R
 
 @Composable
 fun DetailScheduleContent(
-    moveToUserMapScreen: () -> Unit,
     viewModel: DetailScheduleViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val locationServiceRequestLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-            activityResult ->
-        if (activityResult.resultCode == ComponentActivity.RESULT_OK)
-            Log.e("locationServiceRequest", "location service accepted")
-        else {
-            Log.e("locationServiceRequest", "location service denied")
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -194,13 +182,7 @@ fun DetailScheduleContent(
                         shape = RoundedCornerShape(50)
                     )
                     .clickable {
-                        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-                        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            locationServiceRequestLauncher.launch(intent)
-                        }
-                        moveToUserMapScreen()
+                        viewModel.updateScreenState(DetailScheduleViewModel.ScreenState.UserMap)
                     }
                     .padding(10.dp),
                 text = "네이버 지도"
