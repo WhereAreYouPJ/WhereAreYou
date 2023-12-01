@@ -74,113 +74,13 @@ class SignViewModel @Inject constructor(
     private val _PasswordCodeResult = MutableLiveData<Boolean>()
     val PasswordCodeResult: LiveData<Boolean> get() = _PasswordCodeResult
 
-
-    //이메일 중복체크
-
-    fun checkEmailDuplicate(email: String) {
-        viewModelScope.launch {
-            val result = checkEmailDuplicateUseCase(email)
-            when (result) {
-                is NetworkResult.Success -> {
-                    // 중복되지 않은 경우
-                    Log.d("emailduplicate","1")
-                }
-                is NetworkResult.Error -> {
-                    // 중복된 경우
-                    Log.d("emailduplicate","2")
-
-                }
-                is NetworkResult.Exception -> {
-                    // 예외 처리
-                    Log.d("emailduplicate","3")
-
-                }
-            }
-        }
-    }
+    private val _emailduplicateResult = MutableLiveData<Boolean>()
+    val EmailDuplicateResult: LiveData<Boolean> get() = _emailduplicateResult
 
 
-    // 비밀번호 인증코드
-    fun verifyPasswordResetCode(userId: String, email: String, code: String,onPasswordCodeResult: (String) -> Unit) {
-        viewModelScope.launch {
-            val body = VerifyPasswordResetCodeRequest(userId, email, code)
+    private val _emailcodeResult = MutableLiveData<Boolean>()
+    val EmailcodeResult: LiveData<Boolean> get() = _emailcodeResult
 
-            val verifyCodeResult = verifyPasswordResetCodeUseCase(body)
-
-            var userId: String? = null // 초기값 null
-            Log.d("findId",body.toString())
-
-            Log.d("findId",verifyCodeResult.toString())
-
-            when (verifyCodeResult) {
-                is NetworkResult.Success -> {
-                    // 비밀번호 재설정 인증 성공 시 처리
-                    userId = verifyCodeResult.data?.userId
-
-                    Log.d("verify",verifyCodeResult.toString())
-                    // 이후 비밀번호 재설정 로직 수행
-                    // resetPassword(userId, newPassword, newPasswordCheck)
-                }
-                is NetworkResult.Error -> {
-                    // 비밀번호 재설정 인증 실패 시 처리
-                    userId="e"
-
-                    Log.e("verify", "Password reset code verification failed: ${verifyCodeResult.errorData}")
-                }
-                is NetworkResult.Exception -> {
-                    // 예외 처리 로직
-                    userId="e"
-
-                    Log.e("verify", "Password reset code verification exception: ${verifyCodeResult.e.message}")
-                }
-            }
-            if (userId != null) {
-                onPasswordCodeResult(userId)
-            }
-
-        }
-    }
-
-
-    // 아이디 찾기
-    fun findUserId(email: String, code: Int,onFindIdResult: (String) -> Unit) {
-        viewModelScope.launch {
-            var userId: String? = null // 초기값 null
-
-            var body=FindIdRequest(email,code)
-            val findIdResult = findIdUseCase(body)
-            Log.d("findId",body.toString())
-
-            Log.d("findId",findIdResult.toString())
-
-            when (findIdResult) {
-                is NetworkResult.Success -> {
-
-                    userId = findIdResult.data?.userId
-                    Log.d("findid","success")
-
-                }
-                is NetworkResult.Error -> {
-                    Log.d("findid","fail1")
-                    userId="e"
-
-
-                }
-                is NetworkResult.Exception -> {
-                    Log.d("findid","fail2")
-                    userId="e"
-
-
-                }
-            }
-
-            if (userId != null) {
-                onFindIdResult(userId)
-            }
-
-        }
-
-    }
 
     //  로그인 함수
     fun LogIn(user_name: String, user_password: String,onLoginResult: (Boolean) -> Unit // 콜백 함수
@@ -232,11 +132,53 @@ class SignViewModel @Inject constructor(
     }
 
 
+    // 아이디 찾기
+    fun findUserId(email: String, code: Int,onFindIdResult: (String) -> Unit) {
+        viewModelScope.launch {
+            var userId: String? = null // 초기값 null
+
+            var body=FindIdRequest(email,code)
+            val findIdResult = findIdUseCase(body)
+            Log.d("findId",body.toString())
+
+            Log.d("findId",findIdResult.toString())
+
+            when (findIdResult) {
+                is NetworkResult.Success -> {
+
+                    userId = findIdResult.data?.userId
+                    Log.d("findid","success")
+
+                }
+                is NetworkResult.Error -> {
+                    Log.d("findid","fail1")
+                    userId="e"
+
+
+                }
+                is NetworkResult.Exception -> {
+                    Log.d("findid","fail2")
+                    userId="e"
+
+
+                }
+            }
+
+            if (userId != null) {
+                onFindIdResult(userId)
+            }
+
+        }
+
+    }
+
 
 
 
     // 이메일 코드 인증
-    fun checkauthenticateEmailCode(email: String, code: Int) {
+    fun checkauthenticateEmailCode(email: String, code: Int,onEmailCodeResult:(Boolean)->Unit) {
+
+        var EmailCode = false // 초기값 false
 
         viewModelScope.launch {
             val body = AuthenticateEmailCodeRequest(email, code)
@@ -247,19 +189,111 @@ class SignViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     // 이메일 코드가 올바를 때
                     Log.e("checkEmailCode", result.toString())
+
+                    EmailCode=true
+
                 }
 
                 is NetworkResult.Error -> {
                     Log.e("checkEmailCode2", "error")
+                    EmailCode=false
+
                 }
 
                 is NetworkResult.Exception -> {
                     Log.e("checkEmailCode3", "${result.e.message}")
+                    EmailCode=false
+
                 }
+            }
+            onEmailCodeResult(EmailCode)
+
+
+        }
+    }
+
+
+
+
+
+
+    //이메일 중복체크
+
+    fun checkEmailDuplicate(email: String,onEmailDuplicateResult:(Boolean)->Unit) {
+        var Emailunduplicated = false // 초기값 false
+
+
+        viewModelScope.launch {
+            val result = checkEmailDuplicateUseCase(email)
+            when (result) {
+                is NetworkResult.Success -> {
+                    // 중복되지 않은 경우
+                    Log.d("emailduplicate","1")
+                    Emailunduplicated=true
+                }
+                is NetworkResult.Error -> {
+                    // 중복된 경우
+                    Log.d("emailduplicate","2")
+                    Emailunduplicated=false
+
+                }
+                is NetworkResult.Exception -> {
+                    // 예외 처리
+                    Log.d("emailduplicate","3")
+                    Emailunduplicated=false
+
+                }
+            }
+            onEmailDuplicateResult(Emailunduplicated)
+        }
+    }
+
+
+    // 비밀번호 인증코드
+    fun verifyPasswordResetCode(userId: String, email: String, code: String,onPasswordCodeResult: (String) -> Unit) {
+        viewModelScope.launch {
+            val body = VerifyPasswordResetCodeRequest(userId, email, code)
+
+            val verifyCodeResult = verifyPasswordResetCodeUseCase(body)
+
+            var userId: String? = null // 초기값 null
+            Log.d("findId",body.toString())
+
+            Log.d("findId",verifyCodeResult.toString())
+
+            when (verifyCodeResult) {
+                is NetworkResult.Success -> {
+                    // 비밀번호 재설정 인증 성공 시 처리
+                    userId = verifyCodeResult.data?.userId
+
+                    Log.d("verify",verifyCodeResult.toString())
+                    // 이후 비밀번호 재설정 로직 수행
+                    // resetPassword(userId, newPassword, newPasswordCheck)
+                }
+                is NetworkResult.Error -> {
+                    // 비밀번호 재설정 인증 실패 시 처리
+                    userId="e"
+
+                    Log.e("verify", "Password reset code verification failed: ${verifyCodeResult.errorData}")
+                }
+                is NetworkResult.Exception -> {
+                    // 예외 처리 로직
+                    userId="e"
+
+                    Log.e("verify", "Password reset code verification exception: ${verifyCodeResult.e.message}")
+                }
+            }
+            if (userId != null) {
+                onPasswordCodeResult(userId)
             }
 
         }
     }
+
+
+
+
+
 
 
 
@@ -270,8 +304,9 @@ class SignViewModel @Inject constructor(
             val body = ResetPasswordRequest(userId, password, checkPassword)
             Log.d("resetPassword",body.toString())
 
+            val resetPasswordResult=resetPasswordUseCase(body)
             Log.d("resetpassword",resetPasswordUseCase(body).toString())
-/*
+
             when (resetPasswordResult) {
                 is NetworkResult.Success -> {
                     // 비밀번호 재설정 성공 시 처리
@@ -287,7 +322,7 @@ class SignViewModel @Inject constructor(
                     Log.d("reset3","xx")
 
                 }
-            }*/
+            }
 
         }
     }

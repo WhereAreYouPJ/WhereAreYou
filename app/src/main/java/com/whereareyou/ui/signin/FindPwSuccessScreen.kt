@@ -1,5 +1,6 @@
 package com.whereareyou.ui.signin
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,9 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
 
     // 아이디 비밀번호 입력 필드
 
+    val navBackStackEntry = navController.previousBackStackEntry
+    val receivedValue = navBackStackEntry?.savedStateHandle?.get<String>("userId")
+
 
     Column(
         modifier = Modifier
@@ -72,6 +76,27 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
                 .fillMaxWidth()
                 .height(15.dp)
         )
+
+
+        Row() {
+
+
+            Text(text = "아이디 : $receivedValue")
+
+
+            Spacer(
+                modifier = Modifier
+                    .width(10.dp)
+            )
+
+        }
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(15.dp)
+        )
+
         OutlinedTextField(
             value = user_pw.text,
             onValueChange = {
@@ -120,7 +145,9 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
                     style = TextStyle(fontSize = 13.sp)
                 )
 
-            }
+            },
+            visualTransformation = PasswordVisualTransformation()
+
         )
 
 
@@ -149,9 +176,15 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
         // 확인 버튼
         Button(
             onClick = {
-                //navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
-                // signInViewModel.resetPassword("user1","user1","user1")
-                signInViewModel.resetPassword("user1","user1","user1")
+
+                if(receivedValue!=null) {
+                    signInViewModel.resetPassword(receivedValue, user_pw.text, user_pw_check.text
+                    )
+
+                }
+                navController.navigate(Constants.ROUTE_MAIN_SUCCESSPW)
+
+
             },
             shape = RoundedCornerShape(3.dp),
 

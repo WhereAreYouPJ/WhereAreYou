@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -98,11 +99,18 @@ fun SignUpScreen(
     var isButtonClicked by remember { mutableStateOf(false) }
 
 
+
+    var EmailCodeText by remember { mutableStateOf(false) }
+
+
     // 값이 입력되고 검증이 되었을경우 true
     var name_pass by remember { mutableStateOf(false) }
     var id_pass by remember { mutableStateOf(false) }
     var password_pass by remember { mutableStateOf(false) }
     var email_pass by remember { mutableStateOf(true) } //임시로 true 설정
+
+    val context = LocalContext.current
+
 
 ////////////
 
@@ -441,8 +449,25 @@ fun SignUpScreen(
                     Button(
                         onClick = {
                             // 여기에 중복 확인 로직 추가
-                            signInViewModel.checkEmailDuplicate(email.text)
-                            isEmailChecked = true
+                            signInViewModel.checkEmailDuplicate(email.text) {
+                                Emailunduplicated ->
+                                if(Emailunduplicated==true){
+
+                                    isEmailChecked = true
+
+                                }
+                                else{
+                                    Toast.makeText(
+                                        context,
+                                        "이메일이 중복되었습니다.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                    isEmailChecked = false
+
+                                }
+                            }
+
                         },
                         shape = RoundedCornerShape(3.dp),
                         modifier = Modifier
@@ -490,7 +515,22 @@ fun SignUpScreen(
 
                     Button(
                         onClick = {
-                            signInViewModel.checkauthenticateEmailCode(email.text, emailCode.text.toInt())
+                            signInViewModel.checkauthenticateEmailCode(email.text, emailCode.text.toInt()){
+                                EmailCode->
+                                if(EmailCode==true){
+                                    EmailCodeText=true
+                                }
+                                else{
+                                    Toast.makeText(
+                                        context,
+                                        "인증코드가 일치하지 않습니다. ",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+
+                                }
+
+                            }
                         },
                         shape = RoundedCornerShape(3.dp),
                         modifier = Modifier
@@ -500,9 +540,18 @@ fun SignUpScreen(
                         Text("확인")
                     }
                 }
-                Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
             }
         }
+
+        if (EmailCodeText==true) {
+            Text(
+                text = "인증되었습니다.",
+                color = Color.Green
+            )
+            email_pass = true // 검증완료이므로 true 변환
+
+        }
+        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
 
         // 로그인 버튼
         Button(

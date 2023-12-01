@@ -69,7 +69,6 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
             placeholder = {
                 Text("아이디", style = TextStyle(fontSize = 13.sp))
             },
-            visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -161,7 +160,7 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
                     if (userId!="e") {
                         // userId가 반환되었을 때
                         Log.d("id!!",userId)
-
+                        navController.currentBackStackEntry?.savedStateHandle?.set("userId", userId)
                         navController.navigate(Constants.ROUTE_MAIN_FINDPWSUCCESS)
                     } else {
                         // userId가 null 또는 empty일 때
