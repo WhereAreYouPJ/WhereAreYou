@@ -1,9 +1,11 @@
 package com.whereareyou.di.usecase
 
+import com.whereareyou.domain.entity.apimessage.signin.GetMemberDetailsByUserIdResponse
 import com.whereareyou.domain.repository.SignInRepository
 import com.whereareyou.domain.usecase.signin.DeleteMemberUseCase
 import com.whereareyou.domain.usecase.signin.FindIdUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberDetailsByUserIdUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.GetRefreshTokenUseCase
@@ -92,6 +94,13 @@ object SignInUseCaseModule {
         repository: SignInRepository
     ): GetMemberDetailsUseCase {
         return GetMemberDetailsUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetMemberDetailsByUserIdUseCase(
+        repository: SignInRepository
+    ): GetMemberDetailsByUserIdUseCase {
+        return GetMemberDetailsByUserIdUseCase(repository)
     }
 
     @Provides
