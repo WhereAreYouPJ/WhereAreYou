@@ -13,7 +13,10 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.naver.maps.geometry.LatLng
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,18 +24,24 @@ import javax.inject.Singleton
 class LocationUtil @Inject constructor(
     private val context: Context
 ) {
-    fun getCurrentLocation(latLng: Coordinate) {
-        val request = LocationRequest.Builder(10000L)
-            .setIntervalMillis(10000L)
+    fun getCurrentLocation(callback: suspend (LatLng) -> Unit) {
+        val request = LocationRequest.Builder(1000L)
+            .setMaxUpdates(4)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
 
+        val client = LocationServices.getFusedLocationProviderClient(context)
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.locations.lastOrNull()?.let {
-                    latLng.latitude = it.latitude
-                    latLng.longitude = it.longitude
+                    Log.e("location", "${it.latitude}, ${it.longitude}")
+//                    latLng.latitude = it.latitude
+//                    latLng.longitude = it.longitude
+                    CoroutineScope(Dispatchers.Default).launch {
+                        callback(LatLng(it.latitude, it.longitude))
+                    }
                 }
+                client.removeLocationUpdates(this)
             }
         }
         if (ActivityCompat.checkSelfPermission(
@@ -52,7 +61,7 @@ class LocationUtil @Inject constructor(
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        LocationServices.getFusedLocationProviderClient(context).requestLocationUpdates(
+        client.requestLocationUpdates(
             request,
             locationCallback,
             Looper.getMainLooper()
