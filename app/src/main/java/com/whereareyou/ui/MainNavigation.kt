@@ -47,7 +47,7 @@ fun MainNavigation(
                 },
                 moveToMainScreen = {
                     navController.popBackStack()
-                    navController.navigate(Constants.ROUTE_MAIN_START)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
                 },
             )
         }
@@ -60,7 +60,11 @@ fun MainNavigation(
                 moveToAddScheduleScreen = { navController.navigate(Constants.ROUTE_NEW_SCHEDULE) },
                 moveToDetailScreen = { navController.navigate(Constants.ROUTE_DETAIL_SCHEDULE + "/$it") },
                 moveToAddFriendScreen = { navController.navigate(Constants.ROUTE_ADD_FRIEND) },
-                moveToAddGroupScreen = {  }
+                moveToAddGroupScreen = {  },
+                moveToStartScreen = {
+                    navController.popBackStack()
+                    navController.navigate(Constants.ROUTE_MAIN_START)
+                }
             )
         }
 
@@ -98,7 +102,10 @@ fun MainNavigation(
         composable(route=Constants.ROUTE_MAIN_SIGNIN){
             LoginScreen(
                 moveToStartScreen = { navController.navigate(Constants.ROUTE_MAIN_START) },
-                moveToMainHomeScreen = { navController.navigate(Constants.ROUTE_MAIN_HOME) },
+                moveToMainHomeScreen = {
+                    navController.popBackStack(Constants.ROUTE_MAIN_START, true)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+                },
                 moveToFindIdScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDID) },
                 moveToFindPWScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDPW) },
                 moveToBackScreen = { navController.popBackStack() }
