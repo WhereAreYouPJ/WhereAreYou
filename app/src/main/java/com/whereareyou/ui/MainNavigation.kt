@@ -95,7 +95,7 @@ fun MainNavigation(
         }
 
         // 로그인 화면
-        composable(route=Constants.ROUTE_MAIN_LOGIN){
+        composable(route=Constants.ROUTE_MAIN_SIGNIN){
             LoginScreen(
                 moveToStartScreen = { navController.navigate(Constants.ROUTE_MAIN_START) },
                 moveToMainHomeScreen = { navController.navigate(Constants.ROUTE_MAIN_HOME) },
@@ -109,7 +109,7 @@ fun MainNavigation(
         composable(route=Constants.ROUTE_MAIN_START){
             StartScreen(
                 moveToSignUpScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNUP) },
-                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) }
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNIN) }
             )
         }
 
@@ -119,7 +119,7 @@ fun MainNavigation(
                 moveToSignInScreen = {
 //                    Log.e("moveToSignInScreen", "moveToSignInScreen")
                     navController.popBackStack()
-                    navController.navigate(Constants.ROUTE_MAIN_LOGIN)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
                 },
                 num = 0,
                 navController = navController
@@ -128,7 +128,7 @@ fun MainNavigation(
         // 아이디 찾기(오른쪽)
         composable(route=Constants.ROUTE_MAIN_FINDIDSUCCESS){
             Tablayout(
-                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) },
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNIN) },
                 num = 2,
                 navController = navController
             )
@@ -137,7 +137,7 @@ fun MainNavigation(
         // 비밀번호 재설정(왼쪽)
         composable(route=Constants.ROUTE_MAIN_FINDPW){
             Tablayout(
-                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) },
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNIN) },
                 num = 1,
                 navController = navController
             )
@@ -146,7 +146,7 @@ fun MainNavigation(
         // 비밀번호 재설정(오른쪽)
         composable(route=Constants.ROUTE_MAIN_FINDPWSUCCESS){
             Tablayout(
-                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_LOGIN) },
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNIN) },
                 num = 3,
                 navController = navController
             )
