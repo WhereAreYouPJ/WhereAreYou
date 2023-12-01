@@ -1,27 +1,12 @@
 package com.whereareyou
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
-import com.naver.maps.geometry.LatLng
-import com.whereareyou.data.GlobalValue
 import com.whereareyou.domain.entity.apimessage.location.SendUserLocationRequest
 import com.whereareyou.domain.entity.apimessage.signin.SignInRequest
 import com.whereareyou.domain.usecase.location.SendUserLocationUseCase
@@ -31,8 +16,6 @@ import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SignInUseCase
 import com.whereareyou.domain.util.NetworkResult
-import com.whereareyou.repository.SharedPreferencesRepository
-import com.whereareyou.util.CalendarUtil
 import com.whereareyou.util.Coordinate
 import com.whereareyou.util.LocationUtil
 import com.whereareyou.util.NetworkManager
@@ -78,12 +61,30 @@ class GlobalViewModel @Inject constructor(
         }
     }
 
+    fun checkEnvironment(
+        moveToSignInScreen: () -> Unit,
+        moveToMainScreen: () -> Unit,
+        locationPermissionRequest: () -> Unit
+    ) {
+        viewModelScope.launch {
+            // 권한 확인
+
+
+            // 인터넷 연결상태 확인
+
+
+            // 로그인 상태 확인
+
+
+        }
+    }
+
     fun checkIsSignedIn(): Boolean {
         var isSignedIn = false
         runBlocking {
             delay(2000)
             if (getMemberIdUseCase().first().isNotEmpty()) {
-                isSignedIn = true
+                isSignedIn = false
             }
         }
         return isSignedIn
@@ -130,24 +131,22 @@ class GlobalViewModel @Inject constructor(
         })
     }
 
-    private fun checkNetworkState() {
-        viewModelScope.launch {
-            while (true) {
-                delay(1000)
-                if (!NetworkManager.checkNetworkState()) {
-//                    Log.e("checkNetworkState", "네트워크 연결 안됨")
-                } else {
-//                    Log.e("checkNetworkState", "네트워크 연결됨")
-                }
-            }
+    fun checkNetworkState(
+        checkLocationPermission: () -> Unit,
+    ): Boolean {
+        if (NetworkManager.checkNetworkState()) {
+//            checkLo
+        } else {
+
         }
+        return false
     }
 
     init {
-        locationUtil.getCurrentLocation(latLng = currentLocation)
-        signIn()
-        getLocation()
-        getToken()
-        checkNetworkState()
+//        locationUtil.getCurrentLocation(latLng = currentLocation)
+//        signIn()
+//        getLocation()
+//        getToken()
+//        checkNetworkState()
     }
 }
