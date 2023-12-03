@@ -30,7 +30,7 @@ fun UserInfoContent(
             .clip(shape = RoundedCornerShape(50)),
         imageModel = { imageUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
         imageOptions = ImageOptions(
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillWidth,
         )
     )
     Spacer(modifier = Modifier.height(20.dp))
