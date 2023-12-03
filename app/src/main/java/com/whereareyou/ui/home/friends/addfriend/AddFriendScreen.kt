@@ -30,8 +30,7 @@ fun AddFriendScreen(
     val buttonState = viewModel.buttonState.collectAsState().value
 
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AddFriendScreenTopBar()
