@@ -6,14 +6,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.data.Schedule
-import com.whereareyou.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyou.domain.entity.schedule.BriefSchedule
-import com.whereareyou.domain.util.NetworkResult
-import com.whereareyou.domain.entity.schedule.ScheduleCountByDay
 import com.whereareyou.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyou.domain.util.NetworkResult
 import com.whereareyou.util.CalendarUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +55,7 @@ class CalendarViewModel @Inject constructor(
     val currentDateBriefSchedule: List<BriefSchedule> = _currentDateBriefSchedule
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
-    private fun updateCurrentMonthDateInfo() {
+    fun updateCurrentMonthDateInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
         viewModelScope.launch {
@@ -127,6 +125,7 @@ class CalendarViewModel @Inject constructor(
                 is NetworkResult.Exception -> { Log.e("exception", "exception") }
             }
         }
+        updateCurrentMonthDateInfo()
     }
 
     fun updateCalendarState(state: CalendarState) {
