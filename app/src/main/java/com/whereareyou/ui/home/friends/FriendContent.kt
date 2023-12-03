@@ -40,8 +40,7 @@ fun FriendContent(
     LazyColumn() {
         item {
             Box(
-                modifier = Modifier
-                    .height(40.dp),
+                modifier = Modifier.height(40.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
