@@ -56,13 +56,11 @@ fun FriendIdTextField(
             ) {
                 it()
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Image(
-                        modifier = Modifier
-                            .clickable {
+                        modifier = Modifier.clickable {
                                 clearInputId()
                             },
                         painter = painterResource(id = R.drawable.baseline_cancel_24),
