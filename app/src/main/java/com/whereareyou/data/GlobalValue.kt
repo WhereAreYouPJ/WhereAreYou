@@ -7,7 +7,7 @@ object GlobalValue {
     // 화면 가로 너비
     var screenWidth = 720f
     // 상단 영역 높이
-    var topAppBarHeight = 97.6f
+    var topBarHeight = 97.6f
     // 하단 네비게이션 바 높이
     var bottomNavBarHeight = 97.6f
     // 캘린더 뷰 높이
