@@ -117,14 +117,12 @@ fun BriefScheduleList(
     val currentDateBriefSchedule = viewModel.currentDateBriefSchedule
     Column() {
         Text(
-            modifier = Modifier
-                .padding(start = 20.dp, top = 20.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 20.dp),
             text = "$year.$month.$date",
             fontSize = 20.sp
         )
         Text(
-            modifier = Modifier
-                .padding(start = 20.dp),
+            modifier = Modifier.padding(start = 20.dp),
             text = "" + when (dayOfWeek) {
                 1 -> "일"
                 2 -> "월"
