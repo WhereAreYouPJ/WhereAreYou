@@ -39,7 +39,7 @@ fun FriendBox(
                 .clip(shape = RoundedCornerShape(50)),
             imageModel = { imageUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
             imageOptions = ImageOptions(
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.FillWidth,
             )
         )
         Spacer(modifier = Modifier.width(10.dp))
