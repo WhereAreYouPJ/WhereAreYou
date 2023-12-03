@@ -29,10 +29,7 @@ fun MonthCalendar(
     ) {
         Column {
             for (i in 0..3) {
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
+                Row(modifier = Modifier.weight(1f)) {
                     for (j in 0..2) {
                         Box(
                             modifier = Modifier
