@@ -1,16 +1,15 @@
 package com.whereareyou.di.usecase
 
 import com.whereareyou.domain.repository.ScheduleRepository
-import com.whereareyou.domain.repository.SearchLocationRepository
-import com.whereareyou.domain.usecase.location.GetLocationAddressUseCase
 import com.whereareyou.domain.usecase.schedule.AcceptScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.CheckArrivalUseCase
 import com.whereareyou.domain.usecase.schedule.DeleteScheduleUseCase
-import com.whereareyou.domain.usecase.schedule.EndScheduleUseCase
+import com.whereareyou.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyou.domain.usecase.schedule.GetMonthlyScheduleUseCase
+import com.whereareyou.domain.usecase.schedule.GetScheduleInvitationUseCase
 import com.whereareyou.domain.usecase.schedule.ModifyScheduleMemberUseCase
 import com.whereareyou.domain.usecase.schedule.ModifyScheduleUseCase
 import dagger.Module
@@ -72,10 +71,10 @@ object ScheduleUseCaseModule {
     }
 
     @Provides
-    fun provideEndScheduleUseCase(
+    fun provideRefuseOrQuitScheduleUseCase(
         repository: ScheduleRepository
-    ): EndScheduleUseCase {
-        return EndScheduleUseCase(repository)
+    ): RefuseOrQuitScheduleUseCase {
+        return RefuseOrQuitScheduleUseCase(repository)
     }
 
     @Provides
@@ -90,5 +89,12 @@ object ScheduleUseCaseModule {
         repository: ScheduleRepository
     ): ModifyScheduleMemberUseCase {
         return ModifyScheduleMemberUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetScheduleInvitationUseCase(
+        repository: ScheduleRepository
+    ): GetScheduleInvitationUseCase {
+        return GetScheduleInvitationUseCase(repository)
     }
 }
