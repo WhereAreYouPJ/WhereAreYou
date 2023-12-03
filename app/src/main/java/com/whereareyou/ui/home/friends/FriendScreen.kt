@@ -46,8 +46,8 @@ fun FriendScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FriendScreenPreview() {
-    FriendScreen(PaddingValues(0.dp), {}, {})
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FriendScreenPreview() {
+//    FriendScreen(PaddingValues(0.dp), {}, {})
+//}
