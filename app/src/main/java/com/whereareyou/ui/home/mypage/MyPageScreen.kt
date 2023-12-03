@@ -1,50 +1,61 @@
 package com.whereareyou.ui.home.mypage
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.Settings.Global
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyou.R
+import com.whereareyou.data.GlobalValue
 import java.io.File
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyPageScreen(
     paddingValues: PaddingValues,
     moveToStartScreen: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     // 카메라로 사진 찍어서 가져오기
     val takePhotoFromCameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
@@ -64,59 +75,136 @@ fun MyPageScreen(
             }
         }
 
-    Column {
-        Box(
+    val density = LocalDensity.current
+    val name = viewModel.name.collectAsState().value
+    val email = viewModel.email.collectAsState().value
+    val profileImageUri = viewModel.profileImageUri.collectAsState().value
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(
+                brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
+                center = Offset(size.width / 2, GlobalValue.calendarViewHeight + GlobalValue.topBarHeight - size.width),
+                radius = size.width,
+                style = Fill
+            )
+        }
+        Column(
             modifier = Modifier
-                .size(100.dp)
-                .background(color = Color.Yellow)
-                .clickable {
-                    viewModel.signOut(
-                        moveToStartScreen = moveToStartScreen
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((GlobalValue.topBarHeight / density.density).dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "설정",
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((GlobalValue.calendarViewHeight / density.density).dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                GlideImage(
+                    modifier = Modifier
+                        .width(((GlobalValue.calendarViewHeight / density.density) / 3 * 2).dp)
+                        .height(((GlobalValue.calendarViewHeight / density.density) / 3 * 2).dp)
+                        .clip(shape = RoundedCornerShape(50)),
+                    imageModel = { profileImageUri ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                    imageOptions = ImageOptions(
+                        contentScale = ContentScale.FillWidth,
                     )
-                },
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = name,
+                    fontSize = 20.sp,
+                    color = Color.White
+                )
+                Text(
+                    text = email,
+                    fontSize = 16.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Light
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density.density).dp)
+                .fillMaxWidth()
         ) {
             Text(
-                text = "로그아웃"
+                text = "일반"
             )
-        }
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .background(color = Color.Cyan)
-                .clickable {
-                    val takePhotoFromAlbumIntent =
-                        Intent(
-                            Intent.ACTION_GET_CONTENT,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                        ).apply {
-                            type = "image/*"
-                            action = Intent.ACTION_GET_CONTENT
-                            putExtra(
-                                Intent.EXTRA_MIME_TYPES,
-                                arrayOf("image/jpeg", "image/png", "image/bmp", "image/webp")
-                            )
-                            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
-                        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((0.6).dp)
+                    .background(color = Color.Black)
+            )
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(color = Color.Yellow)
+                    .clickable {
+                        viewModel.signOut(
+                            moveToStartScreen = moveToStartScreen
+                        )
+                    },
+            ) {
+                Text(
+                    text = "로그아웃"
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(color = Color.Cyan)
+                    .clickable {
+//                    val takePhotoFromAlbumIntent =
+//                        Intent(
+//                            Intent.ACTION_GET_CONTENT,
+//                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//                        ).apply {
+//                            type = "image/*"
+//                            action = Intent.ACTION_GET_CONTENT
+//                            putExtra(
+//                                Intent.EXTRA_MIME_TYPES,
+//                                arrayOf("image/jpeg", "image/png", "image/bmp", "image/webp")
+//                            )
+//                            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+//                        }
 //                    takePhotoFromAlbumLauncher.launch(takePhotoFromAlbumIntent)
-                    takePhotoFromAlbumLauncher.launch("image/*")
+                        takePhotoFromAlbumLauncher.launch("image/*")
 //                viewModel.updateProfileImage()
-                }
-        ) {
-            Text(
-                text = "회원정보변경"
+                    }
+            ) {
+                Text(
+                    text = "회원정보변경"
+                )
+            }
+            val imagePath = viewModel.imageUri.collectAsState().value
+            GlideImage(
+                modifier = Modifier
+                    .width(100.dp)
+                    .height(100.dp)
+                    .clip(shape = RoundedCornerShape(50)),
+                imageModel = { imagePath ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.FillWidth,
+                )
             )
         }
-        val imagePath = viewModel.imageUri.collectAsState().value
-        GlideImage(
-            modifier = Modifier
-                .width(100.dp)
-                .height(100.dp)
-                .clip(shape = RoundedCornerShape(50)),
-            imageModel = { imagePath ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
-            imageOptions = ImageOptions(
-                contentScale = ContentScale.FillHeight,
-            )
-        )
     }
 }
 
