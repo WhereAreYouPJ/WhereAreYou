@@ -41,8 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WhereAreYouTheme {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val systemUiController = rememberSystemUiController()
