@@ -73,13 +73,13 @@ class MainActivity : ComponentActivity() {
         // 하단 네비게이션 바 높이는 전체 화면의 1/15
         GlobalValue.bottomNavBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15
         // 상단 영역 높이는 전체 화면의 1/15
-        GlobalValue.topAppBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15
+        GlobalValue.topBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15
         // 캘린더 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 2/5
         GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
         // 일별 간략 정보 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 3/5
         GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
         GlobalValue.density = metrics.density
-        Log.e("GlobalValue", "${GlobalValue.screenHeightWithoutStatusBar}, ${GlobalValue.screenWidth}, ${GlobalValue.bottomNavBarHeight}, ${GlobalValue.topAppBarHeight}, ${GlobalValue.calendarViewHeight}, ${GlobalValue.dailyScheduleViewHeight}")
+        Log.e("GlobalValue", "${GlobalValue.screenHeightWithoutStatusBar}, ${GlobalValue.screenWidth}, ${GlobalValue.bottomNavBarHeight}, ${GlobalValue.topBarHeight}, ${GlobalValue.calendarViewHeight}, ${GlobalValue.dailyScheduleViewHeight}")
     }
 }
 
