@@ -75,12 +75,12 @@ fun FriendIdTextField(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun FriendIdTextFieldPreview() {
-    FriendIdTextField(
-        inputId = "abc",
-        updateInputId = {},
-        clearInputId = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun FriendIdTextFieldPreview() {
+//    FriendIdTextField(
+//        inputId = "abc",
+//        updateInputId = {},
+//        clearInputId = {}
+//    )
+//}
