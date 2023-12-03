@@ -35,8 +35,7 @@ fun UserInfoContent(
     )
     Spacer(modifier = Modifier.height(20.dp))
     Box(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Text(
