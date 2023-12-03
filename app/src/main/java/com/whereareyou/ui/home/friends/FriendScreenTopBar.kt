@@ -40,7 +40,7 @@ fun FriendScreenTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topAppBarHeight / density.density).dp)
+            .height((GlobalValue.topBarHeight / density.density).dp)
             .background(
                 color = Color(0xFFCE93D8)
             ),
@@ -70,8 +70,8 @@ fun FriendScreenTopBar(
         ) {
             Box {
                 CustomPopup(
-                    modifier = Modifier
-                        .clip(shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f)),
+                    modifier = Modifier,
+//                        .clip(shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f)),
                     popupState = popupState,
                     onDismissRequest = { popupState.isVisible = false }
                 ) {
