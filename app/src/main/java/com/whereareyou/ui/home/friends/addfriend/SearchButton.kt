@@ -35,7 +35,7 @@ fun BottomButton(
                 .height(80.dp)
                 .background(
                     color = Color(0xFF2D2573),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(10.dp)
                 )
                 .clickable { searchFriend() },
             contentAlignment = Alignment.Center
@@ -49,11 +49,11 @@ fun BottomButton(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun BottomButtonPreview() {
-    BottomButton(
-        searchFriend = {},
-        text = "text"
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun BottomButtonPreview() {
+//    BottomButton(
+//        searchFriend = {},
+//        text = "text"
+//    )
+//}
