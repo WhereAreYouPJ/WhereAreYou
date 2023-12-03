@@ -24,8 +24,7 @@ fun BottomButton(
     text: String
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
         Box(
