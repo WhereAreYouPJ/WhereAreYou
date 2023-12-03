@@ -79,10 +79,7 @@ fun DateContent(
                 .height((componentWidth * 0.2).dp)
         ) {
             for (i in 0..1) {
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
+                Row(modifier = Modifier.weight(1f)) {
                     for (j in 0..2) {
                         Box(
                             modifier = Modifier
@@ -109,17 +106,17 @@ fun DateContent(
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DateContentPreview() {
-    Box(
-        modifier = Modifier
-            .width(50.dp)
-            .height(40.dp)
-            .background(
-                color = Color(0xFFFFFFFF)
-            )
-    ) {
-        DateContent(8, 3, true, Color.Black)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DateContentPreview() {
+//    Box(
+//        modifier = Modifier
+//            .width(50.dp)
+//            .height(40.dp)
+//            .background(
+//                color = Color(0xFFFFFFFF)
+//            )
+//    ) {
+//        DateContent(8, 3, true, Color.Black)
+//    }
+//}
