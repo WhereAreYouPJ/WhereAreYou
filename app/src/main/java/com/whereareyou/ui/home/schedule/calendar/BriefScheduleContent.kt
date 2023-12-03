@@ -55,7 +55,7 @@ fun BriefScheduleContainer(
 ) {
     Column(
         modifier = Modifier
-            .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topAppBarHeight) / GlobalValue.density + 2).dp)
+            .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / GlobalValue.density + 2).dp)
             .height(((GlobalValue.dailyScheduleViewHeight / GlobalValue.density)).dp)
             .offset {
                 IntOffset(
@@ -167,7 +167,7 @@ fun BriefScheduleList(
                         fontWeight = FontWeight.Medium
                     )
                     Text(
-                        text = String.format("$startAMPM %02d시 %02d분 - $endAMPM %02d시 %02d분", startHour, startMinute, endHour, endMinute),
+                        text = String.format("$startAMPM %02d:%02d - $endAMPM %02d:%02d", startHour, startMinute, endHour, endMinute),
                         fontSize = 20.sp
                     )
                 }
