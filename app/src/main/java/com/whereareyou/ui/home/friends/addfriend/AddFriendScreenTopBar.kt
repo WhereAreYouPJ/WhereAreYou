@@ -28,7 +28,7 @@ fun AddFriendScreenTopBar() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topAppBarHeight / density.density).dp)
+            .height((GlobalValue.topBarHeight / density.density).dp)
             .background(color = Color.Yellow)
             .padding(start = 20.dp, end = 20.dp),
         contentAlignment = Alignment.CenterStart
@@ -52,8 +52,8 @@ fun AddFriendScreenTopBar() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AddFriendScreenTopBarPreview() {
-    AddFriendScreenTopBar()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun AddFriendScreenTopBarPreview() {
+//    AddFriendScreenTopBar()
+//}
