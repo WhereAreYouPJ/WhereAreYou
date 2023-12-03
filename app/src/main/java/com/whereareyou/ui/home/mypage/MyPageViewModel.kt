@@ -5,10 +5,11 @@ import android.app.Application
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
+import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyou.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
@@ -30,12 +31,20 @@ class MyPageViewModel @Inject constructor(
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val saveMemberIdUseCase: SaveMemberIdUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val modifyMyInfoUseCase: ModifyMyInfoUseCase
+    private val getMemberIdUseCase: GetMemberIdUseCase,
+    private val modifyMyInfoUseCase: ModifyMyInfoUseCase,
+    private val getMemberDetailsUseCase: GetMemberDetailsUseCase
 
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
     val imageUri: StateFlow<String?> = _imageUri
+    private val _name = MutableStateFlow("")
+    val name: StateFlow<String> = _name
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email
+    private val _profileImageUri = MutableStateFlow<String?>("")
+    val profileImageUri: StateFlow<String?> = _profileImageUri
 
     fun signOut(
         moveToStartScreen: () -> Unit,
@@ -52,6 +61,7 @@ class MyPageViewModel @Inject constructor(
     fun updateProfileImage(uri: Uri) {
         viewModelScope.launch {
             val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
             val cursor = application.contentResolver.query(uri, null, null, null, null)
             cursor?.moveToNext()
             val path = cursor?.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
@@ -59,14 +69,14 @@ class MyPageViewModel @Inject constructor(
             _imageUri.update {
                 path
             }
-            Log.e("File", "${file?.absolutePath}")
+            Log.e("File", "${file}")
 //            val file = File.createTempFile(
 //                prefix = "${System.currentTimeMillis()}",
 //                suffix = ".jpg",
 //                directory = application.cacheDir
 //            )
             file?.let {
-                when (val updateProfileImageResponse = modifyMyInfoUseCase(accessToken, it, "user1")) {
+                when (val updateProfileImageResponse = modifyMyInfoUseCase(accessToken, memberId, it)) {
                     is NetworkResult.Success -> {
                         Log.e("success", "${updateProfileImageResponse.code}, ${updateProfileImageResponse.data}")
                     }
@@ -75,9 +85,36 @@ class MyPageViewModel @Inject constructor(
                         Log.e("error", "${updateProfileImageResponse.code}, ${updateProfileImageResponse.errorData}")
                     }
 
-                    is NetworkResult.Exception -> { Log.e("exception", "${updateProfileImageResponse.e}") }
+                    is NetworkResult.Exception -> { Log.e("a exception", "${updateProfileImageResponse.e}") }
                 }
             }
         }
+    }
+
+    private fun getMyInfo() {
+        viewModelScope.launch {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            when (val getMyInfoResponse = getMemberDetailsUseCase(accessToken, memberId)) {
+                is NetworkResult.Success -> {
+                    Log.e("success", "${getMyInfoResponse.code}, ${getMyInfoResponse.data}")
+                    getMyInfoResponse.data?.let { data ->
+                        _name.update { data.userName }
+                        _email.update { data.email }
+                        _profileImageUri.update { data.profileImage }
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    Log.e("error", "${getMyInfoResponse.code}, ${getMyInfoResponse.errorData}")
+                }
+
+                is NetworkResult.Exception -> { Log.e("exception", "${getMyInfoResponse.e}") }
+            }
+        }
+    }
+
+    init {
+        getMyInfo()
     }
 }
