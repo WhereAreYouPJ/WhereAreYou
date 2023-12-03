@@ -113,8 +113,7 @@ fun HomeNavigationBar(
                             }
                         ),
                         contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxHeight(0.7f)
+                        modifier = Modifier.fillMaxHeight(0.7f)
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
