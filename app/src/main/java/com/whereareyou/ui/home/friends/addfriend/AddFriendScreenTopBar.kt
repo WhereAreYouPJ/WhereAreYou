@@ -34,8 +34,7 @@ fun AddFriendScreenTopBar() {
         contentAlignment = Alignment.CenterStart
     ) {
         Image(
-            modifier = Modifier
-                .clickable {  },
+            modifier = Modifier.clickable {  },
             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
             contentDescription = null
         )
