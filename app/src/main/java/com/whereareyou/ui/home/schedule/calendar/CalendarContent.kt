@@ -22,8 +22,7 @@ fun CalendarContent(
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
     Box(
-        modifier = Modifier
-            .height(((GlobalValue.calendarViewHeight + state.offset) / density.density).dp)
+        modifier = Modifier.height(((GlobalValue.calendarViewHeight + state.offset) / density.density).dp)
     ) {
         DateCalendar(expandDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } })
         MonthCalendar(hideDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } })
