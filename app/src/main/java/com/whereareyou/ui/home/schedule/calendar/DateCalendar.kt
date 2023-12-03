@@ -41,19 +41,16 @@ fun DateCalendar(
     ) {
         Column() {
             Row(
-                modifier = Modifier
-                    .height(((GlobalValue.topAppBarHeight / GlobalValue.density) / 2).dp),
+                modifier = Modifier.height(((GlobalValue.topBarHeight / GlobalValue.density) / 2).dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 for (i in 0..6) {
                     Box(
-                        modifier = Modifier
-                            .weight(1f),
+                        modifier = Modifier.weight(1f),
                         contentAlignment = Alignment.TopCenter
                     ) {
                         Text(
-                            modifier = Modifier
-                                .padding(top = 4.dp),
+                            modifier = Modifier.padding(top = 4.dp),
                             text = when (i) {
                                 0 -> "일"
                                 1 -> "월"
@@ -73,10 +70,7 @@ fun DateCalendar(
             }
 
             for (date in 0 until (currMonthCalendarInfo.size / 7)) {
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
+                Row(modifier = Modifier.weight(1f)) {
                     for (i in 0..6) {
                         Box(
                             modifier = Modifier
