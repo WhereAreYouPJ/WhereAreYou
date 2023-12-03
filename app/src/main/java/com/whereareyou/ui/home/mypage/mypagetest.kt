@@ -55,10 +55,7 @@ fun mypagetest() {
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Spacer(
-            modifier = Modifier
-                .height(10.dp)
-        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         Box(
             modifier = Modifier
@@ -91,8 +88,7 @@ fun mypagetest() {
             )
         }
         Spacer(
-            modifier = Modifier
-                .height(100.dp)
+            modifier = Modifier.height(100.dp)
         )
         Text(
             text = "이름",
@@ -167,8 +163,7 @@ fun mypagetest() {
                     textAlign = TextAlign.Left
 
                 ),
-                modifier = Modifier
-                    .size(width = 240.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
+                modifier = Modifier.size(width = 240.dp, height = 45.dp) // 가로폭 200dp, 높이 90dp로 크기 조정
 
                 ,
                 placeholder = {
@@ -180,8 +175,7 @@ fun mypagetest() {
                 }
             )
             Spacer(
-                modifier = Modifier
-                    .width(10.dp)
+                modifier = Modifier.width(10.dp)
             )
             Button(
                 onClick = {
