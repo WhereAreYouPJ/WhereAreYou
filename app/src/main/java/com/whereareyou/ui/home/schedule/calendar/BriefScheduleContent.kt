@@ -114,7 +114,7 @@ fun BriefScheduleList(
     val month = viewModel.month.collectAsState().value
     val date = viewModel.date.collectAsState().value
     val dayOfWeek = viewModel.dayOfWeek.collectAsState().value
-    val currentDateBriefSchedule = viewModel.currentDateBriefSchedule
+    val currentDateBriefSchedule = viewModel.currentDateBriefScheduleInfoList
     Column() {
         Text(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp),
