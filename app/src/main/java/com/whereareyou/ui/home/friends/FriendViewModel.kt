@@ -15,6 +15,7 @@ import com.whereareyou.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class FriendViewModel @Inject constructor(
     val friendsList = mutableStateListOf<Friend>()
 
     fun getFriendIdsList() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             // 친구 memberId 리스트를 가져온다.
             val accessToken = getAccessTokenUseCase().first()
             val myMemberId = getMemberIdUseCase().first()
@@ -55,7 +56,7 @@ class FriendViewModel @Inject constructor(
 
     fun getFriendsList(friendIds: List<String>) {
         // 친구 memberId 리스트로 친구 상세정보 리스트를 가져온다.
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val getFriendListRequest = GetFriendListRequest(friendIds)
 
