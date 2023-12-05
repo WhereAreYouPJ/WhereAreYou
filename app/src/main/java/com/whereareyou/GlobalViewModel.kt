@@ -20,6 +20,7 @@ import com.whereareyou.util.Coordinate
 import com.whereareyou.util.LocationUtil
 import com.whereareyou.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ class GlobalViewModel @Inject constructor(
     private var currentLocation = Coordinate(0.0, 0.0)
     // 임시 로그인
     private fun signIn() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val request = SignInRequest("user1", "00")
             val signInResult = signInUseCase(request)
             when (signInResult) {
@@ -66,7 +67,7 @@ class GlobalViewModel @Inject constructor(
         moveToMainScreen: () -> Unit,
         locationPermissionRequest: () -> Unit
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             // 권한 확인
 
 
@@ -91,7 +92,7 @@ class GlobalViewModel @Inject constructor(
     }
 
     private fun getLocation() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             while (true) {
                 delay(20000)
 //                Log.e("GlobalViewModel", "${currentLocation.latitude}, ${currentLocation.longitude}")
@@ -101,7 +102,7 @@ class GlobalViewModel @Inject constructor(
     }
 
     fun sendUserLocation(lat: Double, lng: Double) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val request = SendUserLocationRequest(memberId, lat, lng)
