@@ -16,6 +16,7 @@ import com.whereareyou.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyou.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -49,7 +50,7 @@ class MyPageViewModel @Inject constructor(
     fun signOut(
         moveToStartScreen: () -> Unit,
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             saveRefreshTokenUseCase("")
             saveAccessTokenUseCase("")
             saveMemberIdUseCase("")
@@ -59,7 +60,7 @@ class MyPageViewModel @Inject constructor(
 
     @SuppressLint("Recycle", "Range")
     fun updateProfileImage(uri: Uri) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val cursor = application.contentResolver.query(uri, null, null, null, null)
@@ -92,7 +93,7 @@ class MyPageViewModel @Inject constructor(
     }
 
     private fun getMyInfo() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             when (val getMyInfoResponse = getMemberDetailsUseCase(accessToken, memberId)) {
