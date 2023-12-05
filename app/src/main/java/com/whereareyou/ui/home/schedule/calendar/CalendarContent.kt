@@ -25,10 +25,7 @@ fun CalendarContent(
         modifier = Modifier.height(((GlobalValue.calendarViewHeight + state.offset) / density.density).dp)
     ) {
         DateCalendar(expandDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } })
-        MonthCalendar(hideDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } })
-        YearCalendar(
-            hideDetailContent = {
-            }
-        )
+        MonthCalendar(expandDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } })
+        YearCalendar()
     }
 }
