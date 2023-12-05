@@ -13,6 +13,7 @@ import com.whereareyou.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyou.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -55,7 +56,7 @@ class AddFriendViewModel @Inject constructor(
 
     // 친구 검색
     fun searchFriend() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             when (val networkResult = getMemberDetailsByUserIdUseCase(accessToken, _inputId.value)) {
                 is NetworkResult.Success -> {
@@ -82,7 +83,7 @@ class AddFriendViewModel @Inject constructor(
 
     // 친구 요청
     fun sendFriendRequest() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val request = SendFriendRequestRequest(friendMemberId, memberId)
