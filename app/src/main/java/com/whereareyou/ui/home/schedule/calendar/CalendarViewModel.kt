@@ -47,18 +47,24 @@ class CalendarViewModel @Inject constructor(
     // 보여지고 있는 달력 상태 (년도 or 월 or 일)
     private val _calendarState = MutableStateFlow(CalendarState.DATE)
     val calendarState: StateFlow<CalendarState> = _calendarState
-    // 선택된 월의 (년/월/일/일정 개수)정보를 담는 리스트
-    private val _currentMonthDateInfo = mutableStateListOf<Schedule>()
-    val currentMonthDateInfo: List<Schedule> = _currentMonthDateInfo
-    // 일별 일정 간략 정보 리스트
-    private val _currentDateBriefSchedule = mutableStateListOf<BriefSchedule>()
-    val currentDateBriefSchedule: List<BriefSchedule> = _currentDateBriefSchedule
+    // 선택된 월의 달력(년/월/일/일정 개수)정보 리스트
+    private val _currentMonthCalendarInfoList = mutableStateListOf<Schedule>()
+    val currentMonthCalendarInfoList: List<Schedule> = _currentMonthCalendarInfoList
+    // 선택된 날짜의 일별 일정 간략 정보 리스트
+    private val _currentDateBriefScheduleInfoList = mutableStateListOf<BriefSchedule>()
+    val currentDateBriefScheduleInfoList: List<BriefSchedule> = _currentDateBriefScheduleInfoList
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
-    fun updateCurrentMonthDateInfo() {
-        // 현재 달의 달력 정보를 가져온다. [2023/10/1, 2023/10/2, 2023/10/3,...]
+    fun updateCurrentMonthCalendarInfo() {
+        // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
         val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
-        viewModelScope.launch {
+
+        // 빈 달력을 먼저 보여주기 위해 일단 리스트를 초기화한다.
+        _currentMonthCalendarInfoList.clear()
+        _currentMonthCalendarInfoList.addAll(calendarArrList)
+
+
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             var currYear: Int
@@ -68,9 +74,11 @@ class CalendarViewModel @Inject constructor(
                     // 월이 바뀔 경우 다음 월의 일정 정보를 가져온다.
                     currYear = calendarArrList[i].year
                     currMonth = calendarArrList[i].month
-                    when (val networkResponse = getMonthlyScheduleUseCase(accessToken, memberId, currYear, currMonth)) {
+                    when (val getMonthlyScheduleResponse = getMonthlyScheduleUseCase(accessToken, memberId, currYear, currMonth)) {
                         is NetworkResult.Success -> {
-                            networkResponse.data?.let { data ->
+                            Log.e("success", "${getMonthlyScheduleResponse.code}, ${getMonthlyScheduleResponse.data}")
+                            getMonthlyScheduleResponse.data?.let { data ->
+                                // 가져온 스케줄과 달력을 비교해 연/월/일이 같으면 일정 개수 정보를 추가한다.
                                 for (schedule in data.schedules) {
                                     for (calendarInfo in calendarArrList) {
                                         if (calendarInfo.year == _year.value &&
@@ -78,21 +86,21 @@ class CalendarViewModel @Inject constructor(
                                             calendarInfo.date == schedule.date
                                         ) {
                                             calendarInfo.scheduleCount = schedule.scheduleCount
+                                            break
                                         }
                                     }
                                 }
-                            }
+                            } ?: Log.e("success-error", "body is null")
                         }
-                        is NetworkResult.Error -> { Log.e("error", "${networkResponse.code}, ${networkResponse.errorData}") }
-                        is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                        is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResponse.code}, ${getMonthlyScheduleResponse.errorData}") }
+                        is NetworkResult.Exception -> { Log.e("exception", "${getMonthlyScheduleResponse.e}") }
                     }
                 }
             }
             withContext(Dispatchers.Main) {
-                _currentMonthDateInfo.clear()
-                _currentMonthDateInfo.addAll(calendarArrList)
+                _currentMonthCalendarInfoList.clear()
+                _currentMonthCalendarInfoList.addAll(calendarArrList)
             }
-            Log.e("MonthlySchedule", calendarArrList.toString())
         }
     }
 
@@ -103,43 +111,51 @@ class CalendarViewModel @Inject constructor(
     fun updateMonth(month: Int) {
         if (month != _month.value) {
             _month.update { month }
-            updateCurrentMonthDateInfo()
+            updateCurrentMonthCalendarInfo()
         }
     }
 
     fun updateDate(date: Int) {
-        _date.update { date }
-        _dayOfWeek.update { CalendarUtil.getDayOfWeek(_year.value, _month.value, _date.value) }
-        viewModelScope.launch {
-            val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            val getDailyBriefScheduleResult = getDailyBriefScheduleUseCase(
-                accessToken, memberId, _year.value, _month.value, _date.value
-            )
-            when (getDailyBriefScheduleResult) {
-                is NetworkResult.Success -> {
-                    _currentDateBriefSchedule.clear()
-                    _currentDateBriefSchedule.addAll(getDailyBriefScheduleResult.data!!.schedules)
-                }
-                is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResult.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
-            }
+        if (date != _date.value) {
+            _date.update { date }
+            updateCurrentDateBriefScheduleInfo()
         }
-        updateCurrentMonthDateInfo()
     }
 
+    private fun updateCurrentDateBriefScheduleInfo() {
+        _dayOfWeek.update { CalendarUtil.getDayOfWeek(_year.value, _month.value, _date.value) }
+        viewModelScope.launch(Dispatchers.Default) {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            when (val getDailyBriefScheduleResponse = getDailyBriefScheduleUseCase(accessToken, memberId, _year.value, _month.value, _date.value)) {
+                is NetworkResult.Success -> {
+                    Log.e("success", "${getDailyBriefScheduleResponse.code}, ${getDailyBriefScheduleResponse.data}")
+                    getDailyBriefScheduleResponse.data?.let { data ->
+                        withContext(Dispatchers.Main) {
+                            _currentDateBriefScheduleInfoList.clear()
+                            _currentDateBriefScheduleInfoList.addAll(data.schedules)
+                        }
+                    } ?: Log.e("success-error", "body is null")
+                }
+                is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResponse.code}, ${getDailyBriefScheduleResponse.errorData}") }
+                is NetworkResult.Exception -> { Log.e("exception", "${getDailyBriefScheduleResponse.e}") }
+            }
+        }
+    }
+
+    // 연도 선택/월 선택/일 선택 달력으로 변경한다.
     fun updateCalendarState(state: CalendarState) {
         _calendarState.update { state }
     }
 
-    // 처음 화면에 보여지는 날짜
+    // 처음 화면에 보여지는 날짜에 대한 달력 정보를 모두 설정한다.
     private fun initCalendarInfo() {
         val todayInfo = CalendarUtil.getTodayInfo()
         _year.update { todayInfo[0] }
         _month.update { todayInfo[1] }
         _date.update { todayInfo[2] }
         _dayOfWeek.update { todayInfo[3] }
-        updateCurrentMonthDateInfo()
+        updateCurrentMonthCalendarInfo()
         updateDate(todayInfo[2])
     }
 
