@@ -107,14 +107,12 @@ fun UserMapScreen(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
     ) {
         var isUserListShowing by remember { mutableStateOf(false) }
         NaverMap(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = mapProperties,
             uiSettings = mapUiSettings
@@ -158,8 +156,7 @@ fun UserMapScreen(
 
         // 멤버 위치 업데이트 버튼
         Box(
-            modifier = Modifier
-            .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomStart
         ) {
             Box(
@@ -291,12 +288,11 @@ fun UserList(
             .height(300.dp)
             .background(
                 color = Color.White,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(10.dp)
             )
     ) {
         Text(
-            modifier = Modifier
-                .padding(start = 20.dp, top = 20.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 20.dp),
             text = "친구",
             fontWeight = FontWeight.Bold,
         )
