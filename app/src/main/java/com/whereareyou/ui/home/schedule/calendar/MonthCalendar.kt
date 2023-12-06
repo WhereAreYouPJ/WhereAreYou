@@ -16,7 +16,7 @@ import com.whereareyou.util.AnimationUtil
 
 @Composable
 fun MonthCalendar(
-    hideDetailContent: () -> Unit,
+    expandDetailContent: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val calendarState = viewModel.calendarState.collectAsState().value
@@ -36,7 +36,7 @@ fun MonthCalendar(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clickable {
-                                    hideDetailContent()
+                                    expandDetailContent()
                                     viewModel.updateMonth(i * 3 + j + 1)
                                     viewModel.updateCalendarState(CalendarViewModel.CalendarState.DATE)
                                 },
