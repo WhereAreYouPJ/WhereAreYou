@@ -72,6 +72,14 @@ class DetailScheduleViewModel @Inject constructor(
     private val _myLocation = MutableStateFlow(LatLng(0.0, 0.0))
     val myLocation: StateFlow<LatLng> = _myLocation
 
+    fun updateTitle(title: String) {
+        _title.update { title }
+    }
+
+    fun clearTitle() {
+        _title.update { "" }
+    }
+
     fun updateScheduleId(id: String?) {
         _scheduleId.update { id }
         if (id == null) {
@@ -82,7 +90,7 @@ class DetailScheduleViewModel @Inject constructor(
     }
 
     private fun getDetailSchedule(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             when (val networkResult = getDetailScheduleUseCase(accessToken, memberId, id)) {
@@ -108,7 +116,7 @@ class DetailScheduleViewModel @Inject constructor(
     }
 
     fun getUserLocation() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val memberId = getMemberIdUseCase().first()
             val accessToken = getAccessTokenUseCase().first()
             val userInfoList = mutableListOf<UserInfo>()
@@ -194,7 +202,7 @@ class DetailScheduleViewModel @Inject constructor(
     }
 
     enum class ScreenState {
-        DetailSchedule, UserMap
+        DetailSchedule, UserMap, ModifySchedule, ModifyFriends
     }
 
     data class UserInfo(
