@@ -28,11 +28,12 @@ fun DateCalendar(
     expandDetailContent: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
-    val currMonthCalendarInfo = viewModel.currentMonthDateInfo
+    val currMonthCalendarInfo = viewModel.currentMonthCalendarInfoList
     val calendarState = viewModel.calendarState.collectAsState().value
     val selectedYear = viewModel.year.collectAsState().value
     val selectedMonth = viewModel.month.collectAsState().value
     val selectedDate = viewModel.date.collectAsState().value
+
     // 일자 선택 화면
     AnimatedVisibility(
         visible = calendarState == CalendarViewModel.CalendarState.DATE,
@@ -89,7 +90,7 @@ fun DateCalendar(
                         ) {
                             DateContent(
                                 date = currMonthCalendarInfo[i + date * 7].date,
-                                scheduleNumber = currMonthCalendarInfo[i + date * 7].scheduleCount,
+                                scheduleCount = currMonthCalendarInfo[i + date * 7].scheduleCount,
                                 isSelected = selectedYear == currMonthCalendarInfo[i + date * 7].year &&
                                         selectedDate == currMonthCalendarInfo[i + date * 7].date &&
                                         selectedMonth == currMonthCalendarInfo[i + date * 7].month,
