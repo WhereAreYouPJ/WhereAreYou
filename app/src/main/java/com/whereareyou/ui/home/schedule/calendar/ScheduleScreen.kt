@@ -87,7 +87,7 @@ fun ScheduleScreen(
         )
         ModalNavigationDrawer(
             drawerContent = { DrawerNotification(
-                updateCalendar = viewModel::updateCurrentMonthDateInfo,
+                updateCalendar = viewModel::updateCurrentMonthCalendarInfo,
                 updateBriefCalendar = { viewModel.updateDate(date) }
             ) },
             drawerState = drawerState,
