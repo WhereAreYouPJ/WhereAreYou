@@ -12,6 +12,7 @@ fun NewScheduleScreen(
     when (viewModel.screenState.collectAsState().value) {
         NewScheduleViewModel.ScreenState.NewSchedule -> {
             NewScheduleContent(
+                selectedFriendsList = viewModel.friendsList.collectAsState().value,
                 moveToCalendarScreen = moveToCalendarScreen,
                 moveToFriendsListScreen = { viewModel.updateScreenState(NewScheduleViewModel.ScreenState.AddFriends) },
                 moveToSearchLocationScreen = { viewModel.updateScreenState(NewScheduleViewModel.ScreenState.SearchLocation) }
