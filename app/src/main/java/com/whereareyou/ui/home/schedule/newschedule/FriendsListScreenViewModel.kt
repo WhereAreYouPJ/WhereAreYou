@@ -19,13 +19,17 @@ class FriendsListScreenViewModel @Inject constructor(
     private val _inputText = MutableStateFlow("")
     val inputText: StateFlow<String> = _inputText
 
+    // 전체 친구 리스트
+    // Pair의 first는 친구 정보, second는 선택 여부를 나타낸다.
     private val originalFriendsList: MutableList<Pair<Friend, Boolean>> = FriendProvider.friendsList.map {
         Pair(it, false)
     }.toMutableList()
 
+    // 검색에 의해 필터링된 친구 리스트
     private val _friendsList = MutableStateFlow<List<Pair<Friend, Boolean>>>(originalFriendsList)
     val friendsListCopy: StateFlow<List<Pair<Friend, Boolean>>> = _friendsList
 
+    // 선택된 친구 리스트
     private val _selectedFriendsList = MutableStateFlow<List<Friend>>(emptyList())
     val selectedFriendsList: StateFlow<List<Friend>> = _selectedFriendsList
 
@@ -105,6 +109,4 @@ class FriendsListScreenViewModel @Inject constructor(
             }
         }
     }
-
-
 }
