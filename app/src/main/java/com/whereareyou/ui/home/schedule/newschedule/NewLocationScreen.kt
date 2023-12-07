@@ -53,7 +53,7 @@ fun NewLocationScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((GlobalValue.topAppBarHeight / density.density).dp),
+                .height((GlobalValue.topBarHeight / density.density).dp),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -71,8 +71,7 @@ fun NewLocationScreen(
                 contentDescription = null
             )
             BasicTextField(
-                modifier = Modifier
-                    .padding(start = 60.dp, end = 60.dp),
+                modifier = Modifier.padding(start = 60.dp, end = 60.dp),
                 value = viewModel.inputLocationText.collectAsState().value,
                 onValueChange = {
                     viewModel.updateInputLocationText(it)
@@ -99,7 +98,7 @@ fun NewLocationScreen(
                     .fillMaxHeight()
                     .align(Alignment.CenterEnd)
                     .padding(4.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .clickable { viewModel.searchLocation() },
                 contentAlignment = Alignment.Center
             ) {
