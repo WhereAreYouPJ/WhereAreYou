@@ -52,7 +52,7 @@ fun FriendsListScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((GlobalValue.topAppBarHeight / density.density).dp)
+                .height((GlobalValue.topBarHeight / density.density).dp)
                 .background(
                     color = Color.Yellow
                 ),
@@ -101,7 +101,7 @@ fun FriendsListScreen(
         }
         val friendsList = viewModel.friendsListCopy.collectAsState().value
         LazyColumn() {
-            itemsIndexed(friendsList) { index, friend ->
+            itemsIndexed(friendsList) { _, friend ->
                 Row(
                     modifier = Modifier
                         .padding(top = 10.dp, bottom = 10.dp)
