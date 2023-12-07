@@ -51,12 +51,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.whereareyou.R
 import com.whereareyou.data.GlobalValue
+import com.whereareyou.domain.entity.schedule.Friend
 import java.text.SimpleDateFormat
 
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun NewScheduleContent(
+    selectedFriendsList: List<Friend>,
     moveToCalendarScreen: () -> Unit,
     moveToFriendsListScreen: () -> Unit,
     moveToSearchLocationScreen: () -> Unit,
@@ -77,15 +79,14 @@ fun NewScheduleContent(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((GlobalValue.topAppBarHeight / density.density).dp)
+                .height((GlobalValue.topBarHeight / density.density).dp)
                 .background(
                     color = Color(0xFFCE93D8)
                 ),
             contentAlignment = Alignment.Center
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Image(
@@ -100,8 +101,6 @@ fun NewScheduleContent(
             )
         }
 
-        // 추가된 친구 리스트
-        val friendsList = viewModel.friendsList.collectAsState().value
         Spacer(modifier = Modifier.height(10.dp))
         Box(
             modifier = Modifier
@@ -114,24 +113,17 @@ fun NewScheduleContent(
                 .padding(start = 10.dp, end = 10.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            if (friendsList.isEmpty()) {
-//                Text(
-//                    modifier = Modifier
-//                        .clickable { moveToFriendsListScreen() },
-//                    text = "친구 선택"
-//                )
+            if (selectedFriendsList.isEmpty()) {
                 Image(
-                    modifier = Modifier
-                        .size(30.dp),
+                    modifier = Modifier.size(30.dp),
                     painter = painterResource(id = R.drawable.message_add),
                     contentDescription = null
                 )
             } else {
                 LazyRow {
-                    itemsIndexed(friendsList) { index, friend ->
+                    itemsIndexed(selectedFriendsList) { index, friend ->
                         Text(
-                            modifier = Modifier
-                                .padding(end = 10.dp),
+                            modifier = Modifier.padding(end = 10.dp),
                             text = friend.name
                         )
                     }
@@ -151,13 +143,11 @@ fun NewScheduleContent(
 
         // 날짜,시간 선택
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                modifier = Modifier
-                    .size(30.dp),
+                modifier = Modifier.size(30.dp),
                 painter = painterResource(id = R.drawable.baseline_calendar_month_24),
                 contentDescription = null
             )
@@ -190,8 +180,7 @@ fun NewScheduleContent(
                 )
             }
             Image(
-                modifier = Modifier
-                    .padding(start = 10.dp, end = 10.dp),
+                modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                 painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
                 contentDescription = null
             )
@@ -340,7 +329,7 @@ fun NewScheduleContent(
                     .height(80.dp)
                     .background(
                         color = Color(0xFF2D2573),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(10.dp)
                     )
                     .clickable {
                         viewModel.addNewSchedule(moveToCalendarScreen = moveToCalendarScreen)
