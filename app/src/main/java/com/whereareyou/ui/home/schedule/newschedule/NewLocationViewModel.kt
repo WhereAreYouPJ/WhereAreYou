@@ -7,6 +7,7 @@ import com.whereareyou.domain.entity.schedule.LocationInformation
 import com.whereareyou.domain.usecase.location.GetLocationAddressUseCase
 import com.whereareyou.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -31,7 +32,7 @@ class NewLocationViewModel @Inject constructor(
     }
 
     fun searchLocation() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             when (val getLocationAddressResult = getLocationAddressUseCase.getLocationAddress(inputLocationText.value)) {
                 is NetworkResult.Success -> {
                     _locationInformationList.update {
