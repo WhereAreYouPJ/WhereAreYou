@@ -27,8 +27,8 @@ fun MapScreen(
         moveToSearchLocationScreen()
     }
     NaverMap(
-        modifier = Modifier.
-            fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         cameraPositionState = rememberCameraPositionState {
             this.position = CameraPosition(
                 LatLng(37.28309904245045, 127.04564397832894),
