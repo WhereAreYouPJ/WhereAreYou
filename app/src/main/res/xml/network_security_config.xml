@@ -3,6 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">yj2113.iptime.org</domain>
         <domain includeSubdomains="true">WhereAreYou-env-v11.eba-ex8qguf6.ap-northeast-2.elasticbeanstalk.com</domain>
+        <domain includeSubdomains="true">whereareyou-env-v13.eba-ex8qguf6.ap-northeast-2.elasticbeanstalk.com</domain>
 
     </domain-config>
 </network-security-config>
