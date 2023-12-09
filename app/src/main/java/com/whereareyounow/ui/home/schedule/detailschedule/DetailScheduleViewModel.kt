@@ -51,10 +51,8 @@ class DetailScheduleViewModel @Inject constructor(
     val creatorId: StateFlow<String> = _creatorId
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title
-    private val _startTime = MutableStateFlow("")
-    val startTime: StateFlow<String> = _startTime
-    private val _endTime = MutableStateFlow("")
-    val endTime: StateFlow<String> = _endTime
+    private val _appointmentTime = MutableStateFlow("")
+    val appointmentTime: StateFlow<String> = _appointmentTime
     private val _place = MutableStateFlow("")
     val place: StateFlow<String> = _place
     private val _memo = MutableStateFlow("")
@@ -96,8 +94,7 @@ class DetailScheduleViewModel @Inject constructor(
                     networkResult.data?.let { data ->
                         _creatorId.update { data.creatorId }
                         _title.update { data.title }
-                        _startTime.update { data.start }
-                        _endTime.update { data.end }
+                        _appointmentTime.update { data.appointmentTime }
                         _place.update { data.place.replace("<b>", "").replace("</b>", "") }
                         _memo.update { data.memo }
                         _destinationLatitude.update { data.destinationLatitude }
