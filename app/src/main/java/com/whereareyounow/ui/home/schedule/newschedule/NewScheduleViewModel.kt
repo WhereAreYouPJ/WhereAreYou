@@ -130,8 +130,7 @@ class NewScheduleViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val body = AddNewScheduleRequest(
                 memberId = memberId,
-                start = startDate.value + "T" + startTime.value + ":00",
-                end = endDate.value + "T" + endTime.value + ":00",
+                appointmentTime = startDate.value + "T" + startTime.value + ":00",
                 title = _title.value,
                 place = _destinationName.value,
                 memo = _memo.value,
