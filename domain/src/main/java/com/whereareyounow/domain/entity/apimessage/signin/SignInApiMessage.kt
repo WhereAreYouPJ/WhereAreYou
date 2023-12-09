@@ -10,8 +10,6 @@ data class SignInRequest(
 )
 
 data class SignInResponse(
-    @SerializedName("message")
-    val message: String,
     @SerializedName("accessToken")
     val accessToken: String,
     @SerializedName("refreshToken")

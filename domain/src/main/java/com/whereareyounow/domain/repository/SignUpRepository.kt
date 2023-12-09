@@ -1,13 +1,10 @@
 package com.whereareyounow.domain.repository
 
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeResponse
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailResponse
 import com.whereareyounow.domain.entity.apimessage.signup.CheckEmailDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.CheckIdDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
-import com.whereareyounow.domain.entity.apimessage.signup.SignUpResponse
 import com.whereareyounow.domain.util.NetworkResult
 
 interface SignUpRepository {
@@ -25,15 +22,15 @@ interface SignUpRepository {
     // 이메일 인증
     suspend fun authenticateEmail(
         body: AuthenticateEmailRequest
-    ): NetworkResult<AuthenticateEmailResponse>
+    ): NetworkResult<Unit>
 
     // 이메일 인증 코드 입력
     suspend fun authenticateEmailCode(
         body: AuthenticateEmailCodeRequest
-    ): NetworkResult<AuthenticateEmailCodeResponse>
+    ): NetworkResult<Unit>
 
     // 회원가입 성공
     suspend fun signUp(
         body: SignUpRequest
-    ): NetworkResult<SignUpResponse>
+    ): NetworkResult<Unit>
 }

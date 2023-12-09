@@ -5,10 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class AddNewScheduleRequest(
     @SerializedName("memberId")
     val memberId: String,
-    @SerializedName("start")
-    val start: String,
-    @SerializedName("end")
-    val end: String,
+    @SerializedName("appointmentTime")
+    val appointmentTime: String,
     @SerializedName("title")
     val title: String,
     @SerializedName("place")

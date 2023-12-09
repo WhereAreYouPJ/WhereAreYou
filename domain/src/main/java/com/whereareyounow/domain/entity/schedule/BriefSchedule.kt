@@ -7,8 +7,6 @@ data class BriefSchedule(
     var scheduleId: String,
     @SerializedName("title")
     var title: String,
-    @SerializedName("start")
-    var start: String,
-    @SerializedName("end")
-    var end: String
+    @SerializedName("appointmentTime")
+    val appointmentTime: String
 )

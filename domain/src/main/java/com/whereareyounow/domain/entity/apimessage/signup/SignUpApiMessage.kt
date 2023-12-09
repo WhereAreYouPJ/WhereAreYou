@@ -12,8 +12,3 @@ data class SignUpRequest(
     @SerializedName("email")
     val email: String
 )
-
-data class SignUpResponse(
-    @SerializedName("message")
-    val message: String
-)

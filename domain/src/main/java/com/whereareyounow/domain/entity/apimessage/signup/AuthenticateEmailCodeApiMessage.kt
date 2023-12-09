@@ -8,8 +8,3 @@ data class AuthenticateEmailCodeRequest(
     @SerializedName("code")
     val code: String
 )
-
-data class AuthenticateEmailCodeResponse(
-    @SerializedName("message")
-    val message: String
-)

@@ -5,7 +5,5 @@ import com.whereareyounow.domain.entity.friend.FriendRequest
 
 data class GetFriendRequestListResponse(
     @SerializedName("friendsRequestList")
-    val friendsRequestList: List<FriendRequest>,
-    @SerializedName("todaySchedule")
-    val todaySchedule: Int
+    val friendsRequestList: List<FriendRequest>
 )

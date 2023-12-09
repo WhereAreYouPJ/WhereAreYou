@@ -5,10 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class GetDetailScheduleResponse(
     @SerializedName("creatorId")
     val creatorId: String,
-    @SerializedName("start")
-    val start: String,
-    @SerializedName("end")
-    val end: String,
+    @SerializedName("appointmentTime")
+    val appointmentTime: String,
     @SerializedName("title")
     val title: String,
     @SerializedName("place")

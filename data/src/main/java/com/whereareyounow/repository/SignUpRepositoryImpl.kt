@@ -1,16 +1,13 @@
 package com.whereareyounow.repository
 
 import com.whereareyounow.datasource.RemoteDataSource
-import com.whereareyounow.domain.repository.SignUpRepository
-import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeResponse
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailResponse
 import com.whereareyounow.domain.entity.apimessage.signup.CheckEmailDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.CheckIdDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
-import com.whereareyounow.domain.entity.apimessage.signup.SignUpResponse
+import com.whereareyounow.domain.repository.SignUpRepository
+import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
 class SignUpRepositoryImpl(
@@ -43,7 +40,7 @@ class SignUpRepositoryImpl(
      */
     override suspend fun authenticateEmail(
         body: AuthenticateEmailRequest
-    ): NetworkResult<AuthenticateEmailResponse> {
+    ): NetworkResult<Unit> {
         return handleResult { dataSource.authenticateEmail(body) }
     }
 
@@ -53,7 +50,7 @@ class SignUpRepositoryImpl(
      */
     override suspend fun authenticateEmailCode(
         body: AuthenticateEmailCodeRequest
-    ): NetworkResult<AuthenticateEmailCodeResponse> {
+    ): NetworkResult<Unit> {
         return handleResult { dataSource.authenticateEmailCode(body) }
     }
 
@@ -63,7 +60,7 @@ class SignUpRepositoryImpl(
      */
     override suspend fun signUp(
         body: SignUpRequest
-    ): NetworkResult<SignUpResponse> {
+    ): NetworkResult<Unit> {
         return handleResult { dataSource.signUp(body) }
     }
 }

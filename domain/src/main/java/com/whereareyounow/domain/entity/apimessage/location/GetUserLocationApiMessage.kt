@@ -9,10 +9,6 @@ data class GetUserLocationRequest(
     val scheduleId: String
 )
 
-data class GetUserLocationResponse(
-    val list: List<UserLocation>
-)
-
 data class UserLocation(
     @SerializedName("memberId")
     val memberId: String,
