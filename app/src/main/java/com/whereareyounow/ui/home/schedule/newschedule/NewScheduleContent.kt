@@ -72,8 +72,6 @@ fun NewScheduleContent(
         val density = LocalDensity.current
         val isDatePickerDialogShowing = remember { mutableStateOf(false) }
         val isTimePickerDialogShowing = remember { mutableStateOf(false) }
-        val isStartDate = remember { mutableStateOf(true) }
-        val isStartTime = remember { mutableStateOf(true) }
 
         // 상단바
         Box(
@@ -156,12 +154,9 @@ fun NewScheduleContent(
                 Text(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {
-                            isStartDate.value = true
-                            isDatePickerDialogShowing.value = true
-                        }
+                        .clickable { isDatePickerDialogShowing.value = true }
                         .padding(10.dp),
-                    text = viewModel.startDate.collectAsState().value,
+                    text = viewModel.appointmentDate.collectAsState().value,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp
                 )
@@ -169,45 +164,9 @@ fun NewScheduleContent(
                 Text(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {
-                            isStartTime.value = true
-                            isTimePickerDialogShowing.value = true
-                        }
+                        .clickable { isTimePickerDialogShowing.value = true }
                         .padding(10.dp),
-                    text = viewModel.startTime.collectAsState().value,
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp
-                )
-            }
-            Image(
-                modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),
-                contentDescription = null
-            )
-            Column() {
-                // 종료 날짜 선택
-                Text(
-                    modifier = Modifier
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {
-                            isStartDate.value = false
-                            isDatePickerDialogShowing.value = true
-                        }
-                        .padding(10.dp),
-                    text = viewModel.endDate.collectAsState().value,
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp
-                )
-                // 종료 시간 선택
-                Text(
-                    modifier = Modifier
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {
-                            isStartTime.value = false
-                            isTimePickerDialogShowing.value = true
-                        }
-                        .padding(10.dp),
-                    text = viewModel.endTime.collectAsState().value,
+                    text = viewModel.appointmentTime.collectAsState().value,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp
                 )
@@ -258,8 +217,6 @@ fun NewScheduleContent(
                 )
             }
         }
-        // 알림 선택
-
 
         // 메모
         Spacer(modifier = Modifier.height(30.dp))
@@ -306,14 +263,12 @@ fun NewScheduleContent(
 
         if (isDatePickerDialogShowing.value) {
             MyDatePickerDialog(
-                onDismissRequest = { isDatePickerDialogShowing.value = false },
-                isStartDate = isStartDate.value
+                onDismissRequest = { isDatePickerDialogShowing.value = false }
             )
         }
         if (isTimePickerDialogShowing.value) {
             MyTimePickerDialog(
-                onDismissRequest = { isTimePickerDialogShowing.value = false },
-                isStartTime = isStartTime.value
+                onDismissRequest = { isTimePickerDialogShowing.value = false }
             )
         }
 
@@ -350,10 +305,8 @@ fun NewScheduleContent(
 @Composable
 fun MyDatePickerDialog(
     onDismissRequest: () -> Unit,
-    isStartDate: Boolean,
     viewModel: NewScheduleViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis()
     )
@@ -365,19 +318,11 @@ fun MyDatePickerDialog(
                     .padding(end = 10.dp)
                     .clip(RoundedCornerShape(25))
                     .clickable {
-                        if (isStartDate) {
-                            viewModel.updateStartDate(
-                                SimpleDateFormat("yyyy-MM-dd").format(
-                                    datePickerState.selectedDateMillis
-                                )
+                        viewModel.updateAppointmentDate(
+                            SimpleDateFormat("yyyy-MM-dd").format(
+                                datePickerState.selectedDateMillis
                             )
-                        } else {
-                            viewModel.updateEndDate(
-                                SimpleDateFormat("yyyy-MM-dd").format(
-                                    datePickerState.selectedDateMillis
-                                )
-                            )
-                        }
+                        )
                         onDismissRequest()
                     }
                     .padding(10.dp),
@@ -397,7 +342,6 @@ fun MyDatePickerDialog(
 @Composable
 fun MyTimePickerDialog(
     onDismissRequest: () -> Unit,
-    isStartTime: Boolean,
     viewModel: NewScheduleViewModel = hiltViewModel()
 ) {
     val timePickerState = rememberTimePickerState()
@@ -438,11 +382,7 @@ fun MyTimePickerDialog(
                     ) { Text("Cancel") }
                     TextButton(
                         onClick = {
-                            if (isStartTime) {
-                                viewModel.updateStartTime(String.format("%02d:%02d", timePickerState.hour, timePickerState.minute))
-                            } else {
-                                viewModel.updateEndTime(String.format("%02d:%02d", timePickerState.hour, timePickerState.minute))
-                            }
+                            viewModel.updateAppointmentTime(String.format("%02d:%02d", timePickerState.hour, timePickerState.minute))
                             onDismissRequest()
                         }
                     ) { Text("OK") }

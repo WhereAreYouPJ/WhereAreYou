@@ -88,6 +88,7 @@ class AddFriendViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
+            Log.e("sendFriendRequestRequest", "$memberId")
             val request = SendFriendRequestRequest(friendMemberId, memberId)
             val networkResult = sendFriendRequestUseCase(accessToken, request)
             when (networkResult) {

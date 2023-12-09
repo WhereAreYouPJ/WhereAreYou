@@ -116,7 +116,8 @@ fun SplashScreen(
         SplashViewModel.ScreenState.PERMISSION -> {
             PermissionCheckingScreen(
                 locationPermissions = locationPermissions,
-                updateScreenState = viewModel::updateScreenState
+                updateScreenState = viewModel::updateScreenState,
+                updateCheckingState = viewModel::updateCheckingState
             )
         }
     }
@@ -202,6 +203,7 @@ fun NetworkConnectionErrorDialog(
 fun PermissionCheckingScreen(
     locationPermissions: Array<String>,
     updateScreenState: (SplashViewModel.ScreenState) -> Unit,
+    updateCheckingState: (SplashViewModel.CheckingState) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -215,7 +217,7 @@ fun PermissionCheckingScreen(
             && result.entries.contains(mapOf(Manifest.permission.ACCESS_COARSE_LOCATION to true).entries.first())) {
             Toast.makeText(context, "위치 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show()
             updateScreenState(SplashViewModel.ScreenState.SPLASH)
-
+            updateCheckingState(SplashViewModel.CheckingState.SIGN_IN)
         } else {
             Toast.makeText(context, "위치 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }
@@ -243,7 +245,7 @@ fun PermissionCheckingScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "권한 허용하기"
+                text = "위치 권한 허용하기"
             )
         }
     }

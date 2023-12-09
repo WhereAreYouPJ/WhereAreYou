@@ -40,15 +40,10 @@ class NewScheduleViewModel @Inject constructor(
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title
 
-    private val _startDate = MutableStateFlow("시작 날짜 선택")
-    val startDate: StateFlow<String> = _startDate
-    private val _endDate = MutableStateFlow("종료 날짜 선택")
-    val endDate: StateFlow<String> = _endDate
-
-    private val _startTime = MutableStateFlow("시작 시간 선택")
-    val startTime: StateFlow<String> = _startTime
-    private val _endTime = MutableStateFlow("종료 시간 선택")
-    val endTime: StateFlow<String> = _endTime
+    private val _appointmentDate = MutableStateFlow("약속 날짜 선택")
+    val appointmentDate: StateFlow<String> = _appointmentDate
+    private val _appointmentTime = MutableStateFlow("약속 시간 선택")
+    val appointmentTime: StateFlow<String> = _appointmentTime
 
     private val _destinationName = MutableStateFlow("")
     val destinationName: StateFlow<String> = _destinationName
@@ -62,8 +57,12 @@ class NewScheduleViewModel @Inject constructor(
     private val _memo = MutableStateFlow("")
     val memo: StateFlow<String> = _memo
 
-    fun updateStartDate(date: String) {
-        _startDate.update { date }
+    fun updateAppointmentDate(date: String) {
+        _appointmentDate.update { date }
+    }
+
+    fun updateAppointmentTime(time: String) {
+        _appointmentTime.update { time }
     }
 
     fun updateTitle(title: String) {
@@ -72,18 +71,6 @@ class NewScheduleViewModel @Inject constructor(
 
     fun clearTitle() {
         _title.update { "" }
-    }
-
-    fun updateEndDate(date: String) {
-        _endDate.update { date }
-    }
-
-    fun updateStartTime(time: String) {
-        _startTime.update { time }
-    }
-
-    fun updateEndTime(time: String) {
-        _endTime.update { time }
     }
 
     fun updateMemo(memo: String) {
@@ -104,20 +91,12 @@ class NewScheduleViewModel @Inject constructor(
     fun addNewSchedule(
         moveToCalendarScreen: () -> Unit,
     ) {
-        if (_startDate.value == "시작 날짜 선택") {
-            Toast.makeText(application, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
+        if (_appointmentDate.value == "약속 날짜 선택") {
+            Toast.makeText(application, "약속 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
             return
         }
-        if (_endDate.value == "종료 날짜 선택") {
-            Toast.makeText(application, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_startTime.value == "시작 시간 선택") {
-            Toast.makeText(application, "시작 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_endTime.value == "종료 시간 선택") {
-            Toast.makeText(application, "종료 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
+        if (_appointmentTime.value == "약속 시간 선택") {
+            Toast.makeText(application, "약속 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
             return
         }
         if (_destinationName.value == "") {
@@ -130,16 +109,15 @@ class NewScheduleViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val body = AddNewScheduleRequest(
                 memberId = memberId,
-                start = startDate.value + "T" + startTime.value + ":00",
-                end = endDate.value + "T" + endTime.value + ":00",
+                appointmentTime = _appointmentTime.value + "T" + _appointmentDate.value + ":00",
                 title = _title.value,
                 place = _destinationName.value,
                 memo = _memo.value,
                 destinationLatitude = _destinationLatitude.value,
                 destinationLongitude = _destinationLongitude.value,
                 memberIdList = _friendsList.value.map { friend -> friend.memberId },)
-            val addNewScheduleResult = addNewScheduleUseCase(accessToken, body)
-            when (addNewScheduleResult) {
+
+            when (val addNewScheduleResult = addNewScheduleUseCase(accessToken, body)) {
                 is NetworkResult.Success -> {
                     Log.e("success", "${addNewScheduleResult.data}")
                     moveToCalendarScreen()
