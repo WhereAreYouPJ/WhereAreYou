@@ -110,7 +110,7 @@ fun DetailScheduleContent(
                 )
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
-                    text = "${viewModel.startTime.collectAsState().value.replace("T", "\n")}",
+                    text = "${viewModel.appointmentTime.collectAsState().value.replace("T", "\n")}",
                     fontSize = 20.sp
                 )
                 Image(
@@ -119,7 +119,7 @@ fun DetailScheduleContent(
                     contentDescription = null
                 )
                 Text(
-                    text = "${viewModel.endTime.collectAsState().value.replace("T", "\n")}",
+                    text = "${viewModel.appointmentTime.collectAsState().value.replace("T", "\n")}",
                     fontSize = 20.sp
                 )
             }

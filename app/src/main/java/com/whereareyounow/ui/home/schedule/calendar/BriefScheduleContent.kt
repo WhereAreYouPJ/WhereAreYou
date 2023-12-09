@@ -138,12 +138,9 @@ fun BriefScheduleList(
             contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
         ) {
             itemsIndexed(currentDateBriefSchedule) { _, item ->
-                var startHour = item.start.split("T")[1].split(":")[0].toInt()
-                val startMinute = item.start.split("T")[1].split(":")[1].toInt()
-                var endHour = item.end.split("T")[1].split(":")[0].toInt()
-                val endMinute = item.end.split("T")[1].split(":")[1].toInt()
-                var startAMPM: String = if (startHour < 12) "오전" else { startHour -= 12; "오후"}
-                var endAMPM: String = if (endHour < 12) "오전" else {endHour -= 12; "오후"}
+                var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
+                var appointmentMinute = item.appointmentTime.split("T")[1].split(":")[0].toInt()
+                var appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
 
                 Column(
                     modifier = Modifier
@@ -164,7 +161,7 @@ fun BriefScheduleList(
                         fontWeight = FontWeight.Medium
                     )
                     Text(
-                        text = String.format("$startAMPM %02d:%02d - $endAMPM %02d:%02d", startHour, startMinute, endHour, endMinute),
+                        text = String.format("$appointmentTimeAMPM %02d:%02d", appointmentHour, appointmentMinute),
                         fontSize = 20.sp
                     )
                 }

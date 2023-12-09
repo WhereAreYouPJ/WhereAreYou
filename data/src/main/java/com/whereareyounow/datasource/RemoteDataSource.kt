@@ -41,13 +41,10 @@ import com.whereareyounow.domain.entity.apimessage.signin.SignInResponse
 import com.whereareyounow.domain.entity.apimessage.signin.VerifyPasswordResetCodeRequest
 import com.whereareyounow.domain.entity.apimessage.signin.VerifyPasswordResetCodeResponse
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeResponse
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailResponse
 import com.whereareyounow.domain.entity.apimessage.signup.CheckEmailDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.CheckIdDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
-import com.whereareyounow.domain.entity.apimessage.signup.SignUpResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -174,21 +171,21 @@ class RemoteDataSource(
     // 이메일 인증
     suspend fun authenticateEmail(
         body: AuthenticateEmailRequest
-    ): Response<AuthenticateEmailResponse> {
+    ): Response<Unit> {
         return signUpApi.authenticateEmail(body)
     }
 
     // 이메일 인증 코드 입력
     suspend fun authenticateEmailCode(
         body: AuthenticateEmailCodeRequest
-    ): Response<AuthenticateEmailCodeResponse> {
+    ): Response<Unit> {
         return signUpApi.authenticateEmailCode(body)
     }
 
     // 회원가입 성공
     suspend fun signUp(
         body: SignUpRequest
-    ): Response<SignUpResponse> {
+    ): Response<Unit> {
         return signUpApi.signUp(body)
     }
 

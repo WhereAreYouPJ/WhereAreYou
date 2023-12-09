@@ -120,8 +120,6 @@ class SignViewModel @Inject constructor(
                     Log.e("SignViewModel", "Error: ${signInResult.code}")
                     Log.e("SignViewModel", "Error: ${signInResult.errorData}")
                     isLoginSuccess=false
-
-
                 }
 
                 is NetworkResult.Exception -> {
@@ -191,7 +189,7 @@ class SignViewModel @Inject constructor(
         var EmailCode = false // 초기값 false
 
         viewModelScope.launch(Dispatchers.Default) {
-            val body = AuthenticateEmailCodeRequest(email, code)
+            val body = AuthenticateEmailCodeRequest(email, code.toString())
             Log.e("checkEmailCode",body.toString())
 
             val result = authenticateEmailCodeUseCase(body)
