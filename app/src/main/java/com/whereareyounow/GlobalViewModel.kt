@@ -118,18 +118,19 @@ class GlobalViewModel @Inject constructor(
     }
 
     fun getToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
 
-            val token = task.result
-            Log.e("GlobalViewModel-token", token)
+                val token = task.result
+                Log.e("GlobalViewModel-token", token)
 
-            val msg = token.toString()
-            Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
-        })
+                val msg = token.toString()
+                Toast.makeText(application, msg, Toast.LENGTH_SHORT).show() }
+        )
     }
 
     fun checkNetworkState(
