@@ -7,6 +7,7 @@ import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendRequestListUseCase
 import com.whereareyounow.domain.usecase.friend.RefuseFriendRequestUseCase
 import com.whereareyounow.domain.usecase.friend.SendFriendRequestUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
