@@ -7,12 +7,14 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.whereareyounow.datasource.RemoteDataSource
 import com.whereareyounow.datasource.SearchLocationDataSource
 import com.whereareyounow.datasource.SharedPreferencesDataSource
+import com.whereareyounow.domain.repository.FCMRepository
 import com.whereareyounow.domain.repository.FriendRepository
 import com.whereareyounow.domain.repository.LocationRepository
 import com.whereareyounow.domain.repository.ScheduleRepository
 import com.whereareyounow.domain.repository.SearchLocationRepository
 import com.whereareyounow.domain.repository.SignInRepository
 import com.whereareyounow.domain.repository.SignUpRepository
+import com.whereareyounow.repository.FCMRepositoryImpl
 import com.whereareyounow.repository.FriendRepositoryImpl
 import com.whereareyounow.repository.LocationRepositoryImpl
 import com.whereareyounow.repository.ScheduleRepositoryImpl
@@ -83,5 +85,12 @@ object RepositoryModule {
         dataSource: SharedPreferencesDataSource
     ): SharedPreferencesRepository {
         return SharedPreferencesRepository(dataSource)
+    }
+
+    @Provides
+    fun provideFcmRepository(
+        dataSource: RemoteDataSource
+    ): FCMRepository {
+        return FCMRepositoryImpl(dataSource)
     }
 }
