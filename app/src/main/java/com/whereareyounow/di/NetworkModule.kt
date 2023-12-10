@@ -1,6 +1,7 @@
 package com.whereareyounow.di
 
 import com.whereareyounow.BuildConfig
+import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.SearchLocationApi
@@ -108,5 +109,12 @@ object NetworkModule {
     @Provides
     fun provideLocationApi(@RemoteApiClass retrofit: Retrofit): LocationApi {
         return retrofit.create(LocationApi::class.java)
+    }
+
+    // FCM Api
+    @Singleton
+    @Provides
+    fun provideFCMApi(@RemoteApiClass retrofit: Retrofit): FCMApi {
+        return retrofit.create(FCMApi::class.java)
     }
 }
