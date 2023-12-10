@@ -1,5 +1,7 @@
 package com.whereareyounow.ui.home.schedule.newschedule
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -10,12 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.whereareyounow.R
 
 @Composable
 fun ScheduleTitleTextField(
@@ -23,6 +31,8 @@ fun ScheduleTitleTextField(
     updateTitle: (String) -> Unit,
     clearTitle: () -> Unit
 ) {
+    val context = LocalContext.current
+    val resource = context.resources
     BasicTextField(
         modifier = Modifier.onFocusChanged {
 //                if (it.isFocused && title == "제목을 입력하세요") { updateTitle("") }
@@ -47,6 +57,11 @@ fun ScheduleTitleTextField(
                             start = Offset(0f, size.height),
                             end = Offset(size.width, size.height),
                             strokeWidth = borderSize
+                        )
+                        drawImage(
+                            image = BitmapFactory
+                                .decodeResource(resource, R.drawable.splash_logo)
+                                .asImageBitmap()
                         )
                     },
                 contentAlignment = Alignment.CenterStart
