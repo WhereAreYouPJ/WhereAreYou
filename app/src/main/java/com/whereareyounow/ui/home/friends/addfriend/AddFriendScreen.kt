@@ -16,8 +16,7 @@ fun AddFriendScreen(
     viewModel: AddFriendViewModel = hiltViewModel()
 ) {
     val inputId = viewModel.inputId.collectAsState().value
-    val imageUrl = viewModel.imageUrl.collectAsState().value
-    val userName = viewModel.userName.collectAsState().value
+    val friendInfo = viewModel.friendInfo.collectAsState().value
     val buttonState = viewModel.buttonState.collectAsState().value
 
     Column(
@@ -32,10 +31,12 @@ fun AddFriendScreen(
             clearInputId = { viewModel.clearInputId() }
         )
         Spacer(modifier = Modifier.height(20.dp))
-        UserInfoContent(
-            imageUrl = imageUrl,
-            userName = userName
-        )
+        if (friendInfo != null) {
+            UserInfoContent(
+                imageUrl = friendInfo.profileImgUrl,
+                userName = friendInfo.name
+            )
+        }
         BottomButton(
             searchFriend = {
                 when (buttonState) {

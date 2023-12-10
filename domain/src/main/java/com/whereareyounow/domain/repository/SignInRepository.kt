@@ -3,7 +3,7 @@ package com.whereareyounow.domain.repository
 import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdResponse
-import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsByUserIdResponse
+import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenResponse
@@ -73,10 +73,10 @@ interface SignInRepository {
         memberId: String
     ): NetworkResult<GetMemberDetailsResponse>
 
-    suspend fun getMemberDetailsByUserId(
+    suspend fun getMemberIdByUserId(
         token: String,
         userId: String
-    ): NetworkResult<GetMemberDetailsByUserIdResponse>
+    ): NetworkResult<GetMemberIdByUserIdResponse>
 
     // 마이페이지 수정
     suspend fun modifyMyInfo(

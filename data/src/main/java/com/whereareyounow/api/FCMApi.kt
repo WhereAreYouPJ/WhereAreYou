@@ -1,5 +1,6 @@
 package com.whereareyounow.api
 
+import com.whereareyounow.domain.entity.apimessage.fcm.DeleteFCMTokenRequest
 import com.whereareyounow.domain.entity.apimessage.fcm.UpdateFCMTokenRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,5 +21,6 @@ interface FCMApi {
     @DELETE("fcm")
     suspend fun deleteFCMToken(
         @Header("Authorization") token: String,
+        @Body body: DeleteFCMTokenRequest
     ): Response<Unit>
 }

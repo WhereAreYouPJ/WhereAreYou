@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
@@ -54,7 +55,7 @@ class MyPageViewModel @Inject constructor(
             saveRefreshTokenUseCase("")
             saveAccessTokenUseCase("")
             saveMemberIdUseCase("")
-            moveToStartScreen()
+            withContext(Dispatchers.Main) { moveToStartScreen() }
         }
     }
 

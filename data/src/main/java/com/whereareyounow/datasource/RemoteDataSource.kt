@@ -1,10 +1,13 @@
 package com.whereareyounow.datasource
 
+import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.api.SignInApi
 import com.whereareyounow.api.SignUpApi
+import com.whereareyounow.domain.entity.apimessage.fcm.DeleteFCMTokenRequest
+import com.whereareyounow.domain.entity.apimessage.fcm.UpdateFCMTokenRequest
 import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListResponse
@@ -31,7 +34,7 @@ import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitSchedule
 import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdResponse
-import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsByUserIdResponse
+import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenResponse
@@ -55,7 +58,8 @@ class RemoteDataSource(
     private val signInApi: SignInApi,
     private val friendApi: FriendApi,
 //    private val groupApi: GroupApi,
-    private val locationApi: LocationApi
+    private val locationApi: LocationApi,
+    private val fcmApi: FCMApi,
 ) {
     // 일정 관련
     // 월별 일정 정보
@@ -234,11 +238,11 @@ class RemoteDataSource(
     }
 
     // 회원 상세 정보(userId)
-    suspend fun getMemberDetailsByUserId(
+    suspend fun getMemberIdByUserId(
         token: String,
         userId: String
-    ): Response<GetMemberDetailsByUserIdResponse> {
-        return signInApi.getMemberDetailsByUserId(token, userId)
+    ): Response<GetMemberIdByUserIdResponse> {
+        return signInApi.getMemberIdByUserId(token, userId)
     }
 
     // 마이페이지 수정
@@ -329,5 +333,22 @@ class RemoteDataSource(
         body: SendUserLocationRequest
     ): Response<Boolean> {
         return locationApi.sendUserLocation(token, body)
+    }
+
+    // FCM 관련
+    // FCM 토큰 저장 및 갱신
+    suspend fun updateFCMToken(
+        token: String,
+        body: UpdateFCMTokenRequest
+    ): Response<Unit> {
+        return fcmApi.updateFCMToken(token, body)
+    }
+
+    // FCM 토큰 삭제(로그아웃)
+    suspend fun deleteFCMToken(
+        token: String,
+        body: DeleteFCMTokenRequest
+    ): Response<Unit> {
+        return fcmApi.deleteFCMToken(token, body)
     }
 }

@@ -8,7 +8,7 @@ import com.whereareyounow.datasource.RemoteDataSource
 import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdResponse
-import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsByUserIdResponse
+import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenResponse
@@ -163,13 +163,13 @@ class SignInRepositoryImpl(
 
     /**
      * 회원 상세 정보
-     * implements [SignInRepository.getMemberDetailsByUserId]
+     * implements [SignInRepository.getMemberIdByUserId]
      */
-    override suspend fun getMemberDetailsByUserId(
+    override suspend fun getMemberIdByUserId(
         token: String,
         userId: String
-    ): NetworkResult<GetMemberDetailsByUserIdResponse> {
-        return handleResult { dataSource.getMemberDetailsByUserId(token, userId) }
+    ): NetworkResult<GetMemberIdByUserIdResponse> {
+        return handleResult { dataSource.getMemberIdByUserId(token, userId) }
     }
 
     /**

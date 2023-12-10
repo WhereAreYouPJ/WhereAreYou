@@ -2,12 +2,16 @@ package com.whereareyounow.ui.signin
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.whereareyounow.data.FriendProvider
+import com.whereareyounow.domain.entity.apimessage.fcm.UpdateFCMTokenRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
@@ -17,6 +21,7 @@ import com.whereareyounow.domain.entity.apimessage.signin.VerifyPasswordResetCod
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
 import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
+import com.whereareyounow.domain.usecase.fcm.UpdateFCMTokenUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendIdsListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.signin.FindIdUseCase
@@ -33,6 +38,7 @@ import com.whereareyounow.domain.usecase.signup.AuthenticateEmailUseCase
 import com.whereareyounow.domain.usecase.signup.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.signup.CheckIdDuplicateUseCase
 import com.whereareyounow.domain.usecase.signup.SignUpUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,13 +51,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignViewModel @Inject constructor(
-    application: Application,
+    private val application: Application,
     private val signInUseCase: SignInUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val saveMemberIdUseCase: SaveMemberIdUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
+    private val updateFCMTokenUseCase: UpdateFCMTokenUseCase,
 
 
     private val signUpUseCase: SignUpUseCase, //회원가입
@@ -113,6 +120,38 @@ class SignViewModel @Inject constructor(
                     getFriendList()
                     isLoginSuccess=true
 
+                    // FCM 토큰 저장
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(
+                        OnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                Log.e("GlobalViewModel-token", "Fetching FCM registration token failed", task.exception)
+                                return@OnCompleteListener
+                            }
+                            val fcmToken = task.result
+
+                            viewModelScope.launch {
+                                Log.e("GlobalViewModel-token", fcmToken)
+                                if (fcmToken != "") {
+                                    val accessToken = getAccessTokenUseCase().first()
+                                    val memberId = getMemberIdUseCase().first()
+                                    val request = UpdateFCMTokenRequest(memberId, fcmToken)
+                                    val response = updateFCMTokenUseCase(accessToken, request)
+                                    LogUtil.printNetworkLog(response, "updateFCMTokenUseCase")
+                                    when (response) {
+                                        is NetworkResult.Success -> {
+                                            Log.e("", "FCM 토큰 저장 완료")
+                                        }
+                                        is NetworkResult.Error -> {
+
+                                        }
+                                        is NetworkResult.Exception -> {
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
 
                 is NetworkResult.Error -> {
