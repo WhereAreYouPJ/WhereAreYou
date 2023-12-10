@@ -1,6 +1,7 @@
 package com.whereareyounow.di.datasource
 
 import android.content.Context
+import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.SearchLocationApi
@@ -29,9 +30,10 @@ object RemoteDataSourceModule {
         signInApi: SignInApi,
         friendApi: FriendApi,
 //        groupApi: GroupApi,
-        locationApi: LocationApi
+        locationApi: LocationApi,
+        fcmApi: FCMApi,
     ): RemoteDataSource {
-        return RemoteDataSource(scheduleApi, signUpApi, signInApi, friendApi, locationApi)
+        return RemoteDataSource(scheduleApi, signUpApi, signInApi, friendApi, locationApi, fcmApi)
     }
 
     @Provides
