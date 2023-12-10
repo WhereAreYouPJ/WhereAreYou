@@ -4,7 +4,7 @@ import com.whereareyounow.domain.repository.SignInRepository
 import com.whereareyounow.domain.usecase.signin.DeleteMemberUseCase
 import com.whereareyounow.domain.usecase.signin.FindIdUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
-import com.whereareyounow.domain.usecase.signin.GetMemberDetailsByUserIdUseCase
+import com.whereareyounow.domain.usecase.signin.GetMemberIdByUserIdUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
@@ -96,10 +96,10 @@ object SignInUseCaseModule {
     }
 
     @Provides
-    fun provideGetMemberDetailsByUserIdUseCase(
+    fun provideGetMemberIdByUserIdUseCase(
         repository: SignInRepository
-    ): GetMemberDetailsByUserIdUseCase {
-        return GetMemberDetailsByUserIdUseCase(repository)
+    ): GetMemberIdByUserIdUseCase {
+        return GetMemberIdByUserIdUseCase(repository)
     }
 
     @Provides
