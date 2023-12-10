@@ -58,11 +58,6 @@ fun ScheduleTitleTextField(
                             end = Offset(size.width, size.height),
                             strokeWidth = borderSize
                         )
-                        drawImage(
-                            image = BitmapFactory
-                                .decodeResource(resource, R.drawable.splash_logo)
-                                .asImageBitmap()
-                        )
                     },
                 contentAlignment = Alignment.CenterStart
             ) {

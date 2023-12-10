@@ -17,7 +17,7 @@ import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.home.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.signin.AgreeScreen
 import com.whereareyounow.ui.signin.LoginScreen
-import com.whereareyounow.ui.signin.SignUpScreen
+import com.whereareyounow.ui.signup.SignUpScreen
 import com.whereareyounow.ui.signin.SuccessScreen
 import com.whereareyounow.ui.signin.SuccessScreenPw
 import com.whereareyounow.ui.splash.SplashScreen
@@ -38,10 +38,15 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_MAIN_SPLASH
         ) {
+//            Log.e("Navigation", "ROUTE_MAIN_SPLASH")
+//            for (backStackEntry in navController.currentBackStack.value) {
+//                Log.e("Navigation", "${backStackEntry.destination.route}")
+//            }
             SplashScreen(
                 moveToStartScreen = {
                     navController.popBackStack()
-                    navController.navigate(Constants.ROUTE_MAIN_START)
+//                    navController.navigate(Constants.ROUTE_MAIN_START)
+                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
                 },
                 moveToMainScreen = {
                     navController.popBackStack()
@@ -93,7 +98,9 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_MAIN_SIGNUP
         ) {
-            SignUpScreen(navController = navController)
+            SignUpScreen(
+                moveToBackScreen = { navController.popBackStack() },
+            )
         }
 
         // 로그인 화면

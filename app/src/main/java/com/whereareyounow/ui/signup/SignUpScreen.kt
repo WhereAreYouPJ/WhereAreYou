@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.signin
+package com.whereareyounow.ui.signup
 
 
 import android.util.Log
@@ -24,10 +24,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -44,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.whereareyounow.R
 import com.whereareyounow.data.Constants
+import com.whereareyounow.ui.signin.SignViewModel
 
 fun isValidUserId(input: String): Boolean {
     val regex = Regex("^[a-z][a-z0-9]{4,11}$")
@@ -74,8 +77,9 @@ fun checkPasswordConditions(password: String): Boolean {
 
 @Composable
 fun SignUpScreen(
-    navController: NavHostController,
-    signInViewModel: SignViewModel = hiltViewModel()
+    moveToBackScreen: () -> Unit,
+    signInViewModel: SignViewModel = hiltViewModel(),
+    viewModel: SignUpViewModel = hiltViewModel()
 ) {
     var user_id by remember { mutableStateOf(TextFieldValue()) }
     var user_name by remember { mutableStateOf(TextFieldValue()) }
@@ -109,106 +113,53 @@ fun SignUpScreen(
     var email_pass by remember { mutableStateOf(true) } //임시로 true 설정
 
     val context = LocalContext.current
-
-
-////////////
-
-
-//////////
-    //checkauthenticateEmail().
-////////
-////////
-
-
     Column(
         modifier = Modifier
+            .padding(start = 20.dp, end = 20.dp)
             .fillMaxSize()
-            .padding(8.dp)
     ) {
-        Spacer(
-            modifier = Modifier
-                .height(10.dp)
+        SignUpScreenTopBar(
+            moveToBackScreen = moveToBackScreen
         )
+        Spacer(modifier = Modifier.height(40.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(35.dp), //
-        ) {
-
-
-            Box(
-                modifier = Modifier
-                    .width(30.dp)
-                    .height(30.dp)
-                    .background(Color.White)
-                    .clickable {
-                        navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
-
+        // 이름 입력
+        val inputUserName = viewModel.inputUserName.collectAsState().value
+        Text(
+            text = "이름"
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        BasicTextField(
+            modifier = Modifier,
+            value = inputUserName,
+            onValueChange = { viewModel.updateInputUserName(it) },
+            textStyle = TextStyle(fontSize = 20.sp),
+            decorationBox = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color(0xFFF5F5F6),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(12.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    it()
+                    if (inputUserName == "") {
+                        Text(
+                            text = "이름을 입력해주세요",
+                            color = Color(0xFF737373)
+                        )
                     }
-
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.icon_chevron__1_),
-                    contentDescription = "icon_button"
-                )
-            }
-
-
-            Text(
-                text = "회원가입",
-                fontSize = 20.sp,
-                modifier = Modifier.offset(x = 150.dp)
-            )
-        }
-
-
-        Spacer(
-            modifier = Modifier
-                .height(40.dp)
+                }
+            },
+            singleLine = true
         )
 
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // 이름 입력 필드
-        Column() {
-
-            Text(
-                text = "이름"
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(width = 200.dp, height = 45.dp)
-                    .background(Color(0xFFF5F5F6))
-                    .padding(start = 16.dp, top = 10.dp)
-
-            ) {
-                BasicTextField(
-                    value = user_name,
-                    onValueChange = {
-                        user_name = it
-                        name_pass = true
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Left
-                    ),
-                    modifier = Modifier.fillMaxSize() // Fill the available space inside the Box\
-
-                )
-            }
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-
-            )
-        }
-
-
-        // 아이디 입력 필드
+        // 아이디 입력
         Column() {
             Text(
                 text = "아이디"
@@ -490,7 +441,9 @@ fun SignUpScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .height(15.dp))
 
             if (isEmailChecked) {
                 Row {
@@ -550,7 +503,9 @@ fun SignUpScreen(
             email_pass = true // 검증완료이므로 true 변환
 
         }
-        Spacer(modifier = Modifier.fillMaxWidth().height(15.dp))
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(15.dp))
 
         // 로그인 버튼
         Button(
@@ -569,7 +524,7 @@ fun SignUpScreen(
                         email.text
                     )
 
-                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
+//                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
                 }
                 // 여기에 로그인 로직을 추가
             },

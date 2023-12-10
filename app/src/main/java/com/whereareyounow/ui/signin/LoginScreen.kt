@@ -168,7 +168,7 @@ fun LoginScreen(
 
 
         // 로그인 유지 체크박스
-        Row(
+        /*Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 4.dp)
         ) {
@@ -180,7 +180,7 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(text = "로그인 상태 유지", style = TextStyle(fontSize = 14.sp))
-        }
+        }*/
 
         // 로그인 버튼
 
@@ -221,7 +221,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        Row(
+        /*Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
@@ -250,7 +250,7 @@ fun LoginScreen(
             )
 
 
-        }
+        }*/
 
 
     }

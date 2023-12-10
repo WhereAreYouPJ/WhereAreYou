@@ -73,9 +73,7 @@ fun NewLocationScreen(
             BasicTextField(
                 modifier = Modifier.padding(start = 60.dp, end = 60.dp),
                 value = viewModel.inputLocationText.collectAsState().value,
-                onValueChange = {
-                    viewModel.updateInputLocationText(it)
-                },
+                onValueChange = { viewModel.updateInputLocationText(it) },
                 textStyle = TextStyle(fontSize = 20.sp),
                 decorationBox = {
                     Box(
@@ -86,9 +84,7 @@ fun NewLocationScreen(
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .padding(12.dp)
-                    ) {
-                        it()
-                    }
+                    ) { it() }
                 },
                 singleLine = true
             )

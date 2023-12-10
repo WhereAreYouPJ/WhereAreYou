@@ -28,7 +28,6 @@ fun StartScreen(
     moveToSignUpScreen: () -> Unit,
     moveToSignInScreen: () -> Unit
 ) {
-    Log.e("StartScreen", "StartScreen")
     Column(
         modifier = Modifier
             .fillMaxSize()
