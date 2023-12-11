@@ -40,13 +40,14 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.util.popupmenu.CustomPopup
+import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
 fun DetailScheduleContent(
     viewModel: DetailScheduleViewModel = hiltViewModel()
 ) {
-    val popupState = remember { PopupState(false) }
+    val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
     Box(modifier = Modifier.fillMaxSize()) {
         // 배경
         BackgroundContent()

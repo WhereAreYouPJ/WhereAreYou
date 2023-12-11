@@ -45,8 +45,8 @@ fun MainNavigation(
             SplashScreen(
                 moveToStartScreen = {
                     navController.popBackStack()
-//                    navController.navigate(Constants.ROUTE_MAIN_START)
-                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
+                    navController.navigate(Constants.ROUTE_MAIN_START)
+//                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
                 },
                 moveToMainScreen = {
                     navController.popBackStack()

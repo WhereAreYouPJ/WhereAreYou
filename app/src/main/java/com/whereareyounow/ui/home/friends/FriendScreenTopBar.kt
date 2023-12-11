@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.util.popupmenu.CustomPopup
+import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
@@ -46,7 +47,7 @@ fun FriendScreenTopBar(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val popupState = remember { PopupState(false) }
+        val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
         Text(
             modifier = Modifier
                 .padding(end = 20.dp)

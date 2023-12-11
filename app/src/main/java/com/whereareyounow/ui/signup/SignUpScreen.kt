@@ -7,8 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -42,6 +46,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.whereareyounow.R
@@ -121,7 +127,7 @@ fun SignUpScreen(
         SignUpScreenTopBar(
             moveToBackScreen = moveToBackScreen
         )
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // 이름 입력
         val inputUserName = viewModel.inputUserName.collectAsState().value
@@ -160,105 +166,168 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         // 아이디 입력
-        Column() {
-            Text(
-                text = "아이디"
-            )
-
-            Row() {
-                BasicTextField(
-
-                    /// 값이 바뀌면 -> 체크 되어있떤거 false로 ㄱㄱ
-                    value = user_id.text,
-                    onValueChange = {
-                        user_id = user_id.copy(text = it)
-                        isInvalidId = !isValidUserId(it)
-                        isButtonEnabled = it.isNotEmpty() && !isInvalidId
-                        isButtonClicked = false
-
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Left // 텍스트 가운데 정렬
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { /* Handle Done button press if needed */ }
-                    ),
-                    modifier = Modifier
-                        .size(width = 260.dp, height = 45.dp)
-                        .background(Color(0xFFF5F5F6))
-                        .padding(start = 16.dp, top = 10.dp)
-
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
-
-                Button(
-                    onClick = {
-                        if (isButtonEnabled) {
-
-                            // 여기에 로그인 로직을 추가
-                            // username 및 password를 사용하여 로그인을 처리
-                            // 오류떄문에 임시로 string 값 넣어 놈.
-                            signInViewModel.checkIdDuplicated(user_id.text) { isIdDuplicated ->
-                                Log.d("check", isIdDuplicated.toString())
-                                isIdDuplicate = isIdDuplicated
-                                isButtonClicked = true
-
-
-                            }// 중복 아닐경우 true
-
-
-                        }
-
-                    },
-                    enabled = isButtonEnabled, // 버튼 활성/비활성 상태 변경
-
-                    shape = RoundedCornerShape(3.dp),
-                    modifier = Modifier
-                        .size(width = 130.dp, height = 45.dp)
-                        .background(Color(0xFFF5F5F6))
-                ) {
-                    Text("중복확인")
-                }
-            }
-            if (!user_id.text.isNotEmpty() || (user_id.text.isNotEmpty() && isInvalidId && !isButtonClicked)) {
-                Text(
-                    text = "영문 소문자로 시작하는 5~12자의 아이디를 입력해주세요.",
-                    color = Color.Red,
-                    fontSize = 15.sp
-
-                )
-            }
-
-            if (isIdDuplicate && isButtonClicked) {
-                Text(
-                    text = "사용 가능한 아이디입니다.",
-                    color = Color.Green
-                )
-                id_pass = true // 검증완료이므로 true 변환
-
-            } else if (!isIdDuplicate && isButtonClicked && user_id.text.isNotEmpty() && !isInvalidId) {
-                Text(
-                    text = "중복된 아이디입니다.",
-                    color = Color.Red
-                )
-            }
-
-            Spacer(
+        val inputUserId = viewModel.inputUserId.collectAsState().value
+        Text(
+            text = "아이디"
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Min)
+                .fillMaxWidth()
+        ) {
+            BasicTextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
+                    .weight(1f)
+                    .onFocusEvent {
+                        Log.e("focus", "isFocuesd ${it.isFocused}")
+                        Log.e("focus", "hasFocus ${it.hasFocus}")
+                        Log.e("focus", "isCaptured ${it.isCaptured}")
+                    },
+                value = inputUserId,
+                onValueChange = { viewModel.updateInputUserId(it) },
+                textStyle = TextStyle(fontSize = 20.sp),
+                decorationBox = {
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = Color(0xFFF5F5F6),
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .padding(12.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        it()
+                        if (inputUserId == "") {
+                            Text(
+                                text = "아이디를 입력해주세요",
+                                color = Color(0xFF737373)
+                            )
+                        }
+                    }
+                },
+                singleLine = true
             )
+            Spacer(modifier = Modifier.width(10.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(
+                        color = Color(0xFFE9E9E9),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .clickable {
+
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp),
+                    text = "중복확인",
+                    color = Color(0xFF797979)
+                )
+            }
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+//        Column() {
+//
+//            Row() {
+//                BasicTextField(
+//
+//                    /// 값이 바뀌면 -> 체크 되어있떤거 false로 ㄱㄱ
+//                    value = user_id.text,
+//                    onValueChange = {
+//                        user_id = user_id.copy(text = it)
+//                        isInvalidId = !isValidUserId(it)
+//                        isButtonEnabled = it.isNotEmpty() && !isInvalidId
+//                        isButtonClicked = false
+//
+//                    },
+//                    singleLine = true,
+//                    textStyle = TextStyle(
+//                        fontSize = 20.sp,
+//                        textAlign = TextAlign.Left // 텍스트 가운데 정렬
+//                    ),
+//                    keyboardOptions = KeyboardOptions.Default.copy(
+//                        keyboardType = KeyboardType.Text,
+//                        imeAction = ImeAction.Done
+//                    ),
+//                    keyboardActions = KeyboardActions(
+//                        onDone = { /* Handle Done button press if needed */ }
+//                    ),
+//                    modifier = Modifier
+//                        .size(width = 260.dp, height = 45.dp)
+//                        .background(Color(0xFFF5F5F6))
+//                        .padding(start = 16.dp, top = 10.dp)
+//
+//                )
+//
+//                Spacer(
+//                    modifier = Modifier
+//                        .width(10.dp)
+//                )
+//
+//                Button(
+//                    onClick = {
+//                        if (isButtonEnabled) {
+//
+//                            // 여기에 로그인 로직을 추가
+//                            // username 및 password를 사용하여 로그인을 처리
+//                            // 오류떄문에 임시로 string 값 넣어 놈.
+//                            signInViewModel.checkIdDuplicated(user_id.text) { isIdDuplicated ->
+//                                Log.d("check", isIdDuplicated.toString())
+//                                isIdDuplicate = isIdDuplicated
+//                                isButtonClicked = true
+//
+//
+//                            }// 중복 아닐경우 true
+//
+//
+//                        }
+//
+//                    },
+//                    enabled = isButtonEnabled, // 버튼 활성/비활성 상태 변경
+//
+//                    shape = RoundedCornerShape(3.dp),
+//                    modifier = Modifier
+//                        .size(width = 130.dp, height = 45.dp)
+//                        .background(Color(0xFFF5F5F6))
+//                ) {
+//                    Text("중복확인")
+//                }
+//            }
+//            if (!user_id.text.isNotEmpty() || (user_id.text.isNotEmpty() && isInvalidId && !isButtonClicked)) {
+//                Text(
+//                    text = "영문 소문자로 시작하는 5~12자의 아이디를 입력해주세요.",
+//                    color = Color.Red,
+//                    fontSize = 15.sp
+//
+//                )
+//            }
+//
+//            if (isIdDuplicate && isButtonClicked) {
+//                Text(
+//                    text = "사용 가능한 아이디입니다.",
+//                    color = Color.Green
+//                )
+//                id_pass = true // 검증완료이므로 true 변환
+//
+//            } else if (!isIdDuplicate && isButtonClicked && user_id.text.isNotEmpty() && !isInvalidId) {
+//                Text(
+//                    text = "중복된 아이디입니다.",
+//                    color = Color.Red
+//                )
+//            }
+//
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(15.dp)
+//            )
+//        }
         // 비밀번호 입력 필드
 
         Column() {
