@@ -129,7 +129,8 @@ class GlobalViewModel @Inject constructor(
                 Log.e("GlobalViewModel-token", token)
 
                 val msg = token.toString()
-                Toast.makeText(application, msg, Toast.LENGTH_SHORT).show() }
+//                Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
+            }
         )
     }
 
