@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -248,5 +249,12 @@ fun PermissionCheckingScreen(
                 text = "위치 권한 허용하기"
             )
         }
+        Text(
+            modifier = Modifier
+                .padding(start = 20.dp, end = 20.dp),
+            text = "사용자의 위치 정보는 약속 인원들에게 자신의 위치를 공유하는 앱의 핵심 기능에 반드시 필요합니다." +
+                    "\n위치 정보는 자신의 위치를 사용자가 직접 전송 버튼을 눌러 일정의 인원들에게 자신의 위치를 공유할 때에만 사용되며, 다른 기능에는 일절 사용되지 않습니다.",
+            fontSize = 20.sp
+        )
     }
 }
