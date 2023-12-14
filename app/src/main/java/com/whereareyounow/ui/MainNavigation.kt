@@ -38,10 +38,6 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_MAIN_SPLASH
         ) {
-//            Log.e("Navigation", "ROUTE_MAIN_SPLASH")
-//            for (backStackEntry in navController.currentBackStack.value) {
-//                Log.e("Navigation", "${backStackEntry.destination.route}")
-//            }
             SplashScreen(
                 moveToStartScreen = {
                     navController.popBackStack()
