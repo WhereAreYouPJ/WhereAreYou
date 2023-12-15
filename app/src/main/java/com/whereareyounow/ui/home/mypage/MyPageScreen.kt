@@ -167,7 +167,6 @@ fun MyPageScreen(
                     .size(100.dp)
                     .background(color = Color.Cyan)
                     .clickable {
-//                    val takePhotoFromAlbumIntent =
 //                        Intent(
 //                            Intent.ACTION_GET_CONTENT,
 //                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
