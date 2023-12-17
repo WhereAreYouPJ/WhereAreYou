@@ -78,7 +78,7 @@ fun FriendScreenTopBar(
                 ) {
                     Row(
                         modifier = Modifier
-                            .clip(shape = RoundedCornerShape(50))
+                            .clip(RoundedCornerShape(50))
                             .height(IntrinsicSize.Min)
                     ) {
                         Box(
@@ -104,7 +104,7 @@ fun FriendScreenTopBar(
                         )
                         Box(
                             modifier = Modifier
-                                .clip(shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
+                                .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
                                 .background(Color.Cyan)
                                 .clickable {
                                     popupState.isVisible = false
