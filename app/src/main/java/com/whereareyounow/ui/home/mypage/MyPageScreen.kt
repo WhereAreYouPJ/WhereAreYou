@@ -114,7 +114,7 @@ fun MyPageScreen(
                     modifier = Modifier
                         .width(((GlobalValue.calendarViewHeight / density.density) / 3 * 2).dp)
                         .height(((GlobalValue.calendarViewHeight / density.density) / 3 * 2).dp)
-                        .clip(shape = RoundedCornerShape(50)),
+                        .clip(RoundedCornerShape(50)),
                     imageModel = { profileImageUri ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
                     imageOptions = ImageOptions(
                         contentScale = ContentScale.FillWidth,
@@ -193,7 +193,7 @@ fun MyPageScreen(
                 modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .clip(shape = RoundedCornerShape(50)),
+                    .clip(RoundedCornerShape(50)),
                 imageModel = { imagePath ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
                 imageOptions = ImageOptions(
                     contentScale = ContentScale.FillWidth,
