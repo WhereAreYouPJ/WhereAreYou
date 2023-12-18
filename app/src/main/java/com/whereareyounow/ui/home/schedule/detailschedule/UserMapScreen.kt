@@ -159,7 +159,7 @@ fun UserMapScreen(
             Box(
                 modifier = Modifier
                     .padding(start = 40.dp, bottom = 40.dp)
-                    .clip(shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f))
+                    .clip(RoundedCornerShape(topStart = 50f, bottomStart = 50f))
                     .width(80.dp)
                     .height(40.dp)
                     .background(
@@ -192,7 +192,7 @@ fun UserMapScreen(
             Box(
                 modifier = Modifier
                     .padding(start = 121.dp, bottom = 40.dp)
-                    .clip(shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
+                    .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
                     .width(80.dp)
                     .height(40.dp)
                     .background(
@@ -219,7 +219,7 @@ fun UserMapScreen(
         Box(
             modifier = Modifier
                 .padding(end = 40.dp, bottom = 40.dp)
-                .clip(shape = RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
+                .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
                 .width(80.dp)
                 .height(40.dp)
                 .background(
@@ -242,7 +242,7 @@ fun UserMapScreen(
         Box(
             modifier = Modifier
                 .padding(end = 121.dp, bottom = 40.dp)
-                .clip(shape = RoundedCornerShape(topStart = 50f, bottomStart = 50f))
+                .clip(RoundedCornerShape(topStart = 50f, bottomStart = 50f))
                 .width(80.dp)
                 .height(40.dp)
                 .background(
@@ -311,7 +311,7 @@ fun UserList(
                 ) {
                     GlideImage(
                         modifier = Modifier
-                            .clip(shape = RoundedCornerShape(50))
+                            .clip(RoundedCornerShape(50))
                             .size(30.dp),
                         imageModel = {
                             item.profileImage ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
