@@ -91,7 +91,7 @@ fun DetailScheduleContent(
                         modifier = Modifier
                             .fillMaxHeight()
 //                            .size(30.dp)
-                            .clip(shape = RoundedCornerShape(50f))
+                            .clip(RoundedCornerShape(50f))
                             .clickable {
                                 popupState.isVisible = true
                             },
@@ -164,7 +164,7 @@ fun DetailScheduleContent(
                             GlideImage(
                                 modifier = Modifier
                                     .size(30.dp)
-                                    .clip(shape = RoundedCornerShape(50)),
+                                    .clip(RoundedCornerShape(50)),
                                 imageModel = {
                                     userInfo.profileImage ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
                                 },
@@ -186,7 +186,7 @@ fun DetailScheduleContent(
             Text(
                 modifier = Modifier
                     .padding(start = 50.dp)
-                    .clip(shape = RoundedCornerShape(50f))
+                    .clip(RoundedCornerShape(50f))
                     .background(
                         color = Color(0xFFF9D889),
                         shape = RoundedCornerShape(50)
