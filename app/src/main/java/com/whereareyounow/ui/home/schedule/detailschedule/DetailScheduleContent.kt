@@ -40,13 +40,14 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.util.popupmenu.CustomPopup
+import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
 fun DetailScheduleContent(
     viewModel: DetailScheduleViewModel = hiltViewModel()
 ) {
-    val popupState = remember { PopupState(false) }
+    val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
     Box(modifier = Modifier.fillMaxSize()) {
         // 배경
         BackgroundContent()
@@ -90,7 +91,7 @@ fun DetailScheduleContent(
                         modifier = Modifier
                             .fillMaxHeight()
 //                            .size(30.dp)
-                            .clip(shape = RoundedCornerShape(50f))
+                            .clip(RoundedCornerShape(50f))
                             .clickable {
                                 popupState.isVisible = true
                             },
@@ -163,7 +164,7 @@ fun DetailScheduleContent(
                             GlideImage(
                                 modifier = Modifier
                                     .size(30.dp)
-                                    .clip(shape = RoundedCornerShape(50)),
+                                    .clip(RoundedCornerShape(50)),
                                 imageModel = {
                                     userInfo.profileImage ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
                                 },
@@ -185,7 +186,7 @@ fun DetailScheduleContent(
             Text(
                 modifier = Modifier
                     .padding(start = 50.dp)
-                    .clip(shape = RoundedCornerShape(50f))
+                    .clip(RoundedCornerShape(50f))
                     .background(
                         color = Color(0xFFF9D889),
                         shape = RoundedCornerShape(50)

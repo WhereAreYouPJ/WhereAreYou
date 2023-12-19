@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
+// import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,7 +67,7 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
                 .height(15.dp)
         )
 
-        HorizontalDivider(thickness = 1.dp, color = Color.Black)
+//        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
         Spacer(
             modifier = Modifier
@@ -156,7 +156,7 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
                 .height(15.dp)
         )
 
-        HorizontalDivider(thickness = 1.dp, color = Color.Black)
+//        HorizontalDivider(thickness = 1.dp, color = Color.Black)
 
 
 

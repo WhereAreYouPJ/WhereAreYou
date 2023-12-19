@@ -14,6 +14,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 data class CustomPopupPositionProvider(
     val contentOffset: DpOffset,
     val density: Density,
+    val popupPosition: PopupPosition,
     val onPopupPositionFound: (Alignment.Horizontal, Boolean) -> Unit
 ) : PopupPositionProvider {
 
@@ -67,10 +68,16 @@ data class CustomPopupPositionProvider(
             centerPlacementOffset = centerPlacementOffset
         )
 
-//        onPopupPositionFound(horizontalAndOffset.first, isFitTop)
-        onPopupPositionFound(Alignment.End, isFitTop)
-//        return IntOffset(horizontalAndOffset.second, yOffset)
-        return IntOffset(startPlacementOffset, yOffset)
+        onPopupPositionFound(horizontalAndOffset.first, isFitTop)
+        return when(popupPosition) {
+            PopupPosition.TopLeft -> IntOffset(startPlacementOffset, toTop)
+            PopupPosition.TopCenter -> IntOffset(centerPlacementOffset, toTop)
+            PopupPosition.TopRight -> IntOffset(endPlacementOffset, toTop)
+            PopupPosition.BottomLeft -> IntOffset(startPlacementOffset, toBottom)
+            PopupPosition.BottomCenter -> IntOffset(centerPlacementOffset, toBottom)
+            PopupPosition.BottomRight -> IntOffset(endPlacementOffset, toBottom)
+
+        }
     }
 }
 

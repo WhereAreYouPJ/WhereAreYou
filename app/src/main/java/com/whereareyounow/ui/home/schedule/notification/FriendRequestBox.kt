@@ -44,7 +44,7 @@ fun FriendRequestBox(
         GlideImage(
             modifier = Modifier
                 .size(80.dp)
-                .clip(shape = RoundedCornerShape(50)),
+                .clip(RoundedCornerShape(50)),
             imageModel = {
                 friendRequest.second.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
             },
@@ -84,7 +84,7 @@ fun RowScope.ClickableBox(
         modifier = Modifier
             .fillMaxHeight()
             .weight(1f)
-            .clip(shape = RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(10.dp))
             .background(
                 color = color,
                 shape = RoundedCornerShape(10.dp)

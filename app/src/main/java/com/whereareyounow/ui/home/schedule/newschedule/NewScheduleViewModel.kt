@@ -10,6 +10,7 @@ import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -109,21 +111,25 @@ class NewScheduleViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val body = AddNewScheduleRequest(
                 memberId = memberId,
-                appointmentTime = _appointmentTime.value + "T" + _appointmentDate.value + ":00",
+                appointmentTime = _appointmentDate.value + "T" + _appointmentTime.value + ":00",
                 title = _title.value,
                 place = _destinationName.value,
                 memo = _memo.value,
                 destinationLatitude = _destinationLatitude.value,
                 destinationLongitude = _destinationLongitude.value,
-                memberIdList = _friendsList.value.map { friend -> friend.memberId },)
-
-            when (val addNewScheduleResult = addNewScheduleUseCase(accessToken, body)) {
+                memberIdList = _friendsList.value.map { friend -> friend.memberId }
+            )
+            Log.e("friendsList", "${body}")
+            val response = addNewScheduleUseCase(accessToken, body)
+            LogUtil.printNetworkLog(response, "addNewScheduleUseCase")
+            when (response) {
                 is NetworkResult.Success -> {
-                    Log.e("success", "${addNewScheduleResult.data}")
-                    moveToCalendarScreen()
+                    withContext(Dispatchers.Main) {
+                        moveToCalendarScreen()
+                    }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${addNewScheduleResult.code}, ${addNewScheduleResult.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
         }
     }

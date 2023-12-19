@@ -33,7 +33,8 @@ fun CustomPopup(
         // Instantiate a CustomPopupPositionProvider with the given offset.
         val popupPositionProvider = CustomPopupPositionProvider(
             contentOffset = offset,
-            density = density
+            density = density,
+            popupPosition = popupState.popupPosition
         ) { alignment, isTop ->
             // Update the PopupState's alignment and direction.
             popupState.horizontalAlignment = alignment
@@ -50,16 +51,31 @@ fun CustomPopup(
             CustomPopupContent(
                 expandedStates = expandedStates,
                 transformOrigin = TransformOrigin(
-                    pivotFractionX = when(popupState.horizontalAlignment) {
-                        Alignment.Start -> 0f
-                        Alignment.CenterHorizontally -> 0.5f
+                    pivotFractionX = when (popupState.popupPosition) {
+                        // 왼쪽에서부터 나타남
+                        PopupPosition.TopRight,
+                        PopupPosition.BottomRight -> 0f
+                        // 가운데서부터 나타남
+                        PopupPosition.TopCenter,
+                        PopupPosition.BottomCenter-> 0.5f
+                        // 오른쪽에서부터 나타남
                         else -> 1f
                     },
-                    pivotFractionY = if (popupState.isTop) 1f else 0f
+                    // 1이면 밑에서부터, 0이면 위에서부터 나타남
+                    pivotFractionY = when (popupState.popupPosition) {
+                        PopupPosition.TopLeft,
+                        PopupPosition.TopCenter,
+                        PopupPosition.TopRight -> 1f
+                        else -> 0f
+                    }
                 ),
                 modifier = modifier,
                 content = content
             )
         }
     }
+}
+
+enum class PopupPosition {
+    TopLeft, TopCenter, TopRight, BottomLeft, BottomCenter, BottomRight
 }

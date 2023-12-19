@@ -101,20 +101,4 @@ fun DateContent(
             }
         }
     }
-
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DateContentPreview() {
-//    Box(
-//        modifier = Modifier
-//            .width(50.dp)
-//            .height(40.dp)
-//            .background(
-//                color = Color(0xFFFFFFFF)
-//            )
-//    ) {
-//        DateContent(8, 3, true, Color.Black)
-//    }
-//}

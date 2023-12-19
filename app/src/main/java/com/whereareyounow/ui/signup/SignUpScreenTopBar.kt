@@ -8,14 +8,19 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
 
@@ -27,14 +32,15 @@ fun SignUpScreenTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density.density).dp)
-            .background(color = Color.Yellow)
-            .padding(start = 20.dp, end = 20.dp),
+            .height((GlobalValue.topBarHeight / density.density).dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Image(
-            modifier = Modifier.clickable { moveToBackScreen() },
-            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+            modifier = Modifier
+                .size((GlobalValue.topBarHeight / density.density / 3 * 2).dp)
+                .clip(RoundedCornerShape(50))
+                .clickable { moveToBackScreen() },
+            painter = painterResource(id = R.drawable.arrow_back),
             contentDescription = null
         )
         Box(
@@ -44,7 +50,9 @@ fun SignUpScreenTopBar(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "회원가입"
+                text = "회원가입",
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp
             )
         }
     }

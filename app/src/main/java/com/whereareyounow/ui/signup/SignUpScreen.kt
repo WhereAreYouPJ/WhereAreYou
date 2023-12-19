@@ -1,27 +1,27 @@
 package com.whereareyounow.ui.signup
 
 
-import android.util.Log
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,21 +31,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.whereareyounow.R
-import com.whereareyounow.data.Constants
 import com.whereareyounow.ui.signin.SignViewModel
 
 fun isValidUserId(input: String): Boolean {
@@ -81,6 +79,7 @@ fun SignUpScreen(
     signInViewModel: SignViewModel = hiltViewModel(),
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
+
     var user_id by remember { mutableStateOf(TextFieldValue()) }
     var user_name by remember { mutableStateOf(TextFieldValue()) }
     var check_password by remember { mutableStateOf(TextFieldValue()) }
@@ -113,432 +112,383 @@ fun SignUpScreen(
     var email_pass by remember { mutableStateOf(true) } //임시로 true 설정
 
     val context = LocalContext.current
-    Column(
+    val density = LocalDensity.current.density
+    val listState = rememberLazyListState()
+
+    LazyColumn(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp)
             .fillMaxSize()
+            .imePadding(),
+        state = listState
     ) {
-        SignUpScreenTopBar(
-            moveToBackScreen = moveToBackScreen
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+        item {
+            SignUpScreenTopBar(moveToBackScreen = moveToBackScreen)
+            Spacer(modifier = Modifier.height(20.dp))
 
-        // 이름 입력
-        val inputUserName = viewModel.inputUserName.collectAsState().value
-        Text(
-            text = "이름"
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        BasicTextField(
-            modifier = Modifier,
-            value = inputUserName,
-            onValueChange = { viewModel.updateInputUserName(it) },
-            textStyle = TextStyle(fontSize = 20.sp),
-            decorationBox = {
+            // 사용자명 입력
+            val inputUserName = viewModel.inputUserName.collectAsState().value
+            val inputUserNameState = viewModel.inputUserNameState.collectAsState().value
+            Title(text = "사용자명")
+            InputBox(
+                hint = "사용자명",
+                inputText = inputUserName,
+                onValueChange = viewModel::updateInputUserName,
+                inputBoxState = when (inputUserNameState) {
+                    UserNameState.EMPTY -> InputBoxState.IDLE
+                    UserNameState.SATISFIED -> InputBoxState.SATISFIED
+                    UserNameState.UNSATISFIED -> InputBoxState.UNSATISFIED
+                },
+                isPassword = false,
+                guide = when (inputUserNameState) {
+                    UserNameState.EMPTY -> "사용자명은 4~10자의 한글, 영문 대/소문자 조합으로 입력해주세요."
+                    UserNameState.SATISFIED -> "사용 가능한 사용자명입니다."
+                    UserNameState.UNSATISFIED -> "사용자명은 4~10자의 한글, 영문 대/소문자 조합으로 입력해주세요."
+                },
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 아이디 입력
+            val inputUserId = viewModel.inputUserId.collectAsState().value
+            val inputUserIdState = viewModel.inputUserIdState.collectAsState().value
+            Title(text = "아이디")
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+            ) {
+                // 아이디 입력창
+                Box(modifier = Modifier.weight(1f)) {
+                    InputBox(
+                        hint = "아이디",
+                        inputText = inputUserId,
+                        onValueChange = viewModel::updateInputUserId,
+                        inputBoxState = when (inputUserIdState) {
+                            UserIdState.EMPTY -> InputBoxState.IDLE
+                            UserIdState.SATISFIED -> InputBoxState.IDLE
+                            UserIdState.UNSATISFIED -> InputBoxState.UNSATISFIED
+                            UserIdState.DUPLICATED -> InputBoxState.UNSATISFIED
+                            UserIdState.UNIQUE -> InputBoxState.SATISFIED
+                        },
+                        isPassword = false,
+                        guide = when (inputUserIdState) {
+                            UserIdState.EMPTY -> "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요."
+                            UserIdState.SATISFIED -> "중복 확인을 해주세요."
+                            UserIdState.UNSATISFIED -> "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요."
+                            UserIdState.DUPLICATED -> "이미 존재하는 아이디입니다."
+                            UserIdState.UNIQUE -> "사용 가능한 아이디입니다."
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                // 중복확인 버튼
+                CheckingButton(text = "중복확인") {
+
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 비밀번호 입력
+            val inputPassword = viewModel.inputPassword.collectAsState().value
+            val inputPasswordState = viewModel.inputPasswordState.collectAsState().value
+            Title(text = "비밀번호")
+            // 비밀번호 입력창
+            InputBox(
+                hint = "비밀번호",
+                inputText = inputPassword,
+                onValueChange = viewModel::updateInputPassword,
+                inputBoxState = when (inputPasswordState) {
+                    PasswordState.EMPTY -> InputBoxState.IDLE
+                    PasswordState.SATISFIED -> InputBoxState.SATISFIED
+                    PasswordState.UNSATISFIED -> InputBoxState.UNSATISFIED
+                },
+                isPassword = false,
+                guide = when (inputPasswordState) {
+                    PasswordState.EMPTY -> "비밀번호는 영문 대/소문자로 시작하는 4~10자의 영문 대/소문자, 숫자 조합으로 입력해주세요." +
+                            "\n* 영문 대문자, 소문자, 숫자를 최소 하나 이상씩 포함해야합니다."
+                    PasswordState.SATISFIED -> "사용 가능한 비밀번호입니다."
+                    PasswordState.UNSATISFIED -> "비밀번호는 영문 대/소문자로 시작하는 4~10자의 영문 대/소문자, 숫자 조합으로 입력해주세요." +
+                            "\n* 영문 대문자, 소문자, 숫자를 최소 하나 이상씩 포함해야합니다."
+                },
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 비밀번호 확인
+            val inputPasswordForChecking = viewModel.inputPasswordForChecking.collectAsState().value
+            val inputPasswordForCheckingState =
+                viewModel.inputPasswordForCheckingState.collectAsState().value
+            Title(text = "비밀번호 확인")
+            Spacer(modifier = Modifier.height(10.dp))
+            InputBox(
+                hint = "비밀번호 확인",
+                inputText = inputPasswordForChecking,
+                onValueChange = viewModel::updateInputPasswordForChecking,
+                inputBoxState = when (inputPasswordForCheckingState) {
+                    PasswordCheckingState.EMPTY -> InputBoxState.IDLE
+                    PasswordCheckingState.SATISFIED -> InputBoxState.SATISFIED
+                    PasswordCheckingState.UNSATISFIED -> InputBoxState.UNSATISFIED
+                },
+                isPassword = false,
+                guide = when (inputPasswordForCheckingState) {
+                    PasswordCheckingState.EMPTY -> "비밀번호를 다시 한번 입력해주세요."
+                    PasswordCheckingState.SATISFIED -> "일치합니다."
+                    PasswordCheckingState.UNSATISFIED -> "일치하지 않습니다."
+                },
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 이메일 입력
+            val inputEmail = viewModel.inputEmail.collectAsState().value
+            val inputEmailState = viewModel.inputEmailState.collectAsState().value
+            Title(text = "이메일")
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+                ) {
+                // 이메일 입력창
+                Box(modifier = Modifier.weight(1f)) {
+                    InputBox(
+                        hint = "이메일",
+                        inputText = inputEmail,
+                        onValueChange = viewModel::updateInputEmail,
+                        inputBoxState = when (inputEmailState) {
+                            EmailState.EMPTY -> InputBoxState.IDLE
+                            EmailState.SATISFIED -> InputBoxState.IDLE
+                            EmailState.UNSATISFIED -> InputBoxState.UNSATISFIED
+                            EmailState.DUPLICATED -> InputBoxState.UNSATISFIED
+                            EmailState.UNIQUE -> InputBoxState.SATISFIED
+                        },
+                        isPassword = false,
+                        guide = when (inputEmailState) {
+                            EmailState.EMPTY -> "이메일을 입력해주세요."
+                            EmailState.SATISFIED -> "중복 확인을 해주세요."
+                            EmailState.UNSATISFIED -> "올바른 이메일 형식으로 입력해주세요."
+                            EmailState.DUPLICATED -> "이미 존재하는 이메일입니다."
+                            EmailState.UNIQUE -> "사용 가능한 이메일입니다. 인증을 해주세요."
+                        }
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                // 중복확인, 인증 요청 버튼
+                CheckingButton(text = "중복확인") {
+
+                }
+            }
+
+            // 이메일 인증코드 확인
+            val isVerificationInProgress = viewModel.isVerificationInProgress.collectAsState().value
+            val inputVerificationCode = viewModel.inputVerificationCode.collectAsState().value
+            val inputVerificationCodeState = viewModel.inputVerificationCodeState.collectAsState().value
+            if (isVerificationInProgress) {
+                Row(
+                    modifier = Modifier
+                        .height(IntrinsicSize.Min)
+                        .fillMaxWidth()
+                ) {
+                    // 이메일 입력창
+                    Box(modifier = Modifier.weight(1f)) {
+                        InputBox(
+                            hint = "이메일 인증코드",
+                            inputText = inputVerificationCode,
+                            onValueChange = viewModel::updateInputVerificationCode,
+                            inputBoxState = when (inputVerificationCodeState) {
+                                VerificationCodeState.EMPTY -> InputBoxState.IDLE
+                                VerificationCodeState.SATISFIED -> InputBoxState.SATISFIED
+                                VerificationCodeState.UNSATISFIED -> InputBoxState.UNSATISFIED
+                            },
+                            isPassword = false,
+                            guide = when (inputVerificationCodeState) {
+                                VerificationCodeState.EMPTY -> "인증 코드를 입력해주세요."
+                                VerificationCodeState.SATISFIED -> "일치합니다."
+                                VerificationCodeState.UNSATISFIED -> "일치하지 않습니다."
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    // 확인 버튼
+                    CheckingButton(text = "확인") {
+
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
+@Composable
+fun Title(
+    text: String
+) {
+    Text(
+        text = text,
+        fontSize = 20.sp
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Composable
+fun InputBox(
+    hint: String,
+    inputText: String,
+    onValueChange: (String) -> Unit,
+    inputBoxState: InputBoxState,
+    isPassword: Boolean,
+    guide: String,
+
+) {
+    BasicTextField(
+        modifier = Modifier
+            .fillMaxWidth(),
+        value = inputText,
+        onValueChange = { onValueChange(it) },
+        textStyle = TextStyle(fontSize = 20.sp),
+        decorationBox = {
+            Column {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = Color(0xFFF5F5F6),
-                            shape = RoundedCornerShape(4.dp)
+                        .height(50.dp)
+                        .border(
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = when (inputBoxState) {
+                                    InputBoxState.IDLE -> Color.Black
+                                    InputBoxState.SATISFIED -> Color.Green
+                                    InputBoxState.UNSATISFIED -> Color.Red
+                                }
+                            ),
+                            shape = RoundedCornerShape(10.dp)
                         )
-                        .padding(12.dp),
+                        .background(
+                            color = Color(0xFFEEEEEE),
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(start = 20.dp, end = 20.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     it()
-                    if (inputUserName == "") {
+                    if (inputText == "") {
                         Text(
-                            text = "이름을 입력해주세요",
-                            color = Color(0xFF737373)
+                            text = hint,
+                            fontSize = 20.sp,
+                            color = Color(0xFFBCBCBC)
                         )
                     }
-                }
-            },
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // 아이디 입력
-        Column() {
-            Text(
-                text = "아이디"
-            )
-
-            Row() {
-                BasicTextField(
-
-                    /// 값이 바뀌면 -> 체크 되어있떤거 false로 ㄱㄱ
-                    value = user_id.text,
-                    onValueChange = {
-                        user_id = user_id.copy(text = it)
-                        isInvalidId = !isValidUserId(it)
-                        isButtonEnabled = it.isNotEmpty() && !isInvalidId
-                        isButtonClicked = false
-
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Left // 텍스트 가운데 정렬
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = { /* Handle Done button press if needed */ }
-                    ),
-                    modifier = Modifier
-                        .size(width = 260.dp, height = 45.dp)
-                        .background(Color(0xFFF5F5F6))
-                        .padding(start = 16.dp, top = 10.dp)
-
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .width(10.dp)
-                )
-
-                Button(
-                    onClick = {
-                        if (isButtonEnabled) {
-
-                            // 여기에 로그인 로직을 추가
-                            // username 및 password를 사용하여 로그인을 처리
-                            // 오류떄문에 임시로 string 값 넣어 놈.
-                            signInViewModel.checkIdDuplicated(user_id.text) { isIdDuplicated ->
-                                Log.d("check", isIdDuplicated.toString())
-                                isIdDuplicate = isIdDuplicated
-                                isButtonClicked = true
-
-
-                            }// 중복 아닐경우 true
-
-
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        when (inputBoxState) {
+                            InputBoxState.IDLE -> {  }
+                            InputBoxState.SATISFIED -> {
+                                Image(
+                                    modifier = Modifier.size(30.dp),
+                                    painter = painterResource(id = R.drawable.check_circle_fill0_wght300_grad0_opsz24),
+                                    contentDescription = null
+                                )
+                            }
+                            InputBoxState.UNSATISFIED -> {
+                                Image(
+                                    modifier = Modifier.size(30.dp),
+                                    painter = painterResource(id = R.drawable.cancel_fill0_wght300_grad0_opsz24),
+                                    contentDescription = null
+                                )
+                            }
                         }
-
-                    },
-                    enabled = isButtonEnabled, // 버튼 활성/비활성 상태 변경
-
-                    shape = RoundedCornerShape(3.dp),
-                    modifier = Modifier
-                        .size(width = 130.dp, height = 45.dp)
-                        .background(Color(0xFFF5F5F6))
-                ) {
-                    Text("중복확인")
-                }
-            }
-            if (!user_id.text.isNotEmpty() || (user_id.text.isNotEmpty() && isInvalidId && !isButtonClicked)) {
-                Text(
-                    text = "영문 소문자로 시작하는 5~12자의 아이디를 입력해주세요.",
-                    color = Color.Red,
-                    fontSize = 15.sp
-
-                )
-            }
-
-            if (isIdDuplicate && isButtonClicked) {
-                Text(
-                    text = "사용 가능한 아이디입니다.",
-                    color = Color.Green
-                )
-                id_pass = true // 검증완료이므로 true 변환
-
-            } else if (!isIdDuplicate && isButtonClicked && user_id.text.isNotEmpty() && !isInvalidId) {
-                Text(
-                    text = "중복된 아이디입니다.",
-                    color = Color.Red
-                )
-            }
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-            )
-        }
-        // 비밀번호 입력 필드
-
-        Column() {
-            Text(
-                text = "비밀번호"
-            )
-
-            BasicTextField(
-                value = password.text,
-                onValueChange = {
-                    password = password.copy(text = it)
-                    //isPasswordValid = validatePassword(it, confirmPassword.text)
-
-                },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                textStyle = TextStyle(
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Left
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { /* Handle Done button press if needed */ }
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(width = 200.dp, height = 45.dp)
-                    .background(Color(0xFFF5F5F6))
-                    .padding(start = 16.dp, top = 10.dp)
-
-            )
-            if (password.text.isNotEmpty()) {
-                val passwordConditionsMet = checkPasswordConditions(password.text)
-                if (!passwordConditionsMet) {
-                    Text(
-                        text = "영문 대문자와 소문자, 숫자, 특수문자 중 2가지 이상을 조합하여 6~20자로 입력해주세요.",
-                        color = Color.Red
-                    )
-                    password_pass = false
-
-                } else {
-                    Text(
-                        text = "사용가능한 비밀번호입니다.",
-                        color = Color.Green
-                    )
-                }
-
-            }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-            )
-
-            Text(
-                text = "비밀번호 확인"
-            )
-
-            BasicTextField(
-                value = confirmPassword.text,
-                onValueChange = {
-                    confirmPassword = confirmPassword.copy(text = it)
-                },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                textStyle = TextStyle(
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Left
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { /* Handle Done button press if needed */ }
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(width = 200.dp, height = 45.dp)
-                    .background(Color(0xFFF5F5F6))
-                    .padding(start = 16.dp, top = 10.dp)
-            )
-            if (confirmPassword.text.isNotEmpty()) {
-                val passwordsMatch = password.text == confirmPassword.text
-                if (passwordsMatch) {
-                    Text(
-                        text = "비밀번호가 일치합니다",
-                        color = Color.Green
-
-                    )
-                    password_pass = true
-
-                } else {
-                    Text(
-                        text = "비밀번호가 일치하지 않습니다",
-                        color = Color.Red
-                    )
-                    password_pass = false
-
-                }
-            }
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-            )
-
-
-        }
-        // 이메일 입력필드
-        Column() {
-            Text(text = "이메일")
-
-            Row {
-                BasicTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                    },
-                    singleLine = true,
-                    textStyle = TextStyle(
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Left
-                    ),
-                    modifier = Modifier
-                        .size(width = 260.dp, height = 45.dp)
-                        .background(Color(0xFFF5F5F6))
-                        .padding(start = 16.dp, top = 10.dp)
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                if (!isEmailChecked) {
-                    Button(
-                        onClick = {
-                            // 여기에 중복 확인 로직 추가
-                            signInViewModel.checkEmailDuplicate(email.text) {
-                                Emailunduplicated ->
-                                if(Emailunduplicated==true){
-
-                                    isEmailChecked = true
-
-                                }
-                                else{
-                                    Toast.makeText(
-                                        context,
-                                        "이메일이 중복되었습니다.",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-
-                                    isEmailChecked = false
-
-                                }
-                            }
-
-                        },
-                        shape = RoundedCornerShape(3.dp),
-                        modifier = Modifier
-                            .size(width = 130.dp, height = 45.dp)
-                    ) {
-                        Text("중복확인")
-                    }
-                } else {
-                    Button(
-                        onClick = {
-                            // 여기에 인증 요청 로직 추가
-                            signInViewModel.checkauthenticateEmail(email.text)
-                        },
-                        shape = RoundedCornerShape(3.dp),
-                        modifier = Modifier
-                            .size(width = 130.dp, height = 45.dp)
-                            .background(Color(0xFFF5F5F6))
-                    ) {
-                        Text("인증요청")
                     }
                 }
+                Guideline(
+                    text = guide,
+                    inputBoxState = inputBoxState
+                )
             }
+        },
+        singleLine = true,
+        visualTransformation = when (isPassword) {
+            true -> PasswordVisualTransformation()
+            false -> VisualTransformation.None
+        }
+    )
+}
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(15.dp))
-
-            if (isEmailChecked) {
-                Row {
-                    BasicTextField(
-                        value = emailCode,
-                        onValueChange = {
-                            emailCode = it
-                        },
-                        singleLine = true,
-                        textStyle = TextStyle(
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Left
-                        ),
-                        modifier = Modifier
-                            .size(width = 260.dp, height = 45.dp)
-                            .background(Color(0xFFF5F5F6))
-                            .padding(start = 16.dp, top = 10.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Button(
-                        onClick = {
-                            signInViewModel.checkauthenticateEmailCode(email.text, emailCode.text.toInt()){
-                                EmailCode->
-                                if(EmailCode==true){
-                                    EmailCodeText=true
-                                }
-                                else{
-                                    Toast.makeText(
-                                        context,
-                                        "인증코드가 일치하지 않습니다. ",
-                                        Toast.LENGTH_LONG
-                                    ).show()
-
-
-                                }
-
-                            }
-                        },
-                        shape = RoundedCornerShape(3.dp),
-                        modifier = Modifier
-                            .size(width = 130.dp, height = 45.dp)
-                            .background(Color(0xFFF5F5F6))
-                    ) {
-                        Text("확인")
-                    }
-                }
+@Composable
+fun Guideline(
+    text: String,
+    inputBoxState: InputBoxState
+) {
+    if (text != "") {
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            color = when (inputBoxState) {
+                InputBoxState.IDLE,
+                InputBoxState.SATISFIED -> Color.Black
+                InputBoxState.UNSATISFIED -> Color.Red
             }
-        }
-
-        if (EmailCodeText==true) {
-            Text(
-                text = "인증되었습니다.",
-                color = Color.Green
-            )
-            email_pass = true // 검증완료이므로 true 변환
-
-        }
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(15.dp))
-
-        // 로그인 버튼
-        Button(
-            onClick = {
-                /*  signInViewModel.signup(user_name.text,user_id.text,check_password.text,email.text)*/
-
-                if (name_pass && id_pass && password_pass && email_pass) {
-                    Log.d("pass1", name_pass.toString())
-                    Log.d("pass2", id_pass.toString())
-                    Log.d("pass3", password_pass.toString())
-                    Log.d("pass4", email_pass.toString())
-                    signInViewModel.signup(
-                        user_name.text,
-                        user_id.text,
-                        confirmPassword.text,
-                        email.text
-                    )
-
-//                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
-                }
-                // 여기에 로그인 로직을 추가
-            },
-            shape = RoundedCornerShape(3.dp),
-
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(width = 200.dp, height = 45.dp) // 높이 90dp로 크기 조정
-                .background(color = if (name_pass && id_pass && password_pass && email_pass) Color.Red else Color.Gray), // 조건에 따라 배경색 변경
-            enabled = name_pass && id_pass && password_pass && email_pass // 버튼의 활성/비활성 상태 설정
-
-
-        ) {
-            Text("시작하기")
-        }
+        )
+        Spacer(Modifier.height(10.dp))
     }
+}
+
+@Composable
+fun CheckingButton(
+    text: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .height(50.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(
+                color = Color(0xFFE9E9E9),
+                shape = RoundedCornerShape(10.dp)
+            )
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 20.dp, end = 20.dp),
+            text = text,
+            color = Color(0xFF737373),
+            fontSize = 20.sp
+        )
+    }
+}
+
+enum class InputBoxState {
+    IDLE, SATISFIED, UNSATISFIED
+}
+
+enum class UserNameState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class UserIdState {
+    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
+}
+
+enum class PasswordState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class PasswordCheckingState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class EmailState {
+    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
+}
+
+enum class VerificationCodeState {
+    EMPTY, SATISFIED, UNSATISFIED
 }

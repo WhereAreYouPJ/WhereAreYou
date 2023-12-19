@@ -16,4 +16,5 @@ object GlobalValue {
     var dailyScheduleViewHeight = 761.28f
     // pixel <-> dp 전환에 사용할 밀도
     var density = 1f
+    // 상단 상태바 높이
 }
