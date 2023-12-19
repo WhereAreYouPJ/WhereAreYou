@@ -1,6 +1,7 @@
 package com.whereareyounow.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,9 +31,12 @@ fun MainNavigation(
     viewModel: GlobalViewModel = hiltViewModel()
 ) {
     NavHost(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding(),
         navController = navController,
-        startDestination = Constants.ROUTE_MAIN_SPLASH
+//        startDestination = Constants.ROUTE_MAIN_SPLASH
+        startDestination = Constants.ROUTE_MAIN_SIGNUP
     ) {
         // 스플래시 화면
         composable(
@@ -41,13 +45,45 @@ fun MainNavigation(
             SplashScreen(
                 moveToStartScreen = {
                     navController.popBackStack()
-//                    navController.navigate(Constants.ROUTE_MAIN_START)
-                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
+                    navController.navigate(Constants.ROUTE_MAIN_START)
+//                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
+//                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
                 },
                 moveToMainScreen = {
                     navController.popBackStack()
                     navController.navigate(Constants.ROUTE_MAIN_HOME)
                 },
+            )
+        }
+
+        // 회원가입 화면
+        composable(
+            route = Constants.ROUTE_MAIN_SIGNUP
+        ) {
+            SignUpScreen(
+                moveToBackScreen = { navController.popBackStack() },
+            )
+        }
+
+        // 첫화면
+        composable(route=Constants.ROUTE_MAIN_START){
+            StartScreen(
+                moveToSignUpScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNUP) },
+                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNIN) }
+            )
+        }
+
+        // 로그인 화면
+        composable(route=Constants.ROUTE_MAIN_SIGNIN){
+            LoginScreen(
+                moveToStartScreen = { navController.navigate(Constants.ROUTE_MAIN_START) },
+                moveToMainHomeScreen = {
+                    navController.popBackStack(Constants.ROUTE_MAIN_START, true)
+                    navController.navigate(Constants.ROUTE_MAIN_HOME)
+                },
+                moveToFindIdScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDID) },
+                moveToFindPWScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDPW) },
+                moveToBackScreen = { navController.popBackStack() }
             )
         }
 
@@ -88,37 +124,6 @@ fun MainNavigation(
             route = Constants.ROUTE_ADD_FRIEND
         ) {
             AddFriendScreen()
-        }
-
-        // 회원가입 화면
-        composable(
-            route = Constants.ROUTE_MAIN_SIGNUP
-        ) {
-            SignUpScreen(
-                moveToBackScreen = { navController.popBackStack() },
-            )
-        }
-
-        // 로그인 화면
-        composable(route=Constants.ROUTE_MAIN_SIGNIN){
-            LoginScreen(
-                moveToStartScreen = { navController.navigate(Constants.ROUTE_MAIN_START) },
-                moveToMainHomeScreen = {
-                    navController.popBackStack(Constants.ROUTE_MAIN_START, true)
-                    navController.navigate(Constants.ROUTE_MAIN_HOME)
-                },
-                moveToFindIdScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDID) },
-                moveToFindPWScreen = { navController.navigate(Constants.ROUTE_MAIN_FINDPW) },
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
-
-        // 첫화면
-        composable(route=Constants.ROUTE_MAIN_START){
-            StartScreen(
-                moveToSignUpScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNUP) },
-                moveToSignInScreen = { navController.navigate(Constants.ROUTE_MAIN_SIGNIN) }
-            )
         }
 
         // 아이디 찾기(왼쪽)

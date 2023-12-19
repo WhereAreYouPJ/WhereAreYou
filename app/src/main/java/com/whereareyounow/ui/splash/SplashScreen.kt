@@ -153,7 +153,7 @@ fun NetworkConnectionErrorDialog(
                         .padding(start = 10.dp)
                         .weight(1f)
                         .height(40.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
                             color = Color(0xFF2D2573),
                             shape = RoundedCornerShape(10.dp)
@@ -181,7 +181,7 @@ fun NetworkConnectionErrorDialog(
                         .padding(end = 20.dp)
                         .weight(1f)
                         .height(40.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
                             color = Color(0xFFD9DCE7),
                             shape = RoundedCornerShape(10.dp)
@@ -235,7 +235,7 @@ fun PermissionCheckingScreen(
                 .padding(start = 20.dp, end = 20.dp)
                 .fillMaxWidth()
                 .height(100.dp)
-                .clip(shape = RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(10.dp))
                 .background(
                     color = Color.LightGray,
                     shape = RoundedCornerShape(10.dp)

@@ -153,7 +153,7 @@ fun NewScheduleContent(
                 // 시작 날짜 선택
                 Text(
                     modifier = Modifier
-                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .clickable { isDatePickerDialogShowing.value = true }
                         .padding(10.dp),
                     text = viewModel.appointmentDate.collectAsState().value,
@@ -163,7 +163,7 @@ fun NewScheduleContent(
                 // 시작 시간 선택
                 Text(
                     modifier = Modifier
-                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .clickable { isTimePickerDialogShowing.value = true }
                         .padding(10.dp),
                     text = viewModel.appointmentTime.collectAsState().value,
@@ -192,7 +192,7 @@ fun NewScheduleContent(
             Text(
                 modifier = Modifier
                     .padding(start = 30.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .fillMaxWidth()
                     .clickable {
                         moveToSearchLocationScreen()

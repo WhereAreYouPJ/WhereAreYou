@@ -1,6 +1,10 @@
 package com.whereareyounow.ui.start
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +18,9 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -31,33 +37,39 @@ fun StartScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .padding(start = 20.dp, end = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val context = LocalContext.current
-        Spacer(
-            modifier = Modifier
-                .height(450.dp)
-        )
-        Button(
-            onClick = { moveToSignUpScreen() },
-            shape = RoundedCornerShape(3.dp),
+        Spacer(modifier = Modifier.height(450.dp))
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(60.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    color = Color(0xFF2D3573),
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .clickable { moveToSignUpScreen() },
+            contentAlignment = Alignment.Center
         ) {
-            Text(text = "시작하기", style = TextStyle(fontSize = 20.sp), fontWeight = FontWeight.Bold)
+            Text(
+                text = "시작하기",
+                color = Color.White,
+                style = TextStyle(fontSize = 20.sp),
+                fontWeight = FontWeight.Bold
+            )
         }
-        Spacer(modifier = Modifier.height(5.dp))
-
+        Spacer(modifier = Modifier.height(10.dp))
         Row {
-            Spacer(modifier = Modifier.width(100.dp))
             Text(
                 text = "이미 계정이 있나요?",
                 style = TextStyle(fontSize = 16.sp)
             )
             ClickableText(
                 text = AnnotatedString(" 로그인"),
-                onClick = { offset ->
+                onClick = {
                     // 클릭할 때 수행할 동작 정의
                     // 예: 가입 화면으로 이동
                     moveToSignInScreen()
