@@ -14,6 +14,7 @@ import com.whereareyounow.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -78,16 +79,12 @@ class MyPageViewModel @Inject constructor(
 //                directory = application.cacheDir
 //            )
             file?.let {
-                when (val updateProfileImageResponse = modifyMyInfoUseCase(accessToken, memberId, it)) {
-                    is NetworkResult.Success -> {
-                        Log.e("success", "${updateProfileImageResponse.code}, ${updateProfileImageResponse.data}")
-                    }
-
-                    is NetworkResult.Error -> {
-                        Log.e("error", "${updateProfileImageResponse.code}, ${updateProfileImageResponse.errorData}")
-                    }
-
-                    is NetworkResult.Exception -> { Log.e("a exception", "${updateProfileImageResponse.e}") }
+                val response = modifyMyInfoUseCase(accessToken, memberId, it)
+                LogUtil.printNetworkLog(response, "내 정보 수정")
+                when (response) {
+                    is NetworkResult.Success -> {  }
+                    is NetworkResult.Error -> {  }
+                    is NetworkResult.Exception -> {  }
                 }
             }
         }
@@ -97,21 +94,18 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            when (val getMyInfoResponse = getMemberDetailsUseCase(accessToken, memberId)) {
+            val response = getMemberDetailsUseCase(accessToken, memberId)
+            LogUtil.printNetworkLog(response, "내 정보 가져오기")
+            when (response) {
                 is NetworkResult.Success -> {
-                    Log.e("success", "${getMyInfoResponse.code}, ${getMyInfoResponse.data}")
-                    getMyInfoResponse.data?.let { data ->
+                    response.data?.let { data ->
                         _name.update { data.userName }
                         _email.update { data.email }
                         _profileImageUri.update { data.profileImage }
                     }
                 }
-
-                is NetworkResult.Error -> {
-                    Log.e("error", "${getMyInfoResponse.code}, ${getMyInfoResponse.errorData}")
-                }
-
-                is NetworkResult.Exception -> { Log.e("exception", "${getMyInfoResponse.e}") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
         }
     }
