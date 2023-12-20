@@ -37,11 +37,11 @@ fun FriendScreenTopBar(
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
 ) {
-    val density = LocalDensity.current
+    val density = LocalDensity.current.density
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density.density).dp)
+            .height((GlobalValue.topBarHeight / density).dp)
             .background(
                 color = Color(0xFFCE93D8)
             ),
