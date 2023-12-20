@@ -11,6 +11,8 @@ import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -114,7 +116,7 @@ fun BriefScheduleList(
     val date = viewModel.date.collectAsState().value
     val dayOfWeek = viewModel.dayOfWeek.collectAsState().value
     val currentDateBriefSchedule = viewModel.currentDateBriefScheduleInfoList
-    Column() {
+    Column {
         Text(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp),
             text = "$year.$month.$date",
@@ -134,36 +136,49 @@ fun BriefScheduleList(
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold
         )
-        LazyColumn(
-            contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
-        ) {
-            itemsIndexed(currentDateBriefSchedule) { _, item ->
-                var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
-                var appointmentMinute = item.appointmentTime.split("T")[1].split(":")[0].toInt()
-                var appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
+        if (currentDateBriefSchedule.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "오늘의 일정이 없습니다.",
+                    fontSize = 20.sp,
+                )
+            }
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
+            ) {
+                itemsIndexed(currentDateBriefSchedule) { _, item ->
+                    var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
+                    var appointmentMinute = item.appointmentTime.split("T")[1].split(":")[0].toInt()
+                    var appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
 
-                Column(
-                    modifier = Modifier
-                        .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(color = Color(0XFF80DEEA))
-                        .clickable {
-                            moveToDetailScreen(item.scheduleId)
-                        }
-                        .padding(20.dp)
-                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(color = Color(0XFF80DEEA))
+                            .clickable {
+                                moveToDetailScreen(item.scheduleId)
+                            }
+                            .padding(20.dp)
+                    ) {
 
-                    Text(
-                        text = "${item.title}",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = String.format("$appointmentTimeAMPM %02d:%02d", appointmentHour, appointmentMinute),
-                        fontSize = 20.sp
-                    )
+                        Text(
+                            text = "${item.title}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = String.format("$appointmentTimeAMPM %02d:%02d", appointmentHour, appointmentMinute),
+                            fontSize = 20.sp
+                        )
+                    }
                 }
             }
         }
