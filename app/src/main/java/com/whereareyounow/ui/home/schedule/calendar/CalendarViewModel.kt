@@ -11,6 +11,7 @@ import com.whereareyounow.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.CalendarUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -74,10 +75,11 @@ class CalendarViewModel @Inject constructor(
                     // 월이 바뀔 경우 다음 월의 일정 정보를 가져온다.
                     currYear = calendarArrList[i].year
                     currMonth = calendarArrList[i].month
-                    when (val getMonthlyScheduleResponse = getMonthlyScheduleUseCase(accessToken, memberId, currYear, currMonth)) {
+                    val response = getMonthlyScheduleUseCase(accessToken, memberId, currYear, currMonth)
+                    LogUtil.printNetworkLog(response, "월별 일정 정보")
+                    when (response) {
                         is NetworkResult.Success -> {
-                            Log.e("success", "${getMonthlyScheduleResponse.code}, ${getMonthlyScheduleResponse.data}")
-                            getMonthlyScheduleResponse.data?.let { data ->
+                            response.data?.let { data ->
                                 // 가져온 스케줄과 달력을 비교해 연/월/일이 같으면 일정 개수 정보를 추가한다.
                                 for (schedule in data.schedules) {
                                     for (calendarInfo in calendarArrList) {
@@ -90,14 +92,19 @@ class CalendarViewModel @Inject constructor(
                                         }
                                     }
                                 }
-                            } ?: Log.e("success-error", "body is null")
+                            }
                         }
-                        is NetworkResult.Error -> { Log.e("error", "${getMonthlyScheduleResponse.code}, ${getMonthlyScheduleResponse.errorData}") }
-                        is NetworkResult.Exception -> { Log.e("exception", "${getMonthlyScheduleResponse.e}") }
+                        is NetworkResult.Error -> {
+
+                        }
+                        is NetworkResult.Exception -> {
+
+                        }
                     }
                 }
             }
             withContext(Dispatchers.Main) {
+                Log.e("", "${calendarArrList}")
                 _currentMonthCalendarInfoList.clear()
                 _currentMonthCalendarInfoList.addAll(calendarArrList)
             }
@@ -127,18 +134,19 @@ class CalendarViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            when (val getDailyBriefScheduleResponse = getDailyBriefScheduleUseCase(accessToken, memberId, _year.value, _month.value, _date.value)) {
+            val response = getDailyBriefScheduleUseCase(accessToken, memberId, _year.value, _month.value, _date.value)
+            LogUtil.printNetworkLog(response, "일별 간략정보 가져오기")
+            when (response) {
                 is NetworkResult.Success -> {
-                    Log.e("success", "${getDailyBriefScheduleResponse.code}, ${getDailyBriefScheduleResponse.data}")
-                    getDailyBriefScheduleResponse.data?.let { data ->
+                    response.data?.let { data ->
                         withContext(Dispatchers.Main) {
                             _currentDateBriefScheduleInfoList.clear()
                             _currentDateBriefScheduleInfoList.addAll(data.schedules)
                         }
-                    } ?: Log.e("success-error", "body is null")
+                    }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${getDailyBriefScheduleResponse.code}, ${getDailyBriefScheduleResponse.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "${getDailyBriefScheduleResponse.e}") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
         }
     }
