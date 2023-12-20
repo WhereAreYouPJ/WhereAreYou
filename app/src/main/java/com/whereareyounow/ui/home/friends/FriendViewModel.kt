@@ -13,6 +13,7 @@ import com.whereareyounow.domain.usecase.friend.GetFriendIdsListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,16 +38,16 @@ class FriendViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val myMemberId = getMemberIdUseCase().first()
             val getFriendIdsRequest = GetFriendIdsListRequest(myMemberId)
-
-            when (val networkResponse = getFriendIdsListUseCase(accessToken, getFriendIdsRequest)) {
+            val response = getFriendIdsListUseCase(accessToken, getFriendIdsRequest)
+            LogUtil.printNetworkLog(response, "친구 memberId 리스트 가져오기")
+            when (response) {
                 is NetworkResult.Success -> {
-                    networkResponse.data?.let { data ->
+                    response.data?.let { data ->
                         getFriendsList(data.friendsIdList)
-                        Log.e("getFriendIds Success", "${data.friendsIdList}")
                     }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${networkResponse.code}, ${networkResponse.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "${networkResponse.e}") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
 
             // 가져온 친구 memberId 리스트로 친구 상세정보 리스트를 가져온다.
@@ -58,10 +59,11 @@ class FriendViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val getFriendListRequest = GetFriendListRequest(friendIds)
-
-            when (val networkResponse = getFriendListUseCase(accessToken, getFriendListRequest)) {
+            val response = getFriendListUseCase(accessToken, getFriendListRequest)
+            LogUtil.printNetworkLog(response, "친구 리스트 가져오기")
+            when (response) {
                 is NetworkResult.Success -> {
-                    networkResponse.data?.let { data ->
+                    response.data?.let { data ->
                         val sortedList = data.friendsList.sortedBy { it.name }
                         for (i in sortedList.indices) {
                             sortedList[i].number = i
@@ -73,8 +75,8 @@ class FriendViewModel @Inject constructor(
                         Log.e("getFriendIds Success", "${sortedList}")
                     }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${networkResponse.code}, ${networkResponse.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "${networkResponse.e}") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
         }
     }
