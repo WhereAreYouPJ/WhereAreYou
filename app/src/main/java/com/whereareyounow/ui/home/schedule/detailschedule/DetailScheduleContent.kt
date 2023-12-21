@@ -54,7 +54,7 @@ fun DetailScheduleContent(
 
         Column(
             modifier = Modifier
-                .padding(start = 20.dp, top = 80.dp, end = 40.dp, bottom = 80.dp)
+                .padding(start = 20.dp, top = 80.dp, end = 20.dp, bottom = 80.dp)
                 .fillMaxSize()
                 .background(
                     color = Color.White,
