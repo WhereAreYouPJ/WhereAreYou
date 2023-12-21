@@ -67,7 +67,7 @@ fun DateCalendar(
                 }
             }
 
-            for (date in 0 until (currMonthCalendarInfo.size / 7)) {
+            for (idx in 0 until (currMonthCalendarInfo.size / 7)) {
                 Row(modifier = Modifier.weight(1f)) {
                     for (i in 0..6) {
                         Box(
@@ -78,19 +78,22 @@ fun DateCalendar(
 //                                    indication = null,
 //                                    interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    viewModel.updateYear(currMonthCalendarInfo[i + date * 7].year)
-                                    viewModel.updateMonth(currMonthCalendarInfo[i + date * 7].month)
-                                    viewModel.updateDate(currMonthCalendarInfo[i + date * 7].date)
+                                    val year = currMonthCalendarInfo[i + idx * 7].year
+                                    val month = currMonthCalendarInfo[i + idx * 7].month
+                                    val date = currMonthCalendarInfo[i + idx * 7].date
+                                    viewModel.updateYear(year)
+                                    viewModel.updateMonth(month)
+                                    viewModel.updateDate(date)
                                     expandDetailContent()
                                 },
                             contentAlignment = Alignment.TopCenter
                         ) {
                             DateContent(
-                                date = currMonthCalendarInfo[i + date * 7].date,
-                                scheduleCount = currMonthCalendarInfo[i + date * 7].scheduleCount,
-                                isSelected = selectedYear == currMonthCalendarInfo[i + date * 7].year &&
-                                        selectedDate == currMonthCalendarInfo[i + date * 7].date &&
-                                        selectedMonth == currMonthCalendarInfo[i + date * 7].month,
+                                date = currMonthCalendarInfo[i + idx * 7].date,
+                                scheduleCount = currMonthCalendarInfo[i + idx * 7].scheduleCount,
+                                isSelected = selectedYear == currMonthCalendarInfo[i + idx * 7].year &&
+                                        selectedDate == currMonthCalendarInfo[i + idx * 7].date &&
+                                        selectedMonth == currMonthCalendarInfo[i + idx * 7].month,
                                 textColor = when (i) {
                                     0 -> Color.Red
                                     else -> Color.Black
