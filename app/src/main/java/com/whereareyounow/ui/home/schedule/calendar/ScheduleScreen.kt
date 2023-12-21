@@ -84,7 +84,6 @@ fun ScheduleScreen(
                 val bottomContentState = remember { anchoredDraggableState }
                 Column(
                     modifier = Modifier
-                        .padding(paddingValues)
                         .padding(start = 20.dp, end = 20.dp)
                         .fillMaxSize()
                         .background(color = Color(0xFFFAFAFA))
@@ -122,10 +121,10 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density.density).dp)
-            .background(color = Color(0xFFCE93D8)),
+            .height((GlobalValue.topBarHeight / density.density).dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Spacer(Modifier.width(20.dp))
         Text(
             modifier = Modifier.clickable {
                     coroutineScope.launch(Dispatchers.Default) { bottomContentState.animateTo(DetailState.Close) }
