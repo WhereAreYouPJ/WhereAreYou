@@ -17,10 +17,10 @@ import com.whereareyounow.ui.home.friends.addfriend.AddFriendScreen
 import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.home.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.signin.AgreeScreen
-import com.whereareyounow.ui.signin.LoginScreen
-import com.whereareyounow.ui.signup.SignUpScreen
+import com.whereareyounow.ui.signin.SignInScreen
 import com.whereareyounow.ui.signin.SuccessScreen
 import com.whereareyounow.ui.signin.SuccessScreenPw
+import com.whereareyounow.ui.signup.SignUpScreen
 import com.whereareyounow.ui.splash.SplashScreen
 import com.whereareyounow.ui.start.StartScreen
 import test
@@ -36,7 +36,7 @@ fun MainNavigation(
             .systemBarsPadding(),
         navController = navController,
 //        startDestination = Constants.ROUTE_MAIN_SPLASH
-        startDestination = Constants.ROUTE_MAIN_SIGNUP
+        startDestination = Constants.ROUTE_MAIN_SPLASH
     ) {
         // 스플래시 화면
         composable(
@@ -46,22 +46,11 @@ fun MainNavigation(
                 moveToStartScreen = {
                     navController.popBackStack()
                     navController.navigate(Constants.ROUTE_MAIN_START)
-//                    navController.navigate(Constants.ROUTE_MAIN_SIGNIN)
-//                    navController.navigate(Constants.ROUTE_MAIN_SIGNUP)
                 },
                 moveToMainScreen = {
                     navController.popBackStack()
                     navController.navigate(Constants.ROUTE_MAIN_HOME)
                 },
-            )
-        }
-
-        // 회원가입 화면
-        composable(
-            route = Constants.ROUTE_MAIN_SIGNUP
-        ) {
-            SignUpScreen(
-                moveToBackScreen = { navController.popBackStack() },
             )
         }
 
@@ -75,7 +64,7 @@ fun MainNavigation(
 
         // 로그인 화면
         composable(route=Constants.ROUTE_MAIN_SIGNIN){
-            LoginScreen(
+            SignInScreen(
                 moveToStartScreen = { navController.navigate(Constants.ROUTE_MAIN_START) },
                 moveToMainHomeScreen = {
                     navController.popBackStack(Constants.ROUTE_MAIN_START, true)
@@ -86,6 +75,17 @@ fun MainNavigation(
                 moveToBackScreen = { navController.popBackStack() }
             )
         }
+
+        // 회원가입 화면
+        composable(
+            route = Constants.ROUTE_MAIN_SIGNUP
+        ) {
+            SignUpScreen(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToSignUpSuccessScreen = { navController.navigate(Constants.ROUTE_MAIN_SUCCESS ) }
+            )
+        }
+
 
         // 홈 화면
         composable(
