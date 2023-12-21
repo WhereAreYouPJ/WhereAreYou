@@ -26,6 +26,7 @@ import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -61,17 +62,17 @@ class DrawerNotificationViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val requestList = mutableListOf<FriendRequest>()
-            val networkResult = getFriendRequestListUseCase(accessToken, memberId)
-            when (networkResult) {
+            val response = getFriendRequestListUseCase(accessToken, memberId)
+            LogUtil.printNetworkLog(response, "친구 요청 조회")
+            when (response) {
                 is NetworkResult.Success -> {
-                    if (networkResult.data != null) {
-                        Log.e("loadFriendRequests Success", networkResult.data!!.friendsRequestList.toString())
-                        requestList.addAll(networkResult.data!!.friendsRequestList)
+                    response.data?.let {  data ->
+                        requestList.addAll(response.data!!.friendsRequestList)
                         loadNames(requestList)
                     }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${networkResult.code} ${networkResult.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
         }
     }
@@ -80,42 +81,42 @@ class DrawerNotificationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            when (val getScheduleRequestResponse = getScheduleRequestListUseCase(accessToken, memberId)) {
+            val response = getScheduleRequestListUseCase(accessToken, memberId)
+            LogUtil.printNetworkLog(response, "일정 초대 조회")
+            when (response) {
                 is NetworkResult.Success -> {
-                    getScheduleRequestResponse.data?.let { data ->
-                        Log.e("loadScheduleRequests Success", "${data}")
+                    response.data?.let { data ->
                         withContext(Dispatchers.Main) {
                             _scheduleRequestList.clear()
                             _scheduleRequestList.addAll(data.inviteList)
                         }
                     }
                 }
-                is NetworkResult.Error -> { Log.e("error", "${getScheduleRequestResponse.code} ${getScheduleRequestResponse.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "${getScheduleRequestResponse.e}") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
         }
     }
 
-    private fun loadNames(list: List<FriendRequest>) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val accessToken = getAccessTokenUseCase().first()
-            val requestList = mutableListOf<Pair<FriendRequest, Friend>>()
-            for (friendRequest in list) {
-                val networkResult = getMemberDetailsUseCase(accessToken, friendRequest.senderId)
-                when (networkResult) {
-                    is NetworkResult.Success -> {
-                        networkResult.data?.let { data ->
-                            requestList.add(friendRequest to Friend(0, friendRequest.senderId, data.userName, data.userId, data.profileImage))
-                        }
+    private suspend fun loadNames(list: List<FriendRequest>) {
+        val accessToken = getAccessTokenUseCase().first()
+        val requestList = mutableListOf<Pair<FriendRequest, Friend>>()
+        for (friendRequest in list) {
+            val response = getMemberDetailsUseCase(accessToken, friendRequest.senderId)
+            LogUtil.printNetworkLog(response, "memberId로 유저 정보 조회")
+            when (response) {
+                is NetworkResult.Success -> {
+                    response.data?.let { data ->
+                        requestList.add(friendRequest to Friend(0, friendRequest.senderId, data.userName, data.userId, data.profileImage))
                     }
-                    is NetworkResult.Error -> { Log.e("error", "${networkResult.code} ${networkResult.errorData}") }
-                    is NetworkResult.Exception -> { Log.e("exception", "exception") }
                 }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
-            withContext(Dispatchers.Main) {
-                _friendRequestList.clear()
-                _friendRequestList.addAll(requestList)
-            }
+        }
+        withContext(Dispatchers.Main) {
+            _friendRequestList.clear()
+            _friendRequestList.addAll(requestList)
         }
     }
 
@@ -124,15 +125,14 @@ class DrawerNotificationViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val request = AcceptFriendRequestRequest(friendRequest.friendRequestId, memberId, friendRequest.senderId)
-            val networkResult = acceptFriendRequestUseCase(accessToken, request)
-            when (networkResult) {
+            val response = acceptFriendRequestUseCase(accessToken, request)
+            LogUtil.printNetworkLog(response, "친구 요청 수락")
+            when (response) {
                 is NetworkResult.Success -> {
-//                    if (networkResult.data != null) {
-//                        Log.e("acceptFriendRequest Success", networkResult.data!!.toString())
-//                    }
+
                 }
-                is NetworkResult.Error -> { Log.e("error", "${networkResult.code} ${networkResult.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
             loadFriendRequests()
             getFriendList()
@@ -143,13 +143,14 @@ class DrawerNotificationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val request = RefuseFriendRequestRequest(friendRequest.friendRequestId)
-            val networkResult = refuseFriendRequestUseCase(accessToken, request)
-            when (networkResult) {
+            val response = refuseFriendRequestUseCase(accessToken, request)
+            LogUtil.printNetworkLog(response, "친구 요청 거절")
+            when (response) {
                 is NetworkResult.Success -> {
 
                 }
-                is NetworkResult.Error -> { Log.e("error", "${networkResult.code} ${networkResult.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
             loadFriendRequests()
             getFriendList()
