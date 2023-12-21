@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.home.friends.addfriend
+package com.whereareyounow.ui.home.friend.addfriend
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AddFriendScreen(
+    moveToBackScreen: () -> Unit,
     viewModel: AddFriendViewModel = hiltViewModel()
 ) {
     val inputId = viewModel.inputId.collectAsState().value
@@ -23,14 +24,14 @@ fun AddFriendScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AddFriendScreenTopBar()
-        Spacer(modifier = Modifier.height(20.dp))
+        AddFriendScreenTopBar(moveToBackScreen)
+        Spacer(Modifier.height(20.dp))
         FriendIdTextField(
             inputId = inputId,
             updateInputId = { viewModel.updateInputId(it) },
             clearInputId = { viewModel.clearInputId() }
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
         if (friendInfo != null) {
             UserInfoContent(
                 imageUrl = friendInfo.profileImgUrl,
