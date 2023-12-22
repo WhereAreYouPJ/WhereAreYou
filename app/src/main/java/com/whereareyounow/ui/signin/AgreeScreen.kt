@@ -98,7 +98,7 @@ fun AgreeScreen(navController: NavHostController) {
                 fontWeight = FontWeight.Bold
             )
         }
-        Spacer(modifier = Modifier.height(140.dp))
+        Spacer(Modifier.height(140.dp))
 
         // 모두 동의 체크 박스
         Row(
@@ -115,12 +115,12 @@ fun AgreeScreen(navController: NavHostController) {
                 contentDescription = null, // 콘텐츠 설명 (필요한 경우 추가)
                 modifier = Modifier.size(24.dp) // 아이콘의 크기 지정
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(Modifier.width(10.dp))
 
             Text("모두 동의하기")
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(Modifier.height(40.dp))
 
 
         // 체크 박스 1
@@ -151,7 +151,7 @@ fun AgreeScreen(navController: NavHostController) {
             )
 
         }
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(Modifier.height(25.dp))
 
         // 체크 박스 2
         Row(
@@ -178,7 +178,7 @@ fun AgreeScreen(navController: NavHostController) {
             )
 
         }
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(Modifier.height(25.dp))
 
         // 체크 박스 3
         Row(
@@ -205,10 +205,10 @@ fun AgreeScreen(navController: NavHostController) {
                 style = TextStyle(fontSize = 16.sp)
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
         // 로그인 버튼
         Button(
             onClick = {

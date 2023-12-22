@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.ui.theme.lato
 import kotlin.math.roundToInt
 
 @Composable
@@ -98,7 +99,7 @@ fun BriefScheduleContainer(
                 .fillMaxWidth()
                 .height(((GlobalValue.dailyScheduleViewHeight / GlobalValue.density) - 20).dp)
                 .background(
-                    color = Color(0xFFFFF9C4)
+                    color = Color(0xFFFFFF)
                 )
         ) {
             briefScheduleList()
@@ -120,7 +121,8 @@ fun BriefScheduleList(
         Text(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp),
             text = "$year.$month.$date",
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            fontFamily = lato
         )
         Text(
             modifier = Modifier.padding(start = 20.dp),

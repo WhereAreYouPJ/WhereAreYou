@@ -6,14 +6,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun NewScheduleScreen(
-    moveToCalendarScreen: () -> Unit,
+    moveToBackScreen: () -> Unit,
     viewModel: NewScheduleViewModel = hiltViewModel()
 ) {
     when (viewModel.screenState.collectAsState().value) {
         NewScheduleViewModel.ScreenState.NewSchedule -> {
             NewScheduleContent(
                 selectedFriendsList = viewModel.friendsList.collectAsState().value,
-                moveToCalendarScreen = moveToCalendarScreen,
+                moveToBackScreen = moveToBackScreen,
                 moveToFriendsListScreen = { viewModel.updateScreenState(NewScheduleViewModel.ScreenState.AddFriends) },
                 moveToSearchLocationScreen = { viewModel.updateScreenState(NewScheduleViewModel.ScreenState.SearchLocation) }
             )

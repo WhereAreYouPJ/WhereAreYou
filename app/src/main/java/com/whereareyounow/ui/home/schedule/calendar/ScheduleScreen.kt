@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -44,6 +46,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.ui.home.schedule.notification.DrawerNotification
 import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationViewModel
+import com.whereareyounow.ui.theme.lato
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -75,7 +78,7 @@ fun ScheduleScreen(
         ModalNavigationDrawer(
             drawerContent = { DrawerNotification(
                 updateCalendar = viewModel::updateCurrentMonthCalendarInfo,
-                updateBriefCalendar = { viewModel.updateDate(date) }
+                updateBriefCalendar = viewModel::updateCurrentDateBriefScheduleInfo
             ) },
             drawerState = drawerState,
         ) {
@@ -84,9 +87,9 @@ fun ScheduleScreen(
                 val bottomContentState = remember { anchoredDraggableState }
                 Column(
                     modifier = Modifier
+                        .background(color = Color(0xFFF8F8F8))
                         .padding(start = 20.dp, end = 20.dp)
                         .fillMaxSize()
-                        .background(color = Color(0xFFFAFAFA))
                 ) {
                     // 상단바
                     TopBar(
@@ -132,9 +135,10 @@ fun TopBar(
                 },
             text = "${year}.",
             fontSize = 30.sp,
+            fontFamily = lato,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(Modifier.width(10.dp))
         if (calendarState == CalendarViewModel.CalendarState.DATE) {
             Text(
                 modifier = Modifier.clickable {
@@ -143,18 +147,23 @@ fun TopBar(
                     },
                 text = "${month}",
                 fontSize = 30.sp,
+                fontFamily = lato,
                 fontWeight = FontWeight.Bold
             )
         }
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 10.dp),
             contentAlignment = Alignment.CenterEnd
         ) {
             Image(
                 modifier = Modifier
-                    .size(((GlobalValue.topBarHeight / 2) / density.density).dp)
-                    .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } },
-                painter = painterResource(id = R.drawable.notifications_fill0_wght200_grad0_opsz24),
+                    .size(((GlobalValue.topBarHeight / 3 * 2) / density.density).dp)
+                    .clip(RoundedCornerShape(50))
+                    .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } }
+                    .padding(4.dp),
+                painter = painterResource(id = R.drawable.ic24_notification),
                 contentDescription = null
             )
         }

@@ -53,8 +53,8 @@ class DrawerNotificationViewModel @Inject constructor(
 
     private val _friendRequestList = mutableStateListOf<Pair<FriendRequest, Friend>>()
     val friendRequestList: List<Pair<FriendRequest, Friend>> = _friendRequestList
-    private val _scheduleRequestList = mutableStateListOf<ScheduleInvitation>()
-    val scheduleRequestList: List<ScheduleInvitation> = _scheduleRequestList
+    private val _scheduleRequestList = mutableStateListOf<ScheduleInvitationInfo>()
+    val scheduleRequestList: List<ScheduleInvitationInfo> = _scheduleRequestList
 
 
     fun loadFriendRequests() {
@@ -67,7 +67,7 @@ class DrawerNotificationViewModel @Inject constructor(
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let {  data ->
-                        requestList.addAll(response.data!!.friendsRequestList)
+                        requestList.addAll(data.friendsRequestList)
                         loadNames(requestList)
                     }
                 }
@@ -88,7 +88,20 @@ class DrawerNotificationViewModel @Inject constructor(
                     response.data?.let { data ->
                         withContext(Dispatchers.Main) {
                             _scheduleRequestList.clear()
-                            _scheduleRequestList.addAll(data.inviteList)
+                            data.inviteList.forEach {
+                                _scheduleRequestList.add(
+                                    ScheduleInvitationInfo(
+                                        scheduleId = it.scheduleId,
+                                        title = it.title,
+                                        userName = it.userName,
+                                        year = it.start.split("-")[0],
+                                        month = it.start.split("-")[1],
+                                        date = it.start.split("-")[2].split("T")[0],
+                                        hour = it.start.split("T")[1].split(":")[0],
+                                        minute = it.start.split("T")[1].split(":")[1]
+                                    )
+                                )
+                            }
                         }
                     }
                 }
@@ -165,13 +178,14 @@ class DrawerNotificationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val acceptScheduleRequestRequest = AcceptScheduleRequest(memberId, scheduleId)
-            when (val acceptScheduleResponse = acceptScheduleUseCase(accessToken, acceptScheduleRequestRequest)) {
+            val request = AcceptScheduleRequest(memberId, scheduleId)
+            val response = acceptScheduleUseCase(accessToken, request)
+            LogUtil.printNetworkLog(response, "일정 수락")
+            when (response) {
                 is NetworkResult.Success -> {
-                    Log.e("success", "${acceptScheduleResponse.data}")
                 }
-                is NetworkResult.Error -> { Log.e("error", "${acceptScheduleResponse.code} ${acceptScheduleResponse.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
             loadScheduleRequests()
             updateCalendar()
@@ -187,13 +201,14 @@ class DrawerNotificationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val refuseOrQuitScheduleRequest = RefuseOrQuitScheduleRequest(memberId, scheduleId)
-            when (val refuseOrQuitScheduleResponse = refuseOrQuitScheduleUseCase(accessToken, refuseOrQuitScheduleRequest)) {
+            val request = RefuseOrQuitScheduleRequest(memberId, scheduleId)
+            val response = refuseOrQuitScheduleUseCase(accessToken, request)
+            LogUtil.printNetworkLog(response, "일정 거절")
+            when (response) {
                 is NetworkResult.Success -> {
-                    Log.e("success", "${refuseOrQuitScheduleResponse.data}")
                 }
-                is NetworkResult.Error -> { Log.e("error", "${refuseOrQuitScheduleResponse.code} ${refuseOrQuitScheduleResponse.errorData}") }
-                is NetworkResult.Exception -> { Log.e("exception", "exception") }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
             }
             loadScheduleRequests()
             updateCalendar()
@@ -204,25 +219,29 @@ class DrawerNotificationViewModel @Inject constructor(
     private suspend fun getFriendList() {
         val accessToken = getAccessTokenUseCase().first()
         val memberId = getMemberIdUseCase().first()
-        val getFriendIdsListRequest = GetFriendIdsListRequest(memberId)
-        when (val getFriendIdsListResponse = getFriendIdsListUseCase(accessToken, getFriendIdsListRequest)) {
+        val request = GetFriendIdsListRequest(memberId)
+        val response = getFriendIdsListUseCase(accessToken, request)
+        LogUtil.printNetworkLog(response, "친구  memberId목록 가져오기")
+        when (response) {
             is NetworkResult.Success -> {
-                getFriendIdsListResponse.data?.let { data ->
+                response.data?.let { data ->
                     val getFriendListRequest = GetFriendListRequest(data.friendsIdList)
-                    when (val getFriendListResponse = getFriendListUseCase(accessToken, getFriendListRequest)) {
+                    val getFriendListResponse = getFriendListUseCase(accessToken, getFriendListRequest)
+                    LogUtil.printNetworkLog(getFriendListResponse, "친구 목록 가져오기")
+                    when (getFriendListResponse) {
                         is NetworkResult.Success -> {
                             getFriendListResponse.data?.let { data ->
                                 FriendProvider.friendsList.clear()
                                 FriendProvider.friendsList.addAll(data.friendsList)
                             }
                         }
-                        is NetworkResult.Error -> { Log.e("reissueToken", "${getFriendListResponse.code}, ${getFriendListResponse.errorData}") }
-                        is NetworkResult.Exception -> { Log.e("reissueToken", "${getFriendListResponse.e}") }
+                        is NetworkResult.Error -> {  }
+                        is NetworkResult.Exception -> {  }
                     }
                 }
             }
-            is NetworkResult.Error -> { Log.e("reissueToken", "${getFriendIdsListResponse.code}, ${getFriendIdsListResponse.errorData}") }
-            is NetworkResult.Exception -> { Log.e("reissueToken", "${getFriendIdsListResponse.e}") }
+            is NetworkResult.Error -> {  }
+            is NetworkResult.Exception -> {  }
         }
     }
 
@@ -231,3 +250,14 @@ class DrawerNotificationViewModel @Inject constructor(
         loadScheduleRequests()
     }
 }
+
+data class ScheduleInvitationInfo(
+    val scheduleId: String,
+    val title: String,
+    val userName: String,
+    val year: String,
+    val month: String,
+    val date: String,
+    val hour: String,
+    val minute: String
+)

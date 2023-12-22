@@ -59,7 +59,7 @@ import java.text.SimpleDateFormat
 @Composable
 fun NewScheduleContent(
     selectedFriendsList: List<Friend>,
-    moveToCalendarScreen: () -> Unit,
+    moveToBackScreen: () -> Unit,
     moveToFriendsListScreen: () -> Unit,
     moveToSearchLocationScreen: () -> Unit,
     viewModel: NewScheduleViewModel = hiltViewModel()
@@ -69,7 +69,7 @@ fun NewScheduleContent(
             .fillMaxSize()
             .padding(start = 20.dp, end = 20.dp)
     ) {
-        val density = LocalDensity.current
+        val density = LocalDensity.current.density
         val isDatePickerDialogShowing = remember { mutableStateOf(false) }
         val isTimePickerDialogShowing = remember { mutableStateOf(false) }
 
@@ -77,10 +77,7 @@ fun NewScheduleContent(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((GlobalValue.topBarHeight / density.density).dp)
-                .background(
-                    color = Color(0xFFCE93D8)
-                ),
+                .height((GlobalValue.topBarHeight / density).dp),
             contentAlignment = Alignment.Center
         ) {
             Box(
@@ -88,7 +85,11 @@ fun NewScheduleContent(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24),
+                    modifier = Modifier
+                        .size((GlobalValue.topBarHeight / density / 3 * 2).dp)
+                        .clip(RoundedCornerShape(50))
+                        .clickable { moveToBackScreen() },
+                    painter = painterResource(id = R.drawable.arrow_back),
                     contentDescription = null
                 )
             }
@@ -99,7 +100,7 @@ fun NewScheduleContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(10.dp))
@@ -112,11 +113,19 @@ fun NewScheduleContent(
             contentAlignment = Alignment.CenterStart
         ) {
             if (selectedFriendsList.isEmpty()) {
-                Image(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.message_add),
-                    contentDescription = null
-                )
+                Row {
+                    Image(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(id = R.drawable.message_add),
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Image(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(id = R.drawable.profile_circle),
+                        contentDescription = null
+                    )
+                }
             } else {
                 LazyRow {
                     itemsIndexed(selectedFriendsList) { index, friend ->
@@ -128,7 +137,7 @@ fun NewScheduleContent(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         // 제목
         val title = viewModel.title.collectAsState().value
@@ -137,7 +146,7 @@ fun NewScheduleContent(
             updateTitle = viewModel::updateTitle,
             clearTitle = viewModel::clearTitle
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
 
         // 날짜,시간 선택
         Row(
@@ -177,7 +186,7 @@ fun NewScheduleContent(
         // 위치 선택
         val destinationName = viewModel.destinationName.collectAsState().value
         val destinationAddress = viewModel.destinationAddress.collectAsState().value
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -219,7 +228,7 @@ fun NewScheduleContent(
         }
 
         // 메모
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(Modifier.height(30.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -231,19 +240,20 @@ fun NewScheduleContent(
                 painter = painterResource(id = R.drawable.article_fill0_wght200_grad0_opsz24),
                 contentDescription = null
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(Modifier.width(10.dp))
             Text(
                 text = "메모",
                 fontSize = 20.sp
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         BasicTextField(
             value = viewModel.memo.collectAsState().value,
             onValueChange = {
                 viewModel.updateMemo(it)
             },
             textStyle = TextStyle(fontSize = 20.sp),
+            singleLine = true,
             decorationBox = {
                 Box(
                     modifier = Modifier
@@ -287,7 +297,7 @@ fun NewScheduleContent(
                         shape = RoundedCornerShape(10.dp)
                     )
                     .clickable {
-                        viewModel.addNewSchedule(moveToCalendarScreen = moveToCalendarScreen)
+                        viewModel.addNewSchedule(moveToBackScreen = moveToBackScreen)
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -376,7 +386,7 @@ fun MyTimePickerDialog(
                         .fillMaxWidth()
                 ) {
 //                    toggle()
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(Modifier.weight(1f))
                     TextButton(
                         onClick = onDismissRequest
                     ) { Text("Cancel") }

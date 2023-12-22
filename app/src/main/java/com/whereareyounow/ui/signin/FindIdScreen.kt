@@ -50,7 +50,7 @@ fun FindIdScreen(
             .fillMaxSize()
             .padding(1.dp)
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(Modifier.height(30.dp))
 
 
         Row() {
@@ -101,7 +101,7 @@ fun FindIdScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         OutlinedTextField(
             value = user_email_code.text,

@@ -175,7 +175,7 @@ fun NetworkConnectionErrorDialog(
                         color = Color.White
                     )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(Modifier.width(10.dp))
                 Box(
                     modifier = Modifier
                         .padding(end = 20.dp)
@@ -197,64 +197,5 @@ fun NetworkConnectionErrorDialog(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun PermissionCheckingScreen(
-    locationPermissions: Array<String>,
-    updateScreenState: (SplashViewModel.ScreenState) -> Unit,
-    updateCheckingState: (SplashViewModel.CheckingState) -> Unit
-) {
-
-    val context = LocalContext.current
-    // ACCESS_FINE_LOCATION: 정확한 위치
-    // ACCESS_COARSE_LOCATION: 대략적인 위치
-    val permissionRequestLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { result ->
-        if(
-            result.entries.contains(mapOf(Manifest.permission.ACCESS_FINE_LOCATION to true).entries.first())
-            && result.entries.contains(mapOf(Manifest.permission.ACCESS_COARSE_LOCATION to true).entries.first())) {
-            Toast.makeText(context, "위치 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show()
-            updateScreenState(SplashViewModel.ScreenState.SPLASH)
-            updateCheckingState(SplashViewModel.CheckingState.SIGN_IN)
-        } else {
-            Toast.makeText(context, "위치 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp)
-                .fillMaxWidth()
-                .height(100.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .clickable {
-                    permissionRequestLauncher.launch(locationPermissions)
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "위치 권한 허용하기"
-            )
-        }
-        Text(
-            modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp),
-            text = "사용자의 위치 정보는 약속 인원들에게 자신의 위치를 공유하는 앱의 핵심 기능에 반드시 필요합니다." +
-                    "\n위치 정보는 자신의 위치를 사용자가 직접 전송 버튼을 눌러 일정의 인원들에게 자신의 위치를 공유할 때에만 사용되며, 다른 기능에는 일절 사용되지 않습니다.",
-            fontSize = 20.sp
-        )
     }
 }

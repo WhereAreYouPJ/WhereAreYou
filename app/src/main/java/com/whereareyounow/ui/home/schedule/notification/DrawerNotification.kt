@@ -79,14 +79,14 @@ fun DrawerNotification(
                             FriendRequestBox(
                                 friendRequest = friendRequest,
                                 acceptFriendRequest = {
+                                    viewModel.acceptFriendRequest(friendRequest.first)
                                     updateCalendar()
                                     updateBriefCalendar()
-                                    viewModel.acceptFriendRequest(friendRequest.first)
                                 },
                                 refuseFriendRequest = {
+                                    viewModel.refuseFriendRequest(friendRequest.first)
                                     updateCalendar()
                                     updateBriefCalendar()
-                                    viewModel.refuseFriendRequest(friendRequest.first)
                                 }
                             )
                         }
@@ -134,7 +134,7 @@ fun DrawerNotification(
                         }
                     }
                     item {
-                        Spacer(modifier = Modifier.height((GlobalValue.bottomNavBarHeight / density.density).dp))
+                        Spacer(Modifier.height((GlobalValue.bottomNavBarHeight / density.density).dp))
                     }
                 }
             }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,7 +53,7 @@ fun FriendRequestBox(
                 contentScale = ContentScale.FillWidth,
             )
         )
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(Modifier.width(10.dp))
         Column() {
             Text(
                 text = friendRequest.second.name,
@@ -64,9 +65,10 @@ fun FriendRequestBox(
                 fontSize = 16.sp,
                 color = Color(0xFF999999)
             )
+            Spacer(Modifier.height(4.dp))
             Row() {
                 ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color.White) { acceptFriendRequest() }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(Modifier.width(10.dp))
                 ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseFriendRequest() }
             }
         }

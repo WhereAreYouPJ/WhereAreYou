@@ -49,7 +49,7 @@ fun Tablayout(
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(8.dp)) {
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         Box(
             modifier = Modifier
                 .width(30.dp)

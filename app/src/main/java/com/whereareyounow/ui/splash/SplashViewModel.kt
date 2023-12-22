@@ -15,6 +15,7 @@ import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.signin.ReissueTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,52 +77,81 @@ class SplashViewModel @Inject constructor(
     }
 
     private suspend fun initialize() {
-        reissueToken()
-        getFriendList()
+        val refreshToken = getRefreshTokenUseCase().first()
+        reissueToken(refreshToken)
+        val accessToken = getAccessTokenUseCase().first()
+        val memberId = getMemberIdUseCase().first()
+        getFriendIdsList(
+            accessToken = accessToken,
+            memberId = memberId
+        )
     }
 
-    private suspend fun reissueToken() {
-        val refreshToken = getRefreshTokenUseCase().first()
-        val reissueTokenRequest = ReissueTokenRequest(refreshToken)
-        when (val reissueTokenResponse = reissueTokenUseCase(reissueTokenRequest)) {
+    private suspend fun reissueToken(
+        refreshToken: String
+    ) {
+        val request = ReissueTokenRequest(refreshToken)
+        val response = reissueTokenUseCase(request)
+        LogUtil.printNetworkLog(response, "토큰 재발급")
+        when (response) {
             is NetworkResult.Success -> {
-                reissueTokenResponse.data?.let { data ->
+                response.data?.let { data ->
                     saveRefreshTokenUseCase(data.refreshToken)
                     saveAccessTokenUseCase("Bearer " + data.accessToken)
                 }
-                Log.e("reissueToken Success", "${reissueTokenResponse.data}")
             }
             is NetworkResult.Error -> {
-                Log.e("reissueToken", "${reissueTokenResponse.code}, ${reissueTokenResponse.errorData}")
                 isSignedIn = false
-                return
             }
-            is NetworkResult.Exception -> { Log.e("reissueToken", "${reissueTokenResponse.e}") }
+            is NetworkResult.Exception -> {  }
         }
     }
 
-    private suspend fun getFriendList() {
-        val accessToken = getAccessTokenUseCase().first()
-        val memberId = getMemberIdUseCase().first()
-        val getFriendIdsListRequest = GetFriendIdsListRequest(memberId)
-        when (val getFriendIdsListResponse = getFriendIdsListUseCase(accessToken, getFriendIdsListRequest)) {
+    private suspend fun getFriendIdsList(
+        accessToken: String,
+        memberId: String
+    ) {
+        val request = GetFriendIdsListRequest(memberId)
+        val response = getFriendIdsListUseCase(accessToken, request)
+        LogUtil.printNetworkLog(response, "친구 memberId 리스트 획득")
+        when (response) {
             is NetworkResult.Success -> {
-                getFriendIdsListResponse.data?.let { data ->
-                    val getFriendListRequest = GetFriendListRequest(data.friendsIdList)
-                    when (val getFriendListResponse = getFriendListUseCase(accessToken, getFriendListRequest)) {
-                        is NetworkResult.Success -> {
-                            getFriendListResponse.data?.let { data ->
-                                FriendProvider.friendsList.clear()
-                                FriendProvider.friendsList.addAll(data.friendsList)
-                            }
-                        }
-                        is NetworkResult.Error -> { Log.e("reissueToken", "${getFriendListResponse.code}, ${getFriendListResponse.errorData}") }
-                        is NetworkResult.Exception -> { Log.e("reissueToken", "${getFriendListResponse.e}") }
-                    }
+                response.data?.let {  data ->
+                    getFriendsList(
+                        accessToken = accessToken,
+                        friendIdsList = data.friendsIdList
+                    )
                 }
             }
-            is NetworkResult.Error -> { Log.e("reissueToken", "${getFriendIdsListResponse.code}, ${getFriendIdsListResponse.errorData}") }
-            is NetworkResult.Exception -> { Log.e("reissueToken", "${getFriendIdsListResponse.e}") }
+            is NetworkResult.Error -> {
+
+            }
+            is NetworkResult.Exception -> {
+
+            }
+        }
+    }
+
+    private suspend fun getFriendsList(
+        accessToken: String,
+        friendIdsList: List<String>
+    ) {
+        val request = GetFriendListRequest(friendIdsList)
+        val response = getFriendListUseCase(accessToken, request)
+        LogUtil.printNetworkLog(response, "친구 리스트 획득")
+        when (response) {
+            is NetworkResult.Success -> {
+                response.data?.let { data ->
+                    FriendProvider.friendsList.clear()
+                    FriendProvider.friendsList.addAll(data.friendsList)
+                }
+            }
+            is NetworkResult.Error -> {
+
+            }
+            is NetworkResult.Exception -> {
+
+            }
         }
     }
 

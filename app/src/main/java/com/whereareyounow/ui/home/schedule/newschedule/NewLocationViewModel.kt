@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.domain.entity.schedule.LocationInformation
 import com.whereareyounow.domain.usecase.location.GetLocationAddressUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,12 +34,16 @@ class NewLocationViewModel @Inject constructor(
 
     fun searchLocation() {
         viewModelScope.launch(Dispatchers.Default) {
-            when (val getLocationAddressResult = getLocationAddressUseCase.getLocationAddress(inputLocationText.value)) {
+            val response = getLocationAddressUseCase(inputLocationText.value)
+            LogUtil.printNetworkLog(response, "지역 검색")
+            when (response) {
                 is NetworkResult.Success -> {
-                    _locationInformationList.update {
-                        if (getLocationAddressResult.data != null) {
-                            getLocationAddressResult.data!!.items
-                        } else {
+                    response.data?.let { data ->
+                        _locationInformationList.update {
+                            data.items
+                        }
+                    } ?: {
+                        _locationInformationList.update {
                             listOf()
                         }
                     }

@@ -129,7 +129,7 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    private fun updateCurrentDateBriefScheduleInfo() {
+    fun updateCurrentDateBriefScheduleInfo() {
         _dayOfWeek.update { CalendarUtil.getDayOfWeek(_year.value, _month.value, _date.value) }
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
@@ -163,6 +163,7 @@ class CalendarViewModel @Inject constructor(
         _month.update { todayInfo[1] }
         _date.update { todayInfo[2] }
         _dayOfWeek.update { todayInfo[3] }
+        updateCurrentDateBriefScheduleInfo()
         updateCurrentMonthCalendarInfo()
         updateDate(todayInfo[2])
     }

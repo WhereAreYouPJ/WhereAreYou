@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.AnimationUtil
 
 @Composable
@@ -61,7 +62,8 @@ fun DateCalendar(
                             color = when (i) {
                                 0 -> Color.Red
                                 else -> Color.Black
-                            }
+                            },
+                            fontFamily = lato
                         )
                     }
                 }

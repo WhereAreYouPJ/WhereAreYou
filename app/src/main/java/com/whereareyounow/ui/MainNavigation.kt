@@ -13,7 +13,7 @@ import com.whereareyounow.GlobalViewModel
 import com.whereareyounow.data.Constants
 import com.whereareyounow.ui.home.HomeScreen
 import com.whereareyounow.ui.home.Tablayout
-import com.whereareyounow.ui.home.friends.addfriend.AddFriendScreen
+import com.whereareyounow.ui.home.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.home.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.signin.AgreeScreen
@@ -108,7 +108,7 @@ fun MainNavigation(
             route = Constants.ROUTE_NEW_SCHEDULE
         ) {
             NewScheduleScreen(
-                moveToCalendarScreen = { navController.navigate(Constants.ROUTE_MAIN_HOME) },
+                moveToBackScreen = { navController.popBackStack() },
             )
         }
 
@@ -123,7 +123,9 @@ fun MainNavigation(
         composable(
             route = Constants.ROUTE_ADD_FRIEND
         ) {
-            AddFriendScreen()
+            AddFriendScreen(
+                moveToBackScreen = { navController.popBackStack() }
+            )
         }
 
         // 아이디 찾기(왼쪽)

@@ -317,7 +317,7 @@ fun UserList(
                             item.profileImage ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24
                         }
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(Modifier.width(10.dp))
                     Text(
                         text = item.name
                     )

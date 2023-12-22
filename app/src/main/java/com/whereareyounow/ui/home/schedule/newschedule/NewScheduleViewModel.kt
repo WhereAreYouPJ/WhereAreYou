@@ -91,7 +91,7 @@ class NewScheduleViewModel @Inject constructor(
     }
 
     fun addNewSchedule(
-        moveToCalendarScreen: () -> Unit,
+        moveToBackScreen: () -> Unit,
     ) {
         if (_appointmentDate.value == "약속 날짜 선택") {
             Toast.makeText(application, "약속 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
@@ -125,7 +125,7 @@ class NewScheduleViewModel @Inject constructor(
             when (response) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
-                        moveToCalendarScreen()
+                        moveToBackScreen()
                     }
                 }
                 is NetworkResult.Error -> {  }

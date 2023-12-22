@@ -51,13 +51,13 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
             .fillMaxSize()
             .padding(1.dp)
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(Modifier.height(30.dp))
         Text(
             text = "비밀번호를 변경해 주세요.",
             style = TextStyle(fontSize = 18.sp),
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(Modifier.height(5.dp))
 
         Text(text = "사이트에서 사용한 적 없는 안전한 비밀번호로 변경해 주세요.", style = TextStyle(fontSize = 15.sp))
 
@@ -112,7 +112,7 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
             },
             visualTransformation = PasswordVisualTransformation()
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
 
 
@@ -198,7 +198,7 @@ fun FindPwSuccessScreen(navController: NavController,signInViewModel: SignViewMo
         ) {
             Text(text = "확인", style = TextStyle(fontSize = 20.sp), fontWeight = FontWeight.Bold)
         }
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(Modifier.height(15.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()

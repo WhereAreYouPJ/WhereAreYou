@@ -1,6 +1,7 @@
 package com.whereareyounow.ui.start
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -23,11 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.whereareyounow.R
 
 @Composable
 fun StartScreen(
@@ -38,10 +42,22 @@ fun StartScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 20.dp, end = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        val context = LocalContext.current
-        Spacer(modifier = Modifier.height(450.dp))
+        Image(
+            modifier = Modifier
+                .size(100.dp),
+            painter = painterResource(R.drawable.logo),
+            contentDescription = null
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = "지금어디",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Medium
+        )
+        Spacer(Modifier.height(100.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -57,38 +73,27 @@ fun StartScreen(
             Text(
                 text = "시작하기",
                 color = Color.White,
-                style = TextStyle(fontSize = 20.sp),
-                fontWeight = FontWeight.Bold
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Medium
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         Row {
             Text(
                 text = "이미 계정이 있나요?",
-                style = TextStyle(fontSize = 16.sp)
+                fontSize = 20.sp
             )
             ClickableText(
                 text = AnnotatedString(" 로그인"),
                 onClick = {
-                    // 클릭할 때 수행할 동작 정의
-                    // 예: 가입 화면으로 이동
                     moveToSignInScreen()
                 },
                 style = TextStyle(
                     color = Color.Blue,
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun StartScreenPreview() {
-//    StartScreen(
-//        moveToSignUpScreen = {},
-//        moveToSignInScreen = {}
-//    )
-//}

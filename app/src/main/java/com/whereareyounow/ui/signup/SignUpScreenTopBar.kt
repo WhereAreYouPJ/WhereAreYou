@@ -28,16 +28,16 @@ import com.whereareyounow.data.GlobalValue
 fun SignUpScreenTopBar(
     moveToBackScreen: () -> Unit,
 ) {
-    val density = LocalDensity.current
+    val density = LocalDensity.current.density
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density.density).dp),
+            .height((GlobalValue.topBarHeight / density).dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Image(
             modifier = Modifier
-                .size((GlobalValue.topBarHeight / density.density / 3 * 2).dp)
+                .size((GlobalValue.topBarHeight / density / 3 * 2).dp)
                 .clip(RoundedCornerShape(50))
                 .clickable { moveToBackScreen() },
             painter = painterResource(id = R.drawable.arrow_back),

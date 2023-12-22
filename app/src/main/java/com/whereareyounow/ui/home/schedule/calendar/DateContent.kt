@@ -26,6 +26,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.whereareyounow.ui.theme.lato
+import com.whereareyounow.ui.theme.nanumSquareNeo
+import com.whereareyounow.ui.theme.notosanskr
 
 @Composable
 fun DateContent(
@@ -51,7 +54,7 @@ fun DateContent(
                 .height((componentWidth * 0.45).dp)
                 .background(
                     color = when (isSelected) {
-                        true -> Color(0xFF8C9EFF)
+                        true -> Color(0xFF1D1A7D)
                         false -> Color(0x00000000)
                     },
                     shape = RoundedCornerShape(25)
@@ -60,17 +63,15 @@ fun DateContent(
         ) {
             Text(
                 text = date.toString(),
-                fontWeight = when (isSelected) {
-                    true -> FontWeight.Black
-                    false -> FontWeight.Normal
-                },
+                fontWeight = FontWeight.Bold,
                 color = when (isSelected) {
                     true -> Color.White
                     false -> textColor
-                }
+                },
+                fontFamily = lato
             )
         }
-        Spacer(modifier = Modifier.size(2.dp))
+        Spacer(Modifier.size(2.dp))
         Column(
             modifier = Modifier
                 .width((componentWidth * 0.3).dp)

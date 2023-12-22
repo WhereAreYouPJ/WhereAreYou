@@ -51,7 +51,7 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
             .fillMaxSize()
             .padding(1.dp)
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(Modifier.height(30.dp))
 
         OutlinedTextField(
             value = user_id.text,
@@ -69,7 +69,7 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
                 Text("아이디", style = TextStyle(fontSize = 13.sp))
             },
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         Row() {
 
@@ -119,7 +119,7 @@ fun FindPasswordScreen(navController: NavHostController,signInViewModel: SignVie
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         OutlinedTextField(
             value = user_email_code.text,

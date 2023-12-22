@@ -48,9 +48,9 @@ fun FindIdSuccessScreen(navController: NavHostController) {
             .fillMaxSize()
             .padding(1.dp)
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(Modifier.height(30.dp))
         Text(text = "고객님의 정보와 일치하는 아이디 목록입니다.", style = TextStyle(fontSize = 18.sp), fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(Modifier.height(5.dp))
 
         Text(text = "아이디를 먼저 선택한 후, 로그인 또는 비밀번호 찾기 버튼을", style = TextStyle(fontSize = 15.sp))
         Text(text = "눌러주세요.", style = TextStyle(fontSize = 15.sp))
@@ -122,16 +122,13 @@ fun FindIdSuccessScreen(navController: NavHostController) {
         ) {
             Text(text = "로그인", style = TextStyle(fontSize = 20.sp), fontWeight = FontWeight.Bold)
         }
-        Spacer(modifier =Modifier.height(15.dp))
+        Spacer(Modifier.height(15.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
                 .background(Color.Gray)
-                .clickable {
-                           navController.navigate(Constants.ROUTE_MAIN_FINDPW)
-
-                },
+                .clickable { navController.navigate(Constants.ROUTE_MAIN_FINDPW) },
             contentAlignment = Alignment.Center
         ) {
             Text(text = "비밀번호 찾기", style = TextStyle(fontSize = 20.sp), fontWeight = FontWeight.Bold)

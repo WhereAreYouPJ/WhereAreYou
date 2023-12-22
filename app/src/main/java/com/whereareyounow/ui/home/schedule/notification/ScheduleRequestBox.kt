@@ -27,7 +27,7 @@ import com.whereareyounow.domain.entity.apimessage.schedule.ScheduleInvitation
 
 @Composable
 fun ScheduleRequestBox(
-    scheduleRequest: ScheduleInvitation,
+    scheduleRequest: ScheduleInvitationInfo,
     acceptScheduleRequest: () -> Unit,
     refuseScheduleRequest: () -> Unit
 ) {
@@ -59,15 +59,15 @@ fun ScheduleRequestBox(
 //                    contentScale = ContentScale.Fit
                 )
             }
-            Spacer(modifier = Modifier.width(20.dp))
-            Column() {
+            Spacer(Modifier.width(20.dp))
+            Column {
                 Text(
                     text = "${scheduleRequest.title}",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = "${scheduleRequest.start}",
+                    text = "${scheduleRequest.year}년 ${scheduleRequest.month}월 ${scheduleRequest.date}일",
                     fontSize = 16.sp
                 )
             }
@@ -87,14 +87,14 @@ fun ScheduleRequestBox(
                 fontSize = 20.sp
             )
             Text(
-                text = "시간 ${scheduleRequest.start}",
+                text = "시간 ${scheduleRequest.hour}:${scheduleRequest.minute}",
                 fontSize = 20.sp
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(Modifier.height(10.dp))
             Row(
             ) {
                 ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color.White) { acceptScheduleRequest() }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(Modifier.width(10.dp))
                 ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseScheduleRequest() }
             }
         }

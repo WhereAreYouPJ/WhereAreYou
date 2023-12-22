@@ -7,7 +7,7 @@ import com.whereareyounow.domain.util.NetworkResult
 class GetLocationAddressUseCase(
     private val repository: SearchLocationRepository
 ) {
-    suspend fun getLocationAddress(
+    suspend operator fun invoke(
         query: String
     ): NetworkResult<GetLocationAddressResponse> {
         return repository.getLocationAddress(query)

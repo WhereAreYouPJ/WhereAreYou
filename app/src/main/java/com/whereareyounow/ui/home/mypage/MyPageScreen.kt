@@ -72,7 +72,7 @@ fun MyPageScreen(
             }
         }
 
-    val density = LocalDensity.current
+    val density = LocalDensity.current.density
     val name = viewModel.name.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
@@ -93,7 +93,7 @@ fun MyPageScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((GlobalValue.topBarHeight / density.density).dp),
+                    .height((GlobalValue.topBarHeight / density).dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -106,21 +106,21 @@ fun MyPageScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((GlobalValue.calendarViewHeight / density.density).dp),
+                    .height((GlobalValue.calendarViewHeight / density).dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 GlideImage(
                     modifier = Modifier
-                        .width(((GlobalValue.calendarViewHeight / density.density) / 3 * 2).dp)
-                        .height(((GlobalValue.calendarViewHeight / density.density) / 3 * 2).dp)
+                        .width(((GlobalValue.calendarViewHeight / density) / 2).dp)
+                        .height(((GlobalValue.calendarViewHeight / density) / 2).dp)
                         .clip(RoundedCornerShape(50)),
                     imageModel = { profileImageUri ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
                     imageOptions = ImageOptions(
                         contentScale = ContentScale.FillWidth,
                     )
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(Modifier.height(10.dp))
                 Text(
                     text = name,
                     fontSize = 20.sp,
@@ -136,12 +136,21 @@ fun MyPageScreen(
         }
         Column(
             modifier = Modifier
-                .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density.density).dp)
+                .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density).dp)
                 .fillMaxWidth()
         ) {
-            Text(
-                text = "일반"
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
+                    .padding(start = 20.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = "일반",
+                    fontSize = 24.sp
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -150,55 +159,48 @@ fun MyPageScreen(
             )
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(color = Color.Yellow)
+                    .fillMaxWidth()
+                    .height(40.dp)
                     .clickable {
-                        viewModel.signOut(
-                            moveToStartScreen = moveToStartScreen
-                        )
-                    },
+                        takePhotoFromAlbumLauncher.launch("image/*")
+                    }
+                    .padding(start = 20.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = "로그아웃"
+                    text = "회원정보변경",
+                    fontSize = 24.sp
                 )
             }
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(color = Color.Cyan)
+                    .fillMaxWidth()
+                    .height(40.dp)
                     .clickable {
-//                        Intent(
-//                            Intent.ACTION_GET_CONTENT,
-//                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//                        ).apply {
-//                            type = "image/*"
-//                            action = Intent.ACTION_GET_CONTENT
-//                            putExtra(
-//                                Intent.EXTRA_MIME_TYPES,
-//                                arrayOf("image/jpeg", "image/png", "image/bmp", "image/webp")
-//                            )
-//                            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
-//                        }
-//                    takePhotoFromAlbumLauncher.launch(takePhotoFromAlbumIntent)
-                        takePhotoFromAlbumLauncher.launch("image/*")
-//                viewModel.updateProfileImage()
+                        viewModel.signOut(
+                            moveToStartScreen = moveToStartScreen
+                        )
                     }
+                    .padding(start = 20.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = "회원정보변경"
+                    text = "로그아웃",
+                    fontSize = 24.sp,
+                    color = Color.Red
                 )
             }
-            val imagePath = viewModel.imageUri.collectAsState().value
-            GlideImage(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(50)),
-                imageModel = { imagePath ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
-                imageOptions = ImageOptions(
-                    contentScale = ContentScale.FillWidth,
-                )
-            )
+//            val imagePath = viewModel.imageUri.collectAsState().value
+//            GlideImage(
+//                modifier = Modifier
+//                    .width(100.dp)
+//                    .height(100.dp)
+//                    .clip(RoundedCornerShape(50)),
+//                imageModel = { imagePath ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+//                imageOptions = ImageOptions(
+//                    contentScale = ContentScale.FillWidth,
+//                )
+//            )
         }
     }
 }

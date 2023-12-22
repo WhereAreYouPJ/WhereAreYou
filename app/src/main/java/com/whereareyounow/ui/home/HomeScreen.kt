@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.ViewType
-import com.whereareyounow.ui.home.friends.FriendScreen
+import com.whereareyounow.ui.home.friend.FriendScreen
 import com.whereareyounow.ui.home.mypage.MyPageScreen
 import com.whereareyounow.ui.home.schedule.calendar.ScheduleScreen
 import kotlinx.coroutines.flow.emptyFlow

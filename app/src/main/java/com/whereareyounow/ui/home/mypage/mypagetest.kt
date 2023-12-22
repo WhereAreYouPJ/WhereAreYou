@@ -55,7 +55,7 @@ fun mypagetest() {
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         Box(
             modifier = Modifier
@@ -94,7 +94,7 @@ fun mypagetest() {
             text = "이름",
             style = TextStyle(fontSize = 11.sp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         Row() {
             OutlinedTextField(
                 value = user_id.text,
@@ -140,12 +140,12 @@ fun mypagetest() {
         }
 
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         Text(
             text = "아이디",
             style = TextStyle(fontSize = 11.sp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         Row() {
 
@@ -193,12 +193,12 @@ fun mypagetest() {
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
         Text(
             text = "이메일",
             style = TextStyle(fontSize = 11.sp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(Modifier.height(10.dp))
 
         OutlinedTextField(
             value = user_email_code.text,

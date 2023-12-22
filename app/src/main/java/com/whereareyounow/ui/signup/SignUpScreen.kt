@@ -1,6 +1,5 @@
 package com.whereareyounow.ui.signup
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,112 +18,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.ui.signin.SignViewModel
-
-fun isValidUserId(input: String): Boolean {
-    val regex = Regex("^[a-z][a-z0-9]{4,11}$")
-    return regex.matches(input)
-}
-
-fun checkPasswordConditions(password: String): Boolean {
-    val lengthCondition = password.length in 6..20
-    val lowercaseRegex = Regex(".*[a-z].*")
-    val uppercaseRegex = Regex(".*[A-Z].*")
-    val digitRegex = Regex(".*\\d.*")
-    val specialCharRegex = Regex("[!@#\$%^&*()\\-_=+\\\\|\\[{\\]};:'\",<.>/?].*")
-
-    val containsLowercase = lowercaseRegex.matches(password)
-    val containsUppercase = uppercaseRegex.matches(password)
-    val containsDigit = digitRegex.matches(password)
-    val containsSpecialChar = specialCharRegex.matches(password)
-
-    val conditionsMet = listOf(
-        containsLowercase,
-        containsUppercase,
-        containsDigit,
-        containsSpecialChar
-    ).count { it } >= 2
-
-    return lengthCondition && conditionsMet
-}
 
 @Composable
 fun SignUpScreen(
     moveToBackScreen: () -> Unit,
-    signInViewModel: SignViewModel = hiltViewModel(),
+    moveToSignUpSuccessScreen: () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
-
-    var user_id by remember { mutableStateOf(TextFieldValue()) }
-    var user_name by remember { mutableStateOf(TextFieldValue()) }
-    var check_password by remember { mutableStateOf(TextFieldValue()) }
-
-    var password by remember { mutableStateOf(TextFieldValue()) }
-    var confirmPassword by remember { mutableStateOf(TextFieldValue()) }
-    var isPasswordValid by remember { mutableStateOf(false) }
-
-    var email by remember { mutableStateOf(TextFieldValue()) }
-    var emailCode by remember { mutableStateOf(TextFieldValue()) }
-    var isEmailChecked by remember { mutableStateOf(false) }
-
-    var isInvalidId by remember { mutableStateOf(false) }
-    var isInvalidPassword by remember { mutableStateOf(false) }
-    var isIdDuplicate by remember { mutableStateOf(false) }
-
-    // 버튼 클릭 가능 여부를 저장할 변수
-    var isButtonEnabled by remember { mutableStateOf(false) }
-    var isButtonClicked by remember { mutableStateOf(false) }
-
-
-
-    var EmailCodeText by remember { mutableStateOf(false) }
-
-
-    // 값이 입력되고 검증이 되었을경우 true
-    var name_pass by remember { mutableStateOf(false) }
-    var id_pass by remember { mutableStateOf(false) }
-    var password_pass by remember { mutableStateOf(false) }
-    var email_pass by remember { mutableStateOf(true) } //임시로 true 설정
-
-    val context = LocalContext.current
-    val density = LocalDensity.current.density
-    val listState = rememberLazyListState()
-
     LazyColumn(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp)
             .fillMaxSize()
-            .imePadding(),
-        state = listState
+            .imePadding()
     ) {
         item {
             SignUpScreenTopBar(moveToBackScreen = moveToBackScreen)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 사용자명 입력
             val inputUserName = viewModel.inputUserName.collectAsState().value
@@ -147,7 +75,7 @@ fun SignUpScreen(
                 },
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 아이디 입력
             val inputUserId = viewModel.inputUserId.collectAsState().value
@@ -181,15 +109,13 @@ fun SignUpScreen(
                         }
                     )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(Modifier.width(10.dp))
                 // 중복확인 버튼
-                CheckingButton(text = "중복확인") {
-
-                }
+                CheckingButton(text = "중복확인") { viewModel.checkIdDuplicate() }
             }
 
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 비밀번호 입력
             val inputPassword = viewModel.inputPassword.collectAsState().value
@@ -215,14 +141,14 @@ fun SignUpScreen(
                 },
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 비밀번호 확인
             val inputPasswordForChecking = viewModel.inputPasswordForChecking.collectAsState().value
             val inputPasswordForCheckingState =
                 viewModel.inputPasswordForCheckingState.collectAsState().value
             Title(text = "비밀번호 확인")
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(Modifier.height(10.dp))
             InputBox(
                 hint = "비밀번호 확인",
                 inputText = inputPasswordForChecking,
@@ -240,11 +166,12 @@ fun SignUpScreen(
                 },
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 이메일 입력
             val inputEmail = viewModel.inputEmail.collectAsState().value
             val inputEmailState = viewModel.inputEmailState.collectAsState().value
+            val isEmailDuplicationChecked = viewModel.isEmailDuplicationChecked.collectAsState().value
             Title(text = "이메일")
             Row(
                 modifier = Modifier
@@ -274,18 +201,26 @@ fun SignUpScreen(
                         }
                     )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(Modifier.width(10.dp))
                 // 중복확인, 인증 요청 버튼
-                CheckingButton(text = "중복확인") {
-
+                CheckingButton(
+                    text = when (isEmailDuplicationChecked) {
+                        true -> "인증요청"
+                        false -> "중복확인"
+                    }
+                ) {
+                    when (isEmailDuplicationChecked) {
+                        true -> viewModel.verifyEmail()
+                        false -> viewModel.checkEmailDuplicate()
+                    }
                 }
             }
 
             // 이메일 인증코드 확인
-            val isVerificationInProgress = viewModel.isVerificationInProgress.collectAsState().value
             val inputVerificationCode = viewModel.inputVerificationCode.collectAsState().value
             val inputVerificationCodeState = viewModel.inputVerificationCodeState.collectAsState().value
-            if (isVerificationInProgress) {
+            val isEmailVerificationInProgress = viewModel.isEmailVerificationInProgress.collectAsState().value
+            if (isEmailVerificationInProgress) {
                 Row(
                     modifier = Modifier
                         .height(IntrinsicSize.Min)
@@ -310,15 +245,40 @@ fun SignUpScreen(
                             }
                         )
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(Modifier.width(10.dp))
                     // 확인 버튼
                     CheckingButton(text = "확인") {
-
+                        viewModel.verifyEmailCode()
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
+
+            // 회원가입 버튼
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        color = Color(0xFF2A2550),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .clickable {
+                        viewModel.signUp(moveToSignUpSuccessScreen)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "시작하기",
+                    fontSize = 30.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
         }
     }
 }
@@ -331,7 +291,7 @@ fun Title(
         text = text,
         fontSize = 20.sp
     )
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(Modifier.height(10.dp))
 }
 
 @Composable
@@ -341,8 +301,7 @@ fun InputBox(
     onValueChange: (String) -> Unit,
     inputBoxState: InputBoxState,
     isPassword: Boolean,
-    guide: String,
-
+    guide: String
 ) {
     BasicTextField(
         modifier = Modifier
@@ -350,6 +309,11 @@ fun InputBox(
         value = inputText,
         onValueChange = { onValueChange(it) },
         textStyle = TextStyle(fontSize = 20.sp),
+        singleLine = true,
+        visualTransformation = when (isPassword) {
+            true -> PasswordVisualTransformation()
+            false -> VisualTransformation.None
+        },
         decorationBox = {
             Column {
                 Box(
@@ -359,7 +323,7 @@ fun InputBox(
                             border = BorderStroke(
                                 width = 1.dp,
                                 color = when (inputBoxState) {
-                                    InputBoxState.IDLE -> Color.Black
+                                    InputBoxState.IDLE -> Color(0xFFBCBCBC)
                                     InputBoxState.SATISFIED -> Color.Green
                                     InputBoxState.UNSATISFIED -> Color.Red
                                 }
@@ -390,16 +354,18 @@ fun InputBox(
                             InputBoxState.IDLE -> {  }
                             InputBoxState.SATISFIED -> {
                                 Image(
-                                    modifier = Modifier.size(30.dp),
+                                    modifier = Modifier.size(20.dp),
                                     painter = painterResource(id = R.drawable.check_circle_fill0_wght300_grad0_opsz24),
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(color = Color(0xFF67C370))
                                 )
                             }
                             InputBoxState.UNSATISFIED -> {
                                 Image(
-                                    modifier = Modifier.size(30.dp),
+                                    modifier = Modifier.size(20.dp),
                                     painter = painterResource(id = R.drawable.cancel_fill0_wght300_grad0_opsz24),
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    colorFilter = ColorFilter.tint(color = Color(0xFFE38C8C))
                                 )
                             }
                         }
@@ -410,11 +376,6 @@ fun InputBox(
                     inputBoxState = inputBoxState
                 )
             }
-        },
-        singleLine = true,
-        visualTransformation = when (isPassword) {
-            true -> PasswordVisualTransformation()
-            false -> VisualTransformation.None
         }
     )
 }

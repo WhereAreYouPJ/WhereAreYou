@@ -70,7 +70,7 @@ fun DetailScheduleContent(
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF505050)
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
                 Box {
                     CustomPopup(
                         popupState = popupState,
@@ -100,7 +100,7 @@ fun DetailScheduleContent(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(Modifier.height(30.dp))
             // 날짜, 시간 정보
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
@@ -109,7 +109,7 @@ fun DetailScheduleContent(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(Modifier.width(20.dp))
                 Text(
                     text = "${viewModel.appointmentTime.collectAsState().value.replace("T", "\n")}",
                     fontSize = 20.sp
@@ -124,7 +124,7 @@ fun DetailScheduleContent(
                     fontSize = 20.sp
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 목적지 정보
             Row(
@@ -136,14 +136,14 @@ fun DetailScheduleContent(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(Modifier.width(20.dp))
                 Text(
                     text = "${viewModel.place.collectAsState().value}",
                     fontSize = 20.sp
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
             // 회원 리스트 정보
             val memberList = viewModel.userInfos
             Row(
@@ -155,7 +155,7 @@ fun DetailScheduleContent(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(Modifier.width(20.dp))
                 LazyRow() {
                     itemsIndexed(memberList) {_, userInfo ->
                         Column(
@@ -177,12 +177,12 @@ fun DetailScheduleContent(
                                 fontSize = 16.sp
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(Modifier.width(10.dp))
                     }
                 }
             }
             // 지도 이동 버튼
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(Modifier.height(10.dp))
             Text(
                 modifier = Modifier
                     .padding(start = 50.dp)
@@ -197,7 +197,7 @@ fun DetailScheduleContent(
                     .padding(10.dp),
                 text = "네이버 지도"
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             // 메모
             Row(
@@ -209,13 +209,13 @@ fun DetailScheduleContent(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
                 )
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(Modifier.width(20.dp))
                 Text(
                     text = "메모",
                     fontSize = 20.sp
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(Modifier.height(10.dp))
 
             // 메모 내용
             Text(
