@@ -143,7 +143,9 @@ class SplashViewModel @Inject constructor(
             is NetworkResult.Success -> {
                 response.data?.let { data ->
                     FriendProvider.friendsList.clear()
-                    FriendProvider.friendsList.addAll(data.friendsList)
+                    for (i in 0 until data.friendsList.size) {
+                        FriendProvider.friendsList.add(data.friendsList[i].copy(number = i, userId = ""))
+                    }
                 }
             }
             is NetworkResult.Error -> {
