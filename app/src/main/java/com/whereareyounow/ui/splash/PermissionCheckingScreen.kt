@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
@@ -121,6 +122,7 @@ fun PermissionCheckingScreen(
         ) {
             Box(
                 modifier = Modifier
+                    .padding(bottom = 20.dp)
                     .fillMaxWidth()
                     .height(80.dp)
                     .clip(RoundedCornerShape(10.dp))
@@ -142,4 +144,14 @@ fun PermissionCheckingScreen(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PermissionCheckingScreenPreview() {
+    PermissionCheckingScreen(
+        locationPermissions = arrayOf(),
+        updateScreenState = {},
+        updateCheckingState = {}
+    )
 }
