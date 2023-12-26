@@ -162,15 +162,13 @@ fun BriefScheduleList(
                         modifier = Modifier
                             .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                             .fillMaxWidth()
-                            .height(80.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(color = Color(0XFF80DEEA))
+                            .background(color = Color(0XFFFFD79B))
                             .clickable {
                                 moveToDetailScreen(item.scheduleId)
                             }
                             .padding(20.dp)
                     ) {
-
                         Text(
                             text = "${item.title}",
                             fontSize = 20.sp,
