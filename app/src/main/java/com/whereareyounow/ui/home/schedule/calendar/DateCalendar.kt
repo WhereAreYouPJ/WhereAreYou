@@ -2,6 +2,7 @@ package com.whereareyounow.ui.home.schedule.calendar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -77,8 +79,8 @@ fun DateCalendar(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clickable(
-//                                    indication = null,
-//                                    interactionSource = remember { MutableInteractionSource() }
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
                                 ) {
                                     val year = currMonthCalendarInfo[i + idx * 7].year
                                     val month = currMonthCalendarInfo[i + idx * 7].month
