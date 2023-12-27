@@ -8,6 +8,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
@@ -63,12 +64,21 @@ fun MyPageScreen(
             }
         }
     // 갤러리에서 사진 가져오기
+//    val takePhotoFromAlbumLauncher =
+//        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+//            Log.e("GetImage", "success")
+//            Log.e("GetImage", "${uri}")
+//            uri?.let {
+//                viewModel.updateProfileImage(it)
+//            }
+//        }
+
     val takePhotoFromAlbumLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            Log.e("GetImage", "success")
-            Log.e("GetImage", "${uri}")
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            Log.e("PickImage", "success")
+            Log.e("PickImage", "${uri}")
             uri?.let {
-                viewModel.updateProfileImage(it)
+                viewModel.updateProfileImage(uri)
             }
         }
 
@@ -162,7 +172,7 @@ fun MyPageScreen(
                     .fillMaxWidth()
                     .height(40.dp)
                     .clickable {
-                        takePhotoFromAlbumLauncher.launch("image/*")
+                        takePhotoFromAlbumLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }
                     .padding(start = 20.dp),
                 contentAlignment = Alignment.CenterStart
