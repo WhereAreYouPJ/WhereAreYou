@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DatePicker
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -49,6 +53,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.domain.entity.schedule.Friend
@@ -68,6 +74,10 @@ fun NewScheduleContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 20.dp, end = 20.dp)
+            .scrollable(
+                state = rememberScrollState(),
+                orientation = Orientation.Vertical
+            )
     ) {
         val density = LocalDensity.current.density
         val isDatePickerDialogShowing = remember { mutableStateOf(false) }
@@ -128,11 +138,24 @@ fun NewScheduleContent(
                 }
             } else {
                 LazyRow {
-                    itemsIndexed(selectedFriendsList) { index, friend ->
-                        Text(
-                            modifier = Modifier.padding(end = 10.dp),
-                            text = friend.name
-                        )
+                    itemsIndexed(selectedFriendsList) { _, friend ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            GlideImage(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clip(RoundedCornerShape(50)),
+                                imageModel = { friend.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                                imageOptions = ImageOptions(
+                                    contentScale = ContentScale.FillWidth,
+                                )
+                            )
+                            Text(
+                                text = friend.name
+                            )
+                        }
+                        Spacer(Modifier.width(10.dp))
                     }
                 }
             }
@@ -158,28 +181,27 @@ fun NewScheduleContent(
                 painter = painterResource(id = R.drawable.baseline_calendar_month_24),
                 contentDescription = null
             )
-            Column() {
-                // 시작 날짜 선택
-                Text(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable { isDatePickerDialogShowing.value = true }
-                        .padding(10.dp),
-                    text = viewModel.appointmentDate.collectAsState().value,
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp
-                )
-                // 시작 시간 선택
-                Text(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable { isTimePickerDialogShowing.value = true }
-                        .padding(10.dp),
-                    text = viewModel.appointmentTime.collectAsState().value,
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp
-                )
-            }
+            Spacer(Modifier.width(10.dp))
+            // 시작 날짜 선택
+            Text(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable { isDatePickerDialogShowing.value = true }
+                    .padding(10.dp),
+                text = viewModel.appointmentDate.collectAsState().value,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
+            )
+            // 시작 시간 선택
+            Text(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable { isTimePickerDialogShowing.value = true }
+                    .padding(10.dp),
+                text = viewModel.appointmentTime.collectAsState().value,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
+            )
         }
 
 
@@ -290,6 +312,7 @@ fun NewScheduleContent(
         ) {
             Box(
                 modifier = Modifier
+                    .padding(bottom = 20.dp)
                     .fillMaxWidth()
                     .height(80.dp)
                     .background(
