@@ -67,6 +67,8 @@ class MyPageViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val cursor = application.contentResolver.query(uri, null, null, null, null)
             cursor?.moveToNext()
+            Log.e("columnCount", "${cursor?.columnNames?.toList()}")
+//            Log.e("document_id", "${cursor?.getString(cursor.getColumnIndex("document_id"))}")
             val path = cursor?.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
             val file = path?.let { File(it) }
             _imageUri.update {
@@ -82,7 +84,7 @@ class MyPageViewModel @Inject constructor(
                 val response = modifyMyInfoUseCase(accessToken, memberId, it)
                 LogUtil.printNetworkLog(response, "내 정보 수정")
                 when (response) {
-                    is NetworkResult.Success -> {  }
+                    is NetworkResult.Success -> { getMyInfo() }
                     is NetworkResult.Error -> {  }
                     is NetworkResult.Exception -> {  }
                 }
