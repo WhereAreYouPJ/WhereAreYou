@@ -93,6 +93,10 @@ class NewScheduleViewModel @Inject constructor(
     fun addNewSchedule(
         moveToBackScreen: () -> Unit,
     ) {
+        if (_title.value == "") {
+            Toast.makeText(application, "제목을 입력하세요", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (_appointmentDate.value == "약속 날짜 선택") {
             Toast.makeText(application, "약속 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
             return
