@@ -157,6 +157,7 @@ fun BriefScheduleList(
                     var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
                     var appointmentMinute = item.appointmentTime.split("T")[1].split(":")[0].toInt()
                     var appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
+                    if (appointmentHour == 0) appointmentHour = 12
 
                     Column(
                         modifier = Modifier
@@ -167,7 +168,7 @@ fun BriefScheduleList(
                             .clickable {
                                 moveToDetailScreen(item.scheduleId)
                             }
-                            .padding(20.dp)
+                            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
                     ) {
                         Text(
                             text = "${item.title}",
@@ -175,7 +176,7 @@ fun BriefScheduleList(
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = String.format("$appointmentTimeAMPM %02d:%02d", appointmentHour, appointmentMinute),
+                            text = "$appointmentTimeAMPM ${appointmentHour}:${String.format("%02d", appointmentMinute)}",
                             fontSize = 20.sp
                         )
                     }
