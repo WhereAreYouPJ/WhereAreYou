@@ -1,6 +1,7 @@
 package com.whereareyounow.ui.home.schedule.newschedule
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,152 +57,39 @@ fun FriendsListScreen(
     BackHandler {
         moveToNewScheduleScreen()
     }
-    val density = LocalDensity.current.density
     val selectedFriendsList = viewModel.selectedFriendsList.collectAsState().value
+    val inputFriendName = viewModel.inputText.collectAsState().value
+    val friendsList = viewModel.friendsListCopy.collectAsState().value
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 20.dp, end = 20.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height((GlobalValue.topBarHeight / density).dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .size((GlobalValue.topBarHeight / density / 3 * 2).dp)
-                    .clip(RoundedCornerShape(50))
-                    .clickable { moveToNewScheduleScreen() },
-                painter = painterResource(id = R.drawable.arrow_back),
-                contentDescription = null
-            )
-            Text(
-                text = "친구추가",
-                fontSize = 30.sp
-            )
-        }
+        // 상단바
+        FriendsListScreenTopBar(moveToNewScheduleScreen)
+
         Spacer(Modifier.height(10.dp))
-        LazyRow() {
-            itemsIndexed(selectedFriendsList) { _, friend ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    GlideImage(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(RoundedCornerShape(50)),
-                        imageModel = { friend.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.FillWidth,
-                        )
-                    )
-                    Text(
-                        text = friend.name
-                    )
-                }
-                Spacer(Modifier.width(10.dp))
-            }
-        }
+
+        // 추가된 친구 목록
+        AddedFriendsList(selectedFriendsList)
+
         Spacer(Modifier.height(10.dp))
-        // 텍스트 입력창
-        val inputFriendName = viewModel.inputText.collectAsState().value
-//        BasicTextField(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .background(
-//                    color = Color.Cyan
-//                ),
-//            value = viewModel.inputText.collectAsState().value,
-//            onValueChange = {
-//                viewModel.updateInputText(it)
-//            },
-//            textStyle = TextStyle(fontSize = 20.sp)
-//        )
-        BasicTextField(
-            value = inputFriendName,
-            onValueChange = { viewModel.updateInputText(it) },
-            textStyle = TextStyle(fontSize = 20.sp),
-            singleLine = true,
-            decorationBox = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = Color(0xFF9B99AB)
-                            ),
-                            shape = RoundedCornerShape(50)
-                        )
-                        .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.search_24px),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(color = Color(0xFF9B99AB))
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    it()
-                }
-            }
+
+        // 친구 검색창
+        FriendSearchTextField(
+            inputFriendName = inputFriendName,
+            updateInputText = viewModel::updateInputText
         )
 
-
         Spacer(Modifier.height(20.dp))
-        val friendsList = viewModel.friendsListCopy.collectAsState().value
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
-            itemsIndexed(friendsList) { _, friend ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            viewModel.selectFriend(friend)
-                        }
-                        .padding(top = 10.dp, bottom = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    GlideImage(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(RoundedCornerShape(50)),
-                        imageModel = { friend.first.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.FillWidth,
-                        )
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = friend.first.name,
-                        fontSize = 24.sp
-                    )
-                    Spacer(Modifier.weight(1f))
-                    Image(
-                        modifier = Modifier
-                            .size(30.dp),
-                        painter = when (friend.second) {
-                            true -> painterResource(id = R.drawable.check_yellow)
-                            false -> painterResource(id = R.drawable.baseline_radio_button_unchecked_24)
-                        },
-                        contentDescription = null
-                    )
-                }
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(0.5.dp)
-                        .background(
-                            color = Color(0xFFAAAAAA)
-                        )
-                )
-            }
-        }
+
+        // 검색된 친구 목록
+        SearchedFriendsList(
+            friendsList = friendsList,
+            selectFriend = viewModel::selectFriend
+        )
+
         Box(
             modifier = Modifier
                 .padding(bottom = 20.dp)
@@ -227,10 +116,151 @@ fun FriendsListScreen(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun AddFriendsScreenPreview() {
-//    WhereAreYouTheme() {
-//        AddFriendsScreen()
-//    }
-//}
+@Composable
+fun FriendsListScreenTopBar(
+    moveToNewScheduleScreen: () -> Unit
+) {
+    val density = LocalDensity.current.density
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height((GlobalValue.topBarHeight / density).dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .size((GlobalValue.topBarHeight / density / 3 * 2).dp)
+                .clip(RoundedCornerShape(50))
+                .clickable { moveToNewScheduleScreen() },
+            painter = painterResource(id = R.drawable.arrow_back),
+            contentDescription = null
+        )
+        Text(
+            text = "친구추가",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+fun FriendSearchTextField(
+    inputFriendName: String,
+    updateInputText: (String) -> Unit,
+) {
+    BasicTextField(
+        value = inputFriendName,
+        onValueChange = updateInputText,
+        textStyle = TextStyle(fontSize = 20.sp),
+        singleLine = true,
+        decorationBox = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = Color(0xFF9B99AB)
+                        ),
+                        shape = RoundedCornerShape(50)
+                    )
+                    .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.search_24px),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(color = Color(0xFF9B99AB))
+                )
+                Spacer(Modifier.width(10.dp))
+                it()
+            }
+        }
+    )
+}
+
+@Composable
+fun AddedFriendsList(
+    selectedFriendsList: List<Friend>
+) {
+    LazyRow(
+        modifier = Modifier
+            .animateContentSize { _, _ ->  }
+    ) {
+        itemsIndexed(selectedFriendsList) { _, friend ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                GlideImage(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(RoundedCornerShape(50)),
+                    imageModel = { friend.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                    imageOptions = ImageOptions(
+                        contentScale = ContentScale.FillWidth,
+                    )
+                )
+                Text(
+                    text = friend.name
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+        }
+    }
+}
+
+@Composable
+fun ColumnScope.SearchedFriendsList(
+    friendsList: List<Pair<Friend, Boolean>>,
+    selectFriend: (Pair<Friend, Boolean>) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.weight(1f)
+    ) {
+        itemsIndexed(friendsList) { _, friend ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        selectFriend(friend)
+                    }
+                    .padding(top = 10.dp, bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                GlideImage(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(RoundedCornerShape(50)),
+                    imageModel = { friend.first.profileImgUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                    imageOptions = ImageOptions(
+                        contentScale = ContentScale.FillWidth,
+                    )
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = friend.first.name,
+                    fontSize = 24.sp
+                )
+                Spacer(Modifier.weight(1f))
+                Image(
+                    modifier = Modifier
+                        .size(30.dp),
+                    painter = when (friend.second) {
+                        true -> painterResource(id = R.drawable.check_yellow)
+                        false -> painterResource(id = R.drawable.baseline_radio_button_unchecked_24)
+                    },
+                    contentDescription = null
+                )
+            }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .background(
+                        color = Color(0xFFAAAAAA)
+                    )
+            )
+        }
+    }
+}
