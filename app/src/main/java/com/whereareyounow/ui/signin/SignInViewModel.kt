@@ -164,9 +164,10 @@ class SignInViewModel @Inject constructor(
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
+                    val sortedList = data.friendsList.sortedBy { it.name }
                     FriendProvider.friendsList.clear()
-                    for (i in 0 until data.friendsList.size) {
-                        FriendProvider.friendsList.add(data.friendsList[i].copy(number = i, userId = ""))
+                    for (i in sortedList.indices) {
+                        FriendProvider.friendsList.add(sortedList[i].copy(number = i, userId = ""))
                     }
                 }
             }
