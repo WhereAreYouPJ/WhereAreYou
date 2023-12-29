@@ -14,6 +14,7 @@ import com.whereareyounow.data.Constants
 import com.whereareyounow.ui.home.HomeScreen
 import com.whereareyounow.ui.home.Tablayout
 import com.whereareyounow.ui.home.friend.addfriend.AddFriendScreen
+import com.whereareyounow.ui.home.mypage.modifyinfo.ModifyInfoScreen
 import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.home.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.signin.AgreeScreen
@@ -99,7 +100,8 @@ fun MainNavigation(
                 moveToStartScreen = {
                     navController.popBackStack()
                     navController.navigate(Constants.ROUTE_MAIN_START)
-                }
+                },
+                moveToModifyInfoScreen = { navController.navigate(Constants.ROUTE_MODIFY_INFO) }
             )
         }
 
@@ -125,6 +127,17 @@ fun MainNavigation(
         ) {
             AddFriendScreen(
                 moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+        // 회원 정보 수정 화면
+        composable(
+            route = Constants.ROUTE_MODIFY_INFO
+        ) {
+            ModifyInfoScreen(
+                moveToBackScreen = {
+                    navController.popBackStack()
+                }
             )
         }
 
