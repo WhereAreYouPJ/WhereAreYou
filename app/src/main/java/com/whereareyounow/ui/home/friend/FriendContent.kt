@@ -30,7 +30,7 @@ fun FriendContent(
 //            text = "이서영"
 //        )
 //    }
-    LazyColumn() {
+    LazyColumn {
         item {
             Box(
                 modifier = Modifier.height(40.dp),
