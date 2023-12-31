@@ -126,6 +126,7 @@ class CalendarViewModel @Inject constructor(
         if (date != _date.value) {
             _date.update { date }
             updateCurrentDateBriefScheduleInfo()
+            updateCurrentMonthCalendarInfo()
         }
     }
 
@@ -163,9 +164,6 @@ class CalendarViewModel @Inject constructor(
         _month.update { todayInfo[1] }
         _date.update { todayInfo[2] }
         _dayOfWeek.update { todayInfo[3] }
-        updateCurrentDateBriefScheduleInfo()
-        updateCurrentMonthCalendarInfo()
-        updateDate(todayInfo[2])
     }
 
     enum class CalendarState {
