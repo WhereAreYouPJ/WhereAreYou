@@ -28,9 +28,7 @@ fun UserInfoContent(
             .size(200.dp)
             .clip(RoundedCornerShape(50)),
         imageModel = { imageUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
-        imageOptions = ImageOptions(
-            contentScale = ContentScale.FillWidth,
-        )
+        imageOptions = ImageOptions(contentScale = ContentScale.Crop)
     )
     Spacer(Modifier.height(20.dp))
     Box(
