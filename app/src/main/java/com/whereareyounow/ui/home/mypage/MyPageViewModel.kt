@@ -35,7 +35,6 @@ class MyPageViewModel @Inject constructor(
     private val saveMemberIdUseCase: SaveMemberIdUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
-    private val modifyMyInfoUseCase: ModifyMyInfoUseCase,
     private val getMemberDetailsUseCase: GetMemberDetailsUseCase
 
 ) : AndroidViewModel(application) {
@@ -60,39 +59,7 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
-    @SuppressLint("Recycle", "Range")
-    fun updateProfileImage(uri: Uri) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            val cursor = application.contentResolver.query(uri, null, null, null, null)
-            cursor?.moveToNext()
-            Log.e("columnCount", "${cursor?.columnNames?.toList()}")
-//            Log.e("document_id", "${cursor?.getString(cursor.getColumnIndex("document_id"))}")
-            val path = cursor?.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
-            val file = path?.let { File(it) }
-            _imageUri.update {
-                path
-            }
-            Log.e("File", "${file}")
-//            val file = File.createTempFile(
-//                prefix = "${System.currentTimeMillis()}",
-//                suffix = ".jpg",
-//                directory = application.cacheDir
-//            )
-            file?.let {
-                val response = modifyMyInfoUseCase(accessToken, memberId, it)
-                LogUtil.printNetworkLog(response, "내 정보 수정")
-                when (response) {
-                    is NetworkResult.Success -> { getMyInfo() }
-                    is NetworkResult.Error -> {  }
-                    is NetworkResult.Exception -> {  }
-                }
-            }
-        }
-    }
-
-    private fun getMyInfo() {
+    fun getMyInfo() {
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
@@ -110,9 +77,5 @@ class MyPageViewModel @Inject constructor(
                 is NetworkResult.Exception -> {  }
             }
         }
-    }
-
-    init {
-        getMyInfo()
     }
 }
