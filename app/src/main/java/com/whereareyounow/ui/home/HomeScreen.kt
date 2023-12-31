@@ -36,6 +36,7 @@ fun HomeScreen(
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToStartScreen: () -> Unit,
+    moveToModifyInfoScreen: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val viewType = viewModel.viewType.collectAsState().value
@@ -77,7 +78,8 @@ fun HomeScreen(
             ViewType.MyPage -> {
                 MyPageScreen(
                     paddingValues = it,
-                    moveToStartScreen = moveToStartScreen
+                    moveToStartScreen = moveToStartScreen,
+                    moveToModifyInfoScreen = moveToModifyInfoScreen
                 )
             }
         }
