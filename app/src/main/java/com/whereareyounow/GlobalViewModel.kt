@@ -29,93 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GlobalViewModel @Inject constructor(
-    private val signInUseCase: SignInUseCase,
-    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val saveMemberIdUseCase: SaveMemberIdUseCase,
-    private val getMemberIdUseCase: GetMemberIdUseCase,
-    private val sendUserLocationUseCase: SendUserLocationUseCase,
-    private val locationUtil: LocationUtil,
     private val application: Application
 ) : AndroidViewModel(application) {
-
-    private var currentLocation = Coordinate(0.0, 0.0)
-    // 임시 로그인
-    private fun signIn() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val request = SignInRequest("user1", "00")
-            val signInResult = signInUseCase(request)
-            when (signInResult) {
-                is NetworkResult.Success -> {
-                    if (signInResult.data != null) {
-                        Log.e("GlobalViewModel", signInResult.data.toString())
-                        saveAccessTokenUseCase("Bearer " + signInResult.data!!.accessToken)
-                        saveMemberIdUseCase(signInResult.data!!.memberId)
-                    }
-                }
-                is NetworkResult.Error -> { Log.e("GlobalViewModel", "error") }
-                is NetworkResult.Exception -> { Log.e("GlobalViewModel", "${signInResult.e.message}") }
-            }
-            val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            Log.e("GlobalViewModel", "$memberId $accessToken")
-        }
-    }
-
-    fun checkEnvironment(
-        moveToSignInScreen: () -> Unit,
-        moveToMainScreen: () -> Unit,
-        locationPermissionRequest: () -> Unit
-    ) {
-        viewModelScope.launch(Dispatchers.Default) {
-            // 권한 확인
-
-
-            // 인터넷 연결상태 확인
-
-
-            // 로그인 상태 확인
-
-
-        }
-    }
-
-    fun checkIsSignedIn(): Boolean {
-        var isSignedIn = false
-        runBlocking {
-            delay(2000)
-            if (getMemberIdUseCase().first().isNotEmpty()) {
-                isSignedIn = false
-            }
-        }
-        return isSignedIn
-    }
-
-    private fun getLocation() {
-        viewModelScope.launch(Dispatchers.Default) {
-            while (true) {
-                delay(20000)
-//                Log.e("GlobalViewModel", "${currentLocation.latitude}, ${currentLocation.longitude}")
-                sendUserLocation(currentLocation.latitude, currentLocation.longitude)
-            }
-        }
-    }
-
-    fun sendUserLocation(lat: Double, lng: Double) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            val request = SendUserLocationRequest(memberId, lat, lng)
-            val result = sendUserLocationUseCase(accessToken, request)
-            when (result) {
-                is NetworkResult.Success -> {
-//                    Log.e("GlobalViewModel", result.data.toString())
-                }
-                is NetworkResult.Error -> { Log.e("GlobalViewModel", "error") }
-                is NetworkResult.Exception -> { Log.e("GlobalViewModel", "${result.e.message}") }
-            }
-        }
-    }
 
     fun getToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(
@@ -132,24 +47,5 @@ class GlobalViewModel @Inject constructor(
 //                Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()
             }
         )
-    }
-
-    fun checkNetworkState(
-        checkLocationPermission: () -> Unit,
-    ): Boolean {
-        if (NetworkManager.checkNetworkState()) {
-//            checkLo
-        } else {
-
-        }
-        return false
-    }
-
-    init {
-//        locationUtil.getCurrentLocation(latLng = currentLocation)
-//        signIn()
-//        getLocation()
-        getToken()
-//        checkNetworkState()
     }
 }
