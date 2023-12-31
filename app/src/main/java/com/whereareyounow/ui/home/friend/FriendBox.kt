@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -32,13 +33,10 @@ fun FriendBox(
     ) {
         GlideImage(
             modifier = Modifier
-                .width(40.dp)
-                .height(40.dp)
+                .size(30.dp)
                 .clip(RoundedCornerShape(50)),
             imageModel = { imageUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
-            imageOptions = ImageOptions(
-                contentScale = ContentScale.FillWidth,
-            )
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
         )
         Spacer(Modifier.width(10.dp))
         Text(
