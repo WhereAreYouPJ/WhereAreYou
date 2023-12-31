@@ -155,8 +155,8 @@ fun BriefScheduleList(
             ) {
                 itemsIndexed(currentDateBriefSchedule) { _, item ->
                     var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
-                    var appointmentMinute = item.appointmentTime.split("T")[1].split(":")[0].toInt()
-                    var appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
+                    val appointmentMinute = item.appointmentTime.split("T")[1].split(":")[1].toInt()
+                    val appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
                     if (appointmentHour == 0) appointmentHour = 12
 
                     Column(
