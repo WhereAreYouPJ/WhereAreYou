@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,42 +53,19 @@ import java.io.File
 fun MyPageScreen(
     paddingValues: PaddingValues,
     moveToStartScreen: () -> Unit,
+    moveToModifyInfoScreen: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    // 카메라로 사진 찍어서 가져오기
-    val takePhotoFromCameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
-            if (takenPhoto != null) {
-                Log.e("TakePicture", "success")
-            } else {
-                Log.e("TakePicture", "failed")
-            }
-        }
-    // 갤러리에서 사진 가져오기
-//    val takePhotoFromAlbumLauncher =
-//        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-//            Log.e("GetImage", "success")
-//            Log.e("GetImage", "${uri}")
-//            uri?.let {
-//                viewModel.updateProfileImage(it)
-//            }
-//        }
-
-    val takePhotoFromAlbumLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            Log.e("PickImage", "success")
-            Log.e("PickImage", "${uri}")
-            uri?.let {
-                viewModel.updateProfileImage(uri)
-            }
-        }
-
+    LaunchedEffect(true) {
+        viewModel.getMyInfo()
+    }
     val density = LocalDensity.current.density
     val name = viewModel.name.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // 파란 원 배경
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
@@ -96,6 +74,7 @@ fun MyPageScreen(
                 style = Fill
             )
         }
+        // 상단 유저 정보
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -144,6 +123,7 @@ fun MyPageScreen(
                 )
             }
         }
+        // 하단 설정 메뉴
         Column(
             modifier = Modifier
                 .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density).dp)
@@ -172,13 +152,13 @@ fun MyPageScreen(
                     .fillMaxWidth()
                     .height(40.dp)
                     .clickable {
-                        takePhotoFromAlbumLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        moveToModifyInfoScreen()
                     }
                     .padding(start = 20.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Text(
-                    text = "회원정보변경",
+                    text = "프로필 변경",
                     fontSize = 24.sp
                 )
             }
@@ -213,21 +193,4 @@ fun MyPageScreen(
 //            )
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.P)
-private fun Uri.parseBitmap(context: Context): Bitmap {
-    return when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        true -> {
-            val source = ImageDecoder.createSource(context.contentResolver, this)
-            ImageDecoder.decodeBitmap(source)
-        }
-        false -> {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, this)
-        }
-    }
-}
-
-private fun Uri.getFile(context: Context): File? {
-    return path?.let { File(it) }
 }
