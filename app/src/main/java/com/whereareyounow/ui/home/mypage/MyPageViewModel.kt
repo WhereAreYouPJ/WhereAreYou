@@ -5,8 +5,11 @@ import android.app.Application
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
+import com.whereareyounow.domain.usecase.signin.DeleteMemberUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
@@ -35,8 +38,8 @@ class MyPageViewModel @Inject constructor(
     private val saveMemberIdUseCase: SaveMemberIdUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
-    private val getMemberDetailsUseCase: GetMemberDetailsUseCase
-
+    private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
+    private val deleteMemberUseCase: DeleteMemberUseCase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -76,6 +79,34 @@ class MyPageViewModel @Inject constructor(
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> {  }
             }
+        }
+    }
+
+    fun withdrawAccount(
+        moveToStartScreen: () -> Unit,
+    ) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val request = DeleteMemberRequest(memberId)
+            val response = deleteMemberUseCase(accessToken, request)
+            LogUtil.printNetworkLog(response, "회원 탈퇴하기")
+            when (response) {
+                is NetworkResult.Success -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "회원탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
+                        moveToStartScreen()
+                    }
+                }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {  }
+            }
+        }
+    }
+
+    fun deleteCalendar() {
+        viewModelScope.launch(Dispatchers.Default) {
+
         }
     }
 }
