@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -96,7 +98,8 @@ fun FriendScreenTopBar(
                             Text(
                                 modifier = Modifier
                                     .padding(10.dp),
-                                text = "친구추가"
+                                text = "친구추가",
+                                fontFamily = nanumSquareNeo
                             )
                         }
                         Box(
@@ -124,15 +127,18 @@ fun FriendScreenTopBar(
                             Text(
                                 modifier = Modifier
                                     .padding(10.dp),
-                                text = "그룹추가"
+                                text = "그룹추가",
+                                fontFamily = nanumSquareNeo
                             )
                         }
                     }
                 }
                 Image(
                     modifier = Modifier
-                        .size(30.dp)
-                        .clickable { popupState.isVisible = true },
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .clickable { popupState.isVisible = true }
+                        .padding(10.dp),
                     painter = painterResource(id = R.drawable.baseline_add_circle_outline_24),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = Color(0xFF545454))
