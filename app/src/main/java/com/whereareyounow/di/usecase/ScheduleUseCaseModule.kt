@@ -5,13 +5,13 @@ import com.whereareyounow.domain.usecase.schedule.AcceptScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.CheckArrivalUseCase
 import com.whereareyounow.domain.usecase.schedule.DeleteScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleInvitationUseCase
+import com.whereareyounow.domain.usecase.schedule.ModifyScheduleDetailsUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleMemberUseCase
-import com.whereareyounow.domain.usecase.schedule.ModifyScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -80,8 +80,8 @@ object ScheduleUseCaseModule {
     @Provides
     fun provideModifyScheduleUseCase(
         repository: ScheduleRepository
-    ): ModifyScheduleUseCase {
-        return ModifyScheduleUseCase(repository)
+    ): ModifyScheduleDetailsUseCase {
+        return ModifyScheduleDetailsUseCase(repository)
     }
 
     @Provides
