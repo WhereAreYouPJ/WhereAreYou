@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -60,6 +61,9 @@ class MainActivity : ComponentActivity() {
     private fun updateGlobalValue() {
         val resources = application.resources
         val metrics = resources.displayMetrics
+        val density = metrics.density
+        val xdpi = metrics.xdpi
+        val ydpi = metrics.ydpi
         val statusBarResourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         // getDimension(): dimen.xml에 정의한 dp값을 기기에 맞게 px로 변환하여 반올림한 값을 int로 반환한다.
         val screenHeight = metrics.heightPixels
@@ -76,8 +80,13 @@ class MainActivity : ComponentActivity() {
         GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
         // 일별 간략 정보 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 3/5
         GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
-        GlobalValue.density = metrics.density
-        Log.e("GlobalValue", "${GlobalValue.screenHeightWithoutStatusBar}, ${GlobalValue.screenWidth}, ${GlobalValue.bottomNavBarHeight}, ${GlobalValue.topBarHeight}, ${GlobalValue.calendarViewHeight}, ${GlobalValue.dailyScheduleViewHeight}")
+        Log.e("ScreenValue", "screenHeightWithoutStatusBar: ${GlobalValue.screenHeightWithoutStatusBar} ${GlobalValue.screenHeightWithoutStatusBar / density}\n" +
+                "screenWidth: ${GlobalValue.screenWidth} ${GlobalValue.screenWidth / density}\n" +
+                "bottomNavBarHeight: ${GlobalValue.bottomNavBarHeight} ${GlobalValue.bottomNavBarHeight / density}\n" +
+                "topBarHeight: ${GlobalValue.topBarHeight} ${GlobalValue.topBarHeight / density}\n" +
+                "calendarViewHeight: ${GlobalValue.calendarViewHeight} ${GlobalValue.calendarViewHeight / density}\n" +
+                "dailyScheduleViewHeight: ${GlobalValue.dailyScheduleViewHeight} ${GlobalValue.dailyScheduleViewHeight / density}"
+        )
     }
 }
 
