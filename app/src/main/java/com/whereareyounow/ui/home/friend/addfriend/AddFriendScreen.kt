@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +38,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
@@ -71,31 +73,40 @@ private fun AddFriendScreen(
     moveToBackScreen: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AddFriendScreenTopBar(moveToBackScreen)
+
         Spacer(Modifier.height(20.dp))
+
         FriendIdTextField(
             inputId = inputId,
             updateInputId = updateInputId,
             clearInputId = clearInputId
         )
+
         Spacer(Modifier.height(20.dp))
+
         if (friendInfo != null) {
             UserInfoContent(
                 imageUrl = friendInfo.profileImgUrl,
                 userName = friendInfo.name
             )
         }
-        BottomButton(
-            searchFriend = when (buttonState) {
-                    AddFriendViewModel.ButtonState.SEARCH -> searchFriend
-                    AddFriendViewModel.ButtonState.REQUEST -> sendFriendRequest
-                },
+
+        Spacer(Modifier.weight(1f))
+
+        BottomOKButton(
             text = when (buttonState) {
                 AddFriendViewModel.ButtonState.SEARCH -> "검색"
                 AddFriendViewModel.ButtonState.REQUEST -> "친구추가"
+            },
+            onClick = when (buttonState) {
+                AddFriendViewModel.ButtonState.SEARCH -> searchFriend
+                AddFriendViewModel.ButtonState.REQUEST -> sendFriendRequest
             }
         )
     }
@@ -109,8 +120,7 @@ fun AddFriendScreenTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density).dp)
-            .padding(start = 20.dp, end = 20.dp),
+            .height((GlobalValue.topBarHeight / density).dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Image(
@@ -129,7 +139,8 @@ fun AddFriendScreenTopBar(
         ) {
             Text(
                 text = "친구추가",
-                fontSize = 30.sp
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Medium
             )
         }
     }
@@ -149,7 +160,6 @@ fun FriendIdTextField(
         decorationBox = {
             Box(
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp)
                     .fillMaxWidth()
                     .drawBehind {
                         val borderSize = 1.dp.toPx()
@@ -205,36 +215,6 @@ fun UserInfoContent(
     }
 }
 
-@Composable
-fun BottomButton(
-    searchFriend: () -> Unit,
-    text: String
-) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-                .height(80.dp)
-                .background(
-                    color = Color(0xFF2D2573),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .clickable { searchFriend() },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 20.sp
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun AddFriendScreenPreview1() {
@@ -244,51 +224,20 @@ private fun AddFriendScreenPreview1() {
             updateInputId = {  },
             clearInputId = {  },
             friendInfo = null,
-            buttonState = AddFriendViewModel.ButtonState.REQUEST,
+            buttonState = AddFriendViewModel.ButtonState.SEARCH,
             searchFriend = {  },
             sendFriendRequest = {  },
             moveToBackScreen = {  }
         )
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun AddFriendScreenPreview2() {
     WhereAreYouTheme {
         AddFriendScreen(
-            inputId = "",
-            updateInputId = {  },
-            clearInputId = {  },
-            friendInfo = null,
-            buttonState = AddFriendViewModel.ButtonState.REQUEST,
-            searchFriend = {  },
-            sendFriendRequest = {  },
-            moveToBackScreen = {  }
-        )
-    }
-}
-@Preview(showBackground = true)
-@Composable
-private fun AddFriendScreenPreview3() {
-    WhereAreYouTheme {
-        AddFriendScreen(
-            inputId = "",
-            updateInputId = {  },
-            clearInputId = {  },
-            friendInfo = null,
-            buttonState = AddFriendViewModel.ButtonState.REQUEST,
-            searchFriend = {  },
-            sendFriendRequest = {  },
-            moveToBackScreen = {  }
-        )
-    }
-}
-@Preview(showBackground = true)
-@Composable
-private fun AddFriendScreenPreview4() {
-    WhereAreYouTheme {
-        AddFriendScreen(
-            inputId = "",
+            inputId = "가나다라",
             updateInputId = {  },
             clearInputId = {  },
             friendInfo = null,
