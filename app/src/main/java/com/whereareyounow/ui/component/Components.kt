@@ -42,7 +42,7 @@ fun BottomOKButton(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun BottomOkButtonPreview() {
     WhereAreYouTheme {
