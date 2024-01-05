@@ -215,7 +215,7 @@ fun UserInfoContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AddFriendScreenPreview1() {
     WhereAreYouTheme {
@@ -232,7 +232,7 @@ private fun AddFriendScreenPreview1() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AddFriendScreenPreview2() {
     WhereAreYouTheme {
