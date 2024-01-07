@@ -5,6 +5,7 @@ import com.whereareyounow.domain.repository.SearchLocationRepository
 import com.whereareyounow.domain.usecase.location.GetLocationAddressUseCase
 import com.whereareyounow.domain.usecase.location.GetUserLocationUseCase
 import com.whereareyounow.domain.usecase.location.SendUserLocationUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
