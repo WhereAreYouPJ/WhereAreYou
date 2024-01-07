@@ -42,12 +42,12 @@ class MainActivity : ComponentActivity() {
             WhereAreYouTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = Color(0xFFFFFFFF)
                 ) {
                     val systemUiController = rememberSystemUiController()
 
                     systemUiController.setStatusBarColor(
-                        color = Color(0xFFFAFAFA),
+                        color = Color(0xFFFFFFFF),
                         darkIcons = true
                     )
                     MainNavigation()
