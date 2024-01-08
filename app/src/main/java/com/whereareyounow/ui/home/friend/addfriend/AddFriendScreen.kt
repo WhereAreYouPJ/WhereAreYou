@@ -39,6 +39,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
@@ -116,34 +117,10 @@ private fun AddFriendScreen(
 fun AddFriendScreenTopBar(
     moveToBackScreen: () -> Unit
 ) {
-    val density = LocalDensity.current.density
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density).dp),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Image(
-            modifier = Modifier
-                .size((GlobalValue.topBarHeight / density / 3 * 2).dp)
-                .clip(RoundedCornerShape(50))
-                .clickable { moveToBackScreen() },
-            painter = painterResource(id = R.drawable.arrow_back),
-            contentDescription = null
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "친구추가",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-    }
+    CustomTopBar(
+        title = "친구추가",
+        onBackButtonClicked = moveToBackScreen
+    )
 }
 
 @Composable
