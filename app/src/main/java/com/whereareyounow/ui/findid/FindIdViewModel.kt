@@ -1,6 +1,7 @@
 package com.whereareyounow.ui.findid
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,7 +58,11 @@ class FindIdViewModel @Inject constructor(
             when (response) {
                 is NetworkResult.Success -> {}
                 is NetworkResult.Error -> {}
-                is NetworkResult.Exception -> {}
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -74,7 +80,10 @@ class FindIdViewModel @Inject constructor(
                     moveToUserIdCheckingScreen()
                 }
                 is NetworkResult.Error -> {}
-                is NetworkResult.Exception -> {}
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }}
             }
         }
     }
