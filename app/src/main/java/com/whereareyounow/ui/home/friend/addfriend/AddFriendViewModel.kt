@@ -92,7 +92,7 @@ class AddFriendViewModel @Inject constructor(
             }
             is NetworkResult.Exception -> {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(application, "알 수 없는 예외가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
                     ""
                 }
             }
@@ -129,7 +129,9 @@ class AddFriendViewModel @Inject constructor(
                 }
             }
             is NetworkResult.Exception -> {
-                withContext(Dispatchers.Main) { Toast.makeText(application, "알 수 없는 예외가 발생했습니다.", Toast.LENGTH_SHORT).show() }
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -159,7 +161,9 @@ class AddFriendViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) { Toast.makeText(application, "알 수 없는 예외가 발생했습니다.", Toast.LENGTH_SHORT).show() }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
