@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.home.mypage
 
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -30,6 +31,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,24 +39,57 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.ui.component.CustomTextField
+import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.signup.CheckingButton
-import com.whereareyounow.ui.signup.InputBox
-import com.whereareyounow.ui.signup.InputBoxState
+import com.whereareyounow.ui.signup.Guideline
 import com.whereareyounow.ui.signup.UserIdState
 import com.whereareyounow.ui.signup.UserNameState
+import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
 fun InfoModificationScreen(
     moveToBackScreen: () -> Unit,
     viewModel: InfoModificationViewModel = hiltViewModel()
 ) {
-    val density = LocalDensity.current.density
-    val name = viewModel.name.collectAsState().value
-    val inputNameState = viewModel.inputNameState.collectAsState().value
-    val id = viewModel.id.collectAsState().value
-    val inputIdState = viewModel.inputIdState.collectAsState().value
+    val inputUserName = viewModel.inputUserName.collectAsState().value
+    val inputUserNameState = viewModel.inputUserNameState.collectAsState().value
+    val inputUserId = viewModel.inputUserId.collectAsState().value
+    val inputUserIdState = viewModel.inputUserIdState.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
+    InfoModificationScreen(
+        inputUserName = inputUserName,
+        updateInputUserName = viewModel::updateInputUserName,
+        inputUserNameState = inputUserNameState,
+        inputUserId = inputUserId,
+        updateInputUserId = viewModel::updateInputUserId,
+        checkIdDuplicate = viewModel::checkIdDuplicate,
+        inputUserIdState = inputUserIdState,
+        email = email,
+        profileImageUri = profileImageUri,
+        updateProfileImageUri = viewModel::updateProfileImageUri,
+        saveModifiedInfo = viewModel::saveModifiedInfo,
+        moveToBackScreen = moveToBackScreen
+    )
+}
+
+@Composable
+private fun InfoModificationScreen(
+    inputUserName: String,
+    updateInputUserName: (String) -> Unit,
+    inputUserNameState: UserNameState,
+    inputUserId: String,
+    updateInputUserId: (String) -> Unit,
+    checkIdDuplicate: () -> Unit,
+    inputUserIdState: UserIdState,
+    email: String,
+    profileImageUri: String?,
+    updateProfileImageUri: (Uri) -> Unit,
+    saveModifiedInfo: (() -> Unit) -> Unit,
+    moveToBackScreen: () -> Unit
+) {
+    val density = LocalDensity.current.density
 
     // 카메라로 사진 찍어서 가져오기
     val takePhotoFromCameraLauncher =
@@ -80,7 +115,7 @@ fun InfoModificationScreen(
             Log.e("PickImage", "success")
             Log.e("PickImage", "${uri}")
             uri?.let {
-                viewModel.updateProfileImageUri(uri)
+                updateProfileImageUri(uri)
             }
         }
 
@@ -91,7 +126,7 @@ fun InfoModificationScreen(
     ) {
         TopBar(
             moveToBackScreen = moveToBackScreen,
-            saveModifiedInfo = { viewModel.saveModifiedInfo(moveToBackScreen) }
+            saveModifiedInfo = { saveModifiedInfo(moveToBackScreen) }
         )
         Column(
             modifier = Modifier
@@ -105,7 +140,11 @@ fun InfoModificationScreen(
                     .size(200.dp)
                     .clip(RoundedCornerShape(50))
                     .clickable {
-                        takePhotoFromAlbumLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        takePhotoFromAlbumLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
                     },
                 imageModel = { profileImageUri ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
                 imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
@@ -116,29 +155,29 @@ fun InfoModificationScreen(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
+            // 사용자명 입력
             Text(
                 text = "이름",
                 fontSize = 20.sp
             )
-            InputBox(
-                hint = "사용자명",
-                inputText = name,
-                onValueChange = viewModel::updateName,
-                inputBoxState = when (inputNameState) {
-                    UserNameState.EMPTY -> InputBoxState.IDLE
-                    UserNameState.SATISFIED -> InputBoxState.SATISFIED
-                    UserNameState.UNSATISFIED -> InputBoxState.UNSATISFIED
-                },
-                isPassword = false,
-                guide = when (inputNameState) {
-                    UserNameState.EMPTY -> ""
-                    UserNameState.SATISFIED -> "사용 가능한 사용자명입니다."
-                    UserNameState.UNSATISFIED -> "사용자명은 4~10자의 한글, 영문 대/소문자 조합으로 입력해주세요."
-                },
+            Spacer(Modifier.height(10.dp))
+            UserNameTextField(
+                inputUserName = inputUserName,
+                updateInputUserName = updateInputUserName,
+                inputUserNameState = inputUserNameState
             )
+            if (inputUserNameState == UserNameState.UNSATISFIED) {
+                Guideline(text = "사용자명은 4~10자의 한글, 영문 대/소문자 조합으로 입력해주세요.")
+            }
 
             Spacer(Modifier.height(20.dp))
 
+            // 아이디 입력
+            Text(
+                text = "아이디",
+                fontSize = 20.sp
+            )
+            Spacer(Modifier.height(10.dp))
             Row(
                 modifier = Modifier
                     .height(IntrinsicSize.Min)
@@ -146,30 +185,21 @@ fun InfoModificationScreen(
             ) {
                 // 아이디 입력창
                 Box(modifier = Modifier.weight(1f)) {
-                    InputBox(
-                        hint = "아이디",
-                        inputText = id,
-                        onValueChange = viewModel::updateId,
-                        inputBoxState = when (inputIdState) {
-                            UserIdState.EMPTY -> InputBoxState.IDLE
-                            UserIdState.SATISFIED -> InputBoxState.IDLE
-                            UserIdState.UNSATISFIED -> InputBoxState.UNSATISFIED
-                            UserIdState.DUPLICATED -> InputBoxState.UNSATISFIED
-                            UserIdState.UNIQUE -> InputBoxState.SATISFIED
-                        },
-                        isPassword = false,
-                        guide = when (inputIdState) {
-                            UserIdState.EMPTY -> ""
-                            UserIdState.SATISFIED -> "중복 확인을 해주세요."
-                            UserIdState.UNSATISFIED -> "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요."
-                            UserIdState.DUPLICATED -> "이미 존재하는 아이디입니다."
-                            UserIdState.UNIQUE -> "사용 가능한 아이디입니다."
-                        }
+                    UserIdTextField(
+                        inputUserId = inputUserId,
+                        updateInputUserId = updateInputUserId,
+                        inputUserIdState = inputUserIdState
                     )
                 }
                 Spacer(Modifier.width(10.dp))
                 // 중복확인 버튼
-                CheckingButton(text = "중복확인") { viewModel.checkIdDuplicate() }
+                CheckingButton(text = "중복확인") { checkIdDuplicate() }
+            }
+            if (inputUserIdState == UserIdState.UNSATISFIED) {
+                Guideline(text = "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요.")
+            }
+            if (inputUserIdState == UserIdState.DUPLICATED) {
+                Guideline(text = "이미 존재하는 아이디입니다.")
             }
         }
     }
@@ -189,7 +219,7 @@ fun TopBar(
     ) {
         Image(
             modifier = Modifier
-                .size((GlobalValue.topBarHeight / density / 3 * 2).dp)
+                .size((GlobalValue.topBarHeight / density / 2).dp)
                 .clip(RoundedCornerShape(50))
                 .clickable { moveToBackScreen() },
             painter = painterResource(id = R.drawable.arrow_back),
@@ -204,7 +234,7 @@ fun TopBar(
             Text(
                 text = "마이페이지",
                 fontWeight = FontWeight.Bold,
-                fontSize = 30.sp
+                fontSize = 26.sp
             )
         }
         Text(
@@ -214,6 +244,65 @@ fun TopBar(
                     saveModifiedInfo()
                 },
             text = "저장"
+        )
+    }
+}
+
+@Composable
+private fun UserNameTextField(
+    inputUserName: String,
+    updateInputUserName: (String) -> Unit,
+    inputUserNameState: UserNameState
+) {
+    CustomTextField(
+        hint = "사용자명",
+        inputText = inputUserName,
+        onValueChange = updateInputUserName,
+        textFieldState = when (inputUserNameState) {
+            UserNameState.EMPTY -> CustomTextFieldState.IDLE
+            UserNameState.SATISFIED -> CustomTextFieldState.SATISFIED
+            UserNameState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+        }
+    )
+}
+
+@Composable
+private fun UserIdTextField(
+    inputUserId: String,
+    updateInputUserId: (String) -> Unit,
+    inputUserIdState: UserIdState
+) {
+    CustomTextField(
+        hint = "아이디",
+        inputText = inputUserId,
+        onValueChange = updateInputUserId,
+        textFieldState = when (inputUserIdState) {
+            UserIdState.EMPTY -> CustomTextFieldState.IDLE
+            UserIdState.SATISFIED -> CustomTextFieldState.IDLE
+            UserIdState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            UserIdState.DUPLICATED -> CustomTextFieldState.UNSATISFIED
+            UserIdState.UNIQUE -> CustomTextFieldState.SATISFIED
+        }
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun InfoModificationScreenPreview() {
+    WhereAreYouTheme {
+        InfoModificationScreen(
+            inputUserName = "아이디",
+            updateInputUserName = {},
+            inputUserNameState = UserNameState.EMPTY,
+            inputUserId = "유저 아이디",
+            updateInputUserId = {},
+            checkIdDuplicate = {},
+            inputUserIdState = UserIdState.EMPTY,
+            email = "example@gmail.com",
+            profileImageUri = "",
+            updateProfileImageUri = {},
+            saveModifiedInfo = {},
+            moveToBackScreen = {}
         )
     }
 }
