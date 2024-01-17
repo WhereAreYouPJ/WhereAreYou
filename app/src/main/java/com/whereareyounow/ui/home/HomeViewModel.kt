@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    application: Application
+    private val application: Application
 ) : AndroidViewModel(application) {
 
     private val _viewType = MutableStateFlow(ViewType.Calendar)
