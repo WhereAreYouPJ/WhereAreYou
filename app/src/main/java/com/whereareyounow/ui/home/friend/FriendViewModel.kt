@@ -2,6 +2,7 @@ package com.whereareyounow.ui.home.friend
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +49,11 @@ class FriendViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             // 가져온 친구 memberId 리스트로 친구 상세정보 리스트를 가져온다.
@@ -72,11 +78,14 @@ class FriendViewModel @Inject constructor(
                         friendsList.addAll(sortedList)
                         FriendProvider.friendsList.clear()
                         FriendProvider.friendsList.addAll(sortedList)
-                        Log.e("getFriendIds Success", "${sortedList}")
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

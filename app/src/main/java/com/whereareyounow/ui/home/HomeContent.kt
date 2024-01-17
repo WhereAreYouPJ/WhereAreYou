@@ -12,8 +12,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -30,7 +28,7 @@ import com.whereareyounow.ui.home.schedule.calendar.ScheduleScreen
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
-fun HomeScreen(
+fun HomeContent(
     moveToAddScheduleScreen: () -> Unit,
     moveToDetailScreen: (String) -> Unit,
     moveToAddFriendScreen: () -> Unit,
@@ -40,11 +38,31 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val viewType = viewModel.viewType.collectAsState().value
-    val isNavigationBarShowing = remember { mutableStateOf(true)}
+    HomeContent(
+        viewType = viewType,
+        moveToAddScheduleScreen = moveToAddScheduleScreen,
+        moveToDetailScreen = moveToDetailScreen,
+        moveToAddFriendScreen = moveToAddFriendScreen,
+        moveToAddGroupScreen = moveToAddGroupScreen,
+        moveToStartScreen = moveToStartScreen,
+        moveToModifyInfoScreen = moveToModifyInfoScreen
+    )
+}
+
+@Composable
+private fun HomeContent(
+    viewType: ViewType,
+    moveToAddScheduleScreen: () -> Unit,
+    moveToDetailScreen: (String) -> Unit,
+    moveToAddFriendScreen: () -> Unit,
+    moveToAddGroupScreen: () -> Unit,
+    moveToStartScreen: () -> Unit,
+    moveToModifyInfoScreen: () -> Unit
+) {
     Scaffold(
         topBar = {},
         bottomBar = {
-            if (isNavigationBarShowing.value) { HomeNavigationBar() }
+            HomeNavigationBar()
         },
         floatingActionButton = {
             if (viewType == ViewType.Calendar) {
@@ -132,7 +150,6 @@ fun HomeNavigationBar(
 }
 
 class NoRippleInteractionSource : MutableInteractionSource {
-
     override val interactions = emptyFlow<Interaction>()
     override suspend fun emit(interaction: Interaction) {}
     override fun tryEmit(interaction: Interaction) = false
