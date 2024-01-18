@@ -77,7 +77,11 @@ class MyPageViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -99,7 +103,11 @@ class MyPageViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
