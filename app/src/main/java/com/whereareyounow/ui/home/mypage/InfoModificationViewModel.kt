@@ -41,25 +41,25 @@ class InfoModificationViewModel @Inject constructor(
     private val nameCondition = Regex("^[\\uAC00-\\uD7A3a-zA-Z]{4,10}\$")
     private val idCondition = Regex("^[a-z][a-z0-9]{3,9}\$")
 
-    private var originalName = ""
-    private var originalId = ""
+    private var originalUserName = ""
+    private var originalUserId = ""
 
-    private val _name = MutableStateFlow("")
-    val name: StateFlow<String> = _name
-    private val _inputNameState = MutableStateFlow(UserNameState.EMPTY)
-    val inputNameState: StateFlow<UserNameState> = _inputNameState
-    private val _id = MutableStateFlow("")
-    val id: StateFlow<String> = _id
-    private val _inputIdState = MutableStateFlow(UserIdState.EMPTY)
-    val inputIdState: StateFlow<UserIdState> = _inputIdState
+    private val _inputUserName = MutableStateFlow("")
+    val inputUserName: StateFlow<String> = _inputUserName
+    private val _inputUserNameState = MutableStateFlow(UserNameState.EMPTY)
+    val inputUserNameState: StateFlow<UserNameState> = _inputUserNameState
+    private val _inputUserId = MutableStateFlow("")
+    val inputUserId: StateFlow<String> = _inputUserId
+    private val _inputUserIdState = MutableStateFlow(UserIdState.EMPTY)
+    val inputUserIdState: StateFlow<UserIdState> = _inputUserIdState
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
-    private val _profileImageUri = MutableStateFlow<String>("")
-    val profileImageUri: StateFlow<String> = _profileImageUri
+    private val _profileImageUri = MutableStateFlow<String?>(null)
+    val profileImageUri: StateFlow<String?> = _profileImageUri
 
-    fun updateName(name: String) {
-        _name.update { name }
-        _inputNameState.update {
+    fun updateInputUserName(name: String) {
+        _inputUserName.update { name }
+        _inputUserNameState.update {
             if (name == "") {
                 UserNameState.EMPTY
             } else {
@@ -68,9 +68,9 @@ class InfoModificationViewModel @Inject constructor(
         }
     }
 
-    fun updateId(id: String) {
-        _id.update { id }
-        _inputIdState.update {
+    fun updateInputUserId(id: String) {
+        _inputUserId.update { id }
+        _inputUserIdState.update {
             if (id == "") {
                 UserIdState.EMPTY
             } else {
@@ -92,16 +92,20 @@ class InfoModificationViewModel @Inject constructor(
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
-                        originalName = data.userName
-                        originalId = data.userId
-                        _name.update { data.userName }
-                        _id.update { data.userId }
+                        originalUserName = data.userName
+                        originalUserId = data.userId
+                        _inputUserName.update { data.userName }
+                        _inputUserId.update { data.userId }
                         _email.update { data.email }
-                        _profileImageUri.update { data.profileImage ?: "" }
+                        _profileImageUri.update { data.profileImage }
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -109,18 +113,20 @@ class InfoModificationViewModel @Inject constructor(
 
     fun checkIdDuplicate() {
         viewModelScope.launch {
-            if (_inputIdState.value == UserIdState.SATISFIED) {
-                val response = checkIdDuplicateUseCase(_id.value)
+            if (_inputUserIdState.value == UserIdState.SATISFIED) {
+                val response = checkIdDuplicateUseCase(_inputUserId.value)
                 LogUtil.printNetworkLog(response, "아이디 중복 체크")
                 when (response) {
                     is NetworkResult.Success -> {
-                        _inputIdState.update { UserIdState.UNIQUE }
+                        _inputUserIdState.update { UserIdState.UNIQUE }
                     }
                     is NetworkResult.Error -> {
-                        _inputIdState.update { UserIdState.DUPLICATED }
+                        _inputUserIdState.update { UserIdState.DUPLICATED }
                     }
                     is NetworkResult.Exception -> {
-
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } else {
@@ -131,7 +137,7 @@ class InfoModificationViewModel @Inject constructor(
         }
     }
 
-    @SuppressLint("Range")
+    @SuppressLint("Range", "Recycle")
     fun saveModifiedInfo(
         moveToBackScreen: () -> Unit
     ) {
@@ -139,23 +145,23 @@ class InfoModificationViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             var imageFile: File? = null
-            if (_profileImageUri.value.contains("content")) {
-                val cursor = application.contentResolver.query(_profileImageUri.value.toUri(), null, null, null, null)
+            if (_profileImageUri.value?.contains("content") == true) {
+                val cursor = application.contentResolver.query(_profileImageUri.value!!.toUri(), null, null, null, null)
                 cursor?.moveToNext()
                 val path = cursor?.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
                 imageFile = path?.let { File(it) }
             }
-            if (_id.value == originalId && imageFile == null) {
+            if (_inputUserId.value == originalUserId && imageFile == null) {
                 withContext(Dispatchers.Main) {
                     moveToBackScreen()
                 }
             } else {
-                val response: NetworkResult<Unit> = if (_id.value == originalId && imageFile != null) {
+                val response: NetworkResult<Unit> = if (_inputUserId.value == originalUserId && imageFile != null) {
                     modifyMyInfoUseCase(accessToken, memberId, imageFile, "")
-                } else if (_id.value != originalId && imageFile == null) {
-                    modifyMyInfoUseCase(accessToken, memberId, null, _id.value)
+                } else if (_inputUserId.value != originalUserId && imageFile == null) {
+                    modifyMyInfoUseCase(accessToken, memberId, null, _inputUserId.value)
                 } else {
-                    modifyMyInfoUseCase(accessToken, memberId, imageFile, _id.value)
+                    modifyMyInfoUseCase(accessToken, memberId, imageFile, _inputUserId.value)
                 }
                 LogUtil.printNetworkLog(response, "내 정보 수정하기")
                 when (response) {
@@ -165,7 +171,11 @@ class InfoModificationViewModel @Inject constructor(
                         }
                     }
                     is NetworkResult.Error -> {  }
-                    is NetworkResult.Exception -> {  }
+                    is NetworkResult.Exception -> {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
