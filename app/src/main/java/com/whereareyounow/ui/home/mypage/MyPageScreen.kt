@@ -1,16 +1,5 @@
 package com.whereareyounow.ui.home.mypage
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +46,7 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
-import java.io.File
+import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
 fun MyPageScreen(
@@ -67,13 +55,38 @@ fun MyPageScreen(
     moveToModifyInfoScreen: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(true) {
-        viewModel.getMyInfo()
-    }
-    val density = LocalDensity.current.density
     val name = viewModel.name.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
+    MyPageScreen(
+        name = name,
+        email = email,
+        profileImageUri = profileImageUri,
+        getMyInfo = viewModel::getMyInfo,
+        signOut = viewModel::signOut,
+        deleteCalendar = viewModel::deleteCalendar,
+        withdrawAccount = viewModel::withdrawAccount,
+        moveToStartScreen = moveToStartScreen,
+        moveToModifyInfoScreen = moveToModifyInfoScreen
+    )
+}
+
+@Composable
+fun MyPageScreen(
+    name: String,
+    email: String,
+    profileImageUri: String?,
+    getMyInfo: () -> Unit,
+    signOut: (() -> Unit) -> Unit,
+    deleteCalendar: () -> Unit,
+    withdrawAccount: (() -> Unit) -> Unit,
+    moveToStartScreen: () -> Unit,
+    moveToModifyInfoScreen: () -> Unit
+) {
+    LaunchedEffect(true) {
+        getMyInfo()
+    }
+    val density = LocalDensity.current.density
     var isWarningDialogShowing by remember { mutableStateOf(false) }
     var warningState by remember { mutableStateOf(WarningState.SignOut) }
 
@@ -98,9 +111,9 @@ fun MyPageScreen(
             onConfirm = {
                 isWarningDialogShowing = false
                 when (warningState) {
-                    WarningState.SignOut -> viewModel.signOut(moveToStartScreen)
-                    WarningState.DeleteCalendar -> viewModel.deleteCalendar()
-                    WarningState.Withdrawal -> viewModel.withdrawAccount(moveToStartScreen)
+                    WarningState.SignOut -> signOut(moveToStartScreen)
+                    WarningState.DeleteCalendar -> deleteCalendar()
+                    WarningState.Withdrawal -> withdrawAccount(moveToStartScreen)
                 }
             }
         )
@@ -131,8 +144,8 @@ fun MyPageScreen(
                 Text(
                     text = "설정",
                     color = Color.White,
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Medium
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
             Column(
@@ -353,14 +366,34 @@ enum class WarningState {
     SignOut, DeleteCalendar, Withdrawal
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun MyPageScreenPreview() {
+    WhereAreYouTheme {
+        MyPageScreen(
+            name = "Name",
+            email = "Email",
+            profileImageUri = null,
+            getMyInfo = {  },
+            signOut = {  },
+            deleteCalendar = {  },
+            withdrawAccount = {  },
+            moveToStartScreen = {  },
+            moveToModifyInfoScreen = {  }
+        )
+    }
+}
+
+@Preview(showBackground = true)
 @Composable
 private fun MyPageWarningDialogPreview() {
-    MyPageWarningDialog(
-        warningTitle = "로그아웃하시겠습니까?",
-        warningText = "경고",
-        okText = "확인",
-        onDismissRequest = {},
-        onConfirm = {}
-    )
+    WhereAreYouTheme {
+        MyPageWarningDialog(
+            warningTitle = "로그아웃하시겠습니까?",
+            warningText = "경고",
+            okText = "확인",
+            onDismissRequest = {},
+            onConfirm = {}
+        )
+    }
 }
