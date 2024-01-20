@@ -2,10 +2,13 @@
 
 package com.whereareyounow.ui.home.schedule.calendar
 
+import android.util.Log
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
@@ -29,22 +32,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.domain.entity.schedule.BriefSchedule
+import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
 import kotlin.math.roundToInt
 
 @Composable
 fun BriefScheduleContent(
+    selectedYear: Int,
+    selectedMonth: Int,
+    selectedDate: Int,
+    dayOfWeek: Int,
+    currentDateBriefSchedule: List<BriefSchedule>,
     moveToDetailScreen: (String) -> Unit,
     state: AnchoredDraggableState<DetailState>
 ) {
     BriefScheduleContainer(state) {
         BriefScheduleList(
+            selectedYear = selectedYear,
+            selectedMonth = selectedMonth,
+            selectedDate = selectedDate,
+            dayOfWeek = dayOfWeek,
+            currentDateBriefSchedule = currentDateBriefSchedule,
             moveToDetailScreen = moveToDetailScreen
         )
     }
@@ -55,10 +72,11 @@ fun BriefScheduleContainer(
     state: AnchoredDraggableState<DetailState>,
     briefScheduleList: @Composable () -> Unit
 ) {
+    val density = LocalDensity.current.density
     Column(
         modifier = Modifier
-            .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / GlobalValue.density + 2).dp)
-            .height(((GlobalValue.dailyScheduleViewHeight / GlobalValue.density)).dp)
+            .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density + 2).dp)
+            .height(((GlobalValue.dailyScheduleViewHeight / density)).dp)
             .offset {
                 IntOffset(
                     x = 0,
@@ -97,7 +115,7 @@ fun BriefScheduleContainer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(((GlobalValue.dailyScheduleViewHeight / GlobalValue.density) - 20).dp)
+                .height(((GlobalValue.dailyScheduleViewHeight / density) - 20).dp)
                 .background(
                     color = Color(0xFFFFFF)
                 )
@@ -109,18 +127,17 @@ fun BriefScheduleContainer(
 
 @Composable
 fun BriefScheduleList(
-    moveToDetailScreen: (String) -> Unit,
-    viewModel: CalendarViewModel = hiltViewModel(),
+    selectedYear: Int,
+    selectedMonth: Int,
+    selectedDate: Int,
+    dayOfWeek: Int,
+    currentDateBriefSchedule: List<BriefSchedule>,
+    moveToDetailScreen: (String) -> Unit
 ) {
-    val year = viewModel.year.collectAsState().value
-    val month = viewModel.month.collectAsState().value
-    val date = viewModel.date.collectAsState().value
-    val dayOfWeek = viewModel.dayOfWeek.collectAsState().value
-    val currentDateBriefSchedule = viewModel.currentDateBriefScheduleInfoList
     Column {
         Text(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp),
-            text = "$year.$month.$date",
+            text = "$selectedYear.$selectedMonth.$selectedDate",
             fontSize = 20.sp,
             fontFamily = lato
         )
@@ -171,7 +188,7 @@ fun BriefScheduleList(
                             .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
                     ) {
                         Text(
-                            text = "${item.title}",
+                            text = item.title,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -183,5 +200,37 @@ fun BriefScheduleList(
                 }
             }
         }
+    }
+}
+
+@Composable
+@Preview(showBackground = true, device = "spec:width=1440px,height=3200px,dpi=556")
+private fun BriefScheduleContentPreview() {
+    val briefScheduleList = listOf(
+        BriefSchedule("", "title", "2023-01-02T10:20")
+    )
+    val anchoredDraggableState = AnchoredDraggableState(
+        initialValue = DetailState.Open,
+        positionalThreshold = { it: Float -> it * 0.5f },
+        velocityThreshold = { 100f },
+        animationSpec = tween(400)
+    ).apply {
+        updateAnchors(
+            DraggableAnchors {
+                DetailState.Open at 0f
+                DetailState.Close at GlobalValue.dailyScheduleViewHeight
+            }
+        )
+    }
+    WhereAreYouTheme {
+        BriefScheduleContent(
+            selectedYear = 2024,
+            selectedMonth = 1,
+            selectedDate = 2,
+            dayOfWeek = 1,
+            currentDateBriefSchedule = briefScheduleList,
+            moveToDetailScreen = {  },
+            state = anchoredDraggableState
+        )
     }
 }
