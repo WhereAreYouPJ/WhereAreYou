@@ -17,32 +17,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.Schedule
+import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.AnimationUtil
 
 @Composable
 fun DateCalendar(
-    expandDetailContent: () -> Unit,
-    viewModel: CalendarViewModel = hiltViewModel()
+    currentMonthCalendarInfo: List<Schedule>,
+    calendarState: CalendarViewModel.CalendarState,
+    selectedYear: Int,
+    updateYear: (Int) -> Unit,
+    selectedMonth: Int,
+    updateMonth: (Int) -> Unit,
+    selectedDate: Int,
+    updateDate: (Int) -> Unit,
+    expandDetailContent: () -> Unit
 ) {
-    val currMonthCalendarInfo = viewModel.currentMonthCalendarInfoList
-    val calendarState = viewModel.calendarState.collectAsState().value
-    val selectedYear = viewModel.year.collectAsState().value
-    val selectedMonth = viewModel.month.collectAsState().value
-    val selectedDate = viewModel.date.collectAsState().value
-
+    val density = LocalDensity.current.density
     // 일자 선택 화면
     AnimatedVisibility(
         visible = calendarState == CalendarViewModel.CalendarState.DATE,
         enter = AnimationUtil.enterTransition,
         exit = AnimationUtil.exitTransition
     ) {
-        Column() {
+        Column {
             Row(
-                modifier = Modifier.height(((GlobalValue.topBarHeight / GlobalValue.density) / 2).dp),
+                modifier = Modifier.height(((GlobalValue.topBarHeight / density) / 2).dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 for (i in 0..6) {
@@ -71,7 +77,7 @@ fun DateCalendar(
                 }
             }
 
-            for (idx in 0 until (currMonthCalendarInfo.size / 7)) {
+            for (idx in 0 until (currentMonthCalendarInfo.size / 7)) {
                 Row(modifier = Modifier.weight(1f)) {
                     for (i in 0..6) {
                         Box(
@@ -82,25 +88,25 @@ fun DateCalendar(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    val year = currMonthCalendarInfo[i + idx * 7].year
-                                    val month = currMonthCalendarInfo[i + idx * 7].month
-                                    val date = currMonthCalendarInfo[i + idx * 7].date
-                                    viewModel.updateYear(year)
-                                    viewModel.updateMonth(month)
-                                    viewModel.updateDate(date)
+                                    val year = currentMonthCalendarInfo[i + idx * 7].year
+                                    val month = currentMonthCalendarInfo[i + idx * 7].month
+                                    val date = currentMonthCalendarInfo[i + idx * 7].date
+                                    updateYear(year)
+                                    updateMonth(month)
+                                    updateDate(date)
                                     expandDetailContent()
                                 },
                             contentAlignment = Alignment.TopCenter
                         ) {
-                            DateContent(
-                                date = currMonthCalendarInfo[i + idx * 7].date,
-                                scheduleCount = currMonthCalendarInfo[i + idx * 7].scheduleCount,
-                                isSelected = selectedYear == currMonthCalendarInfo[i + idx * 7].year &&
-                                        selectedDate == currMonthCalendarInfo[i + idx * 7].date &&
-                                        selectedMonth == currMonthCalendarInfo[i + idx * 7].month,
+                            DateBox(
+                                date = currentMonthCalendarInfo[i + idx * 7].date,
+                                scheduleCount = currentMonthCalendarInfo[i + idx * 7].scheduleCount,
+                                isSelected = selectedYear == currentMonthCalendarInfo[i + idx * 7].year &&
+                                        selectedDate == currentMonthCalendarInfo[i + idx * 7].date &&
+                                        selectedMonth == currentMonthCalendarInfo[i + idx * 7].month,
                                 textColor = when (i) {
-                                    0 -> Color.Red
-                                    else -> Color.Black
+                                    0 -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color.Red else Color(0xFFF48FB1)
+                                    else -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color.Black else Color(0xFFBDBDBD)
                                 }
                             )
                         }
@@ -108,5 +114,60 @@ fun DateCalendar(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, heightDp = 308)
+@Composable
+private fun DateCalendarPreview() {
+    val previewSchedule = listOf(
+        Schedule(2024, 12, 31),
+        Schedule(2024, 1, 1),
+        Schedule(2024, 1, 2),
+        Schedule(2024, 1, 3),
+        Schedule(2024, 1, 4, 1),
+        Schedule(2024, 1, 5, 2),
+        Schedule(2024, 1, 6, 3),
+        Schedule(2024, 1, 7, 4),
+        Schedule(2024, 1, 8, 5),
+        Schedule(2024, 1, 9, 6),
+        Schedule(2024, 1, 10),
+        Schedule(2024, 1, 11),
+        Schedule(2024, 1, 12),
+        Schedule(2024, 1, 13),
+        Schedule(2024, 1, 14),
+        Schedule(2024, 1, 15),
+        Schedule(2024, 1, 16),
+        Schedule(2024, 1, 17),
+        Schedule(2024, 1, 18),
+        Schedule(2024, 1, 19),
+        Schedule(2024, 1, 20),
+        Schedule(2024, 1, 21),
+        Schedule(2024, 1, 22),
+        Schedule(2024, 1, 23),
+        Schedule(2024, 1, 24),
+        Schedule(2024, 1, 25),
+        Schedule(2024, 1, 26),
+        Schedule(2024, 1, 27),
+        Schedule(2024, 1, 28),
+        Schedule(2024, 1, 29),
+        Schedule(2024, 1, 30),
+        Schedule(2024, 1, 31),
+        Schedule(2024, 2, 1),
+        Schedule(2024, 2, 2),
+        Schedule(2024, 2, 3),
+    )
+    WhereAreYouTheme {
+        DateCalendar(
+            currentMonthCalendarInfo = previewSchedule,
+            calendarState = CalendarViewModel.CalendarState.DATE,
+            selectedYear = 2024,
+            updateYear = {  },
+            selectedMonth = 1,
+            updateMonth = {  },
+            selectedDate = 2,
+            updateDate = {  },
+            expandDetailContent = {  }
+        )
     }
 }
