@@ -2,6 +2,7 @@ package com.whereareyounow.ui.home.schedule.calendar
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,44 +27,36 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
-    application: Application,
+    private val application: Application,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
     private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
 
-    // 현재 선택된 년도
-    private val _year = MutableStateFlow(0)
-    val year: StateFlow<Int> = _year
-    // 현재 선택된 월
-    private val _month = MutableStateFlow(0)
-    val month: StateFlow<Int> = _month
-    // 현재 선택된 일
-    private val _date = MutableStateFlow(0)
-    val date: StateFlow<Int> = _date
-    // 현재 선택된 요일
+    private val _selectedYear = MutableStateFlow(0)
+    val selectedYear: StateFlow<Int> = _selectedYear
+    private val _selectedMonth = MutableStateFlow(0)
+    val selectedMonth: StateFlow<Int> = _selectedMonth
+    private val _selectedDate = MutableStateFlow(0)
+    val selectedDate: StateFlow<Int> = _selectedDate
     private val _dayOfWeek = MutableStateFlow(0)
     val dayOfWeek: StateFlow<Int> = _dayOfWeek
-    // 보여지고 있는 달력 상태 (년도 or 월 or 일)
     private val _calendarState = MutableStateFlow(CalendarState.DATE)
     val calendarState: StateFlow<CalendarState> = _calendarState
-    // 선택된 월의 달력(년/월/일/일정 개수)정보 리스트
     private val _currentMonthCalendarInfoList = mutableStateListOf<Schedule>()
     val currentMonthCalendarInfoList: List<Schedule> = _currentMonthCalendarInfoList
-    // 선택된 날짜의 일별 일정 간략 정보 리스트
     private val _currentDateBriefScheduleInfoList = mutableStateListOf<BriefSchedule>()
     val currentDateBriefScheduleInfoList: List<BriefSchedule> = _currentDateBriefScheduleInfoList
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
     fun updateCurrentMonthCalendarInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
-        val calendarArrList = CalendarUtil.getCalendarInfo(_year.value, _month.value)
+        val calendarArrList = CalendarUtil.getCalendarInfo(_selectedYear.value, _selectedMonth.value)
 
         // 빈 달력을 먼저 보여주기 위해 일단 리스트를 초기화한다.
         _currentMonthCalendarInfoList.clear()
         _currentMonthCalendarInfoList.addAll(calendarArrList)
-
 
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
@@ -83,7 +76,7 @@ class CalendarViewModel @Inject constructor(
                                 // 가져온 스케줄과 달력을 비교해 연/월/일이 같으면 일정 개수 정보를 추가한다.
                                 for (schedule in data.schedules) {
                                     for (calendarInfo in calendarArrList) {
-                                        if (calendarInfo.year == _year.value &&
+                                        if (calendarInfo.year == _selectedYear.value &&
                                             calendarInfo.month == currMonth &&
                                             calendarInfo.date == schedule.date
                                         ) {
@@ -98,7 +91,9 @@ class CalendarViewModel @Inject constructor(
 
                         }
                         is NetworkResult.Exception -> {
-
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 }
@@ -112,30 +107,30 @@ class CalendarViewModel @Inject constructor(
     }
 
     fun updateYear(year: Int) {
-        _year.update { year }
+        _selectedYear.update { year }
     }
 
     fun updateMonth(month: Int) {
-        if (month != _month.value) {
-            _month.update { month }
+        if (month != _selectedMonth.value) {
+            _selectedMonth.update { month }
             updateCurrentMonthCalendarInfo()
         }
     }
 
     fun updateDate(date: Int) {
-        if (date != _date.value) {
-            _date.update { date }
+        if (date != _selectedDate.value) {
+            _selectedDate.update { date }
             updateCurrentDateBriefScheduleInfo()
             updateCurrentMonthCalendarInfo()
         }
     }
 
     fun updateCurrentDateBriefScheduleInfo() {
-        _dayOfWeek.update { CalendarUtil.getDayOfWeek(_year.value, _month.value, _date.value) }
+        _dayOfWeek.update { CalendarUtil.getDayOfWeek(_selectedYear.value, _selectedMonth.value, _selectedDate.value) }
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val response = getDailyBriefScheduleUseCase(accessToken, memberId, _year.value, _month.value, _date.value)
+            val response = getDailyBriefScheduleUseCase(accessToken, memberId, _selectedYear.value, _selectedMonth.value, _selectedDate.value)
             LogUtil.printNetworkLog(response, "일별 간략정보 가져오기")
             when (response) {
                 is NetworkResult.Success -> {
@@ -147,7 +142,11 @@ class CalendarViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -160,9 +159,9 @@ class CalendarViewModel @Inject constructor(
     // 처음 화면에 보여지는 날짜에 대한 달력 정보를 모두 설정한다.
     private fun initCalendarInfo() {
         val todayInfo = CalendarUtil.getTodayInfo()
-        _year.update { todayInfo[0] }
-        _month.update { todayInfo[1] }
-        _date.update { todayInfo[2] }
+        _selectedYear.update { todayInfo[0] }
+        _selectedMonth.update { todayInfo[1] }
+        _selectedDate.update { todayInfo[2] }
         _dayOfWeek.update { todayInfo[3] }
     }
 
