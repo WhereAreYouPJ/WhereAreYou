@@ -41,7 +41,10 @@ fun CustomTextField(
     BasicTextField(
         value = inputText,
         onValueChange = onValueChange,
-        textStyle = TextStyle(fontSize = 20.sp),
+        textStyle = TextStyle(
+            color = Color(0xFF000000),
+            fontSize = 16.sp
+        ),
         singleLine = true,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
     ) {
@@ -49,22 +52,22 @@ fun CustomTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .border(
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = when (textFieldState) {
-                            CustomTextFieldState.IDLE -> Color(0xFF808080)
-                            CustomTextFieldState.SATISFIED -> Color(0xFF78C480)
-                            CustomTextFieldState.UNSATISFIED -> Color(0xFFE59090)
-                        }
-                    ),
-                    shape = RoundedCornerShape(10.dp)
-                )
+//                .border(
+//                    border = BorderStroke(
+//                        width = 1.dp,
+//                        color = when (textFieldState) {
+//                            CustomTextFieldState.IDLE -> Color(0xFF808080)
+//                            CustomTextFieldState.SATISFIED -> Color(0xFF78C480)
+//                            CustomTextFieldState.UNSATISFIED -> Color(0xFFE59090)
+//                        }
+//                    ),
+//                    shape = RoundedCornerShape(10.dp)
+//                )
                 .background(
-                    color = Color(0xFFFFFFFF),
-                    shape = RoundedCornerShape(10.dp)
+                    color = Color(0xFFF5F5F6),
+                    shape = RoundedCornerShape(8.dp)
                 )
-                .padding(start = 20.dp, end = 20.dp),
+                .padding(start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -75,8 +78,8 @@ fun CustomTextField(
                 if (inputText == "") {
                     Text(
                         text = hint,
-                        fontSize = 20.sp,
-                        color = Color(0xFF808080)
+                        fontSize = 16.sp,
+                        color = Color(0xFFC1C1C1)
                     )
                 }
             }
@@ -90,15 +93,15 @@ fun CustomTextField(
                         colorFilter = ColorFilter.tint(color = Color(0xFF78C480))
                     )
                 }
+                CustomTextFieldState.UNSATISFIED -> {
+                    Image(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(id = R.drawable.cancel_fill0_wght300_grad0_opsz24),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(color = Color(0xFFE59090))
+                    )
+                }
                 else -> {}
-//                CustomTextFieldState.Unsatisfied -> {
-//                    Image(
-//                        modifier = Modifier.size(20.dp),
-//                        painter = painterResource(id = R.drawable.cancel_fill0_wght300_grad0_opsz24),
-//                        contentDescription = null,
-//                        colorFilter = ColorFilter.tint(color = Color(0xFFE59090))
-//                    )
-//                }
             }
         }
     }
