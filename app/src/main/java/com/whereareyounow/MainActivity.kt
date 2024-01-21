@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -39,18 +41,22 @@ class MainActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
+            val density = LocalDensity.current.density
             WhereAreYouTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFFFFFFFF)
-                ) {
-                    val systemUiController = rememberSystemUiController()
+                // 시스템 글꼴 크기에 상관없이 같은 폰트 사이즈 적용
+                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = Color(0xFFFFFFFF)
+                    ) {
+                        val systemUiController = rememberSystemUiController()
 
-                    systemUiController.setStatusBarColor(
-                        color = Color(0xFFFFFFFF),
-                        darkIcons = true
-                    )
-                    MainNavigation()
+                        systemUiController.setStatusBarColor(
+                            color = Color(0xFFFFFFFF),
+                            darkIcons = true
+                        )
+                        MainNavigation()
+                    }
                 }
             }
         }
@@ -65,10 +71,12 @@ class MainActivity : ComponentActivity() {
         val xdpi = metrics.xdpi
         val ydpi = metrics.ydpi
         val statusBarResourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        val systemNavigationBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         // getDimension(): dimen.xml에 정의한 dp값을 기기에 맞게 px로 변환하여 반올림한 값을 int로 반환한다.
         val screenHeight = metrics.heightPixels
         val screenWidth = metrics.widthPixels
         val statusBarHeight = resources.getDimension(statusBarResourceId)
+        val systemNavigationBarHeight = resources.getDimension(systemNavigationBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
         GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
         GlobalValue.screenWidth = screenWidth.toFloat()
@@ -80,7 +88,9 @@ class MainActivity : ComponentActivity() {
         GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
         // 일별 간략 정보 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 3/5
         GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
-        Log.e("ScreenValue", "screenHeightWithoutStatusBar: ${GlobalValue.screenHeightWithoutStatusBar} ${GlobalValue.screenHeightWithoutStatusBar / density}\n" +
+        Log.e("ScreenValue", "statusBarHeight: $statusBarHeight ${statusBarHeight / density}\n" +
+                "systemNavigationBarHeight: $systemNavigationBarHeight ${systemNavigationBarHeight / density}\n" +
+                "screenHeightWithoutStatusBar: ${GlobalValue.screenHeightWithoutStatusBar} ${GlobalValue.screenHeightWithoutStatusBar / density}\n" +
                 "screenWidth: ${GlobalValue.screenWidth} ${GlobalValue.screenWidth / density}\n" +
                 "bottomNavBarHeight: ${GlobalValue.bottomNavBarHeight} ${GlobalValue.bottomNavBarHeight / density}\n" +
                 "topBarHeight: ${GlobalValue.topBarHeight} ${GlobalValue.topBarHeight / density}\n" +
