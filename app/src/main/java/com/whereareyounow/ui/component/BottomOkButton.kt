@@ -33,7 +33,7 @@ fun BottomOKButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(Color(0xFF2D2573))
             .clickable {
                 focusManager.clearFocus()
@@ -52,7 +52,7 @@ fun BottomOKButton(
             Text(
                 text = text,
                 color = Color.White,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Medium
             )
         }
