@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.whereareyounow.ui.theme.lato
 
 @Composable
@@ -62,44 +63,57 @@ fun DateBox(
         ) {
             Text(
                 text = date.toString(),
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = when (isSelected) {
-                    true -> Color.White
+                    true -> Color(0xFFFFFFFF)
                     false -> textColor
                 },
-                fontFamily = lato
+                fontFamily = lato,
             )
         }
-        Spacer(Modifier.size(2.dp))
-        Column(
-            modifier = Modifier
-                .width((componentWidth * 0.3).dp)
-                .height((componentWidth * 0.2).dp)
-        ) {
-            for (i in 0..1) {
-                Row(modifier = Modifier.weight(1f)) {
-                    for (j in 0..2) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (i * 3 + j < scheduleCount) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(4.dp)
-                                        .background(
-                                            shape = CircleShape,
-                                            color = Color(0xFF8C9EFF)
-                                        )
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+        Spacer(Modifier.height(4.dp))
+        if (scheduleCount > 0) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(
+                        shape = CircleShape,
+                        color = Color(0xFF5B58B3)
+                    )
+            )
+        } else {
+            Spacer(Modifier.height(8.dp))
         }
+//        Column(
+//            modifier = Modifier
+//                .width((componentWidth * 0.3).dp)
+//                .height((componentWidth * 0.2).dp)
+//        ) {
+//            for (i in 0..1) {
+//                Row(modifier = Modifier.weight(1f)) {
+//                    for (j in 0..2) {
+//                        Box(
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .fillMaxHeight(),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            if (i * 3 + j < scheduleCount) {
+//                                Box(
+//                                    modifier = Modifier
+//                                        .size(4.dp)
+//                                        .background(
+//                                            shape = CircleShape,
+//                                            color = Color(0xFF8C9EFF)
+//                                        )
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -114,9 +128,9 @@ fun DateBoxPreview() {
             ) {
                 DateBox(
                     date = 2,
-                    scheduleCount = 1,
+                    scheduleCount = 0,
                     isSelected = false,
-                    textColor = Color.Black
+                    textColor = Color(0xFF000000)
                 )
             }
             Box(
@@ -127,7 +141,7 @@ fun DateBoxPreview() {
                     date = 20,
                     scheduleCount = 3,
                     isSelected = false,
-                    textColor = Color.Black
+                    textColor = Color(0xFF000000)
                 )
             }
         }
@@ -140,7 +154,7 @@ fun DateBoxPreview() {
                     date = 20,
                     scheduleCount = 4,
                     isSelected = false,
-                    textColor = Color.Black
+                    textColor = Color(0xFF000000)
                 )
             }
             Box(
@@ -151,7 +165,7 @@ fun DateBoxPreview() {
                     date = 20,
                     scheduleCount = 6,
                     isSelected = true,
-                    textColor = Color.White
+                    textColor = Color(0xFFFFFFFF)
                 )
             }
         }
