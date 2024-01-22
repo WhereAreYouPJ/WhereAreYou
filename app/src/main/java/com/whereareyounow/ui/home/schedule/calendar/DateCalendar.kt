@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -16,10 +18,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.data.Schedule
@@ -47,10 +53,7 @@ fun DateCalendar(
         exit = AnimationUtil.exitTransition
     ) {
         Column {
-            Row(
-                modifier = Modifier.height(((GlobalValue.topBarHeight / density) / 2).dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
+            Row {
                 for (i in 0..6) {
                     Box(
                         modifier = Modifier.weight(1f),
@@ -68,14 +71,24 @@ fun DateCalendar(
                                 else -> "토"
                             },
                             color = when (i) {
-                                0 -> Color.Red
-                                else -> Color.Black
+                                0, 6 -> Color(0xFFA8361D)
+                                else -> Color(0xFF000000)
                             },
-                            fontFamily = lato
+                            fontSize = 12.sp,
+                            fontFamily = lato,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
+            Spacer(Modifier.height(10.dp))
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .drawBehind {
+                        drawLine(Color(0xFFA7A7A7), Offset(0f, 0f), Offset(size.width, 0f))
+                    }
+            )
 
             for (idx in 0 until (currentMonthCalendarInfo.size / 7)) {
                 Row(modifier = Modifier.weight(1f)) {
@@ -105,8 +118,8 @@ fun DateCalendar(
                                         selectedDate == currentMonthCalendarInfo[i + idx * 7].date &&
                                         selectedMonth == currentMonthCalendarInfo[i + idx * 7].month,
                                 textColor = when (i) {
-                                    0 -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color.Red else Color(0xFFF48FB1)
-                                    else -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color.Black else Color(0xFFBDBDBD)
+                                    0 -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color(0xFFA8361D) else Color(0xFFF48FB1)
+                                    else -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color(0xFF000000) else Color(0xFFBDBDBD)
                                 }
                             )
                         }
