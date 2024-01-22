@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.GlobalValue
@@ -67,6 +68,7 @@ fun BriefScheduleContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BriefScheduleContainer(
     state: AnchoredDraggableState<DetailState>,
@@ -107,7 +109,7 @@ fun BriefScheduleContainer(
                     .width(40.dp)
                     .height(4.dp)
                     .background(
-                        color = Color(0xFF8C9EFF),
+                        color = Color(0xFFC9C9D1),
                         shape = RoundedCornerShape(100)
                     )
             )
@@ -138,8 +140,10 @@ fun BriefScheduleList(
         Text(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp),
             text = "$selectedYear.$selectedMonth.$selectedDate",
+            color = Color(0xFF878787),
             fontSize = 20.sp,
-            fontFamily = lato
+            fontFamily = lato,
+            letterSpacing = 0.em
         )
         Text(
             modifier = Modifier.padding(start = 20.dp),
@@ -152,7 +156,7 @@ fun BriefScheduleList(
                 6 -> "금"
                 else -> "토"
             } + "요일",
-            fontSize = 30.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         if (currentDateBriefSchedule.isEmpty()) {
@@ -189,12 +193,14 @@ fun BriefScheduleList(
                     ) {
                         Text(
                             text = item.title,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Medium
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF4A302C)
                         )
                         Text(
                             text = "$appointmentTimeAMPM ${appointmentHour}:${String.format("%02d", appointmentMinute)}",
-                            fontSize = 20.sp
+                            fontSize = 16.sp,
+                            color = Color(0xFF675555)
                         )
                     }
                 }
