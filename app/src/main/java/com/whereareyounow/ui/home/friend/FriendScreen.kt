@@ -157,7 +157,7 @@ fun FriendScreenTopBar(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(Color.Black)
+                                    .background(Color(0xFF000000))
                             )
                         }
                         Box(
@@ -238,7 +238,7 @@ fun FriendBox(
             modifier = Modifier
                 .size(30.dp)
                 .clip(RoundedCornerShape(50)),
-            imageModel = { imageUrl ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+            imageModel = { imageUrl ?: R.drawable.idle_profile },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
         )
         Spacer(Modifier.width(10.dp))
