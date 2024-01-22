@@ -146,7 +146,7 @@ private fun InfoModificationScreen(
                             )
                         )
                     },
-                imageModel = { profileImageUri ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                imageModel = { profileImageUri ?: R.drawable.idle_profile },
                 imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
             )
         }
