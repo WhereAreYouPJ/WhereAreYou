@@ -46,12 +46,12 @@ fun BottomOKButton(
                 modifier = Modifier
                     .width(40.dp)
                     .height(40.dp),
-                brush = SolidColor(Color.White)
+                brush = SolidColor(Color(0xFFFFFFFF))
             )
         } else {
             Text(
                 text = text,
-                color = Color.White,
+                color = Color(0xFFFFFFFF),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium
             )
