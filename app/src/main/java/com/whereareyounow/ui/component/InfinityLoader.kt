@@ -208,7 +208,7 @@ fun InfinityLoader(
 fun InfinityLoaderPreview() {
     InfinityLoader(
         brush = Brush.horizontalGradient(
-            colors = listOf(Color.Red, Color.Blue)
+            colors = listOf(Color(0xFFFF0000), Color(0xFF0000FF))
         ),
         modifier = Modifier
             .width(100.dp)
@@ -222,7 +222,7 @@ fun InfinityLoaderPreview() {
 @Composable
 fun WhiteInfinityLoaderPreview() {
     InfinityLoader(
-        brush = SolidColor(Color.White),
+        brush = SolidColor(Color(0xFFFFFFFF)),
         modifier = Modifier
             .width(100.dp)
             .height(100.dp),
