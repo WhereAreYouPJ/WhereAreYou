@@ -8,19 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.util.AnimationUtil
 
 @Composable
 fun MonthCalendar(
-    expandDetailContent: () -> Unit,
-    viewModel: CalendarViewModel = hiltViewModel()
+    calendarState: CalendarViewModel.CalendarState,
+    updateMonth: (Int) -> Unit,
+    updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
+    expandDetailContent: () -> Unit
 ) {
-    val calendarState = viewModel.calendarState.collectAsState().value
-
     // 월 선택 화면
     AnimatedVisibility(
         visible = calendarState == CalendarViewModel.CalendarState.MONTH,
@@ -37,18 +38,32 @@ fun MonthCalendar(
                                 .fillMaxHeight()
                                 .clickable {
                                     expandDetailContent()
-                                    viewModel.updateMonth(i * 3 + j + 1)
-                                    viewModel.updateCalendarState(CalendarViewModel.CalendarState.DATE)
+                                    updateMonth(i * 3 + j + 1)
+                                    updateCalendarState(CalendarViewModel.CalendarState.DATE)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "${i * 3 + j + 1}월"
+                                text = "${i * 3 + j + 1}월",
+                                fontSize = 20.sp
                             )
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun MonthCalendarPreview() {
+    WhereAreYouTheme {
+        MonthCalendar(
+            calendarState = CalendarViewModel.CalendarState.MONTH,
+            updateMonth = {  },
+            updateCalendarState = {  },
+            expandDetailContent = {  }
+        )
     }
 }
