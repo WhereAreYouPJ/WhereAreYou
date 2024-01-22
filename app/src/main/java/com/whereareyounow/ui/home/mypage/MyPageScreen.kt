@@ -51,7 +51,7 @@ import com.whereareyounow.ui.theme.WhereAreYouTheme
 @Composable
 fun MyPageScreen(
     paddingValues: PaddingValues,
-    moveToStartScreen: () -> Unit,
+    moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
@@ -66,7 +66,7 @@ fun MyPageScreen(
         signOut = viewModel::signOut,
         deleteCalendar = viewModel::deleteCalendar,
         withdrawAccount = viewModel::withdrawAccount,
-        moveToStartScreen = moveToStartScreen,
+        moveToSignInScreen = moveToSignInScreen,
         moveToModifyInfoScreen = moveToModifyInfoScreen
     )
 }
@@ -80,7 +80,7 @@ fun MyPageScreen(
     signOut: (() -> Unit) -> Unit,
     deleteCalendar: () -> Unit,
     withdrawAccount: (() -> Unit) -> Unit,
-    moveToStartScreen: () -> Unit,
+    moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit
 ) {
     LaunchedEffect(true) {
@@ -111,9 +111,9 @@ fun MyPageScreen(
             onConfirm = {
                 isWarningDialogShowing = false
                 when (warningState) {
-                    WarningState.SignOut -> signOut(moveToStartScreen)
+                    WarningState.SignOut -> signOut(moveToSignInScreen)
                     WarningState.DeleteCalendar -> deleteCalendar()
-                    WarningState.Withdrawal -> withdrawAccount(moveToStartScreen)
+                    WarningState.Withdrawal -> withdrawAccount(moveToSignInScreen)
                 }
             }
         )
@@ -143,7 +143,7 @@ fun MyPageScreen(
             ) {
                 Text(
                     text = "설정",
-                    color = Color.White,
+                    color = Color(0xFFFFFFFF),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -160,19 +160,19 @@ fun MyPageScreen(
                         .width(((GlobalValue.calendarViewHeight / density) / 2).dp)
                         .height(((GlobalValue.calendarViewHeight / density) / 2).dp)
                         .clip(RoundedCornerShape(50)),
-                    imageModel = { profileImageUri ?: R.drawable.account_circle_fill0_wght200_grad0_opsz24 },
+                    imageModel = { profileImageUri ?: R.drawable.idle_profile },
                     imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
                 )
                 Spacer(Modifier.height(10.dp))
                 Text(
                     text = name,
                     fontSize = 20.sp,
-                    color = Color.White
+                    color = Color(0xFFFFFFFF)
                 )
                 Text(
                     text = email,
                     fontSize = 16.sp,
-                    color = Color.White,
+                    color = Color(0xFFFFFFFF),
                     fontWeight = FontWeight.Light
                 )
             }
@@ -192,14 +192,14 @@ fun MyPageScreen(
             ) {
                 Text(
                     text = "일반",
-                    fontSize = 24.sp
+                    fontSize = 18.sp
                 )
             }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height((0.6).dp)
-                    .background(color = Color.Black)
+                    .background(color = Color(0xFF000000))
             )
 
             SettingsMenuItem(
@@ -209,7 +209,7 @@ fun MyPageScreen(
 
             SettingsMenuItem(
                 menuName = "로그아웃",
-                color = Color.Red,
+                color = Color(0xFFFF0000),
                 onClick = {
                     warningState = WarningState.SignOut
                     isWarningDialogShowing = true
@@ -227,19 +227,19 @@ fun MyPageScreen(
             ) {
                 Text(
                     text = "정보",
-                    fontSize = 24.sp
+                    fontSize = 18.sp
                 )
             }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height((0.6).dp)
-                    .background(color = Color.Black)
+                    .background(color = Color(0xFF000000))
             )
 
             SettingsMenuItem(
                 menuName = "캘린더 삭제",
-                color = Color.Red,
+                color = Color(0xFFFF0000),
                 onClick = {
                     warningState = WarningState.DeleteCalendar
                     isWarningDialogShowing = true
@@ -248,7 +248,7 @@ fun MyPageScreen(
 
             SettingsMenuItem(
                 menuName = "회원탈퇴",
-                color = Color.Red,
+                color = Color(0xFFFF0000),
                 onClick = {
                     warningState = WarningState.Withdrawal
                     isWarningDialogShowing = true
@@ -261,23 +261,25 @@ fun MyPageScreen(
 @Composable
 fun SettingsMenuItem(
     menuName: String,
-    color: Color = Color.Black,
+    color: Color = Color(0xFF000000),
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(40.dp)
             .clickable {
                 onClick()
             }
             .padding(start = 20.dp, end = 20.dp),
         contentAlignment = Alignment.CenterStart
     ) {
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = menuName,
-                fontSize = 24.sp,
+                fontSize = 16.sp,
                 color = color
             )
             Spacer(Modifier.weight(1f))
@@ -307,7 +309,7 @@ fun MyPageWarningDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = Color.White,
+                    color = Color(0xFFFFFFFF),
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(20.dp)
@@ -336,7 +338,7 @@ fun MyPageWarningDialog(
                     Text(
                         text = okText,
                         fontSize = 20.sp,
-                        color = Color.White,
+                        color = Color(0xFFFFFFFF),
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -353,7 +355,7 @@ fun MyPageWarningDialog(
                     Text(
                         text = "취소",
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = Color(0xFF000000),
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -378,7 +380,7 @@ private fun MyPageScreenPreview() {
             signOut = {  },
             deleteCalendar = {  },
             withdrawAccount = {  },
-            moveToStartScreen = {  },
+            moveToSignInScreen = {  },
             moveToModifyInfoScreen = {  }
         )
     }
