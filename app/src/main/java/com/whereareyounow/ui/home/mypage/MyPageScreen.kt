@@ -31,13 +31,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -124,7 +127,8 @@ fun MyPageScreen(
         // 파란 원 배경
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
-                brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
+//                brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
+                color = Color(0xFF333C4C),
                 center = Offset(size.width / 2, GlobalValue.calendarViewHeight + GlobalValue.topBarHeight - size.width),
                 radius = size.width,
                 style = Fill
@@ -144,7 +148,7 @@ fun MyPageScreen(
                 Text(
                     text = "설정",
                     color = Color(0xFFFFFFFF),
-                    fontSize = 26.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -157,8 +161,8 @@ fun MyPageScreen(
             ) {
                 GlideImage(
                     modifier = Modifier
-                        .width(((GlobalValue.calendarViewHeight / density) / 2).dp)
-                        .height(((GlobalValue.calendarViewHeight / density) / 2).dp)
+                        .width(((GlobalValue.calendarViewHeight / density) / 3).dp)
+                        .height(((GlobalValue.calendarViewHeight / density) / 3).dp)
                         .clip(RoundedCornerShape(50)),
                     imageModel = { profileImageUri ?: R.drawable.idle_profile },
                     imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
@@ -167,7 +171,8 @@ fun MyPageScreen(
                 Text(
                     text = name,
                     fontSize = 20.sp,
-                    color = Color(0xFFFFFFFF)
+                    color = Color(0xFFFFFFFF),
+                    letterSpacing = 0.05.em
                 )
                 Text(
                     text = email,
@@ -199,17 +204,18 @@ fun MyPageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height((0.6).dp)
-                    .background(color = Color(0xFF000000))
+                    .background(color = Color(0xFFBEBEBE))
             )
 
             SettingsMenuItem(
                 menuName = "프로필 변경",
-                onClick = moveToModifyInfoScreen
+                onClick = moveToModifyInfoScreen,
+                color = Color(0xFF3E3E3E)
             )
 
             SettingsMenuItem(
                 menuName = "로그아웃",
-                color = Color(0xFFFF0000),
+                color = Color(0xFFEC5C5C),
                 onClick = {
                     warningState = WarningState.SignOut
                     isWarningDialogShowing = true
@@ -234,12 +240,12 @@ fun MyPageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height((0.6).dp)
-                    .background(color = Color(0xFF000000))
+                    .background(color = Color(0xFFBEBEBE))
             )
 
             SettingsMenuItem(
                 menuName = "캘린더 삭제",
-                color = Color(0xFFFF0000),
+                color = Color(0xFFEC5C5C),
                 onClick = {
                     warningState = WarningState.DeleteCalendar
                     isWarningDialogShowing = true
@@ -248,7 +254,7 @@ fun MyPageScreen(
 
             SettingsMenuItem(
                 menuName = "회원탈퇴",
-                color = Color(0xFFFF0000),
+                color = Color(0xFFEC5C5C),
                 onClick = {
                     warningState = WarningState.Withdrawal
                     isWarningDialogShowing = true
@@ -280,14 +286,16 @@ fun SettingsMenuItem(
             Text(
                 text = menuName,
                 fontSize = 16.sp,
-                color = color
+                color = color,
+                letterSpacing = 0.em
             )
             Spacer(Modifier.weight(1f))
             Image(
                 modifier = Modifier
-                    .size(30.dp),
+                    .size(20.dp),
                 painter = painterResource(id = R.drawable.arrow_forward_ios_fill0_wght100_grad0_opsz24),
-                contentDescription = null
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(Color(0xFF909295))
             )
         }
     }
@@ -312,18 +320,20 @@ fun MyPageWarningDialog(
                     color = Color(0xFFFFFFFF),
                     shape = RoundedCornerShape(10.dp)
                 )
-                .padding(20.dp)
+                .padding(10.dp)
         ) {
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = warningTitle,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
             )
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = warningText,
-                fontSize = 20.sp
-            )
+//            Spacer(Modifier.height(20.dp))
+//            Text(
+//                text = warningText,
+//                fontSize = 20.sp
+//            )
             Spacer(Modifier.height(20.dp))
             Row {
                 Box(
@@ -342,7 +352,7 @@ fun MyPageWarningDialog(
                         fontWeight = FontWeight.Medium
                     )
                 }
-                Spacer(Modifier.width(20.dp))
+                Spacer(Modifier.width(10.dp))
                 Box(
                     modifier = Modifier
                         .weight(1f)
