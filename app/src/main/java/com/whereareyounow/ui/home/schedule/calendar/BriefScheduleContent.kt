@@ -90,23 +90,23 @@ fun BriefScheduleContainer(
             .padding(start = 20.dp, end = 20.dp)
             .shadow(
                 elevation = 10.dp,
-                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
             )
             .background(
                 color = Color(0xFFFFFFFF),
-                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
             )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(20.dp)
+                .height(30.dp)
                 .anchoredDraggable(state, Orientation.Vertical),
             contentAlignment = Alignment.Center
         ) {
             Box(
                 modifier = Modifier
-                    .width(40.dp)
+                    .width(26.dp)
                     .height(4.dp)
                     .background(
                         color = Color(0xFFC9C9D1),
@@ -156,8 +156,9 @@ fun BriefScheduleList(
                 6 -> "금"
                 else -> "토"
             } + "요일",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.em
         )
         if (currentDateBriefSchedule.isEmpty()) {
             Box(
@@ -195,12 +196,14 @@ fun BriefScheduleList(
                             text = item.title,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4A302C)
+                            color = Color(0xFF4A302C),
+                            letterSpacing = 0.em
                         )
                         Text(
                             text = "$appointmentTimeAMPM ${appointmentHour}:${String.format("%02d", appointmentMinute)}",
-                            fontSize = 16.sp,
-                            color = Color(0xFF675555)
+                            fontSize = 14.sp,
+                            color = Color(0xFF675555),
+                            letterSpacing = 0.em
                         )
                     }
                 }
@@ -209,6 +212,7 @@ fun BriefScheduleList(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview(showBackground = true, device = "spec:width=1440px,height=3200px,dpi=556")
 private fun BriefScheduleContentPreview() {
