@@ -1,7 +1,9 @@
 package com.whereareyounow.ui.home.friend.addfriend
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -132,7 +134,7 @@ fun FriendIdTextField(
     BasicTextField(
         value = inputId,
         onValueChange = { updateInputId(it) },
-        textStyle = TextStyle(fontSize = 30.sp),
+        textStyle = TextStyle(fontSize = 20.sp),
         singleLine = true,
         decorationBox = {
             Box(
@@ -173,22 +175,41 @@ fun UserInfoContent(
     imageUrl: String?,
     userName: String
 ) {
-    GlideImage(
+    Column(
         modifier = Modifier
-            .size(200.dp)
-            .clip(RoundedCornerShape(50)),
-        imageModel = { imageUrl ?: R.drawable.idle_profile },
-        imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-    )
-    Spacer(Modifier.height(20.dp))
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+            .fillMaxWidth()
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = Color(0xFFC3C3C6)
+                ),
+                shape = RoundedCornerShape(10.dp)
+            )
+            .background(
+                color = Color(0xFFF7F7F7),
+                shape = RoundedCornerShape(10.dp)
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = userName,
-            fontSize = 30.sp
+        Spacer(Modifier.height(20.dp))
+        GlideImage(
+            modifier = Modifier
+                .size(200.dp)
+                .clip(RoundedCornerShape(50)),
+            imageModel = { imageUrl ?: R.drawable.idle_profile },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
         )
+        Spacer(Modifier.height(20.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = userName,
+                fontSize = 20.sp
+            )
+        }
+        Spacer(Modifier.height(20.dp))
     }
 }
 
