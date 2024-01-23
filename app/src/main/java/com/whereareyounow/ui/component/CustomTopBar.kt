@@ -44,7 +44,7 @@ fun CustomTopBar(
         )
         Text(
             text = title,
-            fontSize = 26.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Medium
         )
     }
