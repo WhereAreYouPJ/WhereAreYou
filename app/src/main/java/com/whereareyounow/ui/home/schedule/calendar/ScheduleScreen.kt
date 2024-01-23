@@ -268,7 +268,7 @@ fun ScheduleScreenTopBar(
         ) {
             Image(
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(46.dp)
                     .clip(CircleShape)
                     .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } }
                     .padding(10.dp),
