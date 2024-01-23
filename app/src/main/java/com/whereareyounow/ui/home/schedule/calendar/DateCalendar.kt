@@ -118,7 +118,7 @@ fun DateCalendar(
                                         selectedDate == currentMonthCalendarInfo[i + idx * 7].date &&
                                         selectedMonth == currentMonthCalendarInfo[i + idx * 7].month,
                                 textColor = when (i) {
-                                    0 -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color(0xFFA8361D) else Color(0xFFF48FB1)
+                                    0 -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color(0xFFA8361D) else Color(0xFFD3AFAF)
                                     else -> if (currentMonthCalendarInfo[i + idx * 7].month == selectedMonth) Color(0xFF000000) else Color(0xFFBDBDBD)
                                 }
                             )
