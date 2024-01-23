@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -93,7 +94,8 @@ private fun HomeContent(
                     onClick = { moveToAddScheduleScreen() }
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.baseline_add_24),
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.plus),
                         contentDescription = null
                     )
                 }
