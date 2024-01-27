@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +42,8 @@ fun CustomTopBar(
                 .clip(RoundedCornerShape(50))
                 .clickable { onBackButtonClicked() },
             painter = painterResource(id = R.drawable.arrow_back),
-            contentDescription = null
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(Color(0xFF3E3D45))
         )
         Text(
             text = title,
