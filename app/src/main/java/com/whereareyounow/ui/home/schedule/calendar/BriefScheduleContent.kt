@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -90,11 +92,11 @@ fun BriefScheduleContainer(
             .padding(start = 20.dp, end = 20.dp)
             .shadow(
                 elevation = 10.dp,
-                shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
+                shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
             )
             .background(
                 color = Color(0xFFFFFFFF),
-                shape = RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp)
+                shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
             )
     ) {
         Box(
@@ -141,7 +143,7 @@ fun BriefScheduleList(
             modifier = Modifier.padding(start = 20.dp, top = 20.dp),
             text = "$selectedYear.$selectedMonth.$selectedDate",
             color = Color(0xFF878787),
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             fontFamily = lato,
             letterSpacing = 0.em
         )
@@ -158,23 +160,35 @@ fun BriefScheduleList(
             } + "요일",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 0.em
+            letterSpacing = -(0.05).em,
+            style = TextStyle(
+                lineHeight = 28.sp
+            )
         )
-        if (currentDateBriefSchedule.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "오늘의 일정이 없습니다.",
-                    fontSize = 20.sp,
-                )
-            }
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
-            ) {
+        LazyColumn(
+            contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
+        ) {
+            if (currentDateBriefSchedule.isEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                            .height(80.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(color = Color(0XFFF0F0F0))
+                            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "오늘의 일정이 없습니다.",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF8D8D8D)
+                        )
+                    }
+                }
+            } else {
                 itemsIndexed(currentDateBriefSchedule) { _, item ->
                     var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
                     val appointmentMinute = item.appointmentTime.split("T")[1].split(":")[1].toInt()
@@ -184,13 +198,15 @@ fun BriefScheduleList(
                     Column(
                         modifier = Modifier
                             .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                            .height(80.dp)
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(10.dp))
                             .background(color = Color(0XFFFFD79B))
                             .clickable {
                                 moveToDetailScreen(item.scheduleId)
                             }
-                            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
+                            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp),
+                        verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = item.title,
@@ -199,6 +215,7 @@ fun BriefScheduleList(
                             color = Color(0xFF4A302C),
                             letterSpacing = 0.em
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "$appointmentTimeAMPM ${appointmentHour}:${String.format("%02d", appointmentMinute)}",
                             fontSize = 14.sp,
@@ -239,7 +256,7 @@ private fun BriefScheduleContentPreview() {
             selectedDate = 2,
             dayOfWeek = 1,
             currentDateBriefSchedule = briefScheduleList,
-            moveToDetailScreen = {  },
+            moveToDetailScreen = {},
             state = anchoredDraggableState
         )
     }
