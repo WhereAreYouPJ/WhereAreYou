@@ -8,7 +8,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
 import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
+import com.whereareyounow.domain.usecase.schedule.ResetCalendarUseCase
 import com.whereareyounow.domain.usecase.signin.DeleteMemberUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
@@ -39,7 +41,8 @@ class MyPageViewModel @Inject constructor(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
-    private val deleteMemberUseCase: DeleteMemberUseCase
+    private val deleteMemberUseCase: DeleteMemberUseCase,
+    private val resetCalendarUseCase: ResetCalendarUseCase,
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -114,7 +117,24 @@ class MyPageViewModel @Inject constructor(
 
     fun deleteCalendar() {
         viewModelScope.launch(Dispatchers.Default) {
-
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val request = ResetCalendarRequest(memberId)
+            val response = resetCalendarUseCase(accessToken, request)
+            LogUtil.printNetworkLog(response, "캘린더 삭제")
+            when (response) {
+                is NetworkResult.Success -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "캘린더가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 }
