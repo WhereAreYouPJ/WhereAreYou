@@ -111,10 +111,8 @@ class CalendarViewModel @Inject constructor(
     }
 
     fun updateMonth(month: Int) {
-        if (month != _selectedMonth.value) {
-            _selectedMonth.update { month }
-            updateCurrentMonthCalendarInfo()
-        }
+        _selectedMonth.update { month }
+        updateCurrentMonthCalendarInfo()
     }
 
     fun updateDate(date: Int) {
