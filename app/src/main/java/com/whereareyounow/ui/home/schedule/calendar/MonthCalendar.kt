@@ -37,7 +37,6 @@ fun MonthCalendar(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clickable {
-                                    expandDetailContent()
                                     updateMonth(i * 3 + j + 1)
                                     updateCalendarState(CalendarViewModel.CalendarState.DATE)
                                 },
