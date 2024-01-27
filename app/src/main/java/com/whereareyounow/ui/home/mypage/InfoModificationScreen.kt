@@ -167,7 +167,7 @@ private fun InfoModificationScreen(
                 inputUserNameState = inputUserNameState
             )
             if (inputUserNameState == UserNameState.UNSATISFIED) {
-                Guideline(text = "사용자명은 4~10자의 한글, 영문 대/소문자 조합으로 입력해주세요.")
+                Guideline(text = "사용자명은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요.")
             }
 
             Spacer(Modifier.height(20.dp))
