@@ -228,7 +228,7 @@ fun ScheduleScreenTopBar(
             .height((GlobalValue.topBarHeight / density.density).dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(Modifier.width(40.dp))
+        Spacer(Modifier.width(20.dp))
         Text(
             modifier = Modifier.clickable(
                 indication = null,
@@ -268,7 +268,7 @@ fun ScheduleScreenTopBar(
         ) {
             Image(
                 modifier = Modifier
-                    .size(46.dp)
+                    .size(40.dp)
                     .clip(CircleShape)
                     .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } }
                     .padding(10.dp),
