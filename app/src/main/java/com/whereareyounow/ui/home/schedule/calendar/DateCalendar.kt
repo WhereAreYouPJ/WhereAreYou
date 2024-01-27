@@ -101,10 +101,8 @@ fun DateCalendar(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
-                                    val year = currentMonthCalendarInfo[i + idx * 7].year
                                     val month = currentMonthCalendarInfo[i + idx * 7].month
                                     val date = currentMonthCalendarInfo[i + idx * 7].date
-                                    updateYear(year)
                                     updateMonth(month)
                                     updateDate(date)
                                     expandDetailContent()
