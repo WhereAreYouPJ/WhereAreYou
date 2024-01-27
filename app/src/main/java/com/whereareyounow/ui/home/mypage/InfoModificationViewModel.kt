@@ -38,7 +38,7 @@ class InfoModificationViewModel @Inject constructor(
     private val modifyMyInfoUseCase: ModifyMyInfoUseCase,
 ) : AndroidViewModel(application) {
 
-    private val nameCondition = Regex("^[\\uAC00-\\uD7A3a-zA-Z]{4,10}\$")
+    private val nameCondition = Regex("^[\\uAC00-\\uD7A3a-zA-Z]{2,4}\$")
     private val idCondition = Regex("^[a-z][a-z0-9]{3,9}\$")
 
     private var originalUserName = ""
