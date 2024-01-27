@@ -12,6 +12,7 @@ import com.whereareyounow.domain.usecase.schedule.GetScheduleInvitationUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleDetailsUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleMemberUseCase
 import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.ResetCalendarUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -96,5 +97,12 @@ object ScheduleUseCaseModule {
         repository: ScheduleRepository
     ): GetScheduleInvitationUseCase {
         return GetScheduleInvitationUseCase(repository)
+    }
+
+    @Provides
+    fun resetCalendarUseCase(
+        repository: ScheduleRepository
+    ): ResetCalendarUseCase {
+        return ResetCalendarUseCase(repository)
     }
 }
