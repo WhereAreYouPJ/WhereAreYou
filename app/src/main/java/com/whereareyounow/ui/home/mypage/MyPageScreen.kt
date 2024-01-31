@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -309,65 +311,69 @@ fun MyPageWarningDialog(
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
 ) {
+    val density = LocalDensity.current.density
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(0xFFFFFFFF),
-                    shape = RoundedCornerShape(10.dp)
+
+        CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(10.dp)
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = warningTitle,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
                 )
-                .padding(10.dp)
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = warningTitle,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center
-            )
 //            Spacer(Modifier.height(20.dp))
 //            Text(
 //                text = warningText,
 //                fontSize = 20.sp
 //            )
-            Spacer(Modifier.height(20.dp))
-            Row {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFF2D2573))
-                        .padding(10.dp)
-                        .clickable { onConfirm() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = okText,
-                        fontSize = 20.sp,
-                        color = Color(0xFFFFFFFF),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                Spacer(Modifier.width(10.dp))
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color(0xFFCCCCCC))
-                        .padding(10.dp)
-                        .clickable { onDismissRequest() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "취소",
-                        fontSize = 20.sp,
-                        color = Color(0xFF000000),
-                        fontWeight = FontWeight.Medium
-                    )
+                Spacer(Modifier.height(20.dp))
+                Row {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color(0xFF2D2573))
+                            .clickable { onConfirm() }
+                            .padding(10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = okText,
+                            fontSize = 20.sp,
+                            color = Color(0xFFFFFFFF),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Spacer(Modifier.width(10.dp))
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color(0xFFCCCCCC))
+                            .clickable { onDismissRequest() }
+                            .padding(10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "취소",
+                            fontSize = 20.sp,
+                            color = Color(0xFF000000),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             }
         }
