@@ -136,6 +136,7 @@ class CalendarViewModel @Inject constructor(
                         withContext(Dispatchers.Main) {
                             _currentDateBriefScheduleInfoList.clear()
                             _currentDateBriefScheduleInfoList.addAll(data.schedules)
+                            _currentDateBriefScheduleInfoList.sortBy { it.appointmentTime }
                         }
                     }
                 }
