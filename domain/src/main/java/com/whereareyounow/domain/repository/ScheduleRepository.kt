@@ -9,9 +9,10 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefSchedul
 import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
+import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
 import com.whereareyounow.domain.util.NetworkResult
 
 interface ScheduleRepository {
@@ -47,9 +48,9 @@ interface ScheduleRepository {
     ): NetworkResult<AddNewScheduleResponse>
 
     // 일정 내용 수정
-    suspend fun modifySchedule(
+    suspend fun modifyScheduleDetails(
         token: String,
-        body: ModifyScheduleRequest
+        body: ModifyScheduleDetailsRequest
     ): NetworkResult<Unit>
 
     // 일정 멤버 수정
@@ -87,4 +88,10 @@ interface ScheduleRepository {
         token: String,
         memberId: String
     ): NetworkResult<GetScheduleInvitationResponse>
+
+    // 캘린더 삭제
+    suspend fun resetCalendar(
+        token: String,
+        body: ResetCalendarRequest
+    ): NetworkResult<Boolean>
 }

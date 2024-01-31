@@ -6,11 +6,13 @@ data class AddNewScheduleRequest(
     @SerializedName("memberId")
     val memberId: String,
     @SerializedName("appointmentTime")
-    val appointmentTime: String,
+    val scheduleTime: String,
     @SerializedName("title")
-    val title: String,
+    val scheduleName: String,
     @SerializedName("place")
-    val place: String,
+    val destinationName: String,
+    @SerializedName("roadName")
+    val destinationAddress: String,
     @SerializedName("memo")
     val memo: String,
     @SerializedName("destinationLatitude")
@@ -18,7 +20,7 @@ data class AddNewScheduleRequest(
     @SerializedName("destinationLongitude")
     val destinationLongitude: Double,
     @SerializedName("memberIdList")
-    val memberIdList: List<String>
+    val selectedMemberIdsList: List<String>
 )
 
 data class AddNewScheduleResponse(

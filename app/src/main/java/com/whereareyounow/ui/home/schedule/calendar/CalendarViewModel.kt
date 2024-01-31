@@ -99,7 +99,6 @@ class CalendarViewModel @Inject constructor(
                 }
             }
             withContext(Dispatchers.Main) {
-                Log.e("", "${calendarArrList}")
                 _currentMonthCalendarInfoList.clear()
                 _currentMonthCalendarInfoList.addAll(calendarArrList)
             }
@@ -116,11 +115,8 @@ class CalendarViewModel @Inject constructor(
     }
 
     fun updateDate(date: Int) {
-        if (date != _selectedDate.value) {
-            _selectedDate.update { date }
-            updateCurrentDateBriefScheduleInfo()
-            updateCurrentMonthCalendarInfo()
-        }
+        _selectedDate.update { date }
+        updateCurrentDateBriefScheduleInfo()
     }
 
     fun updateCurrentDateBriefScheduleInfo() {

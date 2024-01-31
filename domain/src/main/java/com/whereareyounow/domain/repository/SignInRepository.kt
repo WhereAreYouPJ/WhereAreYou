@@ -82,8 +82,8 @@ interface SignInRepository {
     suspend fun modifyMyInfo(
         token: String,
         memberId: String,
-        image: File,
-//        userId: String
+        image: File?,
+        userId: String
     ): NetworkResult<Unit>
 
     // 회원정보 삭제

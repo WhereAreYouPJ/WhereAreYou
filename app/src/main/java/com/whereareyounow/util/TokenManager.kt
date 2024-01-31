@@ -105,8 +105,6 @@ class TokenManager @Inject constructor(
                 }
             }
             is NetworkResult.Exception -> {
-                Log.e("Exception", "reissueTokenUseCase\n${response.e.printStackTrace()}")
-                withContext(Dispatchers.Main) { Toast.makeText(context, "알 수 없는 예외가 발생했습니다.", Toast.LENGTH_SHORT).show() }
             }
         }
     }

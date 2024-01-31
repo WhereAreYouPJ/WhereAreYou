@@ -16,11 +16,14 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Query
 
 interface SignInApi {
@@ -74,13 +77,14 @@ interface SignInApi {
     @POST("member/myPage/modify")
     suspend fun modifyMyInfo(
         @Header("Authorization") token: String,
-        @Part("memberId") memberId: RequestBody,
-        @Part photo: MultipartBody.Part,
+        @PartMap partMap: HashMap<String, RequestBody>,
+//        @Part("memberId") memberId: RequestBody,
+        @Part photo: MultipartBody.Part?,
 //        @Part("newId") userId: RequestBody
     ): Response<Unit>
 
     // 회원정보 삭제
-    @POST("member/deleteMember")
+    @HTTP(method = "DELETE", path = "member/deleteMember", hasBody = true)
     suspend fun deleteMember(
         @Header("Authorization") token: String,
         @Body body: DeleteMemberRequest

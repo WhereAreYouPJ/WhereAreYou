@@ -1,8 +1,11 @@
 package com.whereareyounow
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -16,8 +19,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -35,18 +41,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getToken()
-        // 화면 크기 정보 저장
-        updateGlobalValue()
 
+        viewModel.getToken()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             val density = LocalDensity.current.density
             WhereAreYouTheme {
                 // 시스템 글꼴 크기에 상관없이 같은 폰트 사이즈 적용
                 CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
                     Surface(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .onGloballyPositioned {
+                                // 화면 크기 정보 저장
+                                updateGlobalValue(it.size)
+                            },
                         color = Color(0xFFFFFFFF)
                     ) {
                         val systemUiController = rememberSystemUiController()
@@ -64,7 +74,7 @@ class MainActivity : ComponentActivity() {
 
     // 모든 영역의 단위는 기본적으로 pixel
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
-    private fun updateGlobalValue() {
+    private fun updateGlobalValue(size: IntSize) {
         val resources = application.resources
         val metrics = resources.displayMetrics
         val density = metrics.density
@@ -72,13 +82,15 @@ class MainActivity : ComponentActivity() {
         val ydpi = metrics.ydpi
         val statusBarResourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val systemNavigationBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+
         // getDimension(): dimen.xml에 정의한 dp값을 기기에 맞게 px로 변환하여 반올림한 값을 int로 반환한다.
         val screenHeight = metrics.heightPixels
         val screenWidth = metrics.widthPixels
         val statusBarHeight = resources.getDimension(statusBarResourceId)
         val systemNavigationBarHeight = resources.getDimension(systemNavigationBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
-        GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
+//        GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
+        GlobalValue.screenHeightWithoutStatusBar = size.height - statusBarHeight - systemNavigationBarHeight
         GlobalValue.screenWidth = screenWidth.toFloat()
         // 하단 네비게이션 바 높이는 전체 화면의 1/15
         GlobalValue.bottomNavBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15

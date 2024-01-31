@@ -8,17 +8,17 @@ import com.whereareyounow.datasource.RemoteDataSource
 import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdResponse
-import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsResponse
+import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ResetPasswordRequest
-import com.whereareyounow.domain.repository.SignInRepository
-import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.domain.entity.apimessage.signin.SignInRequest
 import com.whereareyounow.domain.entity.apimessage.signin.SignInResponse
 import com.whereareyounow.domain.entity.apimessage.signin.VerifyPasswordResetCodeRequest
 import com.whereareyounow.domain.entity.apimessage.signin.VerifyPasswordResetCodeResponse
+import com.whereareyounow.domain.repository.SignInRepository
+import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -179,14 +179,27 @@ class SignInRepositoryImpl(
     override suspend fun modifyMyInfo(
         token: String,
         memberId: String,
-        image: File,
-//        userId: String
+        image: File?,
+        userId: String
     ): NetworkResult<Unit> {
-        val imageBody = RequestBody.create(MediaType.parse("image/*"), image)
-        val multipartImage = MultipartBody.Part.createFormData("images", imageBody.toString(), imageBody)
+        val map = hashMapOf<String, RequestBody>()
         val memberIdBody = RequestBody.create(MediaType.parse("text/plain"), memberId)
+//        val multiPartMemberId = MultipartBody.Part.createFormData("memberId", memberIdBody.toString(), memberIdBody)
+        map["memberId"] = memberIdBody
+
+        var multipartImage: MultipartBody.Part? = null
+        image?.let {
+            val imageBody = RequestBody.create(MediaType.parse("image/*"), image)
+            multipartImage = MultipartBody.Part.createFormData("images", imageBody.toString(), imageBody)
+        }
+
+        if (userId != "") {
+            val userIdBody = RequestBody.create(MediaType.parse("text/plain"), userId)
+//            val multiPartUserId = MultipartBody.Part.createFormData("newId", userIdBody.toString(), userIdBody)
+            map["newId"] = userIdBody
+        }
 //        val newIdBody = RequestBody.create(MediaType.parse("text/plain"), userId)
-        return handleResult { dataSource.modifyMyInfo(token, memberIdBody, multipartImage) }
+        return handleResult { dataSource.modifyMyInfo(token, map, multipartImage) }
     }
 
     /**

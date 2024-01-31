@@ -1,5 +1,6 @@
 package com.whereareyounow.domain.entity.apimessage.signin
 
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 data class SignInRequest(

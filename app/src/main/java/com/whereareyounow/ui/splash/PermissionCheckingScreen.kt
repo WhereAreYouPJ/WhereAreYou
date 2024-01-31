@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
+import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.ui.component.BottomOKButton
 
 
 @Composable
@@ -43,6 +46,8 @@ fun PermissionCheckingScreen(
 ) {
 
     val context = LocalContext.current
+    val density = LocalDensity.current.density
+
     // ACCESS_FINE_LOCATION: 정확한 위치
     // ACCESS_COARSE_LOCATION: 대략적인 위치
     val permissionRequestLauncher = rememberLauncherForActivityResult(
@@ -67,11 +72,12 @@ fun PermissionCheckingScreen(
     ) {
         Spacer(Modifier.height(40.dp))
         Text(
+            modifier = Modifier.height((GlobalValue.topBarHeight / density).dp),
             text = "앱 접근 권한 안내",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Medium
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
         )
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(20.dp))
         Text(
             text = "지금어디의 서비스를 이용하기 위해서는\n아래 권한들을 필요로 합니다.",
             fontSize = 20.sp,
@@ -104,49 +110,32 @@ fun PermissionCheckingScreen(
                 Column() {
                     Text(
                         text = "위치정보 (필수)",
-                        fontSize = 24.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Text(
                         text = "본인 위치 확인에 이용",
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         color = Color(0xFF878787)
                     )
                 }
             }
         }
-        Box(
-            modifier = Modifier
-                .weight(1f),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        color = Color(0xFF2A2550),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .clickable {
-                        permissionRequestLauncher.launch(locationPermissions)
-                    }
-                    .padding(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "확인",
-                    fontSize = 30.sp,
-                    color = Color.White
-                )
+
+        Spacer(Modifier.weight(1f))
+
+        BottomOKButton(
+            text = "확인",
+            onClick = {
+                permissionRequestLauncher.launch(locationPermissions)
             }
-        }
+        )
+
+        Spacer(Modifier.height(20.dp))
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PermissionCheckingScreenPreview() {
     PermissionCheckingScreen(

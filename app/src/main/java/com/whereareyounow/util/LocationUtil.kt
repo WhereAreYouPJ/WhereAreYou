@@ -23,8 +23,8 @@ class LocationUtil @Inject constructor(
     private val context: Context
 ) {
     fun getCurrentLocation(callback: suspend (LatLng) -> Unit) {
-        val request = LocationRequest.Builder(1000L)
-            .setMaxUpdates(4)
+        val request = LocationRequest.Builder(500)
+            .setMaxUpdates(2)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
 

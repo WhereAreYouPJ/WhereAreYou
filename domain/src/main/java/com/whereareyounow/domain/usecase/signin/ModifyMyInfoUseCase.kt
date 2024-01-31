@@ -10,9 +10,9 @@ class ModifyMyInfoUseCase(
     suspend operator fun invoke(
         token: String,
         memberId: String,
-        image: File,
-//        userId: String
+        image: File?,
+        userId: String
     ): NetworkResult<Unit> {
-        return repository.modifyMyInfo(token, memberId, image)
+        return repository.modifyMyInfo(token, memberId, image, userId)
     }
 }

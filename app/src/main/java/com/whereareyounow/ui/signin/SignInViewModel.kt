@@ -2,6 +2,7 @@ package com.whereareyounow.ui.signin
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.OnCompleteListener
@@ -22,6 +23,7 @@ import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -42,63 +44,87 @@ class SignInViewModel @Inject constructor(
     private val getFriendListUseCase: GetFriendListUseCase
 ) : AndroidViewModel(application) {
 
-    private val _inputId = MutableStateFlow("")
-    val inputId: StateFlow<String> = _inputId
-
+    private val _inputUserId = MutableStateFlow("")
+    val inputUserId: StateFlow<String> = _inputUserId
     private val _inputPassword = MutableStateFlow("")
     val inputPassword: StateFlow<String> = _inputPassword
+    private val _isSignInLoading = MutableStateFlow(false)
+    val isSignInLoading: StateFlow<Boolean> = _isSignInLoading
+    private val _isSignInFailed = MutableStateFlow(false)
+    val isSignInFailed: StateFlow<Boolean> = _isSignInFailed
 
-    fun updateInputId(inputId: String) {
-        _inputId.update { inputId }
+    fun updateInputUserId(id: String) {
+        _inputUserId.update { id }
     }
-    fun updateInputPassword(inputPassword: String) {
-        _inputPassword.update { inputPassword }
+
+    fun updateInputPassword(password: String) {
+        _inputPassword.update { password }
+    }
+
+    fun updateIsSignInFailed(isSignInFailed: Boolean) {
+        _isSignInFailed.update { isSignInFailed }
     }
 
     fun signIn(
         moveToHomeScreen: () -> Unit
     ) {
-        viewModelScope.launch(Dispatchers.Default) {
-            val request = SignInRequest(_inputId.value, _inputPassword.value)
-            val response = signInUseCase(request)
-            LogUtil.printNetworkLog(response, "로그인")
-            when (response) {
-                is NetworkResult.Success -> {
-                    response.data?.let { data ->
-                        saveAccessTokenUseCase("Bearer " + data.accessToken)
-                        saveRefreshTokenUseCase(data.refreshToken)
-                        saveMemberIdUseCase(data.memberId)
+        viewModelScope.launch {
+            _isSignInLoading.update { true }
+            _isSignInFailed.update { false }
+            var isSignInFailed = false
 
-                        getFriendIdsList(
-                            accessToken = "Bearer " + data.accessToken,
-                            memberId = data.memberId
-                        )
 
-                        FirebaseMessaging.getInstance().token.addOnCompleteListener(
-                            OnCompleteListener { task ->
-                                if (!task.isSuccessful) {
-                                    Log.e("FCM", "Fetching FCM registration token failed")
-                                    return@OnCompleteListener
+            val isSigningIn = viewModelScope.launch { delay(2000L) }
+            val signIn = launch(Dispatchers.Default) {
+                val request = SignInRequest(_inputUserId.value, _inputPassword.value)
+                val response = signInUseCase(request)
+                LogUtil.printNetworkLog(response, "로그인")
+                when (response) {
+                    is NetworkResult.Success -> {
+                        response.data?.let { data ->
+                            saveAccessTokenUseCase("Bearer " + data.accessToken)
+                            saveRefreshTokenUseCase(data.refreshToken)
+                            saveMemberIdUseCase(data.memberId)
+
+                            getFriendIdsList(
+                                accessToken = "Bearer " + data.accessToken,
+                                memberId = data.memberId
+                            )
+
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener(
+                                OnCompleteListener { task ->
+                                    if (!task.isSuccessful) {
+                                        Log.e("FCM", "Fetching FCM registration token failed")
+                                        return@OnCompleteListener
+                                    }
+
+                                    updateFCMToken(
+                                        fcmToken = task.result,
+                                        accessToken = "Bearer " + data.accessToken,
+                                        memberId = data.memberId
+                                    )
                                 }
-
-                                updateFCMToken(
-                                    fcmToken = task.result,
-                                    accessToken = "Bearer " + data.accessToken,
-                                    memberId = data.memberId
-                                )
-                            }
-                        )
+                            )
+                        }
                     }
-
-                    withContext(Dispatchers.Main) {
-                        moveToHomeScreen()
+                    is NetworkResult.Error -> {
+                        isSignInFailed = true
+                    }
+                    is NetworkResult.Exception -> {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-                is NetworkResult.Error -> {
+            }
 
-                }
-                is NetworkResult.Exception -> {
-
+            signIn.join()
+            isSigningIn.join()
+            _isSignInLoading.update { false }
+            _isSignInFailed.update { isSignInFailed }
+            if (!isSignInFailed) {
+                withContext(Dispatchers.Main) {
+                    moveToHomeScreen()
                 }
             }
         }
@@ -122,7 +148,9 @@ class SignInViewModel @Inject constructor(
 
                     }
                     is NetworkResult.Exception -> {
-
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -149,7 +177,9 @@ class SignInViewModel @Inject constructor(
 
             }
             is NetworkResult.Exception -> {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -175,7 +205,9 @@ class SignInViewModel @Inject constructor(
 
             }
             is NetworkResult.Exception -> {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

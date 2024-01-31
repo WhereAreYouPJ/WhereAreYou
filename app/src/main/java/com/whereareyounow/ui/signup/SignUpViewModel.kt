@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyounow.domain.entity.apimessage.signup.CheckIdDuplicateResponse
 import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
 import com.whereareyounow.domain.usecase.signup.AuthenticateEmailCodeUseCase
 import com.whereareyounow.domain.usecase.signup.AuthenticateEmailUseCase
@@ -17,6 +16,8 @@ import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -34,46 +35,47 @@ class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase
 ) : AndroidViewModel(application) {
 
-    private val nameCondition = Regex("^[\\uAC00-\\uD7A3a-zA-Z]{4,10}\$")
+    private val nameCondition = Regex("^[\\uAC00-\\uD7A3a-zA-Z]{2,4}\$")
     private val idCondition = Regex("^[a-z][a-z0-9]{3,9}\$")
     private val passwordCondition = Regex("^(?=[A-Za-z])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])[A-Za-z0-9]{4,10}\$")
     private val emailCondition = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$")
 
+    private val _screenState = MutableStateFlow(ScreenState.PolicyAgree)
+    val screenState: StateFlow<ScreenState> = _screenState
     private val _inputUserName = MutableStateFlow("")
     val inputUserName: StateFlow<String> = _inputUserName
     private val _inputUserNameState = MutableStateFlow(UserNameState.EMPTY)
     val inputUserNameState: StateFlow<UserNameState> = _inputUserNameState
-
     private val _inputUserId = MutableStateFlow("")
     val inputUserId: StateFlow<String> = _inputUserId
     private val _inputUserIdState = MutableStateFlow(UserIdState.EMPTY)
     val inputUserIdState: StateFlow<UserIdState> = _inputUserIdState
-
     private val _inputPassword = MutableStateFlow("")
     val inputPassword: StateFlow<String> = _inputPassword
     private val _inputPasswordState = MutableStateFlow(PasswordState.EMPTY)
     val inputPasswordState: StateFlow<PasswordState> = _inputPasswordState
-
     private val _inputPasswordForChecking = MutableStateFlow("")
     val inputPasswordForChecking: StateFlow<String> = _inputPasswordForChecking
     private val _inputPasswordForCheckingState = MutableStateFlow(PasswordCheckingState.EMPTY)
     val inputPasswordForCheckingState: StateFlow<PasswordCheckingState> = _inputPasswordForCheckingState
-
     private val _inputEmail = MutableStateFlow("")
     val inputEmail: StateFlow<String> = _inputEmail
     private val _inputEmailState = MutableStateFlow(EmailState.EMPTY)
     val inputEmailState: StateFlow<EmailState> = _inputEmailState
-
+    private val _emailVerificationProgressState = MutableStateFlow(EmailVerificationProgressState.DUPLICATE_UNCHECKED)
+    val emailVerificationProgressState: StateFlow<EmailVerificationProgressState> = _emailVerificationProgressState
     private val _inputVerificationCode = MutableStateFlow("")
     val inputVerificationCode: StateFlow<String> = _inputVerificationCode
     private val _inputVerificationCodeState = MutableStateFlow(VerificationCodeState.EMPTY)
     val inputVerificationCodeState: StateFlow<VerificationCodeState> = _inputVerificationCodeState
+    private val _emailVerificationLeftTime = MutableStateFlow(0)
+    val emailVerificationLeftTime: StateFlow<Int> = _emailVerificationLeftTime
+    private var startTimer: Job? = null
 
-    private val _isEmailDuplicationChecked = MutableStateFlow(false)
-    val isEmailDuplicationChecked: StateFlow<Boolean> = _isEmailDuplicationChecked
 
-    private val _isEmailVerificationInProgress = MutableStateFlow(false)
-    val isEmailVerificationInProgress: StateFlow<Boolean> = _isEmailVerificationInProgress
+    fun updateScreenState(screenState: ScreenState) {
+        _screenState.update { screenState }
+    }
 
     fun updateInputUserName(userName: String) {
         _inputUserName.update { userName }
@@ -128,8 +130,7 @@ class SignUpViewModel @Inject constructor(
                 if (email.matches(emailCondition)) EmailState.SATISFIED else EmailState.UNSATISFIED
             }
         }
-        _isEmailDuplicationChecked.update { false }
-        _isEmailVerificationInProgress.update { false }
+        _emailVerificationProgressState.update { EmailVerificationProgressState.DUPLICATE_UNCHECKED }
     }
 
     fun updateInputVerificationCode(code: String) {
@@ -149,7 +150,9 @@ class SignUpViewModel @Inject constructor(
                         _inputUserIdState.update { UserIdState.DUPLICATED }
                     }
                     is NetworkResult.Exception -> {
-
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             } else {
@@ -168,14 +171,16 @@ class SignUpViewModel @Inject constructor(
                     when (response) {
                         is NetworkResult.Success -> {
                             _inputEmailState.update { EmailState.UNIQUE }
-                            _isEmailDuplicationChecked.update { true }
+                            _emailVerificationProgressState.update { EmailVerificationProgressState.DUPLICATE_CHECKED }
                         }
                         is NetworkResult.Error -> {
                             _inputEmailState.update { EmailState.DUPLICATED }
-                            _isEmailDuplicationChecked.update { false }
+                            _emailVerificationProgressState.update { EmailVerificationProgressState.DUPLICATE_UNCHECKED }
                         }
                         is NetworkResult.Exception -> {
-
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 } else {
@@ -187,25 +192,49 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun verifyEmail() {
+        // 인증 코드를 발송하고 1분이 지나지 않았으면 다시 발송할 수 없다.
+        if (_emailVerificationLeftTime.value > 240) {
+            Toast.makeText(application, "${_emailVerificationLeftTime.value - 240}초 후에 다시 발송할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
         viewModelScope.launch {
             val request = AuthenticateEmailRequest(_inputEmail.value)
             val response = authenticateEmailUseCase(request)
             LogUtil.printNetworkLog(response, "이메일 인증 코드 전송")
             when (response) {
                 is NetworkResult.Success -> {
-                    _isEmailVerificationInProgress.update { true }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "인증 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    _inputVerificationCodeState.update { VerificationCodeState.EMPTY }
+                    startTimer?.cancel()
+                    startTimer = viewModelScope.launch {
+                        _emailVerificationLeftTime.update { 300 }
+                        while (_emailVerificationLeftTime.value > 0) {
+                            _emailVerificationLeftTime.update { it - 1 }
+                            delay(1000)
+                        }
+                    }
+                    _emailVerificationProgressState.update { EmailVerificationProgressState.VERIFICATION_REQUESTED }
                 }
                 is NetworkResult.Error -> {
 
                 }
                 is NetworkResult.Exception -> {
-
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
     }
 
     fun verifyEmailCode() {
+        // 유효시간이 지나면 인증을 다시 받아야 한다.
+        if (_emailVerificationLeftTime.value <= 0) {
+            Toast.makeText(application, "유효시간이 만료되었습니다. 인증코드를 재전송해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
         viewModelScope.launch {
             val request = AuthenticateEmailCodeRequest(_inputEmail.value, _inputVerificationCode.value)
             val response = authenticateEmailCodeUseCase(request)
@@ -218,7 +247,9 @@ class SignUpViewModel @Inject constructor(
                     _inputVerificationCodeState.update { VerificationCodeState.UNSATISFIED }
                 }
                 is NetworkResult.Exception -> {
-
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -270,9 +301,15 @@ class SignUpViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Exception -> {
-
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
+    }
+
+    enum class ScreenState {
+        PolicyAgree, TermsOfService, PrivacyPolicy, SignUp, SignUpSuccess
     }
 }

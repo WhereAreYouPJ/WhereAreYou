@@ -11,6 +11,8 @@ data class GetDetailScheduleResponse(
     val title: String,
     @SerializedName("place")
     val place: String,
+    @SerializedName("roadName")
+    val roadName: String,
     @SerializedName("memo")
     val memo: String,
     @SerializedName("destinationLatitude")

@@ -3,12 +3,12 @@ package com.whereareyounow.datasource
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.whereareyounow.vo.Constants
+import com.whereareyounow.vo.SHARED_PREFERENCES_FILE_NAME
 
 class SharedPreferencesDataSource (
     private val context: Context
 ) {
-    private val pref: SharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
+    private val pref: SharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
     private val editor = pref.edit()
     private val gson = Gson()
 

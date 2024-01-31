@@ -10,12 +10,14 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleRes
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -58,9 +60,9 @@ interface ScheduleApi {
 
     // 일정 내용 수정
     @PUT("schedule")
-    suspend fun modifySchedule(
+    suspend fun modifyScheduleDetails(
         @Header("Authorization") token: String,
-        @Body body: ModifyScheduleRequest
+        @Body body: ModifyScheduleDetailsRequest
     ): Response<Unit>
 
     // 일정 멤버 수정
@@ -71,7 +73,7 @@ interface ScheduleApi {
     ): Response<Unit>
 
     // 일정 삭제
-    @DELETE("schedule")
+    @HTTP(method = "DELETE", path = "schedule", hasBody = true)
     suspend fun deleteSchedule(
         @Header("Authorization") token: String,
         @Body body: DeleteScheduleRequest
@@ -85,14 +87,14 @@ interface ScheduleApi {
     ): Response<Boolean>
 
     // 도착 여부
-    @POST("schedule/arrived")
+    @PUT("schedule/arrived")
     suspend fun checkArrival(
         @Header("Authorization") token: String,
         @Body body: CheckArrivalRequest
     ): Response<Boolean>
 
     // 일정 거절 또는 나가기
-    @DELETE("memberschedule/refuse")
+    @HTTP(method = "DELETE", path = "memberschedule/refuse", hasBody = true)
     suspend fun refuseOrQuitSchedule(
         @Header("Authorization") token: String,
         @Body body: RefuseOrQuitScheduleRequest
@@ -104,4 +106,10 @@ interface ScheduleApi {
         @Header("Authorization") token: String,
         @Query("memberId") memberId: String
     ): Response<GetScheduleInvitationResponse>
+
+    @HTTP(method = "DELETE", path = "schedule/reset", hasBody = true)
+    suspend fun resetCalendar(
+        @Header("Authorization") token: String,
+        @Body body: ResetCalendarRequest
+    ): Response<Boolean>
 }

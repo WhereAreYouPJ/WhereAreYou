@@ -1,8 +1,10 @@
 package com.whereareyounow.ui.splash
 
 import android.app.Application
-import android.util.Log
+import android.widget.Toast
+import androidx.annotation.Keep
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.FriendProvider
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
@@ -19,13 +21,13 @@ import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,10 +70,10 @@ class SplashViewModel @Inject constructor(
     suspend fun checkIsSignedIn(): Boolean {
         isSignedIn = getRefreshTokenUseCase().first().isNotEmpty()
         if (isSignedIn) {
-            val init = CoroutineScope(Dispatchers.Default).async {
+            val init = viewModelScope.launch(Dispatchers.Default) {
                 initialize()
             }
-            init.await()
+            init.join()
         }
         return isSignedIn
     }
@@ -103,10 +105,15 @@ class SplashViewModel @Inject constructor(
             is NetworkResult.Error -> {
                 isSignedIn = false
             }
-            is NetworkResult.Exception -> {  }
+            is NetworkResult.Exception -> {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
+    @Keep
     private suspend fun getFriendIdsList(
         accessToken: String,
         memberId: String
@@ -116,7 +123,7 @@ class SplashViewModel @Inject constructor(
         LogUtil.printNetworkLog(response, "친구 memberId 리스트 획득")
         when (response) {
             is NetworkResult.Success -> {
-                response.data?.let {  data ->
+                response.data?.let { data ->
                     getFriendsList(
                         accessToken = accessToken,
                         friendIdsList = data.friendsIdList
@@ -127,7 +134,9 @@ class SplashViewModel @Inject constructor(
 
             }
             is NetworkResult.Exception -> {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -153,7 +162,9 @@ class SplashViewModel @Inject constructor(
 
             }
             is NetworkResult.Exception -> {
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

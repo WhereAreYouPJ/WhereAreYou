@@ -10,9 +10,10 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefSchedul
 import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
+import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
 import com.whereareyounow.domain.repository.ScheduleRepository
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
@@ -73,13 +74,13 @@ class ScheduleRepositoryImpl(
 
     /**
      * 일정 내용 수정
-     * implements [ScheduleRepository.modifySchedule]
+     * implements [ScheduleRepository.modifyScheduleDetails]
      */
-    override suspend fun modifySchedule(
+    override suspend fun modifyScheduleDetails(
         token: String,
-        body: ModifyScheduleRequest
+        body: ModifyScheduleDetailsRequest
     ): NetworkResult<Unit> {
-        return handleResult { dataSource.modifySchedule(token, body) }
+        return handleResult { dataSource.modifyScheduleDetails(token, body) }
     }
 
     /**
@@ -146,5 +147,16 @@ class ScheduleRepositoryImpl(
         memberId: String
     ): NetworkResult<GetScheduleInvitationResponse> {
         return handleResult { dataSource.getScheduleInvitation(token, memberId) }
+    }
+
+    /**
+     * 일정 초대 목록
+     * implements [ScheduleRepository.resetCalendar]
+     */
+    override suspend fun resetCalendar(
+        token: String,
+        body: ResetCalendarRequest
+    ): NetworkResult<Boolean> {
+        return handleResult { dataSource.resetCalendar(token, body) }
     }
 }

@@ -187,8 +187,9 @@ fun DrawerNotification(
                             }
                         )
                     }
+                    // 하단 네비게이션 바에 가려지는 부분을 위한 여백
                     item {
-                        Spacer(Modifier.height((GlobalValue.bottomNavBarHeight / density).dp))
+                        Spacer(Modifier.height(((GlobalValue.bottomNavBarHeight / density) + 20).dp))
                     }
                 }
             }

@@ -28,14 +28,15 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefSchedul
 import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
+import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
 import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdResponse
-import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.GetMemberDetailsResponse
+import com.whereareyounow.domain.entity.apimessage.signin.GetMemberIdByUserIdResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenResponse
 import com.whereareyounow.domain.entity.apimessage.signin.ResetPasswordRequest
@@ -101,11 +102,11 @@ class RemoteDataSource(
     }
 
     // 일정 내용 수정
-    suspend fun modifySchedule(
+    suspend fun modifyScheduleDetails(
         token: String,
-        body: ModifyScheduleRequest
+        body: ModifyScheduleDetailsRequest
     ): Response<Unit> {
-        return scheduleApi.modifySchedule(token, body)
+        return scheduleApi.modifyScheduleDetails(token, body)
     }
 
     // 일정 멤버 수정
@@ -154,6 +155,14 @@ class RemoteDataSource(
         memberId: String
     ): Response<GetScheduleInvitationResponse> {
         return scheduleApi.getScheduleInvitation(token, memberId)
+    }
+
+    // 캘린더 삭제
+    suspend fun resetCalendar(
+        token: String,
+        body: ResetCalendarRequest
+    ): Response<Boolean> {
+        return scheduleApi.resetCalendar(token, body)
     }
 
 
@@ -248,11 +257,11 @@ class RemoteDataSource(
     // 마이페이지 수정
     suspend fun modifyMyInfo(
         token: String,
-        memberId: RequestBody,
-        image: MultipartBody.Part,
+        partMap: HashMap<String, RequestBody>,
+        photo: MultipartBody.Part?
 //        userId: RequestBody
     ): Response<Unit> {
-        return signInApi.modifyMyInfo(token, memberId, image)
+        return signInApi.modifyMyInfo(token, partMap, photo)
     }
 
     // 회원정보 삭제

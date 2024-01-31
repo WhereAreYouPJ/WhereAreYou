@@ -8,5 +8,5 @@ data class ModifyScheduleMemberRequest(
     @SerializedName("scheduleId")
     val scheduleId: String,
     @SerializedName("friendId")
-    val friendId: List<String>
+    val friendIds: List<String>
 )

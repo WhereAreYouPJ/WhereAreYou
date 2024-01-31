@@ -6,6 +6,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 
@@ -34,7 +35,7 @@ val nanumSquareNeo = FontFamily(
     Font(R.font.nanumsquareneo_heavy, FontWeight.Black)
 )
 
-val notosanskr = FontFamily(
+val notoSanskr = FontFamily(
     Font(R.font.notosanskr_thin, FontWeight.Thin),
     Font(R.font.notosanskr_extralight, FontWeight.ExtraLight),
     Font(R.font.notosanskr_light, FontWeight.Light),
@@ -45,14 +46,29 @@ val notosanskr = FontFamily(
     Font(R.font.notosanskr_extrabold, FontWeight.ExtraBold),
     Font(R.font.notosanskr_black, FontWeight.Black)
 )
+
+val nanumSquare = FontFamily(
+    Font(R.font.nanumsquare_light, FontWeight.Light),
+    Font(R.font.nanumsquare_regular, FontWeight.Normal),
+    Font(R.font.nanumsquare_bold, FontWeight.Bold),
+    Font(R.font.nanumsquare_extrabold, FontWeight.ExtraBold),
+)
+
+val nanumSquareAc = FontFamily(
+    Font(R.font.nanumsquare_ac_light, FontWeight.Light),
+    Font(R.font.nanumsquare_ac_regular, FontWeight.Normal),
+    Font(R.font.nanumsquare_ac_bold, FontWeight.Bold),
+    Font(R.font.nanumsquare_ac_extrabold, FontWeight.ExtraBold),
+
+)
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
-        fontFamily = notosanskr,
+        fontFamily = notoSanskr,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
+        lineHeight = 1.1.em,
+        letterSpacing = 0.05.sp,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         )

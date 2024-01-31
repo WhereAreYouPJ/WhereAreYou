@@ -1,5 +1,6 @@
 package com.whereareyounow.domain.usecase.signin
 
+import androidx.annotation.Keep
 import com.whereareyounow.domain.entity.apimessage.signin.SignInRequest
 import com.whereareyounow.domain.entity.apimessage.signin.SignInResponse
 import com.whereareyounow.domain.repository.SignInRepository

@@ -7,8 +7,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.text.SimpleDateFormat
 
-class EmptyBody : Any()
-
 interface NetworkResultHandler {
     suspend fun <T:Any> handleResult(
         responseFunction: suspend () -> Response<T>

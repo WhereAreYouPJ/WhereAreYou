@@ -45,7 +45,6 @@ fun DateCalendar(
     updateDate: (Int) -> Unit,
     expandDetailContent: () -> Unit
 ) {
-    val density = LocalDensity.current.density
     // 일자 선택 화면
     AnimatedVisibility(
         visible = calendarState == CalendarViewModel.CalendarState.DATE,

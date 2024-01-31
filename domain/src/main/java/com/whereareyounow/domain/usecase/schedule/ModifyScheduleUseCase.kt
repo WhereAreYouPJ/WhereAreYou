@@ -1,16 +1,16 @@
 package com.whereareyounow.domain.usecase.schedule
 
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.repository.ScheduleRepository
 import com.whereareyounow.domain.util.NetworkResult
 
-class ModifyScheduleUseCase(
+class ModifyScheduleDetailsUseCase(
     private val repository: ScheduleRepository
 ) {
     suspend operator fun invoke(
         token: String,
-        body: ModifyScheduleRequest
+        body: ModifyScheduleDetailsRequest
     ): NetworkResult<Unit> {
-        return repository.modifySchedule(token, body)
+        return repository.modifyScheduleDetails(token, body)
     }
 }

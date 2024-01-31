@@ -1,7 +1,11 @@
 package com.whereareyounow.util
 
 import com.whereareyounow.data.Schedule
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Calendar
+import java.util.Date
+import kotlin.math.absoluteValue
 
 object CalendarUtil {
 
@@ -75,5 +79,14 @@ object CalendarUtil {
     fun getTodayInfo(): List<Int> {
         val calendar = Calendar.getInstance()
         return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE), calendar.get(Calendar.DAY_OF_WEEK))
+    }
+
+    fun getMinuteDiffWithCurrentTime(time: String): Int {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val t = dateFormat.parse(time)
+        val currentDate = Date()
+        val diffInMillis = t.time - currentDate.time
+        val minutes = diffInMillis / (1000 * 60)
+        return minutes.toInt().absoluteValue
     }
 }
