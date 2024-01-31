@@ -17,10 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.domain.entity.apimessage.schedule.ScheduleInvitation
@@ -31,9 +35,20 @@ fun ScheduleRequestBox(
     acceptScheduleRequest: () -> Unit,
     refuseScheduleRequest: () -> Unit
 ) {
+    var hour = scheduleRequest.hour.toInt()
+    val minute = scheduleRequest.minute.toInt()
+    val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}
+    if (hour == 0) hour = 12
+
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
+            .fillMaxWidth()
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp))
+            .background(
+                color = Color(0xFFFFFFFF),
+                shape = RoundedCornerShape(20.dp)
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -63,12 +78,18 @@ fun ScheduleRequestBox(
             Column {
                 Text(
                     text = "${scheduleRequest.title}",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    letterSpacing = 0.05.em,
+                    color = Color(0xFF030408)
                 )
                 Text(
                     text = "${scheduleRequest.year}년 ${scheduleRequest.month}월 ${scheduleRequest.date}일",
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF7A7B7C)
                 )
             }
         }
@@ -76,27 +97,70 @@ fun ScheduleRequestBox(
             modifier = Modifier
                 .fillMaxWidth()
                 .height((0.6).dp)
-                .background(color = Color.Black)
+                .background(color = Color(0xFF000000))
         )
         Column(
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            Text(
-                text = "초대 ${scheduleRequest.userName}",
-                fontSize = 20.sp
-            )
-            Text(
-                text = "시간 ${scheduleRequest.hour}:${scheduleRequest.minute}",
-                fontSize = 20.sp
-            )
+            Row {
+                Text(
+                    text = "초대",
+                    color = Color(0xFFACACAC),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = "${scheduleRequest.userName}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color(0xFF7A7B7C)
+                )
+            }
+            Row {
+                Text(
+                    text = "시간",
+                    color = Color(0xFFACACAC),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    text = "$AMPM ${hour}:${String.format("%02d", minute)}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF7A7B7C)
+                )
+            }
             Spacer(Modifier.height(10.dp))
             Row(
             ) {
-                ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color.White) { acceptScheduleRequest() }
+                ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptScheduleRequest() }
                 Spacer(Modifier.width(10.dp))
                 ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseScheduleRequest() }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ScheduleRequestBoxPreview() {
+    ScheduleRequestBox(
+        scheduleRequest = ScheduleInvitationInfo(
+            scheduleId = "",
+            title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            userName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            year = "2023",
+            month = "12",
+            date = "12",
+            hour = "13",
+            minute = "45",
+        ),
+        acceptScheduleRequest = {},
+        refuseScheduleRequest = {}
+    )
 }
