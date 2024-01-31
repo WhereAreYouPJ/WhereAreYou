@@ -1,15 +1,20 @@
 package com.whereareyounow.ui.home.schedule.notification
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,124 +22,173 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.domain.entity.friend.FriendRequest
+import com.whereareyounow.domain.entity.schedule.Friend
 
 @Composable
 fun DrawerNotification(
+    friendRequestsList: List<Pair<FriendRequest, Friend>>,
+    scheduleRequestsList: List<ScheduleInvitationInfo>,
     updateCalendar: () -> Unit,
     updateBriefCalendar: () -> Unit,
-    viewModel: DrawerNotificationViewModel = hiltViewModel()
+    acceptFriendRequest: (FriendRequest) -> Unit,
+    refuseFriendRequest: (FriendRequest) -> Unit,
+    acceptScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
+    refuseScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
+    hideDrawer: () -> Unit
 ) {
-    val density = LocalDensity.current
-    val friendRequestList = viewModel.friendRequestList
-    val scheduleRequestList = viewModel.scheduleRequestList
+
+    BackHandler {
+        hideDrawer()
+    }
+
+    val density = LocalDensity.current.density
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
             modifier = Modifier
-                .width((GlobalValue.screenWidth * 4 / 5 / density.density).dp)
+                .width((GlobalValue.screenWidth * 4 / 5 / density).dp)
                 .fillMaxHeight()
                 .background(color = Color(0xFFFAFAFA))
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(
-                    contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp)
-                ) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
+            ) {
+                LazyColumn {
                     item {
+                        Column(
+                            modifier = Modifier.background(Color(0xFFFFFFFF))
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height((GlobalValue.topBarHeight / density).dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Spacer(Modifier.width(20.dp))
+                                Image(
+                                    modifier = Modifier
+                                        .size((GlobalValue.topBarHeight / density / 2).dp)
+                                        .clip(RoundedCornerShape(50))
+                                        .clickable { hideDrawer() },
+                                    painter = painterResource(id = R.drawable.arrow_back),
+                                    contentDescription = null
+                                )
+                                Spacer(Modifier.weight(1f))
+                                Text(
+                                    text = "2",
+                                    color = Color(0xFFF3A204)
+                                )
+                                Spacer(Modifier.width(10.dp))
+                                Text(
+                                    text = "오늘의 일정",
+                                    color = Color(0xFF5B5B5B),
+                                    fontWeight = FontWeight.Medium,
+                                    letterSpacing = 0.em
+                                )
+                                Spacer(Modifier.width(20.dp))
+                            }
+                            Spacer(Modifier.height(20.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height((0.6).dp)
+                                    .background(color = Color(0xFFBEBEBE))
+                            )
+                        }
+                        Spacer(Modifier.height(20.dp))
                         Text(
-                            modifier = Modifier.padding(start = 20.dp, bottom = 20.dp),
+                            modifier = Modifier.padding(start = 20.dp),
                             text = "알림",
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF5C5C67)
                         )
-                        Text(
-                            modifier = Modifier.padding(start = 20.dp),
-                            text = "친구 요청 ${friendRequestList.size}",
-                            color = Color(0xFF999999),
-                            fontSize = 20.sp
-                        )
-                    }
-                    itemsIndexed(friendRequestList) { _, friendRequest ->
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                        ) {
-                            FriendRequestBox(
-                                friendRequest = friendRequest,
-                                acceptFriendRequest = {
-                                    viewModel.acceptFriendRequest(friendRequest.first)
-                                    updateCalendar()
-                                    updateBriefCalendar()
-                                },
-                                refuseFriendRequest = {
-                                    viewModel.refuseFriendRequest(friendRequest.first)
-                                    updateCalendar()
-                                    updateBriefCalendar()
-                                }
-                            )
-                        }
-                    }
-
-                    item {
-                        Text(
-                            modifier = Modifier.padding(start = 20.dp),
-                            text = "일정 초대 ${scheduleRequestList.size}",
-                            color = Color(0xFF999999),
-                            fontSize = 20.sp
-                        )
-                    }
-                    itemsIndexed(scheduleRequestList) { _, scheduleRequest ->
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
-                                .fillMaxWidth()
-                                .height(180.dp)
-                                .shadow(elevation = 4.dp, shape = RoundedCornerShape(10.dp))
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                        ) {
-                            ScheduleRequestBox(
-                                scheduleRequest = scheduleRequest,
-                                acceptScheduleRequest = {
-                                    viewModel.acceptScheduleRequest(
-                                        scheduleId = scheduleRequest.scheduleId,
-                                        updateCalendar = updateCalendar,
-                                        updateBriefCalendar = updateBriefCalendar
-                                    )
-                                },
-                                refuseScheduleRequest = {
-                                    updateCalendar()
-                                    updateBriefCalendar()
-                                    viewModel.refuseScheduleRequest(
-                                        scheduleId = scheduleRequest.scheduleId,
-                                        updateCalendar = updateCalendar,
-                                        updateBriefCalendar = updateBriefCalendar
-                                    )
-                                }
-                            )
-                        }
+                        Spacer(Modifier.height(10.dp))
                     }
                     item {
-                        Spacer(Modifier.height((GlobalValue.bottomNavBarHeight / density.density).dp))
+                        Spacer(Modifier.height(10.dp))
+                        Text(
+                            modifier = Modifier.padding(start = 20.dp),
+                            text = "친구 요청 ${friendRequestsList.size}",
+                            color = Color(0xFF999999),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    itemsIndexed(friendRequestsList) { _, friendRequest ->
+                        FriendRequestBox(
+                            friendRequest = friendRequest,
+                            acceptFriendRequest = {
+                                acceptFriendRequest(friendRequest.first)
+                                updateCalendar()
+                                updateBriefCalendar()
+                            },
+                            refuseFriendRequest = {
+                                refuseFriendRequest(friendRequest.first)
+                                updateCalendar()
+                                updateBriefCalendar()
+                            }
+                        )
+                    }
+                    item {
+                        Spacer(Modifier.height(20.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height((0.6).dp)
+                                .background(color = Color(0xFFBEBEBE))
+                        )
+                        Spacer(Modifier.height(20.dp))
+                        Text(
+                            modifier = Modifier.padding(start = 20.dp),
+                            text = "일정 초대 ${scheduleRequestsList.size}",
+                            color = Color(0xFF999999),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    itemsIndexed(scheduleRequestsList) { _, scheduleRequest ->
+                        ScheduleRequestBox(
+                            scheduleRequest = scheduleRequest,
+                            acceptScheduleRequest = {
+                                acceptScheduleRequest(
+                                    scheduleRequest.scheduleId,
+                                    updateCalendar,
+                                    updateBriefCalendar
+                                )
+                            },
+                            refuseScheduleRequest = {
+                                updateCalendar()
+                                updateBriefCalendar()
+                                refuseScheduleRequest(
+                                    scheduleRequest.scheduleId,
+                                    updateCalendar,
+                                    updateBriefCalendar
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        Spacer(Modifier.height((GlobalValue.bottomNavBarHeight / density).dp))
                     }
                 }
             }
@@ -142,13 +196,31 @@ fun DrawerNotification(
     }
 }
 
-//@Preview(showBackground = true, widthDp = 411, heightDp = 836, backgroundColor = 0XFF000000)
-//@Composable
-//fun DrawerNotificationPreview() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//    ) {
-//        DrawerNotification()
-//    }
-//}
+@Preview(showBackground = true, widthDp = 411, heightDp = 836, backgroundColor = 0XFF000000)
+@Composable
+fun DrawerNotificationPreview() {
+    val friendRequestsList = listOf(
+        FriendRequest("", "id1") to Friend(0, "memberId1", "name1"),
+        FriendRequest("", "id1") to Friend(0, "memberId1", "name2")
+    )
+    val scheduleRequestsList = listOf(
+        ScheduleInvitationInfo(scheduleId = "", title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", userName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", year = "2023", month = "12", date = "12", hour = "13", minute = "45",
+        )
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        DrawerNotification(
+            friendRequestsList = friendRequestsList,
+            scheduleRequestsList = scheduleRequestsList,
+            updateCalendar = {},
+            updateBriefCalendar = {},
+            acceptFriendRequest = {},
+            refuseFriendRequest = {},
+            acceptScheduleRequest = { _, _, _ -> },
+            refuseScheduleRequest = { _, _, _ -> },
+            hideDrawer = {}
+        )
+    }
+}
