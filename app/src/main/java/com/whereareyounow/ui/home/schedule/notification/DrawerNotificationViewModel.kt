@@ -2,6 +2,7 @@ package com.whereareyounow.ui.home.schedule.notification
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -72,7 +73,11 @@ class DrawerNotificationViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -106,7 +111,11 @@ class DrawerNotificationViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -124,7 +133,11 @@ class DrawerNotificationViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
         withContext(Dispatchers.Main) {
@@ -145,7 +158,11 @@ class DrawerNotificationViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             loadFriendRequests()
             getFriendList()
@@ -163,7 +180,11 @@ class DrawerNotificationViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             loadFriendRequests()
             getFriendList()
@@ -185,7 +206,11 @@ class DrawerNotificationViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             loadScheduleRequests()
             updateCalendar()
@@ -208,7 +233,11 @@ class DrawerNotificationViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {  }
+                is NetworkResult.Exception -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             loadScheduleRequests()
             updateCalendar()
@@ -236,12 +265,20 @@ class DrawerNotificationViewModel @Inject constructor(
                             }
                         }
                         is NetworkResult.Error -> {  }
-                        is NetworkResult.Exception -> {  }
+                        is NetworkResult.Exception -> {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 }
             }
             is NetworkResult.Error -> {  }
-            is NetworkResult.Exception -> {  }
+            is NetworkResult.Exception -> {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
