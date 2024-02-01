@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -128,52 +130,54 @@ fun FriendScreenTopBar(
                     popupState = popupState,
                     onDismissRequest = { popupState.isVisible = false }
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .height(IntrinsicSize.Min)
-                    ) {
-                        Box(
+                    CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                        Row(
                             modifier = Modifier
-                                .background(color = Color(0xFFF9D889))
-                                .clickable {
-                                    popupState.isVisible = false
-                                    moveToAddFriendScreen()
-                                },
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = "친구추가",
-                                fontFamily = nanumSquareNeo
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .fillMaxHeight()
-                                .background(Color(0xFFF9D889))
-                                .padding(top = 10.dp, bottom = 10.dp)
+                                .clip(RoundedCornerShape(50))
+                                .height(IntrinsicSize.Min)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color(0xFF000000))
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
-                                .background(Color(0xFFF9D889))
-                                .clickable {
-                                    popupState.isVisible = false
-                                    moveToAddGroupScreen()
-                                }
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(10.dp),
-                                text = "그룹추가",
-                                fontFamily = nanumSquareNeo
-                            )
+                                    .background(color = Color(0xFFF9D889))
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        moveToAddFriendScreen()
+                                    },
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(10.dp),
+                                    text = "친구추가",
+                                    fontFamily = nanumSquareNeo
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .width(1.dp)
+                                    .fillMaxHeight()
+                                    .background(Color(0xFFF9D889))
+                                    .padding(top = 10.dp, bottom = 10.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(Color(0xFF000000))
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
+                                    .background(Color(0xFFF9D889))
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        moveToAddGroupScreen()
+                                    }
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(10.dp),
+                                    text = "그룹추가",
+                                    fontFamily = nanumSquareNeo
+                                )
+                            }
                         }
                     }
                 }
@@ -213,12 +217,6 @@ fun FriendContent(
                 imageUrl = friend.profileImgUrl,
                 friendName = friend.name
             )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-                    .background(Color(0xFFAAAAAA))
-            )
         }
     }
 }
@@ -238,7 +236,7 @@ fun FriendBox(
             modifier = Modifier
                 .size(30.dp)
                 .clip(RoundedCornerShape(50)),
-            imageModel = { imageUrl ?: R.drawable.idle_profile },
+            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
         )
         Spacer(Modifier.width(10.dp))
