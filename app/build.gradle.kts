@@ -16,7 +16,7 @@ android {
         applicationId = "com.whereareyounow"
         minSdk = 24
         targetSdk = 34
-        versionCode = 25
+        versionCode = 26
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -36,7 +36,7 @@ android {
             )
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
