@@ -316,7 +316,6 @@ fun MyPageWarningDialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties()
     ) {
-
         CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
             Column(
                 modifier = Modifier
