@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -31,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -222,6 +225,8 @@ fun ScheduleScreenTopBar(
 ) {
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
+
+    val isDropDownMenuExpanded = remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -229,20 +234,33 @@ fun ScheduleScreenTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(Modifier.width(20.dp))
-        Text(
-            modifier = Modifier.clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                    coroutineScope.launch(Dispatchers.Default) { bottomContentState.animateTo(DetailState.Close) }
-                    updateCalendarState(CalendarViewModel.CalendarState.YEAR)
+        Box {
+            Text(
+                modifier = Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+//                    coroutineScope.launch(Dispatchers.Default) { bottomContentState.animateTo(DetailState.Close) }
+//                    updateCalendarState(CalendarViewModel.CalendarState.YEAR)
+
+                    isDropDownMenuExpanded.value = true
                 },
-            text = "${selectedYear}.",
-            fontSize = 26.sp,
-            fontFamily = lato,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 0.em
-        )
+                text = "${selectedYear}.",
+                fontSize = 26.sp,
+                fontFamily = lato,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.em
+            )
+            DropdownMenu(
+                expanded = isDropDownMenuExpanded.value,
+                onDismissRequest = { isDropDownMenuExpanded.value = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("item") },
+                    onClick = {  }
+                )
+            }
+        }
         Spacer(Modifier.width(10.dp))
         if (calendarState == CalendarViewModel.CalendarState.DATE) {
             Text(
