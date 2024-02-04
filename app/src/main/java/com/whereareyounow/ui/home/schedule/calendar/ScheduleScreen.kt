@@ -1,6 +1,5 @@
 package com.whereareyounow.ui.home.schedule.calendar
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -18,28 +17,40 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -59,8 +70,10 @@ import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.home.schedule.notification.DrawerNotification
 import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationViewModel
 import com.whereareyounow.ui.home.schedule.notification.ScheduleInvitationInfo
-import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
+import com.whereareyounow.util.popupmenu.CustomPopup
+import com.whereareyounow.util.popupmenu.PopupPosition
+import com.whereareyounow.util.popupmenu.PopupState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -225,8 +238,10 @@ fun ScheduleScreenTopBar(
 ) {
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
+    val yearDropdownPopupState = remember { PopupState(false, PopupPosition.BottomRight) }
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+    val yearList = (currentYear - 20 .. currentYear + 20).toList()
 
-    val isDropDownMenuExpanded = remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,8 +257,7 @@ fun ScheduleScreenTopBar(
                 ) {
 //                    coroutineScope.launch(Dispatchers.Default) { bottomContentState.animateTo(DetailState.Close) }
 //                    updateCalendarState(CalendarViewModel.CalendarState.YEAR)
-
-                    isDropDownMenuExpanded.value = true
+                    yearDropdownPopupState.isVisible = true
                 },
                 text = "${selectedYear}.",
                 fontSize = 26.sp,
@@ -251,14 +265,41 @@ fun ScheduleScreenTopBar(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.em
             )
-            DropdownMenu(
-                expanded = isDropDownMenuExpanded.value,
-                onDismissRequest = { isDropDownMenuExpanded.value = false }
+            CustomPopup(
+                popupState = yearDropdownPopupState,
+                onDismissRequest = { yearDropdownPopupState.isVisible = false }
             ) {
-                DropdownMenuItem(
-                    text = { Text("item") },
-                    onClick = {  }
-                )
+                Box(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(200.dp)
+                        .padding(10.dp)
+                        .offset(x = (-10).dp, y = (-8).dp)
+                ) {
+                    Surface(
+                        modifier = Modifier
+//                        .shadow(
+//                            elevation = 2.dp,
+//                            shape = RoundedCornerShape(10.dp)
+//                        )
+                            .background(
+                                color = Color(0xFFFFFFFF),
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                        shadowElevation = 2.dp
+                    ) {
+                        val listState = rememberLazyListState()
+                        LaunchedEffect(true) { listState.scrollToItem(20) }
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            state = listState
+                        ) {
+                            itemsIndexed(yearList) {_, year ->
+                                Text("$year")
+                            }
+                        }
+                    }
+                }
             }
         }
         Spacer(Modifier.width(10.dp))
@@ -316,34 +357,7 @@ enum class DetailState {
     Open, Close
 }
 
-//@Preview
-//@Composable
-//private fun ScheduleScreenPreview() {
-//    WhereAreYouTheme {
-//        ScheduleScreen(
-//            friendRequestsList = listOf(),
-//            scheduleRequestsList = listOf(),
-//            acceptFriendRequest = {  },
-//            refuseFriendRequest = {  },
-//            acceptScheduleRequest = { _, _, _ -> },
-//            refuseScheduleRequest = { _, _, _ -> },
-//            currentMonthCalendarInfo = listOf(),
-//            calendarState = CalendarViewModel.CalendarState.DATE,
-//            selectedYear = 2024,
-//            updateYear = {},
-//            selectedMonth = 1,
-//            updateMonth = {  },
-//            selectedDate = 2,
-//            updateDate = {  },
-//            dayOfWeek = 1,
-//            currentDateBriefSchedule = listOf(),
-//            updateCurrentMonthCalendarInfo = {  },
-//            updateCurrentDateBriefScheduleInfo = {  },
-//            loadFriendRequests = {  },
-//            loadScheduleRequests = {  }
-//        ) { }
-//    }
-//}
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true, showSystemUi = true)
