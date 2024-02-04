@@ -151,18 +151,14 @@ class InfoModificationViewModel @Inject constructor(
                 val path = cursor?.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
                 imageFile = path?.let { File(it) }
             }
-            if (_inputUserId.value == originalUserId && imageFile == null) {
+            if (_inputUserName.value == originalUserName && _inputUserId.value == originalUserId && imageFile == null) {
                 withContext(Dispatchers.Main) {
                     moveToBackScreen()
                 }
             } else {
-                val response: NetworkResult<Unit> = if (_inputUserId.value == originalUserId && imageFile != null) {
-                    modifyMyInfoUseCase(accessToken, memberId, imageFile, "")
-                } else if (_inputUserId.value != originalUserId && imageFile == null) {
-                    modifyMyInfoUseCase(accessToken, memberId, null, _inputUserId.value)
-                } else {
-                    modifyMyInfoUseCase(accessToken, memberId, imageFile, _inputUserId.value)
-                }
+                val newUserName = if (_inputUserName.value == originalUserName) "" else _inputUserName.value
+                val newUserId = if (_inputUserId.value == originalUserId) "" else _inputUserId.value
+                val response: NetworkResult<Unit> = modifyMyInfoUseCase(accessToken, memberId, imageFile, newUserName, newUserId)
                 LogUtil.printNetworkLog(response, "내 정보 수정하기")
                 when (response) {
                     is NetworkResult.Success -> {
