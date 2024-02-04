@@ -83,6 +83,7 @@ interface SignInRepository {
         token: String,
         memberId: String,
         image: File?,
+        userName: String,
         userId: String
     ): NetworkResult<Unit>
 
