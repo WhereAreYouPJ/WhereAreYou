@@ -180,25 +180,28 @@ class SignInRepositoryImpl(
         token: String,
         memberId: String,
         image: File?,
+        userName: String,
         userId: String
     ): NetworkResult<Unit> {
         val map = hashMapOf<String, RequestBody>()
         val memberIdBody = RequestBody.create(MediaType.parse("text/plain"), memberId)
-//        val multiPartMemberId = MultipartBody.Part.createFormData("memberId", memberIdBody.toString(), memberIdBody)
         map["memberId"] = memberIdBody
 
-        var multipartImage: MultipartBody.Part? = null
-        image?.let {
+        val multipartImage: MultipartBody.Part? = image?.let {
             val imageBody = RequestBody.create(MediaType.parse("image/*"), image)
-            multipartImage = MultipartBody.Part.createFormData("images", imageBody.toString(), imageBody)
+            MultipartBody.Part.createFormData("images", imageBody.toString(), imageBody)
         }
 
         if (userId != "") {
             val userIdBody = RequestBody.create(MediaType.parse("text/plain"), userId)
-//            val multiPartUserId = MultipartBody.Part.createFormData("newId", userIdBody.toString(), userIdBody)
             map["newId"] = userIdBody
         }
-//        val newIdBody = RequestBody.create(MediaType.parse("text/plain"), userId)
+
+        if (userName != "") {
+            val userNameBody = RequestBody.create(MediaType.parse("text/plain"), userName)
+            map["userName"] = userNameBody
+        }
+
         return handleResult { dataSource.modifyMyInfo(token, map, multipartImage) }
     }
 
