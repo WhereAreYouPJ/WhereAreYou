@@ -11,8 +11,9 @@ class ModifyMyInfoUseCase(
         token: String,
         memberId: String,
         image: File?,
+        userName: String,
         userId: String
     ): NetworkResult<Unit> {
-        return repository.modifyMyInfo(token, memberId, image, userId)
+        return repository.modifyMyInfo(token, memberId, image, userName, userId)
     }
 }
