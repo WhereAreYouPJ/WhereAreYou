@@ -19,6 +19,10 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "WhereAreYou"
-include(":app")
-include(":data")
-include(":domain")
+include(
+    ":app",
+    ":data",
+    ":domain"
+)
+//include(":data")
+//include(":domain")
