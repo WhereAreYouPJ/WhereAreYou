@@ -7,6 +7,8 @@ data class ModifyMyInfoRequest(
     val memberId: String,
     @SerializedName("images")
     val images: String,
+    @SerializedName("newUserName")
+    val newUserName: String,
     @SerializedName("newId")
     val newId: String
 )
