@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.signup
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +41,7 @@ import com.whereareyounow.R
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
+import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
@@ -159,13 +161,12 @@ private fun SignUpScreen(
                 UserNameTextField(
                     inputUserName = inputUserName,
                     updateInputUserName = updateInputUserName,
-                    inputUserNameState = inputUserNameState
+                    inputUserNameState = inputUserNameState,
+                    guideLine = when (inputUserNameState) {
+                        UserNameState.UNSATISFIED -> "사용자명은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요."
+                        else -> ""
+                    }
                 )
-                if (inputUserNameState == UserNameState.UNSATISFIED) {
-                    Guideline(
-                        text = "사용자명은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요."
-                    )
-                }
 
                 Spacer(Modifier.height(20.dp))
 
@@ -173,15 +174,24 @@ private fun SignUpScreen(
                 Title(text = "아이디")
                 Row(
                     modifier = Modifier
+                        .animateContentSize { _, _ -> }
                         .height(IntrinsicSize.Min)
                         .fillMaxWidth()
                 ) {
                     // 아이디 입력창
-                    Box(modifier = Modifier.weight(1f)) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
                         UserIdTextField(
                             inputUserId = inputUserId,
                             updateInputUserId = updateInputUserId,
-                            inputUserIdState = inputUserIdState
+                            inputUserIdState = inputUserIdState,
+                            guideLine = when (inputUserIdState) {
+                                UserIdState.UNSATISFIED -> "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요."
+                                UserIdState.DUPLICATED -> "이미 존재하는 아이디입니다."
+                                else -> ""
+                            }
                         )
                     }
                     Spacer(Modifier.width(10.dp))
@@ -189,16 +199,6 @@ private fun SignUpScreen(
                     CheckingButton(
                         text = "중복확인",
                         onClick = checkIdDuplicate
-                    )
-                }
-                if (inputUserIdState == UserIdState.UNSATISFIED) {
-                    Guideline(
-                        text = "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요."
-                    )
-                }
-                if (inputUserIdState == UserIdState.DUPLICATED) {
-                    Guideline(
-                        text = "이미 존재하는 아이디입니다."
                     )
                 }
 
@@ -210,14 +210,13 @@ private fun SignUpScreen(
                 PasswordTextField(
                     inputPassword = inputPassword,
                     updateInputPassword = updateInputPassword,
-                    inputPasswordState = inputPasswordState
-                )
-                if (inputPasswordState == PasswordState.UNSATISFIED) {
-                    Guideline(
-                        text = "비밀번호는 영문 대/소문자로 시작하는 4~10자의 영문 대/소문자, 숫자 조합으로 입력해주세요." +
+                    inputPasswordState = inputPasswordState,
+                    guideLine = when (inputPasswordState) {
+                        PasswordState.UNSATISFIED -> "비밀번호는 영문 대/소문자로 시작하는 4~10자의 영문 대/소문자, 숫자 조합으로 입력해주세요." +
                                 "\n* 영문 대문자, 소문자, 숫자를 최소 하나 이상씩 포함해야합니다."
-                    )
-                }
+                        else -> ""
+                    }
+                )
 
                 Spacer(Modifier.height(10.dp))
 
@@ -225,13 +224,12 @@ private fun SignUpScreen(
                 PasswordForCheckingTextField(
                     inputPassword = inputPasswordForChecking,
                     updateInputPassword = updateInputPasswordForChecking,
-                    inputPasswordState = inputPasswordForCheckingState
+                    inputPasswordState = inputPasswordForCheckingState,
+                    guideLine = when (inputPasswordForCheckingState) {
+                        PasswordCheckingState.UNSATISFIED -> "비밀번호가 일치하지 않습니다."
+                        else -> ""
+                    }
                 )
-                if (inputPasswordForCheckingState == PasswordCheckingState.UNSATISFIED) {
-                    Guideline(
-                        text = "비밀번호가 일치하지 않습니다."
-                    )
-                }
 
                 Spacer(Modifier.height(20.dp))
 
@@ -239,6 +237,7 @@ private fun SignUpScreen(
                 Title(text = "이메일")
                 Row(
                     modifier = Modifier
+                        .animateContentSize { _, _ -> }
                         .height(IntrinsicSize.Min)
                         .fillMaxWidth()
                 ) {
@@ -247,7 +246,12 @@ private fun SignUpScreen(
                         EmailTextField(
                             inputEmail = inputEmail,
                             updateInputEmail = updateInputEmail,
-                            inputEmailState = inputEmailState
+                            inputEmailState = inputEmailState,
+                            guideLine = when (inputEmailState) {
+                                EmailState.UNSATISFIED -> "올바른 이메일 형식으로 입력해주세요."
+                                EmailState.DUPLICATED -> "이미 존재하는 이메일입니다."
+                                else -> ""
+                            }
                         )
                     }
                     Spacer(Modifier.width(10.dp))
@@ -264,16 +268,6 @@ private fun SignUpScreen(
                             else -> verifyEmail()
                         }
                     }
-                }
-                if (inputEmailState == EmailState.UNSATISFIED) {
-                    Guideline(
-                        text = "올바른 이메일 형식으로 입력해주세요."
-                    )
-                }
-                if (inputEmailState == EmailState.DUPLICATED) {
-                    Guideline(
-                        text = "이미 존재하는 이메일입니다."
-                    )
                 }
 
                 Spacer(Modifier.height(10.dp))
@@ -301,14 +295,8 @@ private fun SignUpScreen(
                         }
                     }
                 }
-                if (inputVerificationCodeState == VerificationCodeState.UNSATISFIED) {
-                    Guideline(
-                        text = "인증코드가 일치하지 않습니다."
-                    )
-                }
 
                 Spacer(Modifier.height(40.dp))
-
             }
         }
 
@@ -351,12 +339,14 @@ private fun Title(
 private fun UserNameTextField(
     inputUserName: String,
     updateInputUserName: (String) -> Unit,
-    inputUserNameState: UserNameState
+    inputUserNameState: UserNameState,
+    guideLine: String
 ) {
     CustomTextField(
         hint = "이름",
         inputText = inputUserName,
         onValueChange = updateInputUserName,
+        guideLine = guideLine,
         textFieldState = when (inputUserNameState) {
             UserNameState.EMPTY -> CustomTextFieldState.IDLE
             UserNameState.SATISFIED -> CustomTextFieldState.SATISFIED
@@ -369,12 +359,14 @@ private fun UserNameTextField(
 private fun UserIdTextField(
     inputUserId: String,
     updateInputUserId: (String) -> Unit,
-    inputUserIdState: UserIdState
+    inputUserIdState: UserIdState,
+    guideLine: String
 ) {
     CustomTextField(
         hint = "아이디",
         inputText = inputUserId,
         onValueChange = updateInputUserId,
+        guideLine = guideLine,
         textFieldState = when (inputUserIdState) {
             UserIdState.EMPTY -> CustomTextFieldState.IDLE
             UserIdState.SATISFIED -> CustomTextFieldState.IDLE
@@ -389,12 +381,14 @@ private fun UserIdTextField(
 private fun PasswordTextField(
     inputPassword: String,
     updateInputPassword: (String) -> Unit,
-    inputPasswordState: PasswordState
+    inputPasswordState: PasswordState,
+    guideLine: String
 ) {
     CustomTextField(
         hint = "비밀번호",
         inputText = inputPassword,
         onValueChange = updateInputPassword,
+        guideLine = guideLine,
         textFieldState = when (inputPasswordState) {
             PasswordState.EMPTY -> CustomTextFieldState.IDLE
             PasswordState.SATISFIED -> CustomTextFieldState.SATISFIED
@@ -408,12 +402,14 @@ private fun PasswordTextField(
 private fun PasswordForCheckingTextField(
     inputPassword: String,
     updateInputPassword: (String) -> Unit,
-    inputPasswordState: PasswordCheckingState
+    inputPasswordState: PasswordCheckingState,
+    guideLine: String
 ) {
     CustomTextField(
         hint = "비밀번호 확인",
         inputText = inputPassword,
         onValueChange = updateInputPassword,
+        guideLine = guideLine,
         textFieldState = when (inputPasswordState) {
             PasswordCheckingState.EMPTY -> CustomTextFieldState.IDLE
             PasswordCheckingState.SATISFIED -> CustomTextFieldState.SATISFIED
@@ -427,12 +423,14 @@ private fun PasswordForCheckingTextField(
 private fun EmailTextField(
     inputEmail: String,
     updateInputEmail: (String) -> Unit,
-    inputEmailState: EmailState
+    inputEmailState: EmailState,
+    guideLine: String
 ) {
     CustomTextField(
         hint = "이메일",
         inputText = inputEmail,
         onValueChange = updateInputEmail,
+        guideLine = guideLine,
         textFieldState = when (inputEmailState) {
             EmailState.EMPTY -> CustomTextFieldState.IDLE
             EmailState.SATISFIED -> CustomTextFieldState.IDLE
@@ -450,71 +448,19 @@ private fun EmailVerificationCodeTextField(
     inputVerificationCodeState: VerificationCodeState,
     leftTime: Int
 ) {
-    BasicTextField(
-        value = inputVerificationCode,
+    CustomTextFieldWithTimer(
+        hint = "이메일 인증코드",
+        inputText = inputVerificationCode,
         onValueChange = updateInputVerificationCode,
-        textStyle = TextStyle(
-            color = Color(0xFF000000),
-            fontSize = 16.sp
-        ),
-        singleLine = true
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(
-                    color = Color(0xFFF5F5F6),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(start = 10.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                it()
-                if (inputVerificationCode == "") {
-                    Text(
-                        text = "이메일 인증코드",
-                        fontSize = 16.sp,
-                        color = Color(0xFFC1C1C1)
-                    )
-                }
-            }
-            Spacer(Modifier.width(20.dp))
-            when (inputVerificationCodeState) {
-                VerificationCodeState.SATISFIED -> {
-                    Image(
-                        modifier = Modifier.size(20.dp),
-                        painter = painterResource(id = R.drawable.check_circle_fill0_wght300_grad0_opsz24),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(color = Color(0xFF78C480))
-                    )
-                }
-                VerificationCodeState.UNSATISFIED -> {
-                    Text(
-                        text = "${leftTime / 60}:${String.format("%02d", leftTime % 60)}",
-                        color = Color(0xFFE59090)
-                    )
-                    Spacer(Modifier.width(20.dp))
-                    Image(
-                        modifier = Modifier.size(20.dp),
-                        painter = painterResource(id = R.drawable.cancel_fill0_wght300_grad0_opsz24),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(color = Color(0xFFE59090))
-                    )
-                }
-                else -> {
-                    Text(
-                        text = "${leftTime / 60}:${String.format("%02d", leftTime % 60)}",
-                        color = Color(0xFFE59090)
-                    )
-                }
-            }
-        }
-    }
+        guideLine = "인증코드가 일치하지 않습니다.",
+        textFieldState =
+        when (inputVerificationCodeState) {
+            VerificationCodeState.EMPTY -> CustomTextFieldState.IDLE
+            VerificationCodeState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            VerificationCodeState.SATISFIED -> CustomTextFieldState.SATISFIED
+        },
+        leftTime = leftTime
+    )
 }
 
 @Composable
@@ -539,18 +485,17 @@ fun CheckingButton(
 ) {
     Box(
         modifier = Modifier
-            .height(50.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(
                 color = Color(0xFFE9E9E9),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(8.dp)
             )
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp),
+                .padding(start = 20.dp, top = 14.dp, end = 20.dp, bottom = 14.dp),
             text = text,
             color = Color(0xFF737373),
             fontSize = 16.sp

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 object CalendarUtil {
@@ -29,6 +30,18 @@ object CalendarUtil {
         calendar.set(Calendar.MONTH, month - 1)
         calendar.set(Calendar.DATE, date)
         return calendar.get(Calendar.DAY_OF_WEEK)
+    }
+
+    fun getDayOfWeekStringFromNum(num: Int): String {
+        return when (num) {
+            1 -> "일"
+            2 -> "월"
+            3 -> "화"
+            4 -> "수"
+            5 -> "목"
+            6 -> "금"
+            else -> "토"
+        }
     }
 
     // year년 month월의 달력 정보를 return
@@ -75,10 +88,23 @@ object CalendarUtil {
         return arrList
     }
 
-    // 오늘의 년월일 정보를 return
+    // 오늘의 년, 월, 일, 요일 정보를 return
     fun getTodayInfo(): List<Int> {
         val calendar = Calendar.getInstance()
         return listOf(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE), calendar.get(Calendar.DAY_OF_WEEK))
+    }
+
+    fun getCurrentYear(): Int = Calendar.getInstance().get(Calendar.YEAR)
+
+    fun getCurrentMonth(): Int = Calendar.getInstance().get(Calendar.MONTH) + 1
+
+    fun getCurrentDate(): Int = Calendar.getInstance().get(Calendar.DATE)
+
+    // yyyy-MM-dd'T'HH:mm:ss 형식의 문자열을 Calendar로 변환한다
+    fun getCalendarFromString(string: String): Calendar {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val date = format.parse(string)
+        return  Calendar.getInstance().apply { time = date }
     }
 
     fun getMinuteDiffWithCurrentTime(time: String): Int {

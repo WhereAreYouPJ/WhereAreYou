@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.ViewType
-import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.home.friend.FriendScreen
 import com.whereareyounow.ui.home.mypage.MyPageScreen
+import com.whereareyounow.ui.home.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.home.schedule.calendar.ScheduleScreen
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareNeo
@@ -42,18 +42,25 @@ import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun HomeContent(
-    moveToAddScheduleScreen: () -> Unit,
+    moveToAddScheduleScreen: (String) -> Unit,
     moveToDetailScreen: (String) -> Unit,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    scheduleViewModel: CalendarViewModel = hiltViewModel()
 ) {
     val viewType = viewModel.viewType.collectAsState().value
     val navigationItemContentList = viewModel.getNavigationItemContent()
+    val selectedYear = scheduleViewModel.selectedYear.collectAsState().value
+    val selectedMonth = scheduleViewModel.selectedMonth.collectAsState().value
+    val selectedDate = scheduleViewModel.selectedDate.collectAsState().value
     HomeContent(
         viewType = viewType,
+        selectedYear = selectedYear,
+        selectedMonth = selectedMonth,
+        selectedDate = selectedDate,
         navigationItemContentList = navigationItemContentList,
         updateViewType = viewModel::updateViewType,
         moveToAddScheduleScreen = moveToAddScheduleScreen,
@@ -68,9 +75,12 @@ fun HomeContent(
 @Composable
 private fun HomeContent(
     viewType: ViewType,
+    selectedYear: Int,
+    selectedMonth: Int,
+    selectedDate: Int,
     navigationItemContentList: List<HomeViewModel.NavigationItemContent>,
     updateViewType: (ViewType) -> Unit,
-    moveToAddScheduleScreen: () -> Unit,
+    moveToAddScheduleScreen: (String) -> Unit,
     moveToDetailScreen: (String) -> Unit,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
@@ -91,7 +101,7 @@ private fun HomeContent(
                 FloatingActionButton(
                     contentColor = Color(0xFFFFFFFF),
                     containerColor = Color(0xFF2D2573),
-                    onClick = { moveToAddScheduleScreen() }
+                    onClick = { moveToAddScheduleScreen("${selectedYear}-${selectedMonth}-${selectedDate}") }
                 ) {
                     Icon(
                         modifier = Modifier.size(20.dp),

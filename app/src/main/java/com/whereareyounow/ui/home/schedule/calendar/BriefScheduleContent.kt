@@ -2,6 +2,7 @@
 
 package com.whereareyounow.ui.home.schedule.calendar
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -42,6 +43,10 @@ import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
+import com.whereareyounow.util.CalendarUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -162,6 +167,11 @@ fun BriefScheduleList(
                 lineHeight = 28.sp
             )
         )
+
+        val currentYear = CalendarUtil.getCurrentYear()
+        val currentMonth = CalendarUtil.getCurrentMonth()
+        val currentDate = CalendarUtil.getCurrentDate()
+
         LazyColumn(
             contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
         ) {
@@ -187,9 +197,10 @@ fun BriefScheduleList(
                 }
             } else {
                 itemsIndexed(currentDateBriefSchedule) { _, item ->
-                    var appointmentHour = item.appointmentTime.split("T")[1].split(":")[0].toInt()
-                    val appointmentMinute = item.appointmentTime.split("T")[1].split(":")[1].toInt()
-                    val appointmentTimeAMPM: String = if (appointmentHour < 12) "오전" else { appointmentHour -= 12; "오후"}
+                    val calendar = CalendarUtil.getCalendarFromString(item.appointmentTime)
+                    var appointmentHour = calendar.get(Calendar.HOUR)
+                    val appointmentMinute = calendar.get(Calendar.MINUTE)
+                    val appointmentTimeAMPM: String = if (calendar.get(Calendar.AM_PM) == 0) "오전" else "오후"
                     if (appointmentHour == 0) appointmentHour = 12
 
                     Column(
@@ -198,7 +209,12 @@ fun BriefScheduleList(
                             .height(80.dp)
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(10.dp))
-                            .background(color = Color(0XFFFFD79B))
+                            .background(
+                                when (calendar.before(Calendar.getInstance())) {
+                                    true -> Color(0XFFF5F5F5)
+                                    false -> Color(0XFFFFD79B)
+                                }
+                            )
                             .clickable {
                                 moveToDetailScreen(item.scheduleId)
                             }
@@ -209,14 +225,20 @@ fun BriefScheduleList(
                             text = item.title,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4A302C),
+                            color = when (calendar.before(Calendar.getInstance())) {
+                                true -> Color(0XFFA8A8A8)
+                                false -> Color(0xFF4A302C)
+                            },
                             letterSpacing = 0.em
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "$appointmentTimeAMPM ${appointmentHour}:${String.format("%02d", appointmentMinute)}",
                             fontSize = 14.sp,
-                            color = Color(0xFF675555),
+                            color = when (calendar.before(Calendar.getInstance())) {
+                                true -> Color(0XFFA8A8A8)
+                                false -> Color(0xFF675555)
+                            },
                             letterSpacing = 0.em
                         )
                     }

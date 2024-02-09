@@ -137,6 +137,7 @@ private fun UserIdInputBox(
         hint = "아이디",
         inputText = inputText,
         onValueChange = onValueChange,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE
     )
 }
@@ -150,6 +151,7 @@ fun EmailInputBox(
         hint = "이메일",
         inputText = inputText,
         onValueChange = onValueChange,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE
     )
 }
@@ -163,6 +165,7 @@ private fun AuthCodeInputBox(
         hint = "인증번호 6자리",
         inputText = inputText,
         onValueChange = onValueChange,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE
     )
 }

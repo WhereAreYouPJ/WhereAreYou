@@ -183,10 +183,10 @@ fun FriendScreenTopBar(
                 }
                 Image(
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
                         .clickable { popupState.isVisible = true }
-                        .padding(10.dp),
+                        .padding(6.dp),
                     painter = painterResource(id = R.drawable.baseline_add_circle_outline_24),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(color = Color(0xFF545454))

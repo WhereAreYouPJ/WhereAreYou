@@ -41,16 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -146,7 +137,7 @@ fun ScheduleScreen(
     loadScheduleRequests: () -> Unit,
     moveToDetailScreen: (String) -> Unit
 ) {
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         updateCurrentMonthCalendarInfo()
         updateCurrentDateBriefScheduleInfo()
     }
@@ -193,13 +184,16 @@ fun ScheduleScreen(
                         calendarState = calendarState,
                         updateCalendarState = updateCalendarState,
                         selectedYear = selectedYear,
+                        updateYear = updateYear,
                         selectedMonth = selectedMonth,
+                        updateMonth = updateMonth,
                         drawerState = drawerState,
                         bottomContentState = bottomContentState
                     )
                     // 달력 뷰
                     CalendarContent(
                         currentMonthCalendarInfo = currentMonthCalendarInfo,
+                        updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
                         calendarState = calendarState,
                         updateCalendarState = updateCalendarState,
                         selectedYear = selectedYear,
@@ -232,15 +226,19 @@ fun ScheduleScreenTopBar(
     calendarState: CalendarViewModel.CalendarState,
     updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
     selectedYear: Int,
+    updateYear: (Int) -> Unit,
     selectedMonth: Int,
+    updateMonth: (Int) -> Unit,
     drawerState: DrawerState,
     bottomContentState: AnchoredDraggableState<DetailState>
 ) {
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
     val yearDropdownPopupState = remember { PopupState(false, PopupPosition.BottomRight) }
+    val monthDropdownPopupState = remember { PopupState(false, PopupPosition.BottomRight) }
     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
     val yearList = (currentYear - 20 .. currentYear + 20).toList()
+    val monthList = (1..12).toList()
 
     Row(
         modifier = Modifier
@@ -254,16 +252,13 @@ fun ScheduleScreenTopBar(
                 modifier = Modifier.clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) {
-//                    coroutineScope.launch(Dispatchers.Default) { bottomContentState.animateTo(DetailState.Close) }
-//                    updateCalendarState(CalendarViewModel.CalendarState.YEAR)
-                    yearDropdownPopupState.isVisible = true
-                },
+                ) { yearDropdownPopupState.isVisible = true },
                 text = "${selectedYear}.",
                 fontSize = 26.sp,
                 fontFamily = lato,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 0.em
+                letterSpacing = 0.em,
+                color = Color(0xFF373737)
             )
             CustomPopup(
                 popupState = yearDropdownPopupState,
@@ -277,25 +272,36 @@ fun ScheduleScreenTopBar(
                         .offset(x = (-10).dp, y = (-8).dp)
                 ) {
                     Surface(
-                        modifier = Modifier
-//                        .shadow(
-//                            elevation = 2.dp,
-//                            shape = RoundedCornerShape(10.dp)
-//                        )
-                            .background(
-                                color = Color(0xFFFFFFFF),
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        shadowElevation = 2.dp
+                        color = Color(0xFFFFFFFF),
+                        shadowElevation = 2.dp,
+                        shape = RoundedCornerShape(10.dp)
                     ) {
                         val listState = rememberLazyListState()
-                        LaunchedEffect(true) { listState.scrollToItem(20) }
+                        LaunchedEffect(Unit) { listState.scrollToItem(20) }
                         LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(top = 10.dp, bottom = 10.dp),
                             state = listState
                         ) {
                             itemsIndexed(yearList) {_, year ->
-                                Text("$year")
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                        .clickable {
+                                            updateYear(year)
+                                            coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$year",
+                                        color = Color(0xFF000000),
+                                        fontSize = 20.sp
+                                    )
+                                }
                             }
                         }
                     }
@@ -303,21 +309,62 @@ fun ScheduleScreenTopBar(
             }
         }
         Spacer(Modifier.width(10.dp))
-        if (calendarState == CalendarViewModel.CalendarState.DATE) {
+        Box {
             Text(
                 modifier = Modifier.clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) {
-                        coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
-                        updateCalendarState(CalendarViewModel.CalendarState.MONTH)
-                    },
+                ) { monthDropdownPopupState.isVisible = true },
                 text = "$selectedMonth",
                 fontSize = 26.sp,
                 fontFamily = lato,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.em
             )
+            CustomPopup(
+                popupState = monthDropdownPopupState,
+                onDismissRequest = { monthDropdownPopupState.isVisible = false }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(200.dp)
+                        .padding(10.dp)
+                        .offset(x = (-10).dp, y = (-8).dp)
+                ) {
+                    Surface(
+                        color = Color(0xFFFFFFFF),
+                        shadowElevation = 2.dp,
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        val listState = rememberLazyListState()
+                        LaunchedEffect(Unit) { listState.scrollToItem(selectedMonth) }
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            itemsIndexed(monthList) {_, month ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                        .clickable {
+                                            updateMonth(month)
+                                            coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$month",
+                                        color = Color(0xFF000000),
+                                        fontSize = 20.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         Box(
             modifier = Modifier
@@ -330,8 +377,8 @@ fun ScheduleScreenTopBar(
                     .size(40.dp)
                     .clip(CircleShape)
                     .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } }
-                    .padding(10.dp),
-                painter = painterResource(id = R.drawable.ic24_notification),
+                    .padding(8.dp),
+                painter = painterResource(id = R.drawable.icon_bell),
                 contentDescription = null
             )
         }
@@ -418,13 +465,16 @@ private fun ScheduleScreenPreview2() {
             calendarState = CalendarViewModel.CalendarState.DATE,
             updateCalendarState = {},
             selectedYear = 2024,
+            updateYear = {},
             selectedMonth = 1,
+            updateMonth = {},
             drawerState = drawerState,
             bottomContentState = bottomContentState
         )
         // 달력 뷰
         CalendarContent(
             currentMonthCalendarInfo = previewSchedule,
+            updateCurrentMonthCalendarInfo = {},
             calendarState = CalendarViewModel.CalendarState.DATE,
             updateCalendarState = {},
             selectedYear = 2024,

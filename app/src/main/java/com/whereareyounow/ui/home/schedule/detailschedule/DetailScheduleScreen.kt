@@ -125,7 +125,7 @@ private fun DetailScheduleScreen(
 ) {
     val contentSpace = 30
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         updateScheduleId(scheduleId)
         getUserLocation()
     }
@@ -159,12 +159,16 @@ private fun DetailScheduleScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-                Image(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.clock),
-                    contentDescription = null
-                )
+                Box(
+                    modifier = Modifier.size(30.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        modifier = Modifier.size(26.dp),
+                        painter = painterResource(id = R.drawable.clock),
+                        contentDescription = null
+                    )
+                }
 
                 Spacer(Modifier.width(10.dp))
 
@@ -224,9 +228,9 @@ fun BackgroundContent() {
                 .fillMaxWidth()
                 .height(200.dp)
                 .background(
-                    brush = Brush.horizontalGradient(listOf(Color.Red, Color.Blue)),
-                    alpha = 0.4f,
-                    shape = RoundedCornerShape(10.dp)
+                    brush = Brush.horizontalGradient(listOf(Color(0xFF4D6EC5), Color(0xFF5E54AF))),
+                    alpha = 1f,
+                    shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp)
                 )
         )
     }
@@ -366,12 +370,17 @@ fun DestinationContent(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            modifier = Modifier.size(26.dp),
-            painter = painterResource(id = R.drawable.location),
-            contentDescription = null,
+        Box(
+            modifier = Modifier.size(30.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                modifier = Modifier.size(30.dp),
+                painter = painterResource(id = R.drawable.location),
+                contentDescription = null,
 //            colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
-        )
+            )
+        }
         Spacer(Modifier.width(10.dp))
         Column {
             Text(
@@ -400,12 +409,17 @@ fun MemberListContent(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            modifier = Modifier.size(26.dp),
-            painter = painterResource(id = R.drawable.users),
-            contentDescription = null,
-//            colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
-        )
+        Box(
+            modifier = Modifier.size(30.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                modifier = Modifier.size(26.dp),
+                painter = painterResource(id = R.drawable.users),
+                contentDescription = null,
+    //            colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
+            )
+        }
         Spacer(Modifier.width(10.dp))
         Box {
             CustomPopup(
@@ -517,17 +531,24 @@ fun MemoContent(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            modifier = Modifier.size(26.dp),
-            painter = painterResource(id = R.drawable.memo),
-            contentDescription = null,
+        Box(
+            modifier = Modifier.size(30.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                modifier = Modifier.size(26.dp),
+                painter = painterResource(id = R.drawable.memo),
+                contentDescription = null,
 //            colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
-        )
+            )
+        }
         Spacer(Modifier.width(20.dp))
-//        Text(
-//            text = "메모",
-//            fontSize = 20.sp
-//        )
+        Text(
+            text = "메모",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF7C7C7C)
+        )
     }
 
     Spacer(Modifier.height(10.dp))

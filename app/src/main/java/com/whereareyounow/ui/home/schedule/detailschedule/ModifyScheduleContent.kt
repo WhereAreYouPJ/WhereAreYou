@@ -20,7 +20,7 @@ fun ModifyScheduleContent(
     detailScheduleViewModel: DetailScheduleViewModel = hiltViewModel(),
     scheduleEditorViewModel: ScheduleEditorViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         scheduleEditorViewModel.updateScheduleId(scheduleId)
         scheduleEditorViewModel.updateSelectedFriendsList(
             detailScheduleViewModel.memberInfos.map {

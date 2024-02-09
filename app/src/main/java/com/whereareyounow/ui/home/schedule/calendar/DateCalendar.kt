@@ -36,6 +36,7 @@ import com.whereareyounow.util.AnimationUtil
 @Composable
 fun DateCalendar(
     currentMonthCalendarInfo: List<Schedule>,
+    updateCurrentMonthCalendarInfo: () -> Unit,
     calendarState: CalendarViewModel.CalendarState,
     selectedYear: Int,
     updateYear: (Int) -> Unit,
@@ -100,9 +101,14 @@ fun DateCalendar(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
                                 ) {
+                                    val year = currentMonthCalendarInfo[i + idx * 7].year
                                     val month = currentMonthCalendarInfo[i + idx * 7].month
                                     val date = currentMonthCalendarInfo[i + idx * 7].date
-                                    updateMonth(month)
+                                    if (selectedYear != year || selectedMonth != month) {
+                                        updateYear(year)
+                                        updateMonth(month)
+                                        updateCurrentMonthCalendarInfo()
+                                    }
                                     updateDate(date)
                                     expandDetailContent()
                                 },
@@ -170,6 +176,7 @@ private fun DateCalendarPreview() {
     WhereAreYouTheme {
         DateCalendar(
             currentMonthCalendarInfo = previewSchedule,
+            updateCurrentMonthCalendarInfo = {},
             calendarState = CalendarViewModel.CalendarState.DATE,
             selectedYear = 2024,
             updateYear = {  },

@@ -1,5 +1,6 @@
 package com.whereareyounow.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
@@ -92,7 +93,7 @@ fun MainNavigation(
         // 홈 화면
         composable(route =  ROUTE_MAIN_HOME) {
             HomeContent(
-                moveToAddScheduleScreen = { navController.navigate(ROUTE_NEW_SCHEDULE) },
+                moveToAddScheduleScreen = { navController.navigate("$ROUTE_NEW_SCHEDULE/$it") },
                 moveToDetailScreen = { navController.navigate("$ROUTE_DETAIL_SCHEDULE/$it") },
                 moveToAddFriendScreen = { navController.navigate(ROUTE_ADD_FRIEND) },
                 moveToAddGroupScreen = {},
@@ -105,8 +106,9 @@ fun MainNavigation(
         }
 
         // 일정 추가 화면
-        composable(route =  ROUTE_NEW_SCHEDULE) {
+        composable(route =  ROUTE_NEW_SCHEDULE + "/{date}") {
             NewScheduleContent(
+                date = it.arguments?.getString("date") ?: "",
                 moveToBackScreen = { navController.popBackStack() },
             )
         }

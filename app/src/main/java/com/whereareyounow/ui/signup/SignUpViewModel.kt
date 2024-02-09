@@ -193,8 +193,8 @@ class SignUpViewModel @Inject constructor(
 
     fun verifyEmail() {
         // 인증 코드를 발송하고 1분이 지나지 않았으면 다시 발송할 수 없다.
-        if (_emailVerificationLeftTime.value > 240) {
-            Toast.makeText(application, "${_emailVerificationLeftTime.value - 240}초 후에 다시 발송할 수 있습니다.", Toast.LENGTH_SHORT).show()
+        if (_emailVerificationLeftTime.value > 120) {
+            Toast.makeText(application, "${_emailVerificationLeftTime.value - 120}초 후에 다시 발송할 수 있습니다.", Toast.LENGTH_SHORT).show()
             return
         }
         viewModelScope.launch {
@@ -209,7 +209,7 @@ class SignUpViewModel @Inject constructor(
                     _inputVerificationCodeState.update { VerificationCodeState.EMPTY }
                     startTimer?.cancel()
                     startTimer = viewModelScope.launch {
-                        _emailVerificationLeftTime.update { 300 }
+                        _emailVerificationLeftTime.update { 180 }
                         while (_emailVerificationLeftTime.value > 0) {
                             _emailVerificationLeftTime.update { it - 1 }
                             delay(1000)

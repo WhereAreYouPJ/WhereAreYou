@@ -88,7 +88,7 @@ fun MyPageScreen(
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit
 ) {
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         getMyInfo()
     }
     val density = LocalDensity.current.density
@@ -329,7 +329,7 @@ fun MyPageWarningDialog(
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = warningTitle,
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center
                 )
@@ -351,7 +351,7 @@ fun MyPageWarningDialog(
                     ) {
                         Text(
                             text = okText,
-                            fontSize = 20.sp,
+                            fontSize = 16.sp,
                             color = Color(0xFFFFFFFF),
                             fontWeight = FontWeight.Medium
                         )
@@ -368,7 +368,7 @@ fun MyPageWarningDialog(
                     ) {
                         Text(
                             text = "취소",
-                            fontSize = 20.sp,
+                            fontSize = 16.sp,
                             color = Color(0xFF000000),
                             fontWeight = FontWeight.Medium
                         )

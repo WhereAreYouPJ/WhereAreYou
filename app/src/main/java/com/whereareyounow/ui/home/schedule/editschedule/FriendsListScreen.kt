@@ -89,7 +89,7 @@ private fun FriendsListScreen(
         moveToNewScheduleScreen()
         initialize(initialFriendIdsList)
     }
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         initialize(initialFriendIdsList)
     }
 
@@ -245,6 +245,7 @@ fun ColumnScope.SearchedFriendsList(
                 Spacer(Modifier.width(10.dp))
                 Text(
                     text = friend.first.name,
+                    color = Color(0xFF4B4B4B),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )

@@ -102,6 +102,7 @@ private fun NewPasswordTextField(
         hint = "새 비밀번호",
         inputText = inputPassword,
         onValueChange = updateInputPassword,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE,
         isPassword = true
     )
@@ -116,6 +117,7 @@ private fun NewPasswordCheckingTextField(
         hint = "새 비밀번호 확인",
         inputText = inputPasswordForChecking,
         onValueChange = updateInputPasswordForChecking,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE,
         isPassword = true
     )

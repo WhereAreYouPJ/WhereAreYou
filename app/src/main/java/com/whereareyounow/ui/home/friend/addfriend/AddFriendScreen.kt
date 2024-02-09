@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -78,7 +79,8 @@ private fun AddFriendScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AddFriendScreenTopBar(moveToBackScreen)
@@ -134,7 +136,7 @@ fun FriendIdTextField(
     BasicTextField(
         value = inputId,
         onValueChange = { updateInputId(it) },
-        textStyle = TextStyle(fontSize = 20.sp),
+        textStyle = TextStyle(fontSize = 18.sp),
         singleLine = true,
         decorationBox = {
             Box(
@@ -151,7 +153,14 @@ fun FriendIdTextField(
                     },
                 contentAlignment = Alignment.CenterStart
             ) {
-                it()
+                Box {
+                    Text(
+                        text = if (inputId == "") "친구 ID" else "",
+                        fontSize = 18.sp,
+                        color = Color(0xFFA5A5A5)
+                    )
+                    it()
+                }
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.CenterEnd
@@ -180,7 +189,7 @@ fun UserInfoContent(
             .fillMaxWidth()
             .border(
                 border = BorderStroke(
-                    width = 1.dp,
+                    width = (0.5).dp,
                     color = Color(0xFFC3C3C6)
                 ),
                 shape = RoundedCornerShape(10.dp)
@@ -191,15 +200,15 @@ fun UserInfoContent(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(40.dp))
         GlideImage(
             modifier = Modifier
-                .size(200.dp)
+                .size(120.dp)
                 .clip(RoundedCornerShape(50)),
             imageModel = { imageUrl ?: R.drawable.idle_profile },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop)
         )
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(40.dp))
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center

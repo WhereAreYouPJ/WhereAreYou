@@ -11,12 +11,19 @@ import com.whereareyounow.ui.home.schedule.editschedule.ScheduleEditorViewModel
 
 @Composable
 fun NewScheduleContent(
+    date: String,
     moveToBackScreen: () -> Unit,
     viewModel: ScheduleEditorViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.updateScheduleDate(date)
+        viewModel.updateScheduleTime("00:00")
+    }
     when (viewModel.screenState.collectAsState().value) {
         ScheduleEditorViewModel.ScreenState.EditSchedule -> {
-            NewScheduleScreen(moveToBackScreen)
+            NewScheduleScreen(
+                moveToBackScreen
+            )
         }
         ScheduleEditorViewModel.ScreenState.AddFriends -> {
             FriendsListScreen(

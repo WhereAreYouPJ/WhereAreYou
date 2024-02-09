@@ -250,6 +250,7 @@ private fun UserIdInputBox(
         hint = "아이디",
         inputText = inputText,
         onValueChange = onValueChange,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE
     )
 }
@@ -263,6 +264,7 @@ private fun PasswordInputBox(
         hint = "비밀번호",
         inputText = inputText,
         onValueChange = onValueChange,
+        guideLine = "",
         textFieldState = CustomTextFieldState.IDLE,
         isPassword = true
     )

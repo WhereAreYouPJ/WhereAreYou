@@ -258,6 +258,7 @@ private fun UserNameTextField(
         hint = "사용자명",
         inputText = inputUserName,
         onValueChange = updateInputUserName,
+        guideLine = "",
         textFieldState = when (inputUserNameState) {
             UserNameState.EMPTY -> CustomTextFieldState.IDLE
             UserNameState.SATISFIED -> CustomTextFieldState.SATISFIED
@@ -276,6 +277,7 @@ private fun UserIdTextField(
         hint = "아이디",
         inputText = inputUserId,
         onValueChange = updateInputUserId,
+        guideLine = "",
         textFieldState = when (inputUserIdState) {
             UserIdState.EMPTY -> CustomTextFieldState.IDLE
             UserIdState.SATISFIED -> CustomTextFieldState.IDLE

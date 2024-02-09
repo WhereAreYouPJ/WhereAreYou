@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalendarContent(
     currentMonthCalendarInfo: List<Schedule>,
+    updateCurrentMonthCalendarInfo: () -> Unit,
     calendarState: CalendarViewModel.CalendarState,
     updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
     selectedYear: Int,
@@ -36,6 +37,7 @@ fun CalendarContent(
     ) {
         DateCalendar(
             currentMonthCalendarInfo = currentMonthCalendarInfo,
+            updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
             calendarState = calendarState,
             selectedYear = selectedYear,
             updateYear = updateYear,

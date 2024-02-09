@@ -65,7 +65,7 @@ fun YearCalendar(
                 }
             }
         }
-        LaunchedEffect(true) {
+        LaunchedEffect(Unit) {
             val targetColumnIndex = 99
             listState.scrollToItem(targetColumnIndex)
         }
