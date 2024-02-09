@@ -48,7 +48,8 @@ fun CustomTopBar(
         Text(
             text = title,
             fontSize = 20.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF373737)
         )
     }
 }
