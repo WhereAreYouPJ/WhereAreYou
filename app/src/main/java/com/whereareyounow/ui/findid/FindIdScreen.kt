@@ -1,6 +1,6 @@
 package com.whereareyounow.ui.findid
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -22,18 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
+import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
@@ -43,13 +39,21 @@ fun FindIdScreen(
     viewModel: FindIdViewModel = hiltViewModel()
 ) {
     val inputEmail = viewModel.inputEmail.collectAsState().value
-    val inputAuthCode = viewModel.authCode.collectAsState().value
+    val inputEmailState = viewModel.inputEmailState.collectAsState().value
+    val inputVerificationCode = viewModel.inputVerificationCode.collectAsState().value
+    val isVerificationCodeSent = viewModel.isVerificationCodeSent.collectAsState().value
+    val inputVerificationCodeState = viewModel.inputVerificationCodeState.collectAsState().value
+    val emailVerificationLeftTime = viewModel.emailVerificationLeftTime.collectAsState().value
     FindIdScreen (
         inputEmail = inputEmail,
         updateInputEmail = viewModel::updateInputEmail,
-        inputAuthCode = inputAuthCode,
-        updateInputAuthCode = viewModel::updateAuthCode,
-        authenticateEmail = viewModel::authenticateEmail,
+        inputEmailState = inputEmailState,
+        inputVerificationCode = inputVerificationCode,
+        updateInputVerificationCode = viewModel::updateVerificationCode,
+        isVerificationCodeSent = isVerificationCodeSent,
+        inputVerificationCodeState = inputVerificationCodeState,
+        emailVerificationLeftTime = emailVerificationLeftTime,
+        verifyEmail = viewModel::verifyEmail,
         findId = viewModel::findId,
         moveToSignInScreen = moveToSignInScreen,
         moveToUserIdCheckingScreen = { viewModel.updateScreenState(FindIdViewModel.ScreenState.ShowingUserId) }
@@ -60,9 +64,13 @@ fun FindIdScreen(
 private fun FindIdScreen(
     inputEmail: String,
     updateInputEmail: (String) -> Unit,
-    inputAuthCode: String,
-    updateInputAuthCode: (String) -> Unit,
-    authenticateEmail: () -> Unit,
+    inputEmailState: EmailState,
+    inputVerificationCode: String,
+    updateInputVerificationCode: (String) -> Unit,
+    isVerificationCodeSent: Boolean,
+    inputVerificationCodeState: VerificationCodeState,
+    emailVerificationLeftTime: Int,
+    verifyEmail: () -> Unit,
     findId: (() -> Unit) -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToUserIdCheckingScreen: () -> Unit,
@@ -71,6 +79,7 @@ private fun FindIdScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 20.dp, end = 20.dp)
+            .imePadding()
     ) {
         FindIdScreenTopBar(moveToSignInScreen)
 
@@ -78,28 +87,35 @@ private fun FindIdScreen(
 
         Row(
             modifier = Modifier
+                .animateContentSize { _, _ -> }
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth()
         ) {
             Box(modifier = Modifier.weight(1f)) {
                 EmailInputBox(
-                    inputText = inputEmail,
-                    onValueChange = updateInputEmail
+                    inputEmail = inputEmail,
+                    onValueChange = updateInputEmail,
+                    inputEmailState = inputEmailState
                 )
             }
             Spacer(Modifier.width(10.dp))
-            AuthenticationButton(
+            VerificationButton(
                 text = "인증",
-                onClick = authenticateEmail
+                onClick = verifyEmail
             )
         }
 
         Spacer(Modifier.height(20.dp))
 
-        AuthCodeInputBox(
-            inputText = inputAuthCode,
-            onValueChange = updateInputAuthCode
-        )
+        if (isVerificationCodeSent) {
+            VerificationCodeInputBox(
+                inputText = inputVerificationCode,
+                onValueChange = updateInputVerificationCode,
+                guideLine = "인증코드가 일치하지 않습니다.",
+                inputVerificationCodeState = inputVerificationCodeState,
+                leftTime = emailVerificationLeftTime
+            )
+        }
 
         Spacer(Modifier.weight(1f))
 
@@ -124,43 +140,54 @@ fun FindIdScreenTopBar(
 
 @Composable
 fun EmailInputBox(
-    inputText: String,
-    onValueChange: (String) -> Unit
+    inputEmail: String,
+    onValueChange: (String) -> Unit,
+    inputEmailState: EmailState
 ) {
     CustomTextField(
         hint = "이메일",
-        inputText = inputText,
+        inputText = inputEmail,
         onValueChange = onValueChange,
-        textFieldState = CustomTextFieldState.IDLE
+        guideLine = "올바른 이메일 형식으로 입력해주세요.",
+        textFieldState = when (inputEmailState) {
+            EmailState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            else -> CustomTextFieldState.IDLE
+        }
     )
 }
 
+
 @Composable
-fun AuthCodeInputBox(
+private fun VerificationCodeInputBox(
     inputText: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    guideLine: String,
+    inputVerificationCodeState: VerificationCodeState,
+    leftTime: Int
 ) {
-    CustomTextField(
-        hint = "인증번호 6자리",
+    CustomTextFieldWithTimer(
+        hint = "이메일 인증코드",
         inputText = inputText,
         onValueChange = onValueChange,
-        textFieldState = CustomTextFieldState.IDLE
+        guideLine = guideLine,
+        textFieldState = when (inputVerificationCodeState) {
+            VerificationCodeState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            else -> CustomTextFieldState.IDLE
+        },
+        leftTime = leftTime
     )
 }
 
 @Composable
-fun AuthenticationButton(
+fun VerificationButton(
     text: String,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .height(50.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(
-                color = Color(0xFF2D2573),
-                shape = RoundedCornerShape(10.dp)
-            )
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color(0xFF2D2573))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -169,9 +196,17 @@ fun AuthenticationButton(
                 .padding(start = 20.dp, end = 20.dp),
             text = text,
             color = Color(0xFFFFFFFF),
-            fontSize = 20.sp
+            fontSize = 16.sp
         )
     }
+}
+
+enum class EmailState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class VerificationCodeState {
+    EMPTY, SATISFIED, UNSATISFIED
 }
 
 @Preview(showBackground = true, showSystemUi = true)
@@ -181,9 +216,13 @@ private fun FindIdScreenPreview() {
         FindIdScreen(
             inputEmail = "",
             updateInputEmail = {},
-            inputAuthCode = "",
-            updateInputAuthCode = {},
-            authenticateEmail = {},
+            inputEmailState = EmailState.EMPTY,
+            inputVerificationCode = "",
+            updateInputVerificationCode = {},
+            isVerificationCodeSent = true,
+            inputVerificationCodeState = VerificationCodeState.UNSATISFIED,
+            emailVerificationLeftTime = 100,
+            verifyEmail = {},
             findId = {},
             moveToSignInScreen = {},
             moveToUserIdCheckingScreen = {}
