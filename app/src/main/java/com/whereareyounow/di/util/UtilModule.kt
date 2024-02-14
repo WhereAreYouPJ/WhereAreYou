@@ -6,6 +6,7 @@ import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.signin.ReissueTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
+import com.whereareyounow.util.InputTextValidator
 import com.whereareyounow.util.LocationUtil
 import com.whereareyounow.util.TokenManager
 import dagger.Module
@@ -20,6 +21,7 @@ import javax.inject.Singleton
 object UtilModule {
 
     @Provides
+    @Singleton
     fun provideLocationUtil(
         @ApplicationContext context: Context
     ): LocationUtil {
@@ -44,5 +46,11 @@ object UtilModule {
             reissueTokenUseCase,
             context
         )
+    }
+
+    @Provides
+    @Singleton
+    fun inputTextValidator(): InputTextValidator {
+        return InputTextValidator()
     }
 }

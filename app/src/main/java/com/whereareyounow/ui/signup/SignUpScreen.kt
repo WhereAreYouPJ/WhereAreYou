@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
+import com.whereareyounow.data.SignUpScreenUIState
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
@@ -51,44 +52,18 @@ fun SignUpScreen(
     moveToSignUpSuccessScreen: () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val inputUserName = viewModel.inputUserName.collectAsState().value
-    val inputUserNameState = viewModel.inputUserNameState.collectAsState().value
-    val inputUserId = viewModel.inputUserId.collectAsState().value
-    val inputUserIdState = viewModel.inputUserIdState.collectAsState().value
-    val inputPassword = viewModel.inputPassword.collectAsState().value
-    val inputPasswordState = viewModel.inputPasswordState.collectAsState().value
-    val inputPasswordForChecking = viewModel.inputPasswordForChecking.collectAsState().value
-    val inputPasswordForCheckingState = viewModel.inputPasswordForCheckingState.collectAsState().value
-    val inputEmail = viewModel.inputEmail.collectAsState().value
-    val inputEmailState = viewModel.inputEmailState.collectAsState().value
-    val emailVerificationProgressState = viewModel.emailVerificationProgressState.collectAsState().value
-    val inputVerificationCode = viewModel.inputVerificationCode.collectAsState().value
-    val inputVerificationCodeState = viewModel.inputVerificationCodeState.collectAsState().value
-    val emailVerificationLeftTime = viewModel.emailVerificationLeftTime.collectAsState().value
+    val signUpScreenUIState = viewModel.signUpScreenUIState.collectAsState().value
     SignUpScreen(
-        inputUserName = inputUserName,
+        signUpScreenUIState = signUpScreenUIState,
         updateInputUserName = viewModel::updateInputUserName,
-        inputUserNameState = inputUserNameState,
-        inputUserId = inputUserId,
         updateInputUserId = viewModel::updateInputUserId,
-        inputUserIdState = inputUserIdState,
         checkIdDuplicate = viewModel::checkIdDuplicate,
-        inputPassword = inputPassword,
         updateInputPassword = viewModel::updateInputPassword,
-        inputPasswordState = inputPasswordState,
-        inputPasswordForChecking = inputPasswordForChecking,
         updateInputPasswordForChecking = viewModel::updateInputPasswordForChecking,
-        inputPasswordForCheckingState = inputPasswordForCheckingState,
-        inputEmail = inputEmail,
         updateInputEmail = viewModel::updateInputEmail,
-        inputEmailState = inputEmailState,
-        emailVerificationProgressState = emailVerificationProgressState,
         verifyEmail = viewModel::verifyEmail,
         checkEmailDuplicate = viewModel::checkEmailDuplicate,
-        inputVerificationCode = inputVerificationCode,
-        inputVerificationCodeState = inputVerificationCodeState,
         updateInputVerificationCode = viewModel::updateInputVerificationCode,
-        emailVerificationLeftTime = emailVerificationLeftTime,
         verifyEmailCode = viewModel::verifyEmailCode,
         signUp = viewModel::signUp,
         moveToBackScreen = moveToBackScreen,
@@ -98,29 +73,16 @@ fun SignUpScreen(
 
 @Composable
 private fun SignUpScreen(
-    inputUserName: String,
+    signUpScreenUIState: SignUpScreenUIState,
     updateInputUserName: (String) -> Unit,
-    inputUserNameState: UserNameState,
-    inputUserId: String,
     updateInputUserId: (String) -> Unit,
-    inputUserIdState: UserIdState,
     checkIdDuplicate: () -> Unit,
-    inputPassword: String,
     updateInputPassword: (String) -> Unit,
-    inputPasswordState: PasswordState,
-    inputPasswordForChecking: String,
     updateInputPasswordForChecking: (String) -> Unit,
-    inputPasswordForCheckingState: PasswordCheckingState,
-    inputEmail: String,
     updateInputEmail: (String) -> Unit,
-    inputEmailState: EmailState,
-    emailVerificationProgressState: EmailVerificationProgressState,
     verifyEmail: () -> Unit,
     checkEmailDuplicate: () -> Unit,
-    inputVerificationCode: String,
-    inputVerificationCodeState: VerificationCodeState,
     updateInputVerificationCode: (String) -> Unit,
-    emailVerificationLeftTime: Int,
     verifyEmailCode: () -> Unit,
     signUp: (() -> Unit) -> Unit,
     moveToBackScreen: () -> Unit,
@@ -159,10 +121,10 @@ private fun SignUpScreen(
                 // 사용자명 입력
                 Title(text = "이름")
                 UserNameTextField(
-                    inputUserName = inputUserName,
+                    inputUserName = signUpScreenUIState.inputUserName,
                     updateInputUserName = updateInputUserName,
-                    inputUserNameState = inputUserNameState,
-                    guideLine = when (inputUserNameState) {
+                    inputUserNameState = signUpScreenUIState.inputUserNameState,
+                    guideLine = when (signUpScreenUIState.inputUserNameState) {
                         UserNameState.UNSATISFIED -> "사용자명은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요."
                         else -> ""
                     }
@@ -184,10 +146,10 @@ private fun SignUpScreen(
                             .weight(1f)
                     ) {
                         UserIdTextField(
-                            inputUserId = inputUserId,
+                            inputUserId = signUpScreenUIState.inputUserId,
                             updateInputUserId = updateInputUserId,
-                            inputUserIdState = inputUserIdState,
-                            guideLine = when (inputUserIdState) {
+                            inputUserIdState = signUpScreenUIState.inputUserIdState,
+                            guideLine = when (signUpScreenUIState.inputUserIdState) {
                                 UserIdState.UNSATISFIED -> "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요."
                                 UserIdState.DUPLICATED -> "이미 존재하는 아이디입니다."
                                 else -> ""
@@ -208,10 +170,10 @@ private fun SignUpScreen(
                 Title(text = "비밀번호")
                 // 비밀번호 입력창
                 PasswordTextField(
-                    inputPassword = inputPassword,
+                    inputPassword = signUpScreenUIState.inputPassword,
                     updateInputPassword = updateInputPassword,
-                    inputPasswordState = inputPasswordState,
-                    guideLine = when (inputPasswordState) {
+                    inputPasswordState = signUpScreenUIState.inputPasswordState,
+                    guideLine = when (signUpScreenUIState.inputPasswordState) {
                         PasswordState.UNSATISFIED -> "비밀번호는 영문 대/소문자로 시작하는 4~10자의 영문 대/소문자, 숫자 조합으로 입력해주세요." +
                                 "\n* 영문 대문자, 소문자, 숫자를 최소 하나 이상씩 포함해야합니다."
                         else -> ""
@@ -222,10 +184,10 @@ private fun SignUpScreen(
 
                 // 비밀번호 확인
                 PasswordForCheckingTextField(
-                    inputPassword = inputPasswordForChecking,
+                    inputPassword = signUpScreenUIState.inputPasswordForChecking,
                     updateInputPassword = updateInputPasswordForChecking,
-                    inputPasswordState = inputPasswordForCheckingState,
-                    guideLine = when (inputPasswordForCheckingState) {
+                    inputPasswordState = signUpScreenUIState.inputPasswordForCheckingState,
+                    guideLine = when (signUpScreenUIState.inputPasswordForCheckingState) {
                         PasswordCheckingState.UNSATISFIED -> "비밀번호가 일치하지 않습니다."
                         else -> ""
                     }
@@ -244,10 +206,10 @@ private fun SignUpScreen(
                     // 이메일 입력창
                     Box(modifier = Modifier.weight(1f)) {
                         EmailTextField(
-                            inputEmail = inputEmail,
+                            inputEmail = signUpScreenUIState.inputEmail,
                             updateInputEmail = updateInputEmail,
-                            inputEmailState = inputEmailState,
-                            guideLine = when (inputEmailState) {
+                            inputEmailState = signUpScreenUIState.inputEmailState,
+                            guideLine = when (signUpScreenUIState.inputEmailState) {
                                 EmailState.UNSATISFIED -> "올바른 이메일 형식으로 입력해주세요."
                                 EmailState.DUPLICATED -> "이미 존재하는 이메일입니다."
                                 else -> ""
@@ -257,13 +219,13 @@ private fun SignUpScreen(
                     Spacer(Modifier.width(10.dp))
                     // 중복확인, 인증요청, 재전송 버튼
                     CheckingButton(
-                        text = when (emailVerificationProgressState) {
+                        text = when (signUpScreenUIState.emailVerificationProgressState) {
                             EmailVerificationProgressState.DUPLICATE_UNCHECKED -> "중복확인"
                             EmailVerificationProgressState.DUPLICATE_CHECKED -> "인증요청"
                             EmailVerificationProgressState.VERIFICATION_REQUESTED -> "재전송"
                         }
                     ) {
-                        when (emailVerificationProgressState) {
+                        when (signUpScreenUIState.emailVerificationProgressState) {
                             EmailVerificationProgressState.DUPLICATE_UNCHECKED -> checkEmailDuplicate()
                             else -> verifyEmail()
                         }
@@ -273,7 +235,7 @@ private fun SignUpScreen(
                 Spacer(Modifier.height(10.dp))
 
                 // 이메일 인증코드 확인
-                if (emailVerificationProgressState == EmailVerificationProgressState.VERIFICATION_REQUESTED) {
+                if (signUpScreenUIState.emailVerificationProgressState == EmailVerificationProgressState.VERIFICATION_REQUESTED) {
                     Row(
                         modifier = Modifier
                             .height(IntrinsicSize.Min)
@@ -282,10 +244,10 @@ private fun SignUpScreen(
                         // 이메일 입력창
                         Box(modifier = Modifier.weight(1f)) {
                             EmailVerificationCodeTextField(
-                                inputVerificationCode = inputVerificationCode,
+                                inputVerificationCode = signUpScreenUIState.inputVerificationCode,
                                 updateInputVerificationCode = updateInputVerificationCode,
-                                inputVerificationCodeState = inputVerificationCodeState,
-                                leftTime = emailVerificationLeftTime
+                                inputVerificationCodeState = signUpScreenUIState.inputVerificationCodeState,
+                                leftTime = signUpScreenUIState.emailVerificationCodeLeftTime
                             )
                         }
                         Spacer(Modifier.width(10.dp))
@@ -536,29 +498,16 @@ enum class VerificationCodeState {
 private fun SignUpScreenPreview1() {
     WhereAreYouTheme {
         SignUpScreen(
-            inputUserName = "",
+            signUpScreenUIState = SignUpScreenUIState(),
             updateInputUserName = {  },
-            inputUserNameState = UserNameState.EMPTY,
-            inputUserId = "",
             updateInputUserId = {},
-            inputUserIdState = UserIdState.EMPTY,
             checkIdDuplicate = {},
-            inputPassword = "",
             updateInputPassword = {},
-            inputPasswordState = PasswordState.EMPTY,
-            inputPasswordForChecking = "",
             updateInputPasswordForChecking = {},
-            inputPasswordForCheckingState = PasswordCheckingState.EMPTY,
-            inputEmail = "",
             updateInputEmail = {},
-            inputEmailState = EmailState.EMPTY,
-            emailVerificationProgressState = EmailVerificationProgressState.DUPLICATE_CHECKED,
             verifyEmail = {},
             checkEmailDuplicate = {},
-            inputVerificationCode = "",
-            inputVerificationCodeState = VerificationCodeState.EMPTY,
             updateInputVerificationCode = {},
-            emailVerificationLeftTime = 100,
             verifyEmailCode = {},
             signUp = {},
             moveToBackScreen = {},
@@ -572,29 +521,16 @@ private fun SignUpScreenPreview1() {
 private fun SignUpScreenPreview2() {
     WhereAreYouTheme {
         SignUpScreen(
-            inputUserName = "",
+            signUpScreenUIState = SignUpScreenUIState(),
             updateInputUserName = {},
-            inputUserNameState = UserNameState.UNSATISFIED,
-            inputUserId = "",
             updateInputUserId = {},
-            inputUserIdState = UserIdState.UNSATISFIED,
             checkIdDuplicate = {},
-            inputPassword = "",
             updateInputPassword = {},
-            inputPasswordState = PasswordState.UNSATISFIED,
-            inputPasswordForChecking = "",
             updateInputPasswordForChecking = {},
-            inputPasswordForCheckingState = PasswordCheckingState.UNSATISFIED,
-            inputEmail = "",
             updateInputEmail = {},
-            inputEmailState = EmailState.UNSATISFIED,
-            emailVerificationProgressState = EmailVerificationProgressState.VERIFICATION_REQUESTED,
             verifyEmail = {},
             checkEmailDuplicate = {},
-            inputVerificationCode = "",
-            inputVerificationCodeState = VerificationCodeState.UNSATISFIED,
             updateInputVerificationCode = {},
-            emailVerificationLeftTime = 100,
             verifyEmailCode = {},
             signUp = {},
             moveToBackScreen = {},
