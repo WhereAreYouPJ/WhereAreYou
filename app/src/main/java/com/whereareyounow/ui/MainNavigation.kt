@@ -1,6 +1,5 @@
 package com.whereareyounow.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
@@ -11,15 +10,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.whereareyounow.data.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.ROUTE_DETAIL_SCHEDULE
-import com.whereareyounow.data.ROUTE_MAIN_FINDID
-import com.whereareyounow.data.ROUTE_MAIN_FINDPW
-import com.whereareyounow.data.ROUTE_MAIN_HOME
-import com.whereareyounow.data.ROUTE_MAIN_START
+import com.whereareyounow.data.ROUTE_FIND_ID
+import com.whereareyounow.data.ROUTE_FIND_PASSWORD
+import com.whereareyounow.data.ROUTE_HOME
 import com.whereareyounow.data.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.ROUTE_NEW_SCHEDULE
+import com.whereareyounow.data.ROUTE_POLICY_AGREE
+import com.whereareyounow.data.ROUTE_PRIVACY_POLICY
 import com.whereareyounow.data.ROUTE_SIGN_IN
 import com.whereareyounow.data.ROUTE_SIGN_UP
+import com.whereareyounow.data.ROUTE_SIGN_UP_SUCCESS
 import com.whereareyounow.data.ROUTE_SPLASH
+import com.whereareyounow.data.ROUTE_TERMS_OF_SERVICE
 import com.whereareyounow.ui.findid.FindIdContent
 import com.whereareyounow.ui.findpw.FindPasswordContent
 import com.whereareyounow.ui.home.HomeContent
@@ -28,7 +30,11 @@ import com.whereareyounow.ui.home.mypage.InfoModificationScreen
 import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleContent
 import com.whereareyounow.ui.home.schedule.newschedule.NewScheduleContent
 import com.whereareyounow.ui.signin.SignInScreen
-import com.whereareyounow.ui.signup.SignUpContent
+import com.whereareyounow.ui.signup.PolicyAgreeScreen
+import com.whereareyounow.ui.signup.PrivacyPolicyDetailsScreen
+import com.whereareyounow.ui.signup.SignUpScreen
+import com.whereareyounow.ui.signup.SignUpSuccessScreen
+import com.whereareyounow.ui.signup.TermsOfServiceDetailsScreen
 import com.whereareyounow.ui.splash.SplashScreen
 
 @Composable
@@ -46,19 +52,61 @@ fun MainNavigation(
         composable(route = ROUTE_SPLASH) {
             SplashScreen(
                 moveToSignInScreen = {
-                    navController.popBackStack(ROUTE_SPLASH, true)
-                    navController.navigate(ROUTE_SIGN_IN)
+                    navController.navigate(ROUTE_SIGN_IN) {
+                        popUpTo(ROUTE_SPLASH) { inclusive = true }
+                    }
                 },
                 moveToMainScreen = {
-                    navController.popBackStack(ROUTE_SPLASH, true)
-                    navController.navigate(ROUTE_MAIN_HOME)
+                    navController.navigate(ROUTE_HOME) {
+                        popUpTo(ROUTE_SPLASH) { inclusive = true }
+                    }
                 },
+            )
+        }
+
+        // 약관 동의 화면
+        composable(route = ROUTE_POLICY_AGREE) {
+            PolicyAgreeScreen(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToSignUpScreen = {
+                    navController.navigate(ROUTE_SIGN_UP) {
+                        popUpTo(ROUTE_SIGN_IN)
+                    }
+                },
+                moveToTermsOfServiceDetailsScreen = { navController.navigate(ROUTE_TERMS_OF_SERVICE) },
+                moveToPrivacyPolicyDetailsScreen = { navController.navigate(ROUTE_TERMS_OF_SERVICE) }
+            )
+        }
+
+        // 서비스 이용약관 화면
+        composable(route = ROUTE_TERMS_OF_SERVICE) {
+            TermsOfServiceDetailsScreen(
+                moveToPolicyAgreeScreen = { navController.popBackStack() }
+            )
+        }
+
+        // 개인정보 처리방침 화면
+        composable(route = ROUTE_PRIVACY_POLICY) {
+            PrivacyPolicyDetailsScreen(
+                moveToPolicyAgreeScreen = { navController.popBackStack() }
             )
         }
 
         // 회원가입 화면
         composable(route = ROUTE_SIGN_UP) {
-            SignUpContent(
+            SignUpScreen(
+                moveToBackScreen = { navController.popBackStack(ROUTE_SIGN_IN, false) },
+                moveToSignUpSuccessScreen = {
+                    navController.navigate(ROUTE_SIGN_UP_SUCCESS) {
+                        popUpTo(ROUTE_SIGN_IN)
+                    }
+                }
+            )
+        }
+
+        // 회원가입 성공 화면
+        composable(route = ROUTE_SIGN_UP_SUCCESS) {
+            SignUpSuccessScreen(
                 moveToBackScreen = { navController.popBackStack(ROUTE_SIGN_IN, false) }
             )
         }
@@ -67,31 +115,32 @@ fun MainNavigation(
         composable(route = ROUTE_SIGN_IN){
             SignInScreen(
                 moveToMainHomeScreen = {
-                    navController.popBackStack(ROUTE_SIGN_IN, true)
-                    navController.navigate(ROUTE_MAIN_HOME)
+                    navController.navigate(ROUTE_HOME) {
+                        popUpTo(ROUTE_SIGN_IN) { inclusive = true }
+                    }
                 },
-                moveToFindIdScreen = { navController.navigate(ROUTE_MAIN_FINDID) },
-                moveToFindPasswordScreen = { navController.navigate(ROUTE_MAIN_FINDPW) },
-                moveToSignUpScreen = { navController.navigate(ROUTE_SIGN_UP) }
+                moveToFindIdScreen = { navController.navigate(ROUTE_FIND_ID) },
+                moveToFindPasswordScreen = { navController.navigate(ROUTE_FIND_PASSWORD) },
+                moveToSignUpScreen = { navController.navigate(ROUTE_POLICY_AGREE) }
             )
         }
 
         // 아이디 찾기 화면
-        composable(route = ROUTE_MAIN_FINDID) {
+        composable(route = ROUTE_FIND_ID) {
             FindIdContent(
                 moveToSignInScreen = { navController.popBackStack(ROUTE_SIGN_IN, false) }
             )
         }
 
         // 비밀번호 찾기 화면
-        composable(route = ROUTE_MAIN_FINDPW) {
+        composable(route = ROUTE_FIND_PASSWORD) {
             FindPasswordContent(
                 moveToSignInScreen = { navController.popBackStack(ROUTE_SIGN_IN, false) }
             )
         }
 
         // 홈 화면
-        composable(route =  ROUTE_MAIN_HOME) {
+        composable(route =  ROUTE_HOME) {
             HomeContent(
                 moveToAddScheduleScreen = { navController.navigate("$ROUTE_NEW_SCHEDULE/$it") },
                 moveToDetailScreen = { navController.navigate("$ROUTE_DETAIL_SCHEDULE/$it") },
