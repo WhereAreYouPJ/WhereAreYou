@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,16 +38,9 @@ class SignUpViewModel @Inject constructor(
     private val inputTextValidator: InputTextValidator,
 ) : AndroidViewModel(application) {
 
-    private val _screenState = MutableStateFlow(ScreenState.PolicyAgree)
-    val screenState: StateFlow<ScreenState> = _screenState
     private val _signUpScreenUIState = MutableStateFlow(SignUpScreenUIState())
     val signUpScreenUIState = _signUpScreenUIState.asStateFlow()
     private var startTimer: Job? = null
-
-
-    fun updateScreenState(screenState: ScreenState) {
-        _screenState.update { screenState }
-    }
 
     fun updateInputUserName(userName: String) {
         _signUpScreenUIState.update {
