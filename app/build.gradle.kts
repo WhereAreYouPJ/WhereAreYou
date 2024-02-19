@@ -150,6 +150,10 @@ dependencies {
 
     // Landscapist
     implementation("com.github.skydoves:landscapist-glide:2.2.12")
+
+    // Orbit
+    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
+    implementation("org.orbit-mvi:orbit-compose:6.1.0")
 }
 
 kapt {
