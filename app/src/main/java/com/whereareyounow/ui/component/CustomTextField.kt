@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -45,10 +46,10 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     guideLine: String,
     textFieldState: CustomTextFieldState,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    viewRequester: BringIntoViewRequester = BringIntoViewRequester(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val viewRequester = BringIntoViewRequester()
-    val coroutineScope = rememberCoroutineScope()
     BasicTextField(
         modifier = Modifier
             .animateContentSize { _, _ -> }
@@ -125,6 +126,7 @@ enum class CustomTextFieldState {
     IDLE, SATISFIED, UNSATISFIED
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun IdleCustomTextFieldPreview() {
@@ -139,6 +141,7 @@ private fun IdleCustomTextFieldPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun IdlePasswordCustomTextFieldPreview() {
@@ -154,6 +157,7 @@ private fun IdlePasswordCustomTextFieldPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun SatisfiedCustomTextFieldPreview() {
@@ -168,6 +172,7 @@ private fun SatisfiedCustomTextFieldPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun SatisfiedPasswordCustomTextFieldPreview() {
@@ -183,6 +188,7 @@ private fun SatisfiedPasswordCustomTextFieldPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun UnsatisfiedCustomTextFieldPreview() {
@@ -197,6 +203,7 @@ private fun UnsatisfiedCustomTextFieldPreview() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun UnsatisfiedPasswordCustomTextFieldPreview() {
