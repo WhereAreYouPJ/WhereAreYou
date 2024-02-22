@@ -183,6 +183,7 @@ fun ScheduleScreen(
                     ScheduleScreenTopBar(
                         calendarState = calendarState,
                         updateCalendarState = updateCalendarState,
+                        updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
                         selectedYear = selectedYear,
                         updateYear = updateYear,
                         selectedMonth = selectedMonth,
@@ -225,6 +226,7 @@ fun ScheduleScreen(
 fun ScheduleScreenTopBar(
     calendarState: CalendarViewModel.CalendarState,
     updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
+    updateCurrentMonthCalendarInfo: () -> Unit,
     selectedYear: Int,
     updateYear: (Int) -> Unit,
     selectedMonth: Int,
@@ -247,6 +249,7 @@ fun ScheduleScreenTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(Modifier.width(20.dp))
+        // 년도 선택
         Box {
             Text(
                 modifier = Modifier.clickable(
@@ -260,6 +263,7 @@ fun ScheduleScreenTopBar(
                 letterSpacing = 0.em,
                 color = Color(0xFF373737)
             )
+            // 년도 선택 팝업
             CustomPopup(
                 popupState = yearDropdownPopupState,
                 onDismissRequest = { yearDropdownPopupState.isVisible = false }
@@ -292,6 +296,7 @@ fun ScheduleScreenTopBar(
                                         .height(40.dp)
                                         .clickable {
                                             updateYear(year)
+                                            updateCurrentMonthCalendarInfo()
                                             coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
                                         },
                                     contentAlignment = Alignment.Center
@@ -309,6 +314,7 @@ fun ScheduleScreenTopBar(
             }
         }
         Spacer(Modifier.width(10.dp))
+        // 월 선택
         Box {
             Text(
                 modifier = Modifier.clickable(
@@ -321,6 +327,7 @@ fun ScheduleScreenTopBar(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 0.em
             )
+            // 월 선택 팝업
             CustomPopup(
                 popupState = monthDropdownPopupState,
                 onDismissRequest = { monthDropdownPopupState.isVisible = false }
@@ -350,6 +357,7 @@ fun ScheduleScreenTopBar(
                                         .height(40.dp)
                                         .clickable {
                                             updateMonth(month)
+                                            updateCurrentMonthCalendarInfo()
                                             coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
                                         },
                                     contentAlignment = Alignment.Center
@@ -464,6 +472,7 @@ private fun ScheduleScreenPreview2() {
         ScheduleScreenTopBar(
             calendarState = CalendarViewModel.CalendarState.DATE,
             updateCalendarState = {},
+            updateCurrentMonthCalendarInfo = {},
             selectedYear = 2024,
             updateYear = {},
             selectedMonth = 1,
