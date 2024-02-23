@@ -1,10 +1,11 @@
-package com.whereareyounow.ui.home.schedule.editschedule
+package com.whereareyounow.ui.home.schedule.scheduleedit
 
 import android.app.Application
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
@@ -20,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,7 +29,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class ScheduleEditorViewModel @Inject constructor(
+class ScheduleEditViewModel @Inject constructor(
     private val application: Application,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
@@ -44,42 +46,50 @@ class ScheduleEditorViewModel @Inject constructor(
     }
 
     private var scheduleId = ""
-    private val _selectedFriendsList = mutableStateListOf<Friend>()
-    val selectedFriendsList: List<Friend> = _selectedFriendsList
-    private val _scheduleName = MutableStateFlow("")
-    val scheduleName: StateFlow<String> = _scheduleName
-    private val _scheduleYear = MutableStateFlow("0")
-    val scheduleYear: StateFlow<String> = _scheduleYear
-    private val _scheduleMonth = MutableStateFlow("0")
-    val scheduleMonth: StateFlow<String> = _scheduleMonth
-    private val _scheduleDate = MutableStateFlow("0")
-    val scheduleDate: StateFlow<String> = _scheduleDate
-    private val _scheduleHour = MutableStateFlow("0")
-    val scheduleHour: StateFlow<String> = _scheduleHour
-    private val _scheduleMinute = MutableStateFlow("0")
-    val scheduleMinute: StateFlow<String> = _scheduleMinute
-    private val _destinationName = MutableStateFlow("")
-    val destinationName: StateFlow<String> = _destinationName
-    private val _destinationAddress = MutableStateFlow("")
-    val destinationAddress: StateFlow<String> = _destinationAddress
-    private val _destinationLatitude = MutableStateFlow(0.0)
-    val destinationLatitude: StateFlow<Double> = _destinationLatitude
-    private val _destinationLongitude = MutableStateFlow(0.0)
-    val destinationLongitude: StateFlow<Double> = _destinationLongitude
-    private val _memo = MutableStateFlow("")
-    val memo: StateFlow<String> = _memo
+    private val _scheduleEditScreenUIState = MutableStateFlow(ScheduleEditScreenUIState())
+    val scheduleEditScreenUIState = _scheduleEditScreenUIState.asStateFlow()
+//    private val _selectedFriendsList = mutableStateListOf<Friend>()
+//    val selectedFriendsList: List<Friend> = _selectedFriendsList
+//    private val _scheduleName = MutableStateFlow("")
+//    val scheduleName: StateFlow<String> = _scheduleName
+//    private val _scheduleYear = MutableStateFlow("0")
+//    val scheduleYear: StateFlow<String> = _scheduleYear
+//    private val _scheduleMonth = MutableStateFlow("0")
+//    val scheduleMonth: StateFlow<String> = _scheduleMonth
+//    private val _scheduleDate = MutableStateFlow("0")
+//    val scheduleDate: StateFlow<String> = _scheduleDate
+//    private val _scheduleHour = MutableStateFlow("0")
+//    val scheduleHour: StateFlow<String> = _scheduleHour
+//    private val _scheduleMinute = MutableStateFlow("0")
+//    val scheduleMinute: StateFlow<String> = _scheduleMinute
+//    private val _destinationName = MutableStateFlow("")
+//    val destinationName: StateFlow<String> = _destinationName
+//    private val _destinationAddress = MutableStateFlow("")
+//    val destinationAddress: StateFlow<String> = _destinationAddress
+//    private val _destinationLatitude = MutableStateFlow(0.0)
+//    val destinationLatitude: StateFlow<Double> = _destinationLatitude
+//    private val _destinationLongitude = MutableStateFlow(0.0)
+//    val destinationLongitude: StateFlow<Double> = _destinationLongitude
+//    private val _memo = MutableStateFlow("")
+//    val memo: StateFlow<String> = _memo
 
     fun updateScheduleId(id: String) {
         scheduleId = id
     }
 
     fun updateSelectedFriendsList(friends: List<Friend>) {
-        _selectedFriendsList.clear()
-        _selectedFriendsList.addAll(friends)
+        _scheduleEditScreenUIState.update {
+            it.copy(selectedFriendsList = friends)
+        }
+//        _selectedFriendsList.clear()
+//        _selectedFriendsList.addAll(friends)
     }
 
     fun updateScheduleName(name: String) {
-        _scheduleName.update { name }
+        _scheduleEditScreenUIState.update {
+            it.copy(scheduleName = name)
+        }
+//        _scheduleName.update { name }
     }
 
     fun updateScheduleDate(date: String) {
