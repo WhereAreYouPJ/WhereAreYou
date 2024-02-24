@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.ui.signup.VerificationCodeState
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import kotlinx.coroutines.launch
 
