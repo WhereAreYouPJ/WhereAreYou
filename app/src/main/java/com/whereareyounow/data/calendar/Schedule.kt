@@ -1,8 +1,8 @@
-package com.whereareyounow.data
+package com.whereareyounow.data.calendar
 
 data class Schedule(
     val year: Int,
     val month: Int,
     val date: Int,
-    var scheduleCount: Int = 0
+    val scheduleCount: Int = 0
 )
