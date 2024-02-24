@@ -1,8 +1,7 @@
 package com.whereareyounow.util
 
-import com.whereareyounow.data.Schedule
+import com.whereareyounow.data.calendar.Schedule
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
