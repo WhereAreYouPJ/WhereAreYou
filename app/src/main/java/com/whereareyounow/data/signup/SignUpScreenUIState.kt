@@ -1,12 +1,4 @@
-package com.whereareyounow.data
-
-import com.whereareyounow.ui.signup.EmailState
-import com.whereareyounow.ui.signup.EmailVerificationProgressState
-import com.whereareyounow.ui.signup.PasswordCheckingState
-import com.whereareyounow.ui.signup.PasswordState
-import com.whereareyounow.ui.signup.UserIdState
-import com.whereareyounow.ui.signup.UserNameState
-import com.whereareyounow.ui.signup.VerificationCodeState
+package com.whereareyounow.data.signup
 
 data class SignUpScreenUIState(
     val inputUserName: String = "",
@@ -24,3 +16,31 @@ data class SignUpScreenUIState(
     val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.EMPTY,
     val emailVerificationCodeLeftTime: Int = 0
 )
+
+enum class UserNameState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class UserIdState {
+    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
+}
+
+enum class PasswordState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class PasswordCheckingState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
+
+enum class EmailState {
+    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
+}
+
+enum class EmailVerificationProgressState {
+    DUPLICATE_UNCHECKED, DUPLICATE_CHECKED, VERIFICATION_REQUESTED
+}
+
+enum class VerificationCodeState {
+    EMPTY, SATISFIED, UNSATISFIED
+}
