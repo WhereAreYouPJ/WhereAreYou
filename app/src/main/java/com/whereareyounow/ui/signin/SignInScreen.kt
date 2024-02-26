@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.signin
 
+import android.widget.Toast
 import androidx.annotation.Keep
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,27 +25,28 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.signin.SignInScreenSideEffect
+import com.whereareyounow.data.signin.SignInScreenUIState
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
-import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareAc
-import com.whereareyounow.ui.theme.nanumSquareNeo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SignInScreen(
@@ -55,18 +56,14 @@ fun SignInScreen(
     moveToSignUpScreen: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val inputUserId = viewModel.inputUserId.collectAsState().value
-    val inputPassword = viewModel.inputPassword.collectAsState().value
-    val isSignInLoading = viewModel.isSignInLoading.collectAsState().value
-    val isSignInFailed = viewModel.isSignInFailed.collectAsState().value
+    val signInScreenUIState = viewModel.signInScreenUIState.collectAsState().value
+    val signUpScreenSideEffectFlow = viewModel.signInScreenSideEffectFlow
     SignInScreen(
-        inputUserId = inputUserId,
+        signInScreenUIState = signInScreenUIState,
+        signInScreenSideEffectFlow = signUpScreenSideEffectFlow,
         updateInputUserId = viewModel::updateInputUserId,
-        inputPassword = inputPassword,
         updateInputPassword = viewModel::updateInputPassword,
         signIn = viewModel::signIn,
-        isSignInLoading = isSignInLoading,
-        isSignInFailed = isSignInFailed,
         updateIsSignInFailed = viewModel::updateIsSignInFailed,
         moveToMainHomeScreen = moveToMainHomeScreen,
         moveToFindIdScreen = moveToFindIdScreen,
@@ -77,21 +74,27 @@ fun SignInScreen(
 
 @Composable
 private fun SignInScreen(
-    inputUserId: String,
+    signInScreenUIState: SignInScreenUIState,
+    signInScreenSideEffectFlow: SharedFlow<SignInScreenSideEffect>,
     updateInputUserId: (String) -> Unit,
-    inputPassword: String,
     updateInputPassword: (String) -> Unit,
     signIn: (() -> Unit) -> Unit,
-    isSignInLoading: Boolean,
-    isSignInFailed: Boolean,
     updateIsSignInFailed: (Boolean) -> Unit,
     moveToMainHomeScreen: () -> Unit,
     moveToFindIdScreen: () -> Unit,
     moveToFindPasswordScreen: () -> Unit,
     moveToSignUpScreen: () -> Unit
 ) {
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         updateIsSignInFailed(false)
+        signInScreenSideEffectFlow.collect { value ->
+            when (value) {
+                is SignInScreenSideEffect.Toast -> {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
     }
     Column(
         modifier = Modifier
@@ -122,7 +125,7 @@ private fun SignInScreen(
 
         // 아이디 입력
         UserIdInputBox(
-            inputText = inputUserId,
+            inputText = signInScreenUIState.inputUserId,
             onValueChange = updateInputUserId
         )
 
@@ -130,12 +133,12 @@ private fun SignInScreen(
 
         // 비밀번호 입력
         PasswordInputBox(
-            inputText = inputPassword,
+            inputText = signInScreenUIState.inputPassword,
             onValueChange = updateInputPassword
         )
 
 
-        if (isSignInFailed) {
+        if (signInScreenUIState.isSignInFailed) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,7 +154,7 @@ private fun SignInScreen(
         BottomOKButton(
             text = "로그인",
             onClick = { signIn(moveToMainHomeScreen) },
-            isLoading = isSignInLoading
+            isLoading = signInScreenUIState.isSignInLoading
         )
 
         Spacer(Modifier.height(10.dp))
@@ -276,13 +279,11 @@ private fun PasswordInputBox(
 private fun SignInScreenPreview() {
     WhereAreYouTheme {
         SignInScreen(
-            inputUserId = "",
+            signInScreenUIState = SignInScreenUIState(),
+            signInScreenSideEffectFlow = MutableSharedFlow(),
             updateInputUserId = {},
-            inputPassword = "",
             updateInputPassword = {},
             signIn = {},
-            isSignInLoading = false,
-            isSignInFailed = false,
             updateIsSignInFailed = {},
             moveToMainHomeScreen = {},
             moveToFindIdScreen = {},
@@ -298,13 +299,11 @@ private fun SignInScreenPreview() {
 private fun LoadingSignInScreenPreview() {
     WhereAreYouTheme {
         SignInScreen(
-            inputUserId = "",
+            signInScreenUIState = SignInScreenUIState(),
+            signInScreenSideEffectFlow = MutableSharedFlow(),
             updateInputUserId = {},
-            inputPassword = "",
             updateInputPassword = {},
             signIn = {},
-            isSignInLoading = true,
-            isSignInFailed = true,
             updateIsSignInFailed = {},
             moveToMainHomeScreen = {},
             moveToFindIdScreen = {},
