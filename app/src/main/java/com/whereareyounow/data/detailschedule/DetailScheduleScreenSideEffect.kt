@@ -1,4 +1,5 @@
 package com.whereareyounow.data.detailschedule
 
-class DetailScheduleScreenSideEffect {
+sealed class DetailScheduleScreenSideEffect {
+    data class Toast(val text: String): DetailScheduleScreenSideEffect()
 }
