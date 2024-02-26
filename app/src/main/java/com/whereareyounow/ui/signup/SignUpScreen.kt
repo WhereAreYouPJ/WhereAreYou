@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.signup
 
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,25 +20,39 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.whereareyounow.data.SignUpScreenUIState
+import com.whereareyounow.data.signup.EmailState
+import com.whereareyounow.data.signup.EmailVerificationProgressState
+import com.whereareyounow.data.signup.PasswordCheckingState
+import com.whereareyounow.data.signup.PasswordState
+import com.whereareyounow.data.signup.SignUpScreenSideEffect
+import com.whereareyounow.data.signup.SignUpScreenUIState
+import com.whereareyounow.data.signup.UserIdState
+import com.whereareyounow.data.signup.UserNameState
+import com.whereareyounow.data.signup.VerificationCodeState
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SignUpScreen(
@@ -46,8 +61,10 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val signUpScreenUIState = viewModel.signUpScreenUIState.collectAsState().value
+    val signUpScreenSideEffectFlow = viewModel.signUpScreenSideEffectFlow
     SignUpScreen(
         signUpScreenUIState = signUpScreenUIState,
+        signUpScreenSideEffectFlow = signUpScreenSideEffectFlow,
         updateInputUserName = viewModel::updateInputUserName,
         updateInputUserId = viewModel::updateInputUserId,
         checkIdDuplicate = viewModel::checkIdDuplicate,
@@ -67,6 +84,7 @@ fun SignUpScreen(
 @Composable
 private fun SignUpScreen(
     signUpScreenUIState: SignUpScreenUIState,
+    signUpScreenSideEffectFlow: SharedFlow<SignUpScreenSideEffect>,
     updateInputUserName: (String) -> Unit,
     updateInputUserId: (String) -> Unit,
     checkIdDuplicate: () -> Unit,
@@ -81,11 +99,22 @@ private fun SignUpScreen(
     moveToBackScreen: () -> Unit,
     moveToSignUpSuccessScreen: () -> Unit
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        signUpScreenSideEffectFlow.collect { value ->
+            when (value) {
+                is SignUpScreenSideEffect.Toast -> {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 20.dp, end = 20.dp)
             .imePadding(),
+        // LazyColumn이지만 화면 세로 길이와 상관없이 마지막 item을 최하단에 고정시키기 위함
         verticalArrangement = remember {
             object : Arrangement.Vertical {
                 override fun Density.arrange(
@@ -408,8 +437,7 @@ private fun EmailVerificationCodeTextField(
         inputText = inputVerificationCode,
         onValueChange = updateInputVerificationCode,
         guideLine = "인증코드가 일치하지 않습니다.",
-        textFieldState =
-        when (inputVerificationCodeState) {
+        textFieldState = when (inputVerificationCodeState) {
             VerificationCodeState.EMPTY -> CustomTextFieldState.IDLE
             VerificationCodeState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
             VerificationCodeState.SATISFIED -> CustomTextFieldState.SATISFIED
@@ -458,33 +486,7 @@ fun CheckingButton(
     }
 }
 
-enum class UserNameState {
-    EMPTY, SATISFIED, UNSATISFIED
-}
 
-enum class UserIdState {
-    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
-}
-
-enum class PasswordState {
-    EMPTY, SATISFIED, UNSATISFIED
-}
-
-enum class PasswordCheckingState {
-    EMPTY, SATISFIED, UNSATISFIED
-}
-
-enum class EmailState {
-    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
-}
-
-enum class EmailVerificationProgressState {
-    DUPLICATE_UNCHECKED, DUPLICATE_CHECKED, VERIFICATION_REQUESTED
-}
-
-enum class VerificationCodeState {
-    EMPTY, SATISFIED, UNSATISFIED
-}
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -492,6 +494,7 @@ private fun SignUpScreenPreview1() {
     WhereAreYouTheme {
         SignUpScreen(
             signUpScreenUIState = SignUpScreenUIState(),
+            signUpScreenSideEffectFlow = MutableSharedFlow(),
             updateInputUserName = {  },
             updateInputUserId = {},
             checkIdDuplicate = {},
@@ -515,6 +518,7 @@ private fun SignUpScreenPreview2() {
     WhereAreYouTheme {
         SignUpScreen(
             signUpScreenUIState = SignUpScreenUIState(),
+            signUpScreenSideEffectFlow = MutableSharedFlow(),
             updateInputUserName = {},
             updateInputUserId = {},
             checkIdDuplicate = {},
