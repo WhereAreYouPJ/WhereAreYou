@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.home.schedule.editschedule
+package com.whereareyounow.ui.home.schedule.scheduleedit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
@@ -7,7 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -33,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,7 +42,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTopBar
@@ -52,47 +49,42 @@ import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
 fun FriendsListScreen(
-    initialFriendIdsList: List<String> = listOf(),
-    updateFriendsList: (List<Friend>) -> Unit,
-    moveToNewScheduleScreen: () -> Unit,
-    viewModel: FriendsListScreenViewModel = hiltViewModel()
+    moveToBackScreen: () -> Unit,
+    scheduleEditViewModel: ScheduleEditViewModel,
+    friendsListScreenViewModel: FriendsListScreenViewModel = hiltViewModel(),
 ) {
-    val selectedFriendsList = viewModel.selectedFriendsList
-    val inputFriendName = viewModel.inputText.collectAsState().value
-    val searchedFriendsList = viewModel.searchedFriendsList
+    LaunchedEffect(Unit) {
+        friendsListScreenViewModel.initialize(scheduleEditViewModel.scheduleEditScreenUIState.value.selectedFriendsList.map { it.memberId })
+    }
+    val selectedFriendsList = friendsListScreenViewModel.selectedFriendsList
+    val inputFriendName = friendsListScreenViewModel.inputText.collectAsState().value
+    val searchedFriendsList = friendsListScreenViewModel.searchedFriendsList
     FriendsListScreen(
-        initialFriendIdsList = initialFriendIdsList,
-        initialize = viewModel::initialize,
-        updateFriendsList = updateFriendsList,
+        initialize = friendsListScreenViewModel::initialize,
+        updateFriendsList = scheduleEditViewModel::updateSelectedFriendsList,
         selectedFriendsList = selectedFriendsList,
-        selectFriend = viewModel::selectFriend,
+        selectFriend = friendsListScreenViewModel::selectFriend,
         inputFriendName = inputFriendName,
-        updateInputText = viewModel::updateInputText,
+        updateInputText = friendsListScreenViewModel::updateInputText,
         searchedFriendsList = searchedFriendsList,
-        moveToNewScheduleScreen = moveToNewScheduleScreen
+        moveToBackScreen = moveToBackScreen
     )
 }
 
 @Composable
 private fun FriendsListScreen(
-    initialFriendIdsList: List<String> = listOf(),
     initialize: (List<String>) -> Unit,
-    updateFriendsList: (List<Friend>) -> Unit,
+    updateFriendsList: (List<String>) -> Unit,
     selectedFriendsList: List<Friend>,
     selectFriend: (Pair<Friend, Boolean>) -> Unit,
     inputFriendName: String,
     updateInputText: (String) -> Unit,
     searchedFriendsList: List<Pair<Friend, Boolean>>,
-    moveToNewScheduleScreen: () -> Unit
+    moveToBackScreen: () -> Unit
 ) {
     BackHandler {
-        moveToNewScheduleScreen()
-        initialize(initialFriendIdsList)
+        moveToBackScreen()
     }
-    LaunchedEffect(Unit) {
-        initialize(initialFriendIdsList)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,8 +92,7 @@ private fun FriendsListScreen(
     ) {
         // 상단바
         FriendsListScreenTopBar(
-            initializeFriendsList = { initialize(initialFriendIdsList) },
-            moveToNewScheduleScreen = moveToNewScheduleScreen
+            moveToBackScreen = moveToBackScreen
         )
 
         Spacer(Modifier.height(10.dp))
@@ -130,8 +121,8 @@ private fun FriendsListScreen(
         BottomOKButton(
             text = "완료",
             onClick = {
-                updateFriendsList(selectedFriendsList)
-                moveToNewScheduleScreen()
+                updateFriendsList(selectedFriendsList.map { it.memberId })
+                moveToBackScreen()
             }
         )
 
@@ -141,14 +132,12 @@ private fun FriendsListScreen(
 
 @Composable
 fun FriendsListScreenTopBar(
-    initializeFriendsList: () -> Unit,
-    moveToNewScheduleScreen: () -> Unit
+    moveToBackScreen: () -> Unit
 ) {
     CustomTopBar(
         title = "친구선택",
         onBackButtonClicked = {
-            moveToNewScheduleScreen()
-            initializeFriendsList()
+            moveToBackScreen()
         }
     )
 }
@@ -288,15 +277,14 @@ fun FriendsListScreenPreview() {
     )
     WhereAreYouTheme {
         FriendsListScreen(
-            initialFriendIdsList = initialFriendIdsList,
-            initialize = {  },
-            updateFriendsList = {  },
+            initialize = {},
+            updateFriendsList = {},
             selectedFriendsList = selectedFriendsList,
-            selectFriend = {  },
+            selectFriend = {},
             inputFriendName = "피그마",
-            updateInputText = {  },
+            updateInputText = {},
             searchedFriendsList = searchedFriendsList,
-            moveToNewScheduleScreen = {  }
+            moveToBackScreen = {}
         )
     }
 }
