@@ -47,9 +47,9 @@ fun CustomTextField(
     guideLine: String,
     textFieldState: CustomTextFieldState,
     isPassword: Boolean = false,
-    viewRequester: BringIntoViewRequester = BringIntoViewRequester(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
+    val viewRequester = BringIntoViewRequester()
     BasicTextField(
         modifier = Modifier
             .animateContentSize { _, _ -> }
@@ -126,7 +126,6 @@ enum class CustomTextFieldState {
     IDLE, SATISFIED, UNSATISFIED
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun IdleCustomTextFieldPreview() {
@@ -141,7 +140,6 @@ private fun IdleCustomTextFieldPreview() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun IdlePasswordCustomTextFieldPreview() {
@@ -157,7 +155,6 @@ private fun IdlePasswordCustomTextFieldPreview() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun SatisfiedCustomTextFieldPreview() {
@@ -172,7 +169,6 @@ private fun SatisfiedCustomTextFieldPreview() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun SatisfiedPasswordCustomTextFieldPreview() {
@@ -188,7 +184,6 @@ private fun SatisfiedPasswordCustomTextFieldPreview() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun UnsatisfiedCustomTextFieldPreview() {
@@ -203,7 +198,6 @@ private fun UnsatisfiedCustomTextFieldPreview() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun UnsatisfiedPasswordCustomTextFieldPreview() {
