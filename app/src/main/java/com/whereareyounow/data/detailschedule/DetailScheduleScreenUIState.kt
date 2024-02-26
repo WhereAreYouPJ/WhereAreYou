@@ -1,5 +1,9 @@
 package com.whereareyounow.data.detailschedule
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class DetailScheduleScreenUIState(
     val scheduleName: String = "",
     val scheduleYear: Int = 0,
@@ -11,5 +15,5 @@ data class DetailScheduleScreenUIState(
     val destinationName: String = "",
     val destinationRoadAddress: String = "",
     val memo: String = "",
-    val memberInfoList: List<MemberInfo> = emptyList()
-)
+    val memberInfosList: List<MemberInfo> = emptyList()
+) : Parcelable
