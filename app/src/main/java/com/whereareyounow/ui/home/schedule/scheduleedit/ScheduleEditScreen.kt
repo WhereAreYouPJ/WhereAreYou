@@ -1,21 +1,18 @@
-package com.whereareyounow.ui.home.schedule.editschedule
+package com.whereareyounow.ui.home.schedule.scheduleedit
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DatePicker
@@ -40,8 +36,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -54,58 +48,59 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
+import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.ScrollableSelectLayout
 import com.whereareyounow.ui.component.rememberScrollableSelectState
 import com.whereareyounow.util.CalendarUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
 @Composable
-fun ScheduleEditorScreen(
-    selectedFriendsList: List<Friend>,
-    scheduleName: String,
+fun ScheduleEditScreen(
+    scheduleEditScreenUIState: ScheduleEditScreenUIState,
+    scheduleEditScreenSideEffectFlow: SharedFlow<ScheduleEditScreenSideEffect>,
     updateScheduleName: (String) -> Unit,
-    scheduleYear: String,
-    scheduleMonth: String,
-    scheduleDate: String,
-    updateScheduleDate: (String) -> Unit,
-    scheduleHour: String,
-    scheduleMinute: String,
-    updateScheduleTime: (String) -> Unit,
-    destinationName: String,
-    destinationAddress: String,
-    memo: String,
+    updateScheduleDate: (Int, Int, Int) -> Unit,
+    updateScheduleTime: (Int, Int) -> Unit,
     updateMemo: (String) -> Unit,
     onComplete: (() -> Unit) -> Unit,
-    isDatePickerDialogShowing: MutableState<Boolean>,
-    isTimePickerDialogShowing: MutableState<Boolean>,
-    moveToBackScreen: () -> Unit,
+    moveToSearchLocationScreen: () -> Unit,
     moveToFriendsListScreen: () -> Unit,
-    moveToSearchLocationScreen: () -> Unit
+    moveToBackScreen: () -> Unit
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        scheduleEditScreenSideEffectFlow.collect { value ->
+            when (value) {
+                is ScheduleEditScreenSideEffect.Toast -> {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
     val isDateTimePickerDialogShowing = remember { mutableStateOf(false) }
     LazyColumn(
         modifier = Modifier
@@ -140,7 +135,7 @@ fun ScheduleEditorScreen(
 
             // 제목
             ScheduleTitleTextField(
-                scheduleName = scheduleName,
+                scheduleName = scheduleEditScreenUIState.scheduleName,
                 updateScheduleName = updateScheduleName
             )
 
@@ -169,15 +164,15 @@ fun ScheduleEditorScreen(
                 ) {
                     // 날짜 선택
                     DateComponent(
-                        scheduleYear = scheduleYear,
-                        scheduleMonth = scheduleMonth,
-                        scheduleDate = scheduleDate
+                        scheduleYear = scheduleEditScreenUIState.scheduleYear,
+                        scheduleMonth = scheduleEditScreenUIState.scheduleMonth,
+                        scheduleDate = scheduleEditScreenUIState.scheduleDate
                     )
 
                     // 시간 선택
                     TimeComponent(
-                        scheduleHour = scheduleHour,
-                        scheduleMinute = scheduleMinute
+                        scheduleHour = scheduleEditScreenUIState.scheduleHour,
+                        scheduleMinute = scheduleEditScreenUIState.scheduleMinute
                     )
                 }
             }
@@ -187,8 +182,8 @@ fun ScheduleEditorScreen(
 
             // 위치 선택
             LocationSelector(
-                destinationName = destinationName,
-                destinationAddress = destinationAddress,
+                destinationName = scheduleEditScreenUIState.destinationName,
+                destinationAddress = scheduleEditScreenUIState.destinationAddress,
                 moveToSearchLocationScreen = moveToSearchLocationScreen
             )
 
@@ -196,7 +191,7 @@ fun ScheduleEditorScreen(
 
             // 선택된 멤버 리스트
             SelectedMembersList(
-                selectedFriendsList = selectedFriendsList,
+                selectedFriendsList = scheduleEditScreenUIState.selectedFriendsList,
                 moveToFriendsListScreen = moveToFriendsListScreen
             )
 
@@ -204,18 +199,18 @@ fun ScheduleEditorScreen(
 
             // 메모
             ScheduleMemo(
-                memo = memo,
+                memo = scheduleEditScreenUIState.memo,
                 updateMemo = updateMemo
             )
 
             if (isDateTimePickerDialogShowing.value) {
                 // 날짜, 시간 선택 다이얼로그
                 DateTimePickerDialog(
-                    selectedYear = scheduleYear,
-                    selectedMonth = scheduleMonth,
-                    selectedDate = scheduleDate,
-                    selectedHour = scheduleHour,
-                    selectedMinute = scheduleMinute,
+                    selectedYear = scheduleEditScreenUIState.scheduleYear,
+                    selectedMonth = scheduleEditScreenUIState.scheduleMonth,
+                    selectedDate = scheduleEditScreenUIState.scheduleDate,
+                    selectedHour = scheduleEditScreenUIState.scheduleHour,
+                    selectedMinute = scheduleEditScreenUIState.scheduleMinute,
                     updateScheduleDate = updateScheduleDate,
                     updateScheduleTime = updateScheduleTime,
                     closeDialog = { isDateTimePickerDialogShowing.value = false },
@@ -359,12 +354,12 @@ fun ScheduleTitleTextField(
 
 @Composable
 private fun DateComponent(
-    scheduleYear: String,
-    scheduleMonth: String,
-    scheduleDate: String
+    scheduleYear: Int,
+    scheduleMonth: Int,
+    scheduleDate: Int
 ) {
     Text(
-        text = "${scheduleYear}년 ${scheduleMonth.toInt()}월 ${scheduleDate.toInt()}일(${CalendarUtil.getDayOfWeekStringFromNum(CalendarUtil.getDayOfWeek(scheduleYear.toInt(), scheduleMonth.toInt(), scheduleDate.toInt()))})",
+        text = "${scheduleYear}년 ${scheduleMonth}월 ${scheduleDate}일(${CalendarUtil.getDayOfWeekString(scheduleYear, scheduleMonth, scheduleDate)})",
         textAlign = TextAlign.Center,
         fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
@@ -374,15 +369,14 @@ private fun DateComponent(
 
 @Composable
 private fun TimeComponent(
-    scheduleHour: String,
-    scheduleMinute: String,
+    scheduleHour: Int,
+    scheduleMinute: Int,
 ) {
-    var hour = scheduleHour.toInt()
-    val minute = scheduleMinute.toInt()
+    var hour = scheduleHour
     val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}
     if (hour == 0) hour = 12
     Text(
-        text = "$AMPM ${hour}:${String.format("%02d", minute)}",
+        text = "$AMPM ${hour}:${String.format("%02d", scheduleMinute)}",
         textAlign = TextAlign.Center,
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
@@ -591,13 +585,13 @@ private fun MyTimePickerDialog(
 
 @Composable
 private fun DateTimePickerDialog(
-    selectedYear: String,
-    selectedMonth: String,
-    selectedDate: String,
-    selectedHour: String,
-    selectedMinute: String,
-    updateScheduleDate: (String) -> Unit,
-    updateScheduleTime: (String) -> Unit,
+    selectedYear: Int,
+    selectedMonth: Int,
+    selectedDate: Int,
+    selectedHour: Int,
+    selectedMinute: Int,
+    updateScheduleDate: (Int, Int, Int) -> Unit,
+    updateScheduleTime: (Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
     Dialog(
@@ -664,7 +658,7 @@ private fun DateTimePickerDialog(
                             visibleAmount = 3
                         ) { item, selected ->
                             Text(
-                                text = "${item.get(Calendar.YEAR)}년 ${item.get(Calendar.MONTH) + 1}월 ${item.get(Calendar.DATE)}일(${CalendarUtil.getDayOfWeekStringFromNum(item.get(Calendar.DAY_OF_WEEK))})",
+                                text = "${item.get(Calendar.YEAR)}년 ${item.get(Calendar.MONTH) + 1}월 ${item.get(Calendar.DATE)}일(${CalendarUtil.getDayOfWeekString(item.get(Calendar.YEAR), item.get(Calendar.MONTH) + 1, item.get(Calendar.DATE))})",
                                 fontSize = itemFontSize.sp,
                                 color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
                             )
@@ -741,8 +735,8 @@ private fun DateTimePickerDialog(
                                 if (ampmScrollableSelectState.currentSwipeItemIndex == 1 && hour != 12) hour += 12
                                 if (ampmScrollableSelectState.currentSwipeItemIndex == 0 && hour == 12) hour = 0
                                 val minute = minuteList[minuteScrollableSelectState.currentSwipeItemIndex]
-                                updateScheduleDate("${selectedCalendar.get(Calendar.YEAR)}-${String.format("%02d", selectedCalendar.get(Calendar.MONTH) + 1)}-${String.format("%02d", selectedCalendar.get(Calendar.DATE))}")
-                                updateScheduleTime(String.format("%02d:%02d", hour, minute))
+                                updateScheduleDate(selectedCalendar.get(Calendar.YEAR), selectedCalendar.get(Calendar.MONTH) + 1, selectedCalendar.get(Calendar.DATE))
+                                updateScheduleTime(hour, minute)
                                 closeDialog()
                             }
                             .padding(10.dp),
@@ -776,24 +770,14 @@ private fun EmptyNewScheduleScreenPreview() {
         Friend(number = 0, memberId = "", name = "name3"),
         Friend(number = 0, memberId = "", name = "name4")
     )
-    ScheduleEditorScreen(
-        selectedFriendsList = selectedFriendsList,
-        scheduleName = "",
+    ScheduleEditScreen(
+        scheduleEditScreenUIState = ScheduleEditScreenUIState(),
+        scheduleEditScreenSideEffectFlow = MutableSharedFlow(),
         updateScheduleName = {},
-        scheduleYear = "0000",
-        scheduleMonth = "00",
-        scheduleDate = "00",
-        updateScheduleDate = {},
-        scheduleHour = "00",
-        scheduleMinute = "00",
-        updateScheduleTime = {},
-        destinationName = "",
-        destinationAddress = "",
-        memo = "",
+        updateScheduleDate = { _, _, _ -> },
+        updateScheduleTime = { _, _ -> },
         updateMemo = {},
         onComplete = {},
-        isDatePickerDialogShowing = mutableStateOf(false),
-        isTimePickerDialogShowing = mutableStateOf(false),
         moveToBackScreen = {},
         moveToFriendsListScreen = {},
         moveToSearchLocationScreen = {}
@@ -804,24 +788,14 @@ private fun EmptyNewScheduleScreenPreview() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FilledNewScheduleScreenPreview() {
-    ScheduleEditorScreen(
-        selectedFriendsList = emptyList(),
-        scheduleName = "일정 제목",
+    ScheduleEditScreen(
+        scheduleEditScreenUIState = ScheduleEditScreenUIState(),
+        scheduleEditScreenSideEffectFlow = MutableSharedFlow(),
         updateScheduleName = {},
-        scheduleYear = "2024",
-        scheduleMonth = "07",
-        scheduleDate = "08",
-        updateScheduleDate = {},
-        scheduleHour = "01",
-        scheduleMinute = "02",
-        updateScheduleTime = {},
-        destinationName = "목적지명",
-        destinationAddress = "목적지 주소",
-        memo = "메모",
+        updateScheduleDate = { _, _, _ -> },
+        updateScheduleTime = { _, _ -> },
         updateMemo = {},
         onComplete = {},
-        isDatePickerDialogShowing = mutableStateOf(false),
-        isTimePickerDialogShowing = mutableStateOf(false),
         moveToBackScreen = {},
         moveToFriendsListScreen = {},
         moveToSearchLocationScreen = {}
