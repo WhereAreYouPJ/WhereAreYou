@@ -1,19 +1,19 @@
 package com.whereareyounow.ui.home.schedule.notification
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.FriendProvider
+import com.whereareyounow.data.notification.DrawerNotificationContentSideEffect
+import com.whereareyounow.data.notification.DrawerNotificationContentUIState
+import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.RefuseFriendRequestRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.AcceptScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ScheduleInvitation
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.domain.usecase.friend.AcceptFriendRequestUseCase
@@ -31,13 +31,17 @@ import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class DrawerNotificationViewModel @Inject constructor(
+class DrawerNotificationContentViewModel @Inject constructor(
     private val application: Application,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
@@ -52,70 +56,24 @@ class DrawerNotificationViewModel @Inject constructor(
     private val getFriendListUseCase: GetFriendListUseCase,
 ) : AndroidViewModel(application) {
 
-    private val _friendRequestList = mutableStateListOf<Pair<FriendRequest, Friend>>()
-    val friendRequestList: List<Pair<FriendRequest, Friend>> = _friendRequestList
-    private val _scheduleRequestList = mutableStateListOf<ScheduleInvitationInfo>()
-    val scheduleRequestList: List<ScheduleInvitationInfo> = _scheduleRequestList
-
+    private val _drawerNotificationContentUIState = MutableStateFlow(DrawerNotificationContentUIState())
+    val drawerNotificationUIState = _drawerNotificationContentUIState.asStateFlow()
+    val drawerNotificationContentSideEffectFlow = MutableSharedFlow<DrawerNotificationContentSideEffect>()
 
     fun loadFriendRequests() {
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            val requestList = mutableListOf<FriendRequest>()
-            val response = getFriendRequestListUseCase(accessToken, memberId)
+            val myMemberId = getMemberIdUseCase().first()
+            val response = getFriendRequestListUseCase(accessToken, myMemberId)
             LogUtil.printNetworkLog(response, "친구 요청 조회")
             when (response) {
                 is NetworkResult.Success -> {
-                    response.data?.let {  data ->
-                        requestList.addAll(data.friendsRequestList)
-                        loadNames(requestList)
-                    }
-                }
-                is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-    }
-
-    fun loadScheduleRequests() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            val response = getScheduleRequestListUseCase(accessToken, memberId)
-            LogUtil.printNetworkLog(response, "일정 초대 조회")
-            when (response) {
-                is NetworkResult.Success -> {
                     response.data?.let { data ->
-                        withContext(Dispatchers.Main) {
-                            _scheduleRequestList.clear()
-                            data.inviteList.forEach {
-                                _scheduleRequestList.add(
-                                    ScheduleInvitationInfo(
-                                        scheduleId = it.scheduleId,
-                                        title = it.title,
-                                        userName = it.userName,
-                                        year = it.start.split("-")[0],
-                                        month = it.start.split("-")[1],
-                                        date = it.start.split("-")[2].split("T")[0],
-                                        hour = it.start.split("T")[1].split(":")[0],
-                                        minute = it.start.split("T")[1].split(":")[1]
-                                    )
-                                )
-                            }
-                        }
+                        loadNames(data.friendsRequestList)
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
         }
     }
@@ -133,18 +91,48 @@ class DrawerNotificationViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
         }
-        withContext(Dispatchers.Main) {
-            _friendRequestList.clear()
-            _friendRequestList.addAll(requestList)
+        _drawerNotificationContentUIState.update { state ->
+            state.copy(friendRequestsList = requestList)
         }
     }
+
+    fun loadScheduleRequests() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val accessToken = getAccessTokenUseCase().first()
+            val myMemberId = getMemberIdUseCase().first()
+            val response = getScheduleRequestListUseCase(accessToken, myMemberId)
+            LogUtil.printNetworkLog(response, "일정 초대 조회")
+            when (response) {
+                is NetworkResult.Success -> {
+                    response.data?.let { data ->
+                        _drawerNotificationContentUIState.update { state ->
+                            state.copy(
+                                scheduleRequestsList = data.inviteList.map { invitation ->
+                                    ScheduleInvitationInfo(
+                                        scheduleId = invitation.scheduleId,
+                                        title = invitation.title,
+                                        inviterUserName = invitation.userName,
+                                        year = invitation.start.split("-")[0],
+                                        month = invitation.start.split("-")[1],
+                                        date = invitation.start.split("-")[2].split("T")[0],
+                                        hour = invitation.start.split("T")[1].split(":")[0],
+                                        minute = invitation.start.split("T")[1].split(":")[1]
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+                is NetworkResult.Error -> {  }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
+            }
+        }
+    }
+
+
 
     fun acceptFriendRequest(friendRequest: FriendRequest) {
         viewModelScope.launch(Dispatchers.Default) {
@@ -158,11 +146,7 @@ class DrawerNotificationViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
             loadFriendRequests()
             getFriendList()
@@ -180,11 +164,7 @@ class DrawerNotificationViewModel @Inject constructor(
 
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
             loadFriendRequests()
             getFriendList()
@@ -206,11 +186,7 @@ class DrawerNotificationViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
             loadScheduleRequests()
             updateCalendar()
@@ -233,11 +209,7 @@ class DrawerNotificationViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
             loadScheduleRequests()
             updateCalendar()
@@ -250,7 +222,7 @@ class DrawerNotificationViewModel @Inject constructor(
         val memberId = getMemberIdUseCase().first()
         val request = GetFriendIdsListRequest(memberId)
         val response = getFriendIdsListUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "친구  memberId목록 가져오기")
+        LogUtil.printNetworkLog(response, "친구 memberId목록 가져오기")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
@@ -265,11 +237,7 @@ class DrawerNotificationViewModel @Inject constructor(
                             }
                         }
                         is NetworkResult.Error -> {  }
-                        is NetworkResult.Exception -> {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
                     }
                 }
             }
@@ -287,14 +255,3 @@ class DrawerNotificationViewModel @Inject constructor(
         loadScheduleRequests()
     }
 }
-
-data class ScheduleInvitationInfo(
-    val scheduleId: String,
-    val title: String,
-    val userName: String,
-    val year: String,
-    val month: String,
-    val date: String,
-    val hour: String,
-    val minute: String
-)

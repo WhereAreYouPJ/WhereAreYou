@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,10 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -36,16 +35,16 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.notification.DrawerNotificationContentUIState
+import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
 
 @Composable
-fun DrawerNotification(
-    friendRequestsList: List<Pair<FriendRequest, Friend>>,
-    scheduleRequestsList: List<ScheduleInvitationInfo>,
+fun DrawerNotificationContent(
+    drawerNotificationContentUIState: DrawerNotificationContentUIState,
     updateCalendar: () -> Unit,
     updateBriefCalendar: () -> Unit,
     acceptFriendRequest: (FriendRequest) -> Unit,
@@ -54,13 +53,13 @@ fun DrawerNotification(
     refuseScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
     hideDrawer: () -> Unit
 ) {
-
     BackHandler {
         hideDrawer()
     }
+    LaunchedEffect(Unit) {
 
+    }
     val density = LocalDensity.current.density
-
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
             modifier = Modifier
@@ -128,13 +127,13 @@ fun DrawerNotification(
                         Spacer(Modifier.height(10.dp))
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = "친구 요청 ${friendRequestsList.size}",
+                            text = "친구 요청 ${drawerNotificationContentUIState.friendRequestsList.size}",
                             color = Color(0xFF999999),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
                     }
-                    itemsIndexed(friendRequestsList) { _, friendRequest ->
+                    itemsIndexed(drawerNotificationContentUIState.friendRequestsList) { _, friendRequest ->
                         FriendRequestBox(
                             friendRequest = friendRequest,
                             acceptFriendRequest = {
@@ -160,13 +159,13 @@ fun DrawerNotification(
                         Spacer(Modifier.height(20.dp))
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = "일정 초대 ${scheduleRequestsList.size}",
+                            text = "일정 초대 ${drawerNotificationContentUIState.scheduleRequestsList.size}",
                             color = Color(0xFF999999),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
                     }
-                    itemsIndexed(scheduleRequestsList) { _, scheduleRequest ->
+                    itemsIndexed(drawerNotificationContentUIState.scheduleRequestsList) { _, scheduleRequest ->
                         ScheduleRequestBox(
                             scheduleRequest = scheduleRequest,
                             acceptScheduleRequest = {
@@ -205,16 +204,15 @@ fun DrawerNotificationPreview() {
         FriendRequest("", "id1") to Friend(0, "memberId1", "name2")
     )
     val scheduleRequestsList = listOf(
-        ScheduleInvitationInfo(scheduleId = "", title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", userName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", year = "2023", month = "12", date = "12", hour = "13", minute = "45",
+        ScheduleInvitationInfo(scheduleId = "", title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", inviterUserName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", year = "2023", month = "12", date = "12", hour = "13", minute = "45",
         )
     )
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        DrawerNotification(
-            friendRequestsList = friendRequestsList,
-            scheduleRequestsList = scheduleRequestsList,
+        DrawerNotificationContent(
+            drawerNotificationContentUIState = DrawerNotificationContentUIState(),
             updateCalendar = {},
             updateBriefCalendar = {},
             acceptFriendRequest = {},

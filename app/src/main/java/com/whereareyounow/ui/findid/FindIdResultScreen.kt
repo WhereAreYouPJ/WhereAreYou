@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -16,25 +15,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
-fun UserIdCheckingScreen(
-    moveToSignInScreen: () -> Unit,
-    viewModel: FindIdViewModel = hiltViewModel()
-) {
-    val searchedUserId = viewModel.searchedUserId.collectAsState().value
-    UserIdCheckingScreen(
-        searchedUserId = searchedUserId,
-        moveToSignInScreen = moveToSignInScreen
-    )
-}
-
-@Composable
-private fun UserIdCheckingScreen(
+fun FindIdResultScreen(
     searchedUserId: String,
     moveToSignInScreen: () -> Unit
 ) {
@@ -106,7 +92,7 @@ private fun UserIdCheckingScreenTopBar(
 @Composable
 private fun UserIdCheckingScreenPreview() {
     WhereAreYouTheme {
-        UserIdCheckingScreen(
+        FindIdResultScreen(
             searchedUserId = "test",
             moveToSignInScreen = {}
         )
