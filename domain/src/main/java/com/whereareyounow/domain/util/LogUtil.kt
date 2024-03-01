@@ -4,21 +4,21 @@ import android.util.Log
 import com.whereareyounow.domain.BuildConfig
 
 object LogUtil {
-    fun printNetworkLog(response: NetworkResult<Any>, name: String) {
+    fun printNetworkLog(request: Any?, response: NetworkResult<Any>, name: String) {
         when (response) {
             is NetworkResult.Success -> {
-                printLog("NetworkResultLog", "$name Success\ncode: ${response.code}\ndata: ${response.data}\n-")
+                printLog("NetworkResultLog", "$name Success\n[request]\n$request\n[response code]\n${response.code}\n[response data]\n${response.data}\n-")
             }
             is NetworkResult.Error -> {
-                printLog("NetworkResultLog", "$name Error\ncode: ${response.code}\ndata: ${response.errorData}\n-")
+                printLog("NetworkResultLog", "$name Error\n[request]\n$request\n[response code]\n${response.code}\n[response data]\n${response.errorData}\n-")
             }
             is NetworkResult.Exception -> {
-                printLog("NetworkResultLog", "$name Exception\n${response.e}\n-")
+                printLog("NetworkResultLog", "$name Exception\n[request]\n$request\n[error]\n${response.e}\n-")
             }
         }
     }
 
-    fun printLog(tag: String, message: String) {
+    private fun printLog(tag: String, message: String) {
         if (BuildConfig.DEBUG) Log.e(tag, message) else Unit
     }
 }
