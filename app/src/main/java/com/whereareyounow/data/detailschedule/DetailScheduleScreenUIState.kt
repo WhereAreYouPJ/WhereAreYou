@@ -15,5 +15,6 @@ data class DetailScheduleScreenUIState(
     val destinationName: String = "",
     val destinationRoadAddress: String = "",
     val memo: String = "",
+    val isLocationCheckEnabled: Boolean = false,
     val memberInfosList: List<MemberInfo> = emptyList()
 ) : Parcelable
