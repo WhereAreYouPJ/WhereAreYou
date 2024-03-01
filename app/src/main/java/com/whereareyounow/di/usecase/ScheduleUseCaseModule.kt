@@ -9,6 +9,7 @@ import com.whereareyounow.domain.usecase.schedule.GetDailyBriefScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleInvitationUseCase
+import com.whereareyounow.domain.usecase.schedule.GetTodayScheduleCountUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleDetailsUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleMemberUseCase
 import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
@@ -76,6 +77,13 @@ object ScheduleUseCaseModule {
         repository: ScheduleRepository
     ): RefuseOrQuitScheduleUseCase {
         return RefuseOrQuitScheduleUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetTodayScheduleCountUseCase(
+        repository: ScheduleRepository
+    ): GetTodayScheduleCountUseCase {
+        return GetTodayScheduleCountUseCase(repository)
     }
 
     @Provides

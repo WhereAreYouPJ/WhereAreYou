@@ -10,6 +10,7 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefSchedul
 import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
+import com.whereareyounow.domain.entity.apimessage.schedule.GetTodayScheduleCountResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
@@ -158,5 +159,16 @@ class ScheduleRepositoryImpl(
         body: ResetCalendarRequest
     ): NetworkResult<Boolean> {
         return handleResult { dataSource.resetCalendar(token, body) }
+    }
+
+    /**
+     * 일정 초대 목록
+     * implements [ScheduleRepository.getTodayScheduleCount]
+     */
+    override suspend fun getTodayScheduleCount(
+        token: String,
+        memberId: String
+    ): NetworkResult<GetTodayScheduleCountResponse> {
+        return handleResult { dataSource.getTodayScheduleCount(token, memberId) }
     }
 }

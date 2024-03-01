@@ -28,6 +28,7 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefSchedul
 import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
+import com.whereareyounow.domain.entity.apimessage.schedule.GetTodayScheduleCountResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
@@ -147,6 +148,14 @@ class RemoteDataSource(
         body: RefuseOrQuitScheduleRequest
     ): Response<Unit> {
         return scheduleApi.refuseOrQuitSchedule(token, body)
+    }
+
+    // 오늘 일정 개수
+    suspend fun getTodayScheduleCount(
+        token: String,
+        memberId: String
+    ): Response<GetTodayScheduleCountResponse> {
+        return scheduleApi.getTodayScheduleCount(token, memberId)
     }
 
     // 일정 초대 목록
