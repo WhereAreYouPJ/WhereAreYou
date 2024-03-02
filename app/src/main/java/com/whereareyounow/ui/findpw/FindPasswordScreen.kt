@@ -1,5 +1,7 @@
 package com.whereareyounow.ui.findpw
 
+import android.widget.Toast
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,57 +17,77 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.whereareyounow.data.findpw.EmailState
+import com.whereareyounow.data.findpw.FindPasswordScreenSideEffect
+import com.whereareyounow.data.findpw.FindPasswordScreenUIState
+import com.whereareyounow.data.findpw.ResultState
+import com.whereareyounow.data.findpw.VerificationCodeState
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
-import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.CustomTextFieldState
+import com.whereareyounow.ui.component.CustomTextFieldWithTimer
+import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 
 
 @Composable
 fun FindPasswordScreen(
     moveToSignInScreen: () -> Unit,
+    moveToPasswordResettingScreen: (String, ResultState) -> Unit,
     viewModel: FindPasswordViewModel = hiltViewModel()
 ) {
-    val inputId = viewModel.inputUserId.collectAsState().value
-    val inputEmail = viewModel.inputEmail.collectAsState().value
-    val inputAuthCode = viewModel.authCode.collectAsState().value
+    val findPasswordScreenUIState = viewModel.findPasswordScreenUIState.collectAsState().value
+    val findPasswordScreenSideEffectFlow = viewModel.findPasswordScreenSideEffectFlow
     FindPasswordScreen (
-        inputUserId = inputId,
+        findPasswordScreenUIState = findPasswordScreenUIState,
+        findPasswordScreenSideEffectFlow = findPasswordScreenSideEffectFlow,
         updateInputUserId = viewModel::updateInputUserId,
-        inputEmail = inputEmail,
         updateInputEmail = viewModel::updateInputEmail,
-        inputAuthCode = inputAuthCode,
-        updateInputAuthCode = viewModel::updateAuthCode,
-        authenticateEmail = viewModel::authenticateEmail,
+        updateInputVerificationCode = viewModel::updateInputVerificationCode,
+        authenticateEmail = viewModel::sendEmailVerificationCode,
         moveToSignInScreen = moveToSignInScreen,
         verifyPasswordResetCode = viewModel::verifyPasswordResetCode,
-        moveToPasswordResettingScreen = { viewModel.updateScreenState(FindPasswordViewModel.ScreenState.ResettingPassword) }
+        moveToPasswordResettingScreen = moveToPasswordResettingScreen
     )
 }
 
 @Composable
 private fun FindPasswordScreen(
-    inputUserId: String,
+    findPasswordScreenUIState: FindPasswordScreenUIState,
+    findPasswordScreenSideEffectFlow: SharedFlow<FindPasswordScreenSideEffect>,
     updateInputUserId: (String) -> Unit,
-    inputEmail: String,
     updateInputEmail: (String) -> Unit,
-    inputAuthCode: String,
-    updateInputAuthCode: (String) -> Unit,
+    updateInputVerificationCode: (String) -> Unit,
     authenticateEmail: () -> Unit,
     moveToSignInScreen: () -> Unit,
-    verifyPasswordResetCode: (() -> Unit) -> Unit,
-    moveToPasswordResettingScreen: () -> Unit
+    verifyPasswordResetCode: ((String, ResultState) -> Unit) -> Unit,
+    moveToPasswordResettingScreen: (String, ResultState) -> Unit
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        findPasswordScreenSideEffectFlow.collect { sideEffect ->
+            when (sideEffect) {
+                is FindPasswordScreenSideEffect.Toast -> {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, sideEffect.text, Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +98,7 @@ private fun FindPasswordScreen(
         Spacer(Modifier.height(20.dp))
 
         UserIdInputBox(
-            inputText = inputUserId,
+            inputText = findPasswordScreenUIState.inputUserId,
             onValueChange = updateInputUserId
         )
 
@@ -84,28 +106,39 @@ private fun FindPasswordScreen(
 
         Row(
             modifier = Modifier
+                .animateContentSize { _, _ -> }
                 .height(IntrinsicSize.Min)
                 .fillMaxWidth()
         ) {
             Box(modifier = Modifier.weight(1f)) {
                 EmailInputBox(
-                    inputText = inputEmail,
-                    onValueChange = updateInputEmail
+                    inputEmail = findPasswordScreenUIState.inputEmail,
+                    updateInputEmail = updateInputEmail,
+                    inputEmailState = findPasswordScreenUIState.inputEmailState,
+                    guideLine = when (findPasswordScreenUIState.inputEmailState) {
+                        EmailState.UNSATISFIED -> "올바른 이메일 형식으로 입력해주세요."
+                        else -> ""
+                    }
                 )
             }
             Spacer(Modifier.width(10.dp))
             AuthenticationButton(
-                text = "인증",
+                text = "인증요청",
                 onClick = authenticateEmail
             )
         }
 
         Spacer(Modifier.height(20.dp))
 
-        AuthCodeInputBox(
-            inputText = inputAuthCode,
-            onValueChange = updateInputAuthCode
-        )
+        if (findPasswordScreenUIState.isVerificationCodeSent) {
+            VerificationCodeTextField(
+                inputText = findPasswordScreenUIState.inputVerificationCode,
+                onValueChange = updateInputVerificationCode,
+                guideLine = "인증코드가 일치하지 않습니다.",
+                inputVerificationCodeState = findPasswordScreenUIState.inputVerificationCodeState,
+                leftTime = findPasswordScreenUIState.emailVerificationLeftTime
+            )
+        }
 
         Spacer(Modifier.weight(1f))
 
@@ -144,29 +177,42 @@ private fun UserIdInputBox(
 
 @Composable
 fun EmailInputBox(
-    inputText: String,
-    onValueChange: (String) -> Unit
+    inputEmail: String,
+    updateInputEmail: (String) -> Unit,
+    inputEmailState: EmailState,
+    guideLine: String
 ) {
     CustomTextField(
         hint = "이메일",
-        inputText = inputText,
-        onValueChange = onValueChange,
-        guideLine = "",
-        textFieldState = CustomTextFieldState.IDLE
+        inputText = inputEmail,
+        onValueChange = updateInputEmail,
+        guideLine = guideLine,
+        textFieldState = when (inputEmailState) {
+            EmailState.EMPTY -> CustomTextFieldState.IDLE
+            EmailState.SATISFIED -> CustomTextFieldState.SATISFIED
+            EmailState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+        }
     )
 }
 
 @Composable
-private fun AuthCodeInputBox(
+private fun VerificationCodeTextField(
     inputText: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    guideLine: String,
+    inputVerificationCodeState: VerificationCodeState,
+    leftTime: Int
 ) {
-    CustomTextField(
-        hint = "인증번호 6자리",
+    CustomTextFieldWithTimer(
+        hint = "이메일 인증코드",
         inputText = inputText,
         onValueChange = onValueChange,
-        guideLine = "",
-        textFieldState = CustomTextFieldState.IDLE
+        guideLine = guideLine,
+        textFieldState = when (inputVerificationCodeState) {
+            VerificationCodeState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            else -> CustomTextFieldState.IDLE
+        },
+        leftTime = leftTime
     )
 }
 
@@ -191,7 +237,7 @@ private fun AuthenticationButton(
                 .padding(start = 20.dp, end = 20.dp),
             text = text,
             color = Color(0xFFFFFFFF),
-            fontSize = 20.sp
+            fontSize = 16.sp
         )
     }
 }
@@ -201,16 +247,15 @@ private fun AuthenticationButton(
 private fun FindPasswordScreenPreview() {
     WhereAreYouTheme {
         FindPasswordScreen(
-            inputUserId = "",
+            findPasswordScreenUIState = FindPasswordScreenUIState(),
+            findPasswordScreenSideEffectFlow = MutableSharedFlow(),
             updateInputUserId = {},
-            inputEmail = "",
             updateInputEmail = {},
-            inputAuthCode = "",
-            updateInputAuthCode = {},
+            updateInputVerificationCode = {},
             authenticateEmail = {},
             moveToSignInScreen = {},
             verifyPasswordResetCode = {},
-            moveToPasswordResettingScreen = {}
+            moveToPasswordResettingScreen = { _, _ -> }
         )
     }
 }
