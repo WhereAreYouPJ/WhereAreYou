@@ -17,3 +17,7 @@ enum class EmailState {
 enum class VerificationCodeState {
     EMPTY, SATISFIED, UNSATISFIED
 }
+
+enum class ResultState {
+    EMAIL_NOT_FOUND, MEMBER_MISMATCH, OK
+}

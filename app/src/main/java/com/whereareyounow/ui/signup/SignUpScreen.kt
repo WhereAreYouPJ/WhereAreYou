@@ -101,10 +101,10 @@ private fun SignUpScreen(
 ) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        signUpScreenSideEffectFlow.collect { value ->
-            when (value) {
+        signUpScreenSideEffectFlow.collect { sideEffect ->
+            when (sideEffect) {
                 is SignUpScreenSideEffect.Toast -> {
-                    withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
+                    withContext(Dispatchers.Main) { Toast.makeText(context, sideEffect.text, Toast.LENGTH_SHORT).show() }
                 }
             }
         }
@@ -164,8 +164,7 @@ private fun SignUpScreen(
                 ) {
                     // 아이디 입력창
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
+                        modifier = Modifier.weight(1f)
                     ) {
                         UserIdTextField(
                             inputUserId = signUpScreenUIState.inputUserId,

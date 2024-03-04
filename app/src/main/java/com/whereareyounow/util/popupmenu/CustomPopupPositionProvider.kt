@@ -17,7 +17,6 @@ data class CustomPopupPositionProvider(
     val popupPosition: PopupPosition,
     val onPopupPositionFound: (Alignment.Horizontal, Boolean) -> Unit
 ) : PopupPositionProvider {
-
     override fun calculatePosition(
         anchorBounds: IntRect,
         windowSize: IntSize,
