@@ -68,7 +68,7 @@ class AddFriendViewModel @Inject constructor(
     private suspend fun searchMemberIdByUserId(): String {
         val accessToken = tokenManager.getAccessToken()
         val response = getMemberIdByUserIdUseCase(accessToken, _inputId.value)
-        LogUtil.printNetworkLog(response, "getMemberIdByUserIdUseCase")
+        LogUtil.printNetworkLog("userId = ${_inputId.value}", response, "getMemberIdByUserIdUseCase")
         return when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
@@ -102,7 +102,7 @@ class AddFriendViewModel @Inject constructor(
     private suspend fun getMemberDetailsByMemberId() {
         val accessToken = tokenManager.getAccessToken()
         val response = getMemberDetailsUseCase(accessToken, friendMemberId)
-        LogUtil.printNetworkLog(response, "getMemberDetailsUseCase")
+        LogUtil.printNetworkLog("memberId = $friendMemberId", response, "getMemberDetailsUseCase")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
@@ -144,7 +144,7 @@ class AddFriendViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = SendFriendRequestRequest(friendMemberId, memberId)
             val response = sendFriendRequestUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "sendFriendRequestUseCase")
+            LogUtil.printNetworkLog(request, response, "sendFriendRequestUseCase")
             when (response) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) { Toast.makeText(application, "성공적으로 요청되었습니다.", Toast.LENGTH_SHORT).show() }

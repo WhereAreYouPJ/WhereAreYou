@@ -2,9 +2,11 @@ package com.whereareyounow.ui.home.schedule.scheduleedit
 
 import android.app.Application
 import android.widget.Toast
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.FriendProvider
+import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
+import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
@@ -19,8 +21,8 @@ import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -38,16 +40,11 @@ class ScheduleEditViewModel @Inject constructor(
     private val modifyScheduleMemberUseCase: ModifyScheduleMemberUseCase,
 ) : AndroidViewModel(application) {
 
-    private val _screenState = MutableStateFlow(ScreenState.EditSchedule)
-    val screenState: StateFlow<ScreenState> = _screenState
-
-    fun updateScreenState(state: ScreenState) {
-        _screenState.update { state }
-    }
-
     private var scheduleId = ""
     private val _scheduleEditScreenUIState = MutableStateFlow(ScheduleEditScreenUIState())
+    var isInitialized = false
     val scheduleEditScreenUIState = _scheduleEditScreenUIState.asStateFlow()
+    val scheduleEditScreenSideEffectFlow = MutableSharedFlow<ScheduleEditScreenSideEffect>()
 //    private val _selectedFriendsList = mutableStateListOf<Friend>()
 //    val selectedFriendsList: List<Friend> = _selectedFriendsList
 //    private val _scheduleName = MutableStateFlow("")
@@ -77,84 +74,97 @@ class ScheduleEditViewModel @Inject constructor(
         scheduleId = id
     }
 
-    fun updateSelectedFriendsList(friends: List<Friend>) {
+    fun updateSelectedFriendsList(friendIds: List<String>) {
         _scheduleEditScreenUIState.update {
-            it.copy(selectedFriendsList = friends)
+            it.copy(selectedFriendsList = FriendProvider.friendsList.filter { friend ->
+                friend.memberId in friendIds })
         }
-//        _selectedFriendsList.clear()
-//        _selectedFriendsList.addAll(friends)
     }
 
     fun updateScheduleName(name: String) {
         _scheduleEditScreenUIState.update {
             it.copy(scheduleName = name)
         }
-//        _scheduleName.update { name }
     }
 
-    fun updateScheduleDate(date: String) {
-        _scheduleYear.update { date.split("-")[0] }
-        _scheduleMonth.update { date.split("-")[1] }
-        _scheduleDate.update { date.split("-")[2] }
+    fun updateScheduleDate(year: Int, month: Int, date: Int) {
+        _scheduleEditScreenUIState.update {
+            it.copy(
+                scheduleYear = year,
+                scheduleMonth = month,
+                scheduleDate = date
+            )
+        }
     }
 
-    fun updateScheduleTime(time: String) {
-        _scheduleHour.update { time.split(":")[0] }
-        _scheduleMinute.update { time.split(":")[1] }
+    fun updateScheduleTime(hour: Int, minute: Int) {
+        _scheduleEditScreenUIState.update {
+            it.copy(
+                scheduleHour = hour,
+                scheduleMinute = minute
+            )
+        }
     }
 
     fun updateDestinationInformation(name: String, address: String, lat: Double, lng: Double) {
-        _destinationName.update { name }
-        _destinationAddress.update { address }
-        _destinationLatitude.update { lat }
-        _destinationLongitude.update { lng }
-    }
-
-    fun clearDestinationInformation() {
-        _destinationName.update { "" }
-        _destinationAddress.update { "" }
-        _destinationLatitude.update { 0.0 }
-        _destinationLongitude.update { 0.0 }
+        _scheduleEditScreenUIState.update {
+            it.copy(
+                destinationName = name,
+                destinationAddress = address,
+                destinationLatitude = lat,
+                destinationLongitude = lng
+            )
+        }
     }
 
     fun updateMemo(memo: String) {
-        _memo.update { memo }
+        _scheduleEditScreenUIState.update {
+            it.copy(memo = memo)
+        }
+    }
+
+    fun updateDestinationLocation(lat: Double, lng: Double) {
+        _scheduleEditScreenUIState.update {
+            it.copy(
+                destinationLatitude = lat,
+                destinationLongitude = lng
+            )
+        }
     }
 
     fun addNewSchedule(moveToBackScreen: () -> Unit) {
-        if (_scheduleName.value == "") {
-            Toast.makeText(application, "제목을 입력해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_scheduleDate.value == "약속 날짜 선택") {
-            Toast.makeText(application, "약속 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_scheduleHour.value == "" || _scheduleMinute.value == "") {
-            Toast.makeText(application, "약속 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_destinationName.value == "") {
-            Toast.makeText(application, "목적지를 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         viewModelScope.launch(Dispatchers.Default) {
+            if (_scheduleEditScreenUIState.value.scheduleName == "") {
+                scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("제목을 입력해주세요."))
+                return@launch
+            }
+            if (_scheduleEditScreenUIState.value.scheduleDate == 0) {
+                scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("약속 날짜를 선택해주세요."))
+                return@launch
+            }
+            if (_scheduleEditScreenUIState.value.destinationName == "") {
+                scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("목적지를 선택해주세요."))
+                return@launch
+            }
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val request = AddNewScheduleRequest(
                 memberId = memberId,
-                scheduleTime = "${_scheduleYear.value}-${_scheduleMonth.value}-${_scheduleDate.value}T${_scheduleHour.value}:${_scheduleMinute.value}:00",
-                scheduleName = _scheduleName.value,
-                destinationName = _destinationName.value,
-                destinationAddress = _destinationAddress.value,
-                memo = _memo.value,
-                destinationLatitude = _destinationLatitude.value,
-                destinationLongitude = _destinationLongitude.value,
-                selectedMemberIdsList = _selectedFriendsList.map { friend -> friend.memberId }
+                scheduleTime = String.format("%04d", _scheduleEditScreenUIState.value.scheduleYear) +
+                        "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMonth)}" +
+                        "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleDate)}" +
+                        "T${String.format("%02d", _scheduleEditScreenUIState.value.scheduleHour)}" +
+                        ":${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMinute)}:00",
+                scheduleName = _scheduleEditScreenUIState.value.scheduleName,
+                destinationName = _scheduleEditScreenUIState.value.destinationName,
+                destinationAddress = _scheduleEditScreenUIState.value.destinationAddress,
+                memo = _scheduleEditScreenUIState.value.memo,
+                destinationLatitude = _scheduleEditScreenUIState.value.destinationLatitude,
+                destinationLongitude = _scheduleEditScreenUIState.value.destinationLongitude,
+                selectedMemberIdsList = _scheduleEditScreenUIState.value.selectedFriendsList.map { friend -> friend.memberId }
             )
             val response = addNewScheduleUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "addNewScheduleUseCase")
+            LogUtil.printNetworkLog(request, response, "addNewScheduleUseCase")
             when (response) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
@@ -162,34 +172,54 @@ class ScheduleEditViewModel @Inject constructor(
                     }
                 }
                 is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("목적지를 선택해주세요.")) }
             }
         }
     }
 
-    fun modifySchedule(moveToBackScreen: () -> Unit) {
-        if (_scheduleName.value == "") {
-            Toast.makeText(application, "일정명을 입력해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_scheduleDate.value == "약속 날짜 선택") {
-            Toast.makeText(application, "약속 날짜를 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_scheduleHour.value == "" || _scheduleMinute.value == "") {
-            Toast.makeText(application, "약속 시간을 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_destinationName.value == "") {
-            Toast.makeText(application, "목적지를 선택해주세요", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+    fun updateScheduleDetails(details: DetailScheduleScreenUIState) {
         viewModelScope.launch(Dispatchers.Default) {
+            val myMemberId = getMemberIdUseCase().first()
+            _scheduleEditScreenUIState.update { state ->
+                state.copy(
+                    selectedFriendsList = details.memberInfosList.map {
+                        Friend(
+                            memberId = it.memberId,
+                            name = it.name,
+                            userId = it.userId,
+                            profileImgUrl = it.profileImage,
+                        )
+                    }.filter { it.memberId != myMemberId },
+                    scheduleName = details.scheduleName,
+                    scheduleYear = details.scheduleYear,
+                    scheduleMonth = details.scheduleMonth,
+                    scheduleDate = details.scheduleDate,
+                    scheduleHour = details.scheduleHour,
+                    scheduleMinute = details.scheduleMinute,
+                    destinationName = details.destinationName,
+                    destinationAddress = details.destinationRoadAddress,
+                    memo = details.memo
+                )
+            }
+            isInitialized = true
+        }
+    }
+
+    fun modifySchedule(moveToBackScreen: () -> Unit) {
+        viewModelScope.launch(Dispatchers.Default) {
+            if (_scheduleEditScreenUIState.value.scheduleName == "") {
+                scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("일정명을 입력해주세요."))
+                return@launch
+            }
+            if (_scheduleEditScreenUIState.value.scheduleDate == 0) {
+                scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("약속 날짜를 선택해주세요."))
+                Toast.makeText(application, "", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            if (_scheduleEditScreenUIState.value.destinationName == "") {
+                scheduleEditScreenSideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("목적지를 선택해주세요."))
+                return@launch
+            }
             modifyScheduleDetails()
             modifyScheduleMember(moveToBackScreen)
         }
@@ -201,16 +231,20 @@ class ScheduleEditViewModel @Inject constructor(
         val request = ModifyScheduleDetailsRequest(
             creatorId = memberId,
             scheduleId = scheduleId,
-            scheduleTime = "${_scheduleYear.value}-${_scheduleMonth.value}-${_scheduleDate.value}T${_scheduleHour.value}:${_scheduleMinute.value}:00",
-            scheduleName = _scheduleName.value,
-            destinationName = _destinationName.value,
-            destinationAddress = _destinationAddress.value,
-            memo = _memo.value,
-            destinationLatitude = _destinationLatitude.value,
-            destinationLongitude = _destinationLongitude.value
+            scheduleTime = "${String.format("%04d", _scheduleEditScreenUIState.value.scheduleYear)}" +
+                    "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMonth)}" +
+                    "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleDate)}" +
+                    "T${String.format("%02d", _scheduleEditScreenUIState.value.scheduleHour)}" +
+                    ":${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMinute)}:00",
+            scheduleName = _scheduleEditScreenUIState.value.scheduleName,
+            destinationName = _scheduleEditScreenUIState.value.destinationName,
+            destinationAddress = _scheduleEditScreenUIState.value.destinationAddress,
+            memo = _scheduleEditScreenUIState.value.memo,
+            destinationLatitude = _scheduleEditScreenUIState.value.destinationLatitude,
+            destinationLongitude = _scheduleEditScreenUIState.value.destinationLongitude
         )
         val response = modifyScheduleDetailsUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "일정 내용 수정")
+        LogUtil.printNetworkLog(request, response, "일정 내용 수정")
         when (response) {
             is NetworkResult.Success -> {
 
@@ -232,10 +266,10 @@ class ScheduleEditViewModel @Inject constructor(
         val request = ModifyScheduleMemberRequest(
             creatorId = memberId,
             scheduleId = scheduleId,
-            friendIds = _selectedFriendsList.map { it.memberId }
+            friendIds = _scheduleEditScreenUIState.value.selectedFriendsList.map { it.memberId }
         )
         val response = modifyScheduleMemberUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "일정 멤버 수정")
+        LogUtil.printNetworkLog(request, response, "일정 멤버 수정")
         when (response) {
             is NetworkResult.Success -> {
                 withContext(Dispatchers.Main) {
@@ -251,9 +285,5 @@ class ScheduleEditViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    enum class ScreenState {
-        EditSchedule, AddFriends, SearchLocation, Map
     }
 }

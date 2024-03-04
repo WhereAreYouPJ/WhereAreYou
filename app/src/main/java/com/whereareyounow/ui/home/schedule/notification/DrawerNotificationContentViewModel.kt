@@ -23,6 +23,7 @@ import com.whereareyounow.domain.usecase.friend.GetFriendRequestListUseCase
 import com.whereareyounow.domain.usecase.friend.RefuseFriendRequestUseCase
 import com.whereareyounow.domain.usecase.schedule.AcceptScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleInvitationUseCase
+import com.whereareyounow.domain.usecase.schedule.GetTodayScheduleCountUseCase
 import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
@@ -51,6 +52,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
     private val refuseFriendRequestUseCase: RefuseFriendRequestUseCase,
     private val getScheduleRequestListUseCase: GetScheduleInvitationUseCase,
     private val acceptScheduleUseCase: AcceptScheduleUseCase,
+    private val getTodayScheduleCountUseCase: GetTodayScheduleCountUseCase,
     private val refuseOrQuitScheduleUseCase: RefuseOrQuitScheduleUseCase,
     private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
     private val getFriendListUseCase: GetFriendListUseCase,
@@ -65,7 +67,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val myMemberId = getMemberIdUseCase().first()
             val response = getFriendRequestListUseCase(accessToken, myMemberId)
-            LogUtil.printNetworkLog(response, "친구 요청 조회")
+            LogUtil.printNetworkLog("memberId = $myMemberId", response, "친구 요청 조회")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -83,7 +85,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
         val requestList = mutableListOf<Pair<FriendRequest, Friend>>()
         for (friendRequest in list) {
             val response = getMemberDetailsUseCase(accessToken, friendRequest.senderId)
-            LogUtil.printNetworkLog(response, "memberId로 유저 정보 조회")
+            LogUtil.printNetworkLog("senderId = ${friendRequest.senderId}", response, "memberId로 유저 정보 조회")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -104,7 +106,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val myMemberId = getMemberIdUseCase().first()
             val response = getScheduleRequestListUseCase(accessToken, myMemberId)
-            LogUtil.printNetworkLog(response, "일정 초대 조회")
+            LogUtil.printNetworkLog("memberId = $myMemberId", response, "일정 초대 조회")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -140,7 +142,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = AcceptFriendRequestRequest(friendRequest.friendRequestId, memberId, friendRequest.senderId)
             val response = acceptFriendRequestUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "친구 요청 수락")
+            LogUtil.printNetworkLog(request, response, "친구 요청 수락")
             when (response) {
                 is NetworkResult.Success -> {
 
@@ -158,7 +160,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val request = RefuseFriendRequestRequest(friendRequest.friendRequestId)
             val response = refuseFriendRequestUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "친구 요청 거절")
+            LogUtil.printNetworkLog(request, response, "친구 요청 거절")
             when (response) {
                 is NetworkResult.Success -> {
 
@@ -181,7 +183,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = AcceptScheduleRequest(memberId, scheduleId)
             val response = acceptScheduleUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "일정 수락")
+            LogUtil.printNetworkLog(request, response, "일정 수락")
             when (response) {
                 is NetworkResult.Success -> {
                 }
@@ -204,7 +206,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = RefuseOrQuitScheduleRequest(memberId, scheduleId)
             val response = refuseOrQuitScheduleUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "일정 거절")
+            LogUtil.printNetworkLog(request, response, "일정 거절")
             when (response) {
                 is NetworkResult.Success -> {
                 }
@@ -222,13 +224,13 @@ class DrawerNotificationContentViewModel @Inject constructor(
         val memberId = getMemberIdUseCase().first()
         val request = GetFriendIdsListRequest(memberId)
         val response = getFriendIdsListUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "친구 memberId목록 가져오기")
+        LogUtil.printNetworkLog(request, response, "친구 memberId목록 가져오기")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
                     val getFriendListRequest = GetFriendListRequest(data.friendsIdList)
                     val getFriendListResponse = getFriendListUseCase(accessToken, getFriendListRequest)
-                    LogUtil.printNetworkLog(getFriendListResponse, "친구 목록 가져오기")
+                    LogUtil.printNetworkLog(getFriendListRequest, getFriendListResponse, "친구 목록 가져오기")
                     when (getFriendListResponse) {
                         is NetworkResult.Success -> {
                             getFriendListResponse.data?.let { data ->
@@ -250,8 +252,25 @@ class DrawerNotificationContentViewModel @Inject constructor(
         }
     }
 
-    init {
-        loadFriendRequests()
-        loadScheduleRequests()
+    fun getTodayScheduleCount() {
+        viewModelScope.launch {
+            val accessToken = getAccessTokenUseCase().first()
+            val memberId = getMemberIdUseCase().first()
+            val response = getTodayScheduleCountUseCase(accessToken, memberId)
+            LogUtil.printNetworkLog("memberId = $memberId", response, "오늘 일정 개수")
+            when (response) {
+                is NetworkResult.Success -> {
+                    response.data?.let { data ->
+                        _drawerNotificationContentUIState.update {
+                            it.copy(todayScheduleCount = data.todaySchedule)
+                        }
+                    }
+                }
+                is NetworkResult.Error -> {
+
+                }
+                is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
+            }
+        }
     }
 }

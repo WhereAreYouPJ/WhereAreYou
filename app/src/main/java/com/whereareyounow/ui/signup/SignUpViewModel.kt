@@ -1,10 +1,17 @@
 package com.whereareyounow.ui.signup
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyounow.data.SignUpScreenUIState
+import com.whereareyounow.data.signup.EmailState
+import com.whereareyounow.data.signup.EmailVerificationProgressState
+import com.whereareyounow.data.signup.PasswordCheckingState
+import com.whereareyounow.data.signup.PasswordState
+import com.whereareyounow.data.signup.SignUpScreenSideEffect
+import com.whereareyounow.data.signup.SignUpScreenUIState
+import com.whereareyounow.data.signup.UserIdState
+import com.whereareyounow.data.signup.UserNameState
+import com.whereareyounow.data.signup.VerificationCodeState
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
 import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
@@ -20,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -40,6 +48,7 @@ class SignUpViewModel @Inject constructor(
 
     private val _signUpScreenUIState = MutableStateFlow(SignUpScreenUIState())
     val signUpScreenUIState = _signUpScreenUIState.asStateFlow()
+    val signUpScreenSideEffectFlow = MutableSharedFlow<SignUpScreenSideEffect>()
     private var startTimer: Job? = null
 
     fun updateInputUserName(userName: String) {
@@ -99,33 +108,27 @@ class SignUpViewModel @Inject constructor(
 
     fun checkIdDuplicate() {
         viewModelScope.launch {
-            if (_signUpScreenUIState.value.inputUserIdState == UserIdState.SATISFIED) {
-                val response = checkIdDuplicateUseCase(_signUpScreenUIState.value.inputUserId)
-                LogUtil.printNetworkLog(response, "아이디 중복 체크")
-                when (response) {
-                    is NetworkResult.Success -> {
-                        _signUpScreenUIState.update {
-                            it.copy(
-                                inputUserIdState = UserIdState.UNIQUE
-                            )
+            when (_signUpScreenUIState.value.inputUserIdState) {
+                UserIdState.EMPTY -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 입력해주세요.")) }
+                UserIdState.UNSATISFIED -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 확인해주세요.")) }
+                UserIdState.DUPLICATED -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("중복된 아이디입니다.")) }
+                UserIdState.UNIQUE -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이미 확인되었습니다. 다음 단계를 진행해주세요.")) }
+                else -> {
+                    val response = checkIdDuplicateUseCase(_signUpScreenUIState.value.inputUserId)
+                    LogUtil.printNetworkLog("userId = ${_signUpScreenUIState.value.inputUserId}", response, "아이디 중복 체크")
+                    when (response) {
+                        is NetworkResult.Success -> {
+                            _signUpScreenUIState.update {
+                                it.copy(inputUserIdState = UserIdState.UNIQUE)
+                            }
                         }
-                    }
-                    is NetworkResult.Error -> {
-                        _signUpScreenUIState.update {
-                            it.copy(
-                                inputUserIdState = UserIdState.DUPLICATED
-                            )
+                        is NetworkResult.Error -> {
+                            _signUpScreenUIState.update {
+                                it.copy(inputUserIdState = UserIdState.DUPLICATED)
+                            }
                         }
+                        is NetworkResult.Exception -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("오류가 발생했습니다.")) }
                     }
-                    is NetworkResult.Exception -> {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            } else {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(application, "아이디를 확인해주세요.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -135,7 +138,7 @@ class SignUpViewModel @Inject constructor(
             viewModelScope.launch {
                 if (_signUpScreenUIState.value.inputEmailState == EmailState.SATISFIED) {
                     val response = checkEmailDuplicateUseCase(_signUpScreenUIState.value.inputEmail)
-                    LogUtil.printNetworkLog(response, "이메일 중복 확인")
+                    LogUtil.printNetworkLog("email = ${_signUpScreenUIState.value.inputEmail}", response, "이메일 중복 확인")
                     when (response) {
                         is NetworkResult.Success -> {
                             _signUpScreenUIState.update {
@@ -153,45 +156,34 @@ class SignUpViewModel @Inject constructor(
                                 )
                             }
                         }
-                        is NetworkResult.Exception -> {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        is NetworkResult.Exception -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("오류가 발생했습니다.")) }
                     }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "이메일을 확인해주세요.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                } else { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이메일을 확인해주세요.")) }
             }
     }
 
     fun verifyEmail() {
         // 인증 코드를 발송하고 1분이 지나지 않았으면 다시 발송할 수 없다.
         if (_signUpScreenUIState.value.emailVerificationCodeLeftTime > 120) {
-            Toast.makeText(application, "${_signUpScreenUIState.value.emailVerificationCodeLeftTime - 120}초 후에 다시 발송할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            viewModelScope.launch {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("${_signUpScreenUIState.value.emailVerificationCodeLeftTime - 120}초 후에 다시 발송할 수 있습니다."))
+            }
             return
-        }
-
-        _signUpScreenUIState.update {
-            it.copy(
-                emailVerificationProgressState = EmailVerificationProgressState.VERIFICATION_REQUESTED,
-                inputVerificationCodeState = VerificationCodeState.EMPTY
-            )
         }
         startTimer?.cancel()
         startTimer = viewModelScope.launch {
             _signUpScreenUIState.update {
                 it.copy(
-                    emailVerificationCodeLeftTime = 180
+                    emailVerificationProgressState = EmailVerificationProgressState.VERIFICATION_REQUESTED,
+                    inputVerificationCodeState = VerificationCodeState.EMPTY
                 )
+            }
+            _signUpScreenUIState.update {
+                it.copy(emailVerificationCodeLeftTime = 180)
             }
             while (_signUpScreenUIState.value.emailVerificationCodeLeftTime > 0) {
                 _signUpScreenUIState.update {
-                    it.copy(
-                        emailVerificationCodeLeftTime = it.emailVerificationCodeLeftTime - 1
-                    )
+                    it.copy(emailVerificationCodeLeftTime = it.emailVerificationCodeLeftTime - 1)
                 }
                 delay(1000)
             }
@@ -200,35 +192,31 @@ class SignUpViewModel @Inject constructor(
         viewModelScope.launch {
             val request = AuthenticateEmailRequest(_signUpScreenUIState.value.inputEmail)
             val response = authenticateEmailUseCase(request)
-            LogUtil.printNetworkLog(response, "이메일 인증 코드 전송")
+            LogUtil.printNetworkLog(request, response, "이메일 인증 코드 전송")
             when (response) {
-                is NetworkResult.Success -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "인증 코드가 발송되었습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Success -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("인증 코드가 발송되었습니다.")) }
                 is NetworkResult.Error -> {
 
                 }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("오류가 발생했습니다.")) }
             }
         }
     }
 
     fun verifyEmailCode() {
-        // 유효시간이 지나면 인증을 다시 받아야 한다.
-        if (_signUpScreenUIState.value.emailVerificationCodeLeftTime <= 0) {
-            Toast.makeText(application, "유효시간이 만료되었습니다. 인증코드를 재전송해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
         viewModelScope.launch {
+            // 유효시간이 지나면 인증을 다시 받아야 한다.
+            if (_signUpScreenUIState.value.emailVerificationCodeLeftTime <= 0) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("유효시간이 만료되었습니다. 인증코드를 재전송해주세요."))
+                return@launch
+            }
+            if (_signUpScreenUIState.value.inputVerificationCodeState == VerificationCodeState.SATISFIED) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이미 확인되었습니다. 다음 단계를 진행해주세요."))
+                return@launch
+            }
             val request = AuthenticateEmailCodeRequest(_signUpScreenUIState.value.inputEmail, _signUpScreenUIState.value.inputVerificationCode)
             val response = authenticateEmailCodeUseCase(request)
-            LogUtil.printNetworkLog(response, "이메일 인증 코드 확인")
+            LogUtil.printNetworkLog(request, response, "이메일 인증 코드 확인")
             when (response) {
                 is NetworkResult.Success -> {
                     _signUpScreenUIState.update {
@@ -244,11 +232,7 @@ class SignUpViewModel @Inject constructor(
                         )
                     }
                 }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("오류가 발생했습니다.")) }
             }
         }
     }
@@ -256,31 +240,31 @@ class SignUpViewModel @Inject constructor(
     fun signUp(
         moveToSignUpSuccessScreen: () -> Unit
     ) {
-        if (_signUpScreenUIState.value.inputUserNameState != UserNameState.SATISFIED) {
-            Toast.makeText(application, "사용자명을 확인해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_signUpScreenUIState.value.inputUserIdState != UserIdState.UNIQUE) {
-            Toast.makeText(application, "아이디를 확인해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_signUpScreenUIState.value.inputPasswordState != PasswordState.SATISFIED) {
-            Toast.makeText(application, "비밀번호를 확인해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_signUpScreenUIState.value.inputPasswordForCheckingState != PasswordCheckingState.SATISFIED) {
-            Toast.makeText(application, "비밀번호 확인을 다시해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_signUpScreenUIState.value.inputEmailState != EmailState.UNIQUE) {
-            Toast.makeText(application, "이메일을 확인해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (_signUpScreenUIState.value.inputVerificationCodeState != VerificationCodeState.SATISFIED) {
-            Toast.makeText(application, "인증코드를 확인해주세요.", Toast.LENGTH_SHORT).show()
-            return
-        }
         viewModelScope.launch {
+            if (_signUpScreenUIState.value.inputUserNameState != UserNameState.SATISFIED) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("사용자명을 확인해주세요."))
+                return@launch
+            }
+            if (_signUpScreenUIState.value.inputUserIdState != UserIdState.UNIQUE) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 확인해주세요."))
+                return@launch
+            }
+            if (_signUpScreenUIState.value.inputPasswordState != PasswordState.SATISFIED) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호를 확인해주세요."))
+                return@launch
+            }
+            if (_signUpScreenUIState.value.inputPasswordForCheckingState != PasswordCheckingState.SATISFIED) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호 확인을 다시해주세요."))
+                return@launch
+            }
+            if (_signUpScreenUIState.value.inputEmailState != EmailState.UNIQUE) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이메일을 확인해주세요."))
+                return@launch
+            }
+            if (_signUpScreenUIState.value.inputVerificationCodeState != VerificationCodeState.SATISFIED) {
+                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("인증코드를 확인해주세요."))
+                return@launch
+            }
             val request = SignUpRequest(
                 userName = _signUpScreenUIState.value.inputUserName,
                 userId = _signUpScreenUIState.value.inputUserId,
@@ -288,7 +272,7 @@ class SignUpViewModel @Inject constructor(
                 email = _signUpScreenUIState.value.inputEmail
             )
             val response = signUpUseCase(request)
-            LogUtil.printNetworkLog(response, "회원가입")
+            LogUtil.printNetworkLog(request, response, "회원가입")
             when (response) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
@@ -298,16 +282,8 @@ class SignUpViewModel @Inject constructor(
                 is NetworkResult.Error -> {
 
                 }
-                is NetworkResult.Exception -> {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                is NetworkResult.Exception -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("오류가 발생했습니다.")) }
             }
         }
-    }
-
-    enum class ScreenState {
-        PolicyAgree, TermsOfService, PrivacyPolicy, SignUp, SignUpSuccess
     }
 }

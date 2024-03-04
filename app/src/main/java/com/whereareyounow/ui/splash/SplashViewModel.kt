@@ -94,7 +94,7 @@ class SplashViewModel @Inject constructor(
     ) {
         val request = ReissueTokenRequest(refreshToken)
         val response = reissueTokenUseCase(request)
-        LogUtil.printNetworkLog(response, "토큰 재발급")
+        LogUtil.printNetworkLog(request, response, "토큰 재발급")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
@@ -120,7 +120,7 @@ class SplashViewModel @Inject constructor(
     ) {
         val request = GetFriendIdsListRequest(memberId)
         val response = getFriendIdsListUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "친구 memberId 리스트 획득")
+        LogUtil.printNetworkLog(request, response, "친구 memberId 리스트 획득")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
@@ -147,7 +147,7 @@ class SplashViewModel @Inject constructor(
     ) {
         val request = GetFriendListRequest(friendIdsList)
         val response = getFriendListUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "친구 리스트 획득")
+        LogUtil.printNetworkLog(request, response, "친구 리스트 획득")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->

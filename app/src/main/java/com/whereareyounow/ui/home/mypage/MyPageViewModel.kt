@@ -1,10 +1,6 @@
 package com.whereareyounow.ui.home.mypage
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +11,6 @@ import com.whereareyounow.domain.usecase.signin.DeleteMemberUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
-import com.whereareyounow.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveMemberIdUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
@@ -29,7 +24,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -70,7 +64,7 @@ class MyPageViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val response = getMemberDetailsUseCase(accessToken, memberId)
-            LogUtil.printNetworkLog(response, "내 정보 가져오기")
+            LogUtil.printNetworkLog("memberId = $memberId", response, "내 정보 가져오기")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -97,7 +91,7 @@ class MyPageViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = DeleteMemberRequest(memberId)
             val response = deleteMemberUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "회원 탈퇴하기")
+            LogUtil.printNetworkLog(request, response, "회원 탈퇴하기")
             when (response) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
@@ -121,7 +115,7 @@ class MyPageViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = ResetCalendarRequest(memberId)
             val response = resetCalendarUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "캘린더 삭제")
+            LogUtil.printNetworkLog(request, response, "캘린더 삭제")
             when (response) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {

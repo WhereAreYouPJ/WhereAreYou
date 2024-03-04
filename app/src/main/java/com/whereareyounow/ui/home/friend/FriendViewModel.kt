@@ -1,7 +1,6 @@
 package com.whereareyounow.ui.home.friend
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
@@ -39,9 +38,9 @@ class FriendViewModel @Inject constructor(
             // 친구 memberId 리스트를 가져온다.
             val accessToken = getAccessTokenUseCase().first()
             val myMemberId = getMemberIdUseCase().first()
-            val getFriendIdsRequest = GetFriendIdsListRequest(myMemberId)
-            val response = getFriendIdsListUseCase(accessToken, getFriendIdsRequest)
-            LogUtil.printNetworkLog(response, "친구 memberId 리스트 가져오기")
+            val request = GetFriendIdsListRequest(myMemberId)
+            val response = getFriendIdsListUseCase(accessToken, request)
+            LogUtil.printNetworkLog(request, response, "친구 memberId 리스트 가져오기")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -64,9 +63,9 @@ class FriendViewModel @Inject constructor(
         // 친구 memberId 리스트로 친구 상세정보 리스트를 가져온다.
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
-            val getFriendListRequest = GetFriendListRequest(friendIds)
-            val response = getFriendListUseCase(accessToken, getFriendListRequest)
-            LogUtil.printNetworkLog(response, "친구 리스트 가져오기")
+            val request = GetFriendListRequest(friendIds)
+            val response = getFriendListUseCase(accessToken, request)
+            LogUtil.printNetworkLog(request, response, "친구 리스트 가져오기")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->

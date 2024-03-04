@@ -70,7 +70,7 @@ class DetailScheduleMapViewModel @Inject constructor(
             // 유저의 위치를 가져온다.
             val request = GetUserLocationRequest(_detailScheduleMapScreenUIState.value.memberInfosList.map { it.memberId }, scheduleId)
             val response = getUserLocationUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "유저 위치 가져오기")
+            LogUtil.printNetworkLog(request, response, "유저 위치 가져오기")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -101,7 +101,7 @@ class DetailScheduleMapViewModel @Inject constructor(
             val memberId = getMemberIdUseCase().first()
             val request = SendUserLocationRequest(memberId, it.latitude, it.longitude)
             val response = sendUserLocationUseCase(accessToken, request)
-            LogUtil.printNetworkLog(response, "유저 위치 전송하기")
+            LogUtil.printNetworkLog(request, response, "유저 위치 전송하기")
             when (response) {
                 is NetworkResult.Success -> {
                     getUsersLocation()
@@ -121,7 +121,7 @@ class DetailScheduleMapViewModel @Inject constructor(
         val memberId = getMemberIdUseCase().first()
         val request = CheckArrivalRequest(memberId, scheduleId)
         val response = checkArrivalUseCase(accessToken, request)
-        LogUtil.printNetworkLog(response, "도착 여부")
+        LogUtil.printNetworkLog(request, response, "도착 여부")
         when (response) {
             is NetworkResult.Success -> {
 
