@@ -8,25 +8,27 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
+import com.whereareyounow.data.signup.UserIdState
+import com.whereareyounow.data.signup.UserNameState
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.usecase.signin.ModifyMyInfoUseCase
 import com.whereareyounow.domain.usecase.signup.CheckIdDuplicateUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
-import com.whereareyounow.ui.signup.UserIdState
-import com.whereareyounow.ui.signup.UserNameState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import javax.inject.Inject
 
 @HiltViewModel
 class InfoModificationViewModel @Inject constructor(
@@ -46,16 +48,17 @@ class InfoModificationViewModel @Inject constructor(
 
     private val _inputUserName = MutableStateFlow("")
     val inputUserName: StateFlow<String> = _inputUserName
-    private val _inputUserNameState = MutableStateFlow(UserNameState.EMPTY)
+    private val _inputUserNameState = MutableStateFlow(UserNameState.SATISFIED)
     val inputUserNameState: StateFlow<UserNameState> = _inputUserNameState
     private val _inputUserId = MutableStateFlow("")
     val inputUserId: StateFlow<String> = _inputUserId
-    private val _inputUserIdState = MutableStateFlow(UserIdState.EMPTY)
+    private val _inputUserIdState = MutableStateFlow(UserIdState.SATISFIED)
     val inputUserIdState: StateFlow<UserIdState> = _inputUserIdState
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
     private val _profileImageUri = MutableStateFlow<String?>(null)
     val profileImageUri: StateFlow<String?> = _profileImageUri
+    val infoModificationScreenSideEffectFlow = MutableSharedFlow<InfoModificationScreenSideEffect>()
 
     fun updateInputUserName(name: String) {
         _inputUserName.update { name }
@@ -88,7 +91,7 @@ class InfoModificationViewModel @Inject constructor(
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             val response = getMemberDetailsUseCase(accessToken, memberId)
-            LogUtil.printNetworkLog(response, "내 정보 가져오기")
+            LogUtil.printNetworkLog("memberId = $memberId", response, "내 정보 가져오기")
             when (response) {
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
@@ -113,9 +116,13 @@ class InfoModificationViewModel @Inject constructor(
 
     fun checkIdDuplicate() {
         viewModelScope.launch {
+            if (_inputUserId.value == originalUserId) {
+                _inputUserIdState.update { UserIdState.UNIQUE }
+                return@launch
+            }
             if (_inputUserIdState.value == UserIdState.SATISFIED) {
                 val response = checkIdDuplicateUseCase(_inputUserId.value)
-                LogUtil.printNetworkLog(response, "아이디 중복 체크")
+                LogUtil.printNetworkLog("userId = ${_inputUserId.value}", response, "아이디 중복 체크")
                 when (response) {
                     is NetworkResult.Success -> {
                         _inputUserIdState.update { UserIdState.UNIQUE }
@@ -142,6 +149,38 @@ class InfoModificationViewModel @Inject constructor(
         moveToBackScreen: () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.Default) {
+            when (_inputUserIdState.value) {
+                UserIdState.EMPTY -> {
+                    infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디를 입력해주세요."))
+                    return@launch
+                }
+                UserIdState.SATISFIED -> {
+                    if (_inputUserId.value != originalUserId) {
+                        infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디 중복확인을 해주세요."))
+                        return@launch
+                    }
+                }
+                UserIdState.DUPLICATED -> {
+                    infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디가 중복되었습니다."))
+                    return@launch
+                }
+                UserIdState.UNSATISFIED -> {
+                    infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디를 확인해주세요."))
+                    return@launch
+                }
+                UserIdState.UNIQUE -> {}
+            }
+            when (_inputUserNameState.value) {
+                UserNameState.EMPTY -> {
+                    infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("이름을 입력해주세요."))
+                    return@launch
+                }
+                UserNameState.UNSATISFIED -> {
+                    infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("이름을 확인해주세요."))
+                    return@launch
+                }
+                UserNameState.SATISFIED -> {}
+            }
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
             var imageFile: File? = null
@@ -157,9 +196,9 @@ class InfoModificationViewModel @Inject constructor(
                 }
             } else {
                 val newUserName = if (_inputUserName.value == originalUserName) "" else _inputUserName.value
-                val newUserId = if (_inputUserId.value == originalUserId) "" else _inputUserId.value
+                val newUserId = if (_inputUserIdState.value == UserIdState.UNIQUE) _inputUserId.value else ""
                 val response: NetworkResult<Unit> = modifyMyInfoUseCase(accessToken, memberId, imageFile, newUserName, newUserId)
-                LogUtil.printNetworkLog(response, "내 정보 수정하기")
+                LogUtil.printNetworkLog("memberId = $memberId\nimageFile = $imageFile\nnewUserName = $newUserName\nnewUserId = $newUserId", response, "내 정보 수정하기")
                 when (response) {
                     is NetworkResult.Success -> {
                         withContext(Dispatchers.Main) {

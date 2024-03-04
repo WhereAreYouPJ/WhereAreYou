@@ -2,6 +2,7 @@ package com.whereareyounow.ui.home.mypage
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,11 +24,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,13 +42,18 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
+import com.whereareyounow.data.signup.UserIdState
+import com.whereareyounow.data.signup.UserNameState
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.signup.CheckingButton
 import com.whereareyounow.ui.signup.Guideline
-import com.whereareyounow.ui.signup.UserIdState
-import com.whereareyounow.ui.signup.UserNameState
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 
 @Composable
 fun InfoModificationScreen(
@@ -58,7 +66,9 @@ fun InfoModificationScreen(
     val inputUserIdState = viewModel.inputUserIdState.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
+    val infoModificationScreenSideEffectFlow = viewModel.infoModificationScreenSideEffectFlow
     InfoModificationScreen(
+        infoModificationScreenSideEffectFlow = infoModificationScreenSideEffectFlow,
         inputUserName = inputUserName,
         updateInputUserName = viewModel::updateInputUserName,
         inputUserNameState = inputUserNameState,
@@ -76,6 +86,7 @@ fun InfoModificationScreen(
 
 @Composable
 private fun InfoModificationScreen(
+    infoModificationScreenSideEffectFlow: SharedFlow<InfoModificationScreenSideEffect>,
     inputUserName: String,
     updateInputUserName: (String) -> Unit,
     inputUserNameState: UserNameState,
@@ -90,7 +101,17 @@ private fun InfoModificationScreen(
     moveToBackScreen: () -> Unit
 ) {
     val density = LocalDensity.current.density
+    val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        infoModificationScreenSideEffectFlow.collect { sideEffect ->
+            when (sideEffect) {
+                is InfoModificationScreenSideEffect.Toast -> {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, sideEffect.text, Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
     // 카메라로 사진 찍어서 가져오기
     val takePhotoFromCameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
@@ -293,6 +314,7 @@ private fun UserIdTextField(
 private fun InfoModificationScreenPreview() {
     WhereAreYouTheme {
         InfoModificationScreen(
+            infoModificationScreenSideEffectFlow = MutableSharedFlow(),
             inputUserName = "아이디",
             updateInputUserName = {},
             inputUserNameState = UserNameState.EMPTY,
