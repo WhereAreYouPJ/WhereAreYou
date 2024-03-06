@@ -1,7 +1,7 @@
 package com.whereareyounow.ui.findid
 
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,64 +18,73 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.whereareyounow.data.findid.EmailState
+import com.whereareyounow.data.findid.FindIdScreenSideEffect
+import com.whereareyounow.data.findid.FindIdScreenUIState
+import com.whereareyounow.data.findid.VerificationCodeState
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.withContext
 
 @Composable
 fun FindIdScreen(
     moveToSignInScreen: () -> Unit,
+    moveToFindIdResultScreen: (String) -> Unit,
     viewModel: FindIdViewModel = hiltViewModel()
 ) {
-    val inputEmail = viewModel.inputEmail.collectAsState().value
-    val inputEmailState = viewModel.inputEmailState.collectAsState().value
-    val inputVerificationCode = viewModel.inputVerificationCode.collectAsState().value
-    val isVerificationCodeSent = viewModel.isVerificationCodeSent.collectAsState().value
-    val inputVerificationCodeState = viewModel.inputVerificationCodeState.collectAsState().value
-    val emailVerificationLeftTime = viewModel.emailVerificationLeftTime.collectAsState().value
+    val findIdScreenUIState = viewModel.findIdScreenUIState.collectAsState().value
+    val findIdScreenSideEffectFlow = viewModel.findIdScreenSideEffectFlow
     FindIdScreen (
-        inputEmail = inputEmail,
+        findIdScreenUIState = findIdScreenUIState,
+        findIdScreenSideEffectFlow = findIdScreenSideEffectFlow,
         updateInputEmail = viewModel::updateInputEmail,
-        inputEmailState = inputEmailState,
-        inputVerificationCode = inputVerificationCode,
-        updateInputVerificationCode = viewModel::updateVerificationCode,
-        isVerificationCodeSent = isVerificationCodeSent,
-        inputVerificationCodeState = inputVerificationCodeState,
-        emailVerificationLeftTime = emailVerificationLeftTime,
-        verifyEmail = viewModel::verifyEmail,
+        updateInputVerificationCode = viewModel::updateInputVerificationCode,
+        sendEmailVerificationCode = viewModel::sendEmailVerificationCode,
         findId = viewModel::findId,
         moveToSignInScreen = moveToSignInScreen,
-        moveToUserIdCheckingScreen = { viewModel.updateScreenState(FindIdViewModel.ScreenState.ShowingUserId) }
+        moveToFindIdResultScreen = moveToFindIdResultScreen
     )
 }
 
 @Composable
 private fun FindIdScreen(
-    inputEmail: String,
+    findIdScreenUIState: FindIdScreenUIState,
+    findIdScreenSideEffectFlow: SharedFlow<FindIdScreenSideEffect>,
     updateInputEmail: (String) -> Unit,
-    inputEmailState: EmailState,
-    inputVerificationCode: String,
     updateInputVerificationCode: (String) -> Unit,
-    isVerificationCodeSent: Boolean,
-    inputVerificationCodeState: VerificationCodeState,
-    emailVerificationLeftTime: Int,
-    verifyEmail: () -> Unit,
-    findId: (() -> Unit) -> Unit,
+    sendEmailVerificationCode: () -> Unit,
+    findId: ((String) -> Unit) -> Unit,
     moveToSignInScreen: () -> Unit,
-    moveToUserIdCheckingScreen: () -> Unit,
+    moveToFindIdResultScreen: (String) -> Unit,
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        findIdScreenSideEffectFlow.collect { sideEffect ->
+            when (sideEffect) {
+                is FindIdScreenSideEffect.Toast -> {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, sideEffect.text, Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,28 +102,28 @@ private fun FindIdScreen(
                 .fillMaxWidth()
         ) {
             Box(modifier = Modifier.weight(1f)) {
-                EmailInputBox(
-                    inputEmail = inputEmail,
+                EmailTextField(
+                    inputEmail = findIdScreenUIState.inputEmail,
                     onValueChange = updateInputEmail,
-                    inputEmailState = inputEmailState
+                    inputEmailState = findIdScreenUIState.inputEmailState
                 )
             }
             Spacer(Modifier.width(10.dp))
             VerificationButton(
-                text = "인증",
-                onClick = verifyEmail
+                text = "인증요청",
+                onClick = sendEmailVerificationCode
             )
         }
 
         Spacer(Modifier.height(20.dp))
 
-        if (isVerificationCodeSent) {
-            VerificationCodeInputBox(
-                inputText = inputVerificationCode,
+        if (findIdScreenUIState.isVerificationCodeSent) {
+            VerificationCodeTextField(
+                inputText = findIdScreenUIState.inputVerificationCode,
                 onValueChange = updateInputVerificationCode,
                 guideLine = "인증코드가 일치하지 않습니다.",
-                inputVerificationCodeState = inputVerificationCodeState,
-                leftTime = emailVerificationLeftTime
+                inputVerificationCodeState = findIdScreenUIState.inputVerificationCodeState,
+                leftTime = findIdScreenUIState.emailVerificationLeftTime
             )
         }
 
@@ -122,7 +131,7 @@ private fun FindIdScreen(
 
         BottomOKButton(
             text = "확인",
-            onClick = { findId(moveToUserIdCheckingScreen) }
+            onClick = { findId(moveToFindIdResultScreen) }
         )
 
         Spacer(Modifier.height(20.dp))
@@ -140,7 +149,7 @@ fun FindIdScreenTopBar(
 }
 
 @Composable
-fun EmailInputBox(
+fun EmailTextField(
     inputEmail: String,
     onValueChange: (String) -> Unit,
     inputEmailState: EmailState
@@ -159,7 +168,7 @@ fun EmailInputBox(
 
 
 @Composable
-private fun VerificationCodeInputBox(
+private fun VerificationCodeTextField(
     inputText: String,
     onValueChange: (String) -> Unit,
     guideLine: String,
@@ -202,31 +211,19 @@ fun VerificationButton(
     }
 }
 
-enum class EmailState {
-    EMPTY, SATISFIED, UNSATISFIED
-}
-
-enum class VerificationCodeState {
-    EMPTY, SATISFIED, UNSATISFIED
-}
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FindIdScreenPreview() {
     WhereAreYouTheme {
         FindIdScreen(
-            inputEmail = "",
+            findIdScreenUIState = FindIdScreenUIState(),
+            findIdScreenSideEffectFlow = MutableSharedFlow(),
             updateInputEmail = {},
-            inputEmailState = EmailState.EMPTY,
-            inputVerificationCode = "",
             updateInputVerificationCode = {},
-            isVerificationCodeSent = true,
-            inputVerificationCodeState = VerificationCodeState.UNSATISFIED,
-            emailVerificationLeftTime = 100,
-            verifyEmail = {},
+            sendEmailVerificationCode = {},
             findId = {},
             moveToSignInScreen = {},
-            moveToUserIdCheckingScreen = {}
+            moveToFindIdResultScreen = {}
         )
     }
 }
