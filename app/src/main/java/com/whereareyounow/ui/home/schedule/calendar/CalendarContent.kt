@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.data.GlobalValue
-import com.whereareyounow.data.Schedule
+import com.whereareyounow.data.calendar.Schedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -20,8 +20,6 @@ import kotlinx.coroutines.launch
 fun CalendarContent(
     currentMonthCalendarInfo: List<Schedule>,
     updateCurrentMonthCalendarInfo: () -> Unit,
-    calendarState: CalendarViewModel.CalendarState,
-    updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
     selectedYear: Int,
     updateYear: (Int) -> Unit,
     selectedMonth: Int,
@@ -38,7 +36,6 @@ fun CalendarContent(
         DateCalendar(
             currentMonthCalendarInfo = currentMonthCalendarInfo,
             updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
-            calendarState = calendarState,
             selectedYear = selectedYear,
             updateYear = updateYear,
             selectedMonth = selectedMonth,
@@ -46,18 +43,6 @@ fun CalendarContent(
             selectedDate = selectedDate,
             updateDate = updateDate,
             expandDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } }
-        )
-        MonthCalendar(
-            calendarState = calendarState,
-            updateMonth = updateMonth,
-            updateCalendarState = updateCalendarState,
-            expandDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } }
-        )
-        YearCalendar(
-            selectedYear = selectedYear,
-            calendarState = calendarState,
-            updateYear = updateYear,
-            updateCalendarState = updateCalendarState
         )
     }
 }
