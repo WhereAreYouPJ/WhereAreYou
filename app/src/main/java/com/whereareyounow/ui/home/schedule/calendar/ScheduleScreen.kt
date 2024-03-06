@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.home.schedule.calendar
 
+import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -42,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -54,59 +56,53 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
-import com.whereareyounow.data.Schedule
+import com.whereareyounow.data.calendar.CalendarScreenSideEffect
+import com.whereareyounow.data.calendar.CalendarScreenUIState
+import com.whereareyounow.data.calendar.Schedule
+import com.whereareyounow.data.notification.DrawerNotificationContentSideEffect
+import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
-import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.ui.home.schedule.notification.DrawerNotification
-import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationViewModel
-import com.whereareyounow.ui.home.schedule.notification.ScheduleInvitationInfo
+import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationContent
+import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationContentViewModel
 import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 @Composable
 fun ScheduleScreen(
     paddingValues: PaddingValues,
     moveToDetailScreen: (String) -> Unit,
-    notificationViewModel: DrawerNotificationViewModel = hiltViewModel(),
+    notificationViewModel: DrawerNotificationContentViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel(),
 ) {
-    val friendRequestsList = notificationViewModel.friendRequestList
-    val scheduleRequestsList = notificationViewModel.scheduleRequestList
-    val currentMonthCalendarInfo = calendarViewModel.currentMonthCalendarInfoList
-    val calendarState = calendarViewModel.calendarState.collectAsState().value
-    val selectedYear = calendarViewModel.selectedYear.collectAsState().value
-    val selectedMonth = calendarViewModel.selectedMonth.collectAsState().value
-    val selectedDate = calendarViewModel.selectedDate.collectAsState().value
-    val dayOfWeek = calendarViewModel.dayOfWeek.collectAsState().value
-    val currentDateBriefSchedule = calendarViewModel.currentDateBriefScheduleInfoList
+    val calendarScreenUIState = calendarViewModel.calendarScreenUIState.collectAsState().value
+    val calendarScreenSideEffectFlow = calendarViewModel.calendarScreenSideEffectFlow
+    val drawerNotificationContentUIState = notificationViewModel.drawerNotificationUIState.collectAsState().value
+    val drawerNotificationContentSideEffectFlow = notificationViewModel.drawerNotificationContentSideEffectFlow
     ScheduleScreen(
-        friendRequestsList = friendRequestsList,
-        scheduleRequestsList = scheduleRequestsList,
+        calendarScreenUIState = calendarScreenUIState,
+        calendarScreenSideEffectFlow = calendarScreenSideEffectFlow,
+        drawerNotificationContentUIState = drawerNotificationContentUIState,
+        drawerNotificationContentSideEffectFlow = drawerNotificationContentSideEffectFlow,
         acceptFriendRequest = notificationViewModel::acceptFriendRequest,
         refuseFriendRequest = notificationViewModel::refuseFriendRequest,
         acceptScheduleRequest = notificationViewModel::acceptScheduleRequest,
         refuseScheduleRequest = notificationViewModel::refuseScheduleRequest,
-        currentMonthCalendarInfo = currentMonthCalendarInfo,
-        calendarState = calendarState,
-        updateCalendarState = calendarViewModel::updateCalendarState,
-        selectedYear = selectedYear,
         updateYear = calendarViewModel::updateYear,
-        selectedMonth = selectedMonth,
         updateMonth = calendarViewModel::updateMonth,
-        selectedDate = selectedDate,
         updateDate = calendarViewModel::updateDate,
-        dayOfWeek = dayOfWeek,
-        currentDateBriefSchedule = currentDateBriefSchedule,
         updateCurrentMonthCalendarInfo = calendarViewModel::updateCurrentMonthCalendarInfo,
         updateCurrentDateBriefScheduleInfo = calendarViewModel::updateCurrentDateBriefScheduleInfo,
         loadFriendRequests = notificationViewModel::loadFriendRequests,
         loadScheduleRequests = notificationViewModel::loadScheduleRequests,
+        getTodayScheduleCount = notificationViewModel::getTodayScheduleCount,
         moveToDetailScreen = moveToDetailScreen
     )
 }
@@ -114,58 +110,67 @@ fun ScheduleScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreen(
-    friendRequestsList: List<Pair<FriendRequest, Friend>>,
-    scheduleRequestsList: List<ScheduleInvitationInfo>,
+    calendarScreenUIState: CalendarScreenUIState,
+    calendarScreenSideEffectFlow: SharedFlow<CalendarScreenSideEffect>,
+    drawerNotificationContentUIState: DrawerNotificationContentUIState,
+    drawerNotificationContentSideEffectFlow: SharedFlow<DrawerNotificationContentSideEffect>,
     acceptFriendRequest: (FriendRequest) -> Unit,
     refuseFriendRequest: (FriendRequest) -> Unit,
     acceptScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
     refuseScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
-    currentMonthCalendarInfo: List<Schedule>,
-    calendarState: CalendarViewModel.CalendarState,
-    updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
-    selectedYear: Int,
     updateYear: (Int) -> Unit,
-    selectedMonth: Int,
     updateMonth: (Int) -> Unit,
-    selectedDate: Int,
     updateDate: (Int) -> Unit,
-    dayOfWeek: Int,
-    currentDateBriefSchedule: List<BriefSchedule>,
     updateCurrentMonthCalendarInfo: () -> Unit,
     updateCurrentDateBriefScheduleInfo: () -> Unit,
     loadFriendRequests: () -> Unit,
     loadScheduleRequests: () -> Unit,
+    getTodayScheduleCount: () -> Unit,
     moveToDetailScreen: (String) -> Unit
 ) {
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
+        loadFriendRequests()
+        loadScheduleRequests()
+        getTodayScheduleCount()
         updateCurrentMonthCalendarInfo()
         updateCurrentDateBriefScheduleInfo()
+        launch {
+            calendarScreenSideEffectFlow.collect { value ->
+                when (value) {
+                    is CalendarScreenSideEffect.Toast -> {
+                        withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
+                    }
+                }
+            }
+        }
+        launch {
+            drawerNotificationContentSideEffectFlow.collect { value ->
+                when (value) {
+                    is DrawerNotificationContentSideEffect.Toast -> {
+                        withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
+                    }
+                }
+            }
+        }
     }
-
     val coroutineScope = rememberCoroutineScope()
-
+    val drawerState = rememberDrawerState(
+        initialValue = DrawerValue.Closed
+    )
     // 사이드바가 오른쪽에서 열리게 하기 위한 Rtl
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        val drawerState = rememberDrawerState(
-            initialValue = DrawerValue.Closed,
-            confirmStateChange = {
-                loadFriendRequests()
-                loadScheduleRequests()
-                true
-            }
-        )
         ModalNavigationDrawer(
             drawerContent = {
-                DrawerNotification(
-                    friendRequestsList = friendRequestsList,
-                    scheduleRequestsList = scheduleRequestsList,
+                DrawerNotificationContent(
+                    drawerNotificationContentUIState = drawerNotificationContentUIState,
                     updateCalendar = updateCurrentMonthCalendarInfo,
                     updateBriefCalendar = updateCurrentDateBriefScheduleInfo,
                     acceptFriendRequest = acceptFriendRequest,
                     refuseFriendRequest = refuseFriendRequest,
                     acceptScheduleRequest = acceptScheduleRequest,
                     refuseScheduleRequest = refuseScheduleRequest,
-                    hideDrawer = { coroutineScope.launch { drawerState.close() } }
+                    drawerState = drawerState
                 )
             },
             drawerState = drawerState,
@@ -181,38 +186,34 @@ fun ScheduleScreen(
                 ) {
                     // 상단바
                     ScheduleScreenTopBar(
-                        calendarState = calendarState,
-                        updateCalendarState = updateCalendarState,
                         updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
-                        selectedYear = selectedYear,
+                        selectedYear = calendarScreenUIState.selectedYear,
                         updateYear = updateYear,
-                        selectedMonth = selectedMonth,
+                        selectedMonth = calendarScreenUIState.selectedMonth,
                         updateMonth = updateMonth,
                         drawerState = drawerState,
                         bottomContentState = bottomContentState
                     )
                     // 달력 뷰
                     CalendarContent(
-                        currentMonthCalendarInfo = currentMonthCalendarInfo,
+                        currentMonthCalendarInfo = calendarScreenUIState.selectedMonthCalendarInfoList,
                         updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
-                        calendarState = calendarState,
-                        updateCalendarState = updateCalendarState,
-                        selectedYear = selectedYear,
+                        selectedYear = calendarScreenUIState.selectedYear,
                         updateYear = updateYear,
-                        selectedMonth = selectedMonth,
+                        selectedMonth = calendarScreenUIState.selectedMonth,
                         updateMonth = updateMonth,
-                        selectedDate = selectedDate,
+                        selectedDate = calendarScreenUIState.selectedDate,
                         updateDate = updateDate,
                         state = bottomContentState
                     )
                 }
                 // 일별 간략한 일정
                 BriefScheduleContent(
-                    selectedYear = selectedYear,
-                    selectedMonth = selectedMonth,
-                    selectedDate = selectedDate,
-                    dayOfWeek = dayOfWeek,
-                    currentDateBriefSchedule = currentDateBriefSchedule,
+                    selectedYear = calendarScreenUIState.selectedYear,
+                    selectedMonth = calendarScreenUIState.selectedMonth,
+                    selectedDate = calendarScreenUIState.selectedDate,
+                    dayOfWeek = calendarScreenUIState.selectedDayOfWeek,
+                    currentDateBriefSchedule = calendarScreenUIState.selectedDateBriefScheduleInfoList,
                     moveToDetailScreen = moveToDetailScreen,
                     state = bottomContentState
                 )
@@ -224,8 +225,6 @@ fun ScheduleScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreenTopBar(
-    calendarState: CalendarViewModel.CalendarState,
-    updateCalendarState: (CalendarViewModel.CalendarState) -> Unit,
     updateCurrentMonthCalendarInfo: () -> Unit,
     selectedYear: Int,
     updateYear: (Int) -> Unit,
@@ -297,7 +296,12 @@ fun ScheduleScreenTopBar(
                                         .clickable {
                                             updateYear(year)
                                             updateCurrentMonthCalendarInfo()
-                                            coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
+                                            coroutineScope.launch {
+                                                bottomContentState.animateTo(
+                                                    DetailState.Close
+                                                )
+                                            }
+                                            yearDropdownPopupState.isVisible = false
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -358,7 +362,12 @@ fun ScheduleScreenTopBar(
                                         .clickable {
                                             updateMonth(month)
                                             updateCurrentMonthCalendarInfo()
-                                            coroutineScope.launch { bottomContentState.animateTo(DetailState.Close) }
+                                            coroutineScope.launch {
+                                                bottomContentState.animateTo(
+                                                    DetailState.Close
+                                                )
+                                            }
+                                            monthDropdownPopupState.isVisible = false
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -384,7 +393,9 @@ fun ScheduleScreenTopBar(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .clickable { coroutineScope.launch(Dispatchers.Default) { drawerState.open() } }
+                    .clickable {
+                        coroutineScope.launch(Dispatchers.Default) { drawerState.open() }
+                    }
                     .padding(8.dp),
                 painter = painterResource(id = R.drawable.icon_bell),
                 contentDescription = null
@@ -470,8 +481,6 @@ private fun ScheduleScreenPreview2() {
     ) {
         // 상단바
         ScheduleScreenTopBar(
-            calendarState = CalendarViewModel.CalendarState.DATE,
-            updateCalendarState = {},
             updateCurrentMonthCalendarInfo = {},
             selectedYear = 2024,
             updateYear = {},
@@ -484,8 +493,6 @@ private fun ScheduleScreenPreview2() {
         CalendarContent(
             currentMonthCalendarInfo = previewSchedule,
             updateCurrentMonthCalendarInfo = {},
-            calendarState = CalendarViewModel.CalendarState.DATE,
-            updateCalendarState = {},
             selectedYear = 2024,
             updateYear = {},
             selectedMonth = 1,
