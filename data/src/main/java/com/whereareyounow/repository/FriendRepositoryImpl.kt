@@ -2,6 +2,7 @@ package com.whereareyounow.repository
 
 import com.whereareyounow.datasource.RemoteDataSource
 import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
+import com.whereareyounow.domain.entity.apimessage.friend.DeleteFriendRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListResponse
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
@@ -81,5 +82,16 @@ class FriendRepositoryImpl(
         body: RefuseFriendRequestRequest
     ): NetworkResult<Unit> {
         return handleResult { dataSource.refuseFriendRequest(token, body) }
+    }
+
+    /**
+     * 친구 삭제
+     * [FriendRepository.deleteFriend]
+     */
+    override suspend fun deleteFriend(
+        token: String,
+        body: DeleteFriendRequest
+    ): NetworkResult<Unit> {
+        return handleResult { dataSource.deleteFriend(token, body) }
     }
 }

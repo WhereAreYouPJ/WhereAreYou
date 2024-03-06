@@ -12,6 +12,7 @@ object CalendarUtil {
     // year년 month월에 몇일까지 있는지 return
     fun getDayOfMonth(year: Int, month: Int, flag: Type = Type.CURRENT): Int {
         val calendar = Calendar.getInstance()
+        calendar.set(Calendar.DATE, 1)
         calendar.set(Calendar.YEAR, year)
         when (flag) {
             Type.PREVIOUS -> calendar.set(Calendar.MONTH, month - 2)
@@ -31,8 +32,12 @@ object CalendarUtil {
         return calendar.get(Calendar.DAY_OF_WEEK)
     }
 
-    fun getDayOfWeekStringFromNum(num: Int): String {
-        return when (num) {
+    fun getDayOfWeekString(year: Int, month: Int, date: Int): String {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month - 1)
+        calendar.set(Calendar.DATE, date)
+        return when (calendar.get(Calendar.DAY_OF_WEEK)) {
             1 -> "일"
             2 -> "월"
             3 -> "화"
@@ -46,16 +51,12 @@ object CalendarUtil {
     // year년 month월의 달력 정보를 return
     fun getCalendarInfo(year: Int, month: Int): List<Schedule> {
         val calendar = Calendar.getInstance()
-
         // month월 첫 날 요일
         val firstDayOfWeek = getDayOfWeek(year, month, 1)
-
-        // month월이 총 몇주인지 계산
-        calendar.set(Calendar.YEAR, year)
-        calendar.set(Calendar.MONTH, month - 1)
+        calendar.set(year, month - 1, 1)
         calendar.set(Calendar.DATE, getDayOfMonth(year, month))
+        // month월이 총 몇주인지 계산
         val weekCount = calendar.get(Calendar.WEEK_OF_MONTH)
-
 
         calendar.set(Calendar.DATE, 1 - firstDayOfWeek)
         val scheduleList = List<Schedule>(7 * weekCount) {

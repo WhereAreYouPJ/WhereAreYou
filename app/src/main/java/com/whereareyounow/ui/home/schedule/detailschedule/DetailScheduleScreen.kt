@@ -20,9 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +46,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
+import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
+import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.popupmenu.CustomPopup
@@ -57,45 +57,27 @@ import com.whereareyounow.util.popupmenu.PopupState
 @Composable
 fun DetailScheduleScreen(
     scheduleId: String,
+    moveToDetailScheduleMapScreen: (String, Double, Double, List<MemberInfo>) -> Unit,
+    moveToModifyScheduleScreen: (String, Double, Double, DetailScheduleScreenUIState) -> Unit,
     moveToBackScreen: () -> Unit,
-    moveToModifyScheduleScreen: () -> Unit,
     viewModel: DetailScheduleViewModel = hiltViewModel(),
 ) {
-    val scheduleName = viewModel.scheduleName.collectAsState().value
-    val scheduleYear = viewModel.scheduleYear.collectAsState().value
-    val scheduleMonth = viewModel.scheduleMonth.collectAsState().value
-    val scheduleDate = viewModel.scheduleDate.collectAsState().value
-    val scheduleDayOfWeek = viewModel.scheduleDayOfWeek.collectAsState().value
-    val scheduleHour = viewModel.scheduleHour.collectAsState().value
-    val scheduleMinute = viewModel.scheduleMinute.collectAsState().value
-    val destinationName = viewModel.destinationName.collectAsState().value
-    val destinationAddress = viewModel.destinationAddress.collectAsState().value
-    val memberList = viewModel.memberInfos
-    val isLocationCheckEnabled = viewModel.isLocationCheckEnabled.collectAsState().value
-    val memo = viewModel.memo.collectAsState().value
+    val detailScheduleScreenUIState = viewModel.detailScheduleScreenUIState.collectAsState().value
     val isScheduleCreator = viewModel.isScheduleCreator.collectAsState().value
     DetailScheduleScreen(
         scheduleId = scheduleId,
         updateScheduleId = viewModel::updateScheduleId,
-        scheduleName = scheduleName,
-        scheduleYear = scheduleYear,
-        scheduleMonth = scheduleMonth,
-        scheduleDate = scheduleDate,
-        scheduleDayOfWeek = scheduleDayOfWeek,
-        scheduleHour = scheduleHour,
-        scheduleMinute = scheduleMinute,
-        destinationName = destinationName,
-        destinationAddress = destinationAddress,
-        memberList = memberList,
-        isLocationCheckEnabled = isLocationCheckEnabled,
-        memo = memo,
+        detailScheduleScreenUIState = detailScheduleScreenUIState,
         isScheduleCreator = isScheduleCreator,
         deleteSchedule = viewModel::deleteSchedule,
         quitSchedule = viewModel::quitSchedule,
-        updateScreenState = viewModel::updateScreenState,
-        getUserLocation = viewModel::getUsersLocation,
         moveToBackScreen = moveToBackScreen,
-        moveToModifyScheduleScreen = moveToModifyScheduleScreen
+        moveToModifyScheduleScreen = {
+            moveToModifyScheduleScreen(scheduleId, viewModel.destinationLatitude, viewModel.destinationLongitude, detailScheduleScreenUIState)
+        },
+        moveToDetailScheduleMapScreen = {
+            moveToDetailScheduleMapScreen(scheduleId, viewModel.destinationLatitude, viewModel.destinationLongitude, detailScheduleScreenUIState.memberInfosList)
+        }
     )
 }
 
@@ -103,31 +85,18 @@ fun DetailScheduleScreen(
 private fun DetailScheduleScreen(
     scheduleId: String,
     updateScheduleId: (String) -> Unit,
-    scheduleName: String,
-    scheduleYear: String,
-    scheduleMonth: String,
-    scheduleDate: String,
-    scheduleDayOfWeek: String,
-    scheduleHour: String,
-    scheduleMinute: String,
-    destinationName: String,
-    destinationAddress: String,
-    memberList: List<DetailScheduleViewModel.MemberInfo>,
-    isLocationCheckEnabled: Boolean,
-    memo: String,
+    detailScheduleScreenUIState: DetailScheduleScreenUIState,
     isScheduleCreator: Boolean,
     deleteSchedule: (() -> Unit) -> Unit,
     quitSchedule: (() -> Unit) -> Unit,
-    updateScreenState: (DetailScheduleViewModel.ScreenState) -> Unit,
-    getUserLocation: () -> Unit,
     moveToBackScreen: () -> Unit,
     moveToModifyScheduleScreen: () -> Unit,
+    moveToDetailScheduleMapScreen: () -> Unit,
 ) {
     val contentSpace = 30
 
     LaunchedEffect(Unit) {
         updateScheduleId(scheduleId)
-        getUserLocation()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -146,9 +115,9 @@ private fun DetailScheduleScreen(
         ) {
             // 일정 제목
             ScheduleName(
-                scheduleName = scheduleName,
+                scheduleName = detailScheduleScreenUIState.scheduleName,
                 isScheduleCreator = isScheduleCreator,
-                modifySchedule = moveToModifyScheduleScreen,
+                moveToModifyScheduleScreen = moveToModifyScheduleScreen,
                 deleteSchedule = { deleteSchedule(moveToBackScreen) },
                 quitSchedule = { quitSchedule(moveToBackScreen) }
             )
@@ -175,16 +144,16 @@ private fun DetailScheduleScreen(
                 Column {
                     // 날짜 정보
                     DateContent(
-                        scheduleYear = scheduleYear,
-                        scheduleMonth = scheduleMonth,
-                        scheduleDate = scheduleDate,
-                        scheduleDayOfWeek = scheduleDayOfWeek
+                        scheduleYear = detailScheduleScreenUIState.scheduleYear,
+                        scheduleMonth = detailScheduleScreenUIState.scheduleMonth,
+                        scheduleDate = detailScheduleScreenUIState.scheduleDate,
+                        scheduleDayOfWeek = detailScheduleScreenUIState.scheduleDayOfWeek
                     )
 
                     // 시간 정보
                     TimeContent(
-                        scheduleHour = scheduleHour,
-                        scheduleMinute = scheduleMinute
+                        scheduleHour = detailScheduleScreenUIState.scheduleHour,
+                        scheduleMinute = detailScheduleScreenUIState.scheduleMinute
                     )
                 }
             }
@@ -193,23 +162,23 @@ private fun DetailScheduleScreen(
 
             // 목적지 정보
             DestinationContent(
-                destinationName = destinationName,
-                destinationAddress = destinationAddress
+                destinationName = detailScheduleScreenUIState.destinationName,
+                destinationAddress = detailScheduleScreenUIState.destinationRoadAddress
             )
 
             Spacer(Modifier.height(contentSpace.dp))
 
             // 회원 리스트 정보
             MemberListContent(
-                memberList = memberList,
-                isLocationCheckEnabled = isLocationCheckEnabled,
-                updateScreenState = updateScreenState
+                memberList = detailScheduleScreenUIState.memberInfosList,
+                isLocationCheckEnabled = detailScheduleScreenUIState.isLocationCheckEnabled,
+                moveToDetailScheduleMapScreen = moveToDetailScheduleMapScreen
             )
 
             Spacer(Modifier.height(contentSpace.dp))
 
             // 메모
-            MemoContent(memo)
+            MemoContent(detailScheduleScreenUIState.memo)
         }
     }
 }
@@ -240,7 +209,7 @@ fun BackgroundContent() {
 fun ScheduleName(
     scheduleName: String,
     isScheduleCreator: Boolean,
-    modifySchedule: () -> Unit,
+    moveToModifyScheduleScreen: () -> Unit,
     deleteSchedule: () -> Unit,
     quitSchedule: () -> Unit
 ) {
@@ -275,7 +244,7 @@ fun ScheduleName(
                                 .fillMaxWidth()
                                 .clickable {
                                     popupState.isVisible = false
-                                    modifySchedule()
+                                    moveToModifyScheduleScreen()
                                 }
                                 .padding(10.dp),
                             text = "수정",
@@ -329,13 +298,13 @@ fun ScheduleName(
 
 @Composable
 fun DateContent(
-    scheduleYear: String,
-    scheduleMonth: String,
-    scheduleDate: String,
+    scheduleYear: Int,
+    scheduleMonth: Int,
+    scheduleDate: Int,
     scheduleDayOfWeek: String
 ) {
     Text(
-        text = "${scheduleYear}년 ${scheduleMonth.toInt()}월 ${scheduleDate}일 (${scheduleDayOfWeek})",
+        text = "${String.format("%04d", scheduleYear)}년 ${String.format("%02d", scheduleMonth.toInt())}월 ${String.format("%02d", scheduleDate)}일 (${scheduleDayOfWeek})",
         fontSize = 16.sp,
         color = Color(0xFF5F5F5F),
         fontWeight = FontWeight.Medium,
@@ -345,21 +314,18 @@ fun DateContent(
 
 @Composable
 fun TimeContent(
-    scheduleHour: String,
-    scheduleMinute: String
+    scheduleHour: Int,
+    scheduleMinute: Int
 ) {
-    if (scheduleHour != "" && scheduleMinute != "") {
-        var hour = scheduleHour.toInt()
-        val minute = scheduleMinute.toInt()
-        val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}
-        if (hour == 0) hour = 12
-        Text(
-            text = "$AMPM ${hour}:${String.format("%02d", minute)}",
-            fontSize = 14.sp,
-            color = Color(0xFF7C7C7C),
-            letterSpacing = 0.05.em
-        )
-    }
+    var hour = scheduleHour
+    val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}
+    if (hour == 0) hour = 12
+    Text(
+        text = "$AMPM ${hour}:${String.format("%02d", scheduleMinute)}",
+        fontSize = 14.sp,
+        color = Color(0xFF7C7C7C),
+        letterSpacing = 0.05.em
+    )
 }
 
 @Composable
@@ -400,9 +366,9 @@ fun DestinationContent(
 
 @Composable
 fun MemberListContent(
-    memberList: List<DetailScheduleViewModel.MemberInfo>,
+    memberList: List<MemberInfo>,
     isLocationCheckEnabled: Boolean,
-    updateScreenState: (DetailScheduleViewModel.ScreenState) -> Unit
+    moveToDetailScheduleMapScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     val popupState = remember { PopupState(false, PopupPosition.BottomRight) }
@@ -504,7 +470,7 @@ fun MemberListContent(
                 .background(if (isLocationCheckEnabled) Color(0xFFF9D889) else Color(0xFFAAAAAA))
                 .clickable {
                     if (isLocationCheckEnabled) {
-                        updateScreenState(DetailScheduleViewModel.ScreenState.UserMap)
+                        moveToDetailScheduleMapScreen()
                     } else {
                         Toast
                             .makeText(
@@ -575,31 +541,19 @@ fun MemoContent(
 @Composable
 private fun DetailScheduleScreenPreview() {
     val membersList = listOf(
-        DetailScheduleViewModel.MemberInfo(name = "홍길동")
+        MemberInfo(name = "홍길동")
     )
     WhereAreYouTheme {
         DetailScheduleScreen(
             scheduleId = "",
             updateScheduleId = {},
-            scheduleName = "일정 이름",
-            scheduleYear = "2024",
-            scheduleMonth = "01",
-            scheduleDate = "02",
-            scheduleDayOfWeek = "월",
-            scheduleHour = "23",
-            scheduleMinute = "45",
-            destinationName = "목적지명",
-            destinationAddress = "목적지 주소",
-            memberList = membersList,
-            isLocationCheckEnabled = true,
-            memo = "메모",
+            detailScheduleScreenUIState = DetailScheduleScreenUIState(),
             isScheduleCreator = true,
             deleteSchedule = {},
             quitSchedule = {},
-            updateScreenState = {},
-            getUserLocation = { /*TODO*/ },
-            moveToBackScreen = { /*TODO*/ },
-            moveToModifyScheduleScreen = { /*TODO*/ }
+            moveToBackScreen = {},
+            moveToModifyScheduleScreen = {},
+            moveToDetailScheduleMapScreen = {}
         )
     }
 }

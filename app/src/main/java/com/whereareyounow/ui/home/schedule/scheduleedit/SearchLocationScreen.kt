@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.home.schedule.editschedule
+package com.whereareyounow.ui.home.schedule.scheduleedit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,66 +31,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.searchlocation.SearchLocationScreenUIState
 import com.whereareyounow.domain.entity.schedule.LocationInformation
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareNeo
 
 @Composable
-fun NewLocationScreen(
-    updateDestinationInformation: (String, String, Double, Double) -> Unit,
-    clearDestinationInformation: () -> Unit,
-    moveToNewScheduleScreen: () -> Unit,
+fun SearchLocationScreen(
+    moveToBackScreen: () -> Unit,
     moveToMapScreen: (Double, Double) -> Unit,
-    viewModel: NewLocationViewModel = hiltViewModel()
+    scheduleEditViewModel: ScheduleEditViewModel,
+    searchLocationViewModel: SearchLocationViewModel = hiltViewModel()
 ) {
-    val inputLocationText = viewModel.inputLocationText.collectAsState().value
-    val locationInfoList = viewModel.locationInformationList.collectAsState().value
-    NewLocationScreen(
-        inputLocationText = inputLocationText,
-        updateInputLocationText = viewModel::updateInputLocationText,
-        searchLocation = viewModel::searchLocation,
-        locationInfoList = locationInfoList,
-        updateDestinationInformation = updateDestinationInformation,
-        clearDestinationInformation = clearDestinationInformation,
-        moveToNewScheduleScreen = moveToNewScheduleScreen,
+    val searchLocationScreenUIState = searchLocationViewModel.searchLocationScreenUIState.collectAsState().value
+    SearchLocationScreen(
+        searchLocationScreenUIState = searchLocationScreenUIState,
+        updateInputLocationName = searchLocationViewModel::updateInputLocationText,
+        searchLocation = searchLocationViewModel::searchLocation,
+        updateDestinationInformation = scheduleEditViewModel::updateDestinationInformation,
+        moveToBackScreen = moveToBackScreen,
         moveToMapScreen = moveToMapScreen,
     )
 }
 
 @Composable
-private fun NewLocationScreen(
-    inputLocationText: String,
-    updateInputLocationText: (String) -> Unit,
+private fun SearchLocationScreen(
+    searchLocationScreenUIState: SearchLocationScreenUIState,
+    updateInputLocationName: (String) -> Unit,
     searchLocation: () -> Unit,
-    locationInfoList: List<LocationInformation>,
     updateDestinationInformation: (String, String, Double, Double) -> Unit,
-    clearDestinationInformation: () -> Unit,
-    moveToNewScheduleScreen: () -> Unit,
+    moveToBackScreen: () -> Unit,
     moveToMapScreen: (Double, Double) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
 
     BackHandler {
-        clearDestinationInformation()
-        moveToNewScheduleScreen()
+        moveToBackScreen()
     }
     Column(
         modifier = Modifier
@@ -100,8 +88,7 @@ private fun NewLocationScreen(
     ) {
         // 상단바
         NewLocationScreenTopBar(
-            clearDestinationInformation = clearDestinationInformation,
-            moveToNewScheduleScreen = moveToNewScheduleScreen
+            moveToBackScreen = moveToBackScreen
         )
 
         Spacer(Modifier.height(10.dp))
@@ -115,32 +102,30 @@ private fun NewLocationScreen(
 
         // 장소 검색창
         LocationSearchTextField(
-            inputLocationName = inputLocationText,
-            updateInputText = updateInputLocationText,
+            inputLocationName = searchLocationScreenUIState.inputLocationName,
+            updateInputText = updateInputLocationName,
             searchLocation = searchLocation,
         )
 
         Spacer(Modifier.height(30.dp))
 
         SearchedLocationList(
-            locationInfoList = locationInfoList,
+            locationInfoList = searchLocationScreenUIState.locationInfosList,
             updateDestinationInformation = updateDestinationInformation,
             moveToMapScreen = moveToMapScreen,
-            moveToNewScheduleScreen = moveToNewScheduleScreen
+            moveToNewScheduleScreen = moveToBackScreen
         )
     }
 }
 
 @Composable
 fun NewLocationScreenTopBar(
-    clearDestinationInformation: () -> Unit,
-    moveToNewScheduleScreen: () -> Unit
+    moveToBackScreen: () -> Unit
 ) {
     CustomTopBar(
         title = "장소검색",
         onBackButtonClicked = {
-            clearDestinationInformation()
-            moveToNewScheduleScreen()
+            moveToBackScreen()
         }
     )
 }
@@ -220,7 +205,7 @@ fun SearchedLocationList(
     moveToNewScheduleScreen: () -> Unit
 ) {
     LazyColumn {
-        itemsIndexed(locationInfoList) { idx, item ->
+        itemsIndexed(locationInfoList) { _, item ->
             val lat =
                 (item.mapy.substring(0 until item.mapy.length - 7) + "." + item.mapy.substring(
                     item.mapy.length - 7 until item.mapy.length
@@ -285,14 +270,12 @@ private fun NewLocationScreenPreview() {
         LocationInformation("지역5", "", "", "", "", "주소5", "도로명주소5", "1234567890", "1234567890"),
     )
     WhereAreYouTheme {
-        NewLocationScreen(
-            inputLocationText = "지역텍스트222222222222222222222222222222222222222222222222",
-            updateInputLocationText = {},
+        SearchLocationScreen(
+            searchLocationScreenUIState = SearchLocationScreenUIState(),
+            updateInputLocationName = {},
             searchLocation = {},
-            locationInfoList = locationInfoList,
             updateDestinationInformation = { _, _, _, _ -> },
-            clearDestinationInformation = {},
-            moveToNewScheduleScreen = {},
+            moveToBackScreen = {},
             moveToMapScreen = { _, _ -> }
         )
     }

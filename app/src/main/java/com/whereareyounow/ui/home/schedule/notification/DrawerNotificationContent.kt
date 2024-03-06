@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +44,7 @@ import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
+import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerNotificationContent(
@@ -51,13 +55,11 @@ fun DrawerNotificationContent(
     refuseFriendRequest: (FriendRequest) -> Unit,
     acceptScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
     refuseScheduleRequest: (String, () -> Unit, () -> Unit) -> Unit,
-    hideDrawer: () -> Unit
+    drawerState: DrawerState
 ) {
-    BackHandler {
-        hideDrawer()
-    }
-    LaunchedEffect(Unit) {
-
+    val coroutineScope = rememberCoroutineScope()
+    BackHandler(enabled = !drawerState.isClosed) {
+        coroutineScope.launch { drawerState.close() }
     }
     val density = LocalDensity.current.density
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
@@ -87,13 +89,15 @@ fun DrawerNotificationContent(
                                     modifier = Modifier
                                         .size((GlobalValue.topBarHeight / density / 2).dp)
                                         .clip(RoundedCornerShape(50))
-                                        .clickable { hideDrawer() },
+                                        .clickable {
+                                            coroutineScope.launch { drawerState.close() }
+                                        },
                                     painter = painterResource(id = R.drawable.arrow_back),
                                     contentDescription = null
                                 )
                                 Spacer(Modifier.weight(1f))
                                 Text(
-                                    text = "2",
+                                    text = "${drawerNotificationContentUIState.todayScheduleCount}",
                                     color = Color(0xFFF3A204)
                                 )
                                 Spacer(Modifier.width(10.dp))
@@ -219,7 +223,7 @@ fun DrawerNotificationPreview() {
             refuseFriendRequest = {},
             acceptScheduleRequest = { _, _, _ -> },
             refuseScheduleRequest = { _, _, _ -> },
-            hideDrawer = {}
+            drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         )
     }
 }

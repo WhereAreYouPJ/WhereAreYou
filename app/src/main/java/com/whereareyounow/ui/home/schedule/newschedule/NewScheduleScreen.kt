@@ -1,50 +1,45 @@
 package com.whereareyounow.ui.home.schedule.newschedule
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.whereareyounow.ui.home.schedule.editschedule.ScheduleEditorScreen
-import com.whereareyounow.ui.home.schedule.editschedule.ScheduleEditorViewModel
+import com.whereareyounow.ui.home.schedule.scheduleedit.ScheduleEditScreen
+import com.whereareyounow.ui.home.schedule.scheduleedit.ScheduleEditViewModel
 
 @Composable
 fun NewScheduleScreen(
+    initialYear: Int,
+    initialMonth: Int,
+    initialDate: Int,
+    moveToSearchLocationScreen: () -> Unit,
+    moveToFriendsListScreen: () -> Unit,
     moveToBackScreen: () -> Unit,
-    viewModel: ScheduleEditorViewModel = hiltViewModel()
+    viewModel: ScheduleEditViewModel = hiltViewModel(),
 ) {
-    val selectedFriendsList = viewModel.selectedFriendsList
-    val scheduleName = viewModel.scheduleName.collectAsState().value
-    val scheduleYear = viewModel.scheduleYear.collectAsState().value
-    val scheduleMonth = viewModel.scheduleMonth.collectAsState().value
-    val scheduleDate = viewModel.scheduleDate.collectAsState().value
-    val scheduleHour = viewModel.scheduleHour.collectAsState().value
-    val scheduleMinute = viewModel.scheduleMinute.collectAsState().value
-    val destinationName = viewModel.destinationName.collectAsState().value
-    val destinationAddress = viewModel.destinationAddress.collectAsState().value
-    val memo = viewModel.memo.collectAsState().value
-    val isDatePickerDialogShowing = remember { mutableStateOf(false) }
-    val isTimePickerDialogShowing = remember { mutableStateOf(false) }
-    ScheduleEditorScreen(
-        selectedFriendsList = selectedFriendsList,
-        scheduleName = scheduleName,
+    LaunchedEffect(Unit) {
+        viewModel.updateScheduleDate(
+            year = initialYear,
+            month = initialMonth,
+            date = initialDate
+        )
+    }
+    val scheduleEditScreenUIState = viewModel.scheduleEditScreenUIState.collectAsState().value
+    val scheduleEditScreenSideEffectFlow = viewModel.scheduleEditScreenSideEffectFlow
+    ScheduleEditScreen(
+        scheduleEditScreenUIState = scheduleEditScreenUIState,
+        scheduleEditScreenSideEffectFlow = scheduleEditScreenSideEffectFlow,
         updateScheduleName = viewModel::updateScheduleName,
-        scheduleYear = scheduleYear,
-        scheduleMonth = scheduleMonth,
-        scheduleDate = scheduleDate,
         updateScheduleDate = viewModel::updateScheduleDate,
-        scheduleHour = scheduleHour,
-        scheduleMinute = scheduleMinute,
         updateScheduleTime = viewModel::updateScheduleTime,
-        destinationName = destinationName,
-        destinationAddress = destinationAddress,
-        memo = memo,
         updateMemo = viewModel::updateMemo,
         onComplete = viewModel::addNewSchedule,
-        isDatePickerDialogShowing = isDatePickerDialogShowing,
-        isTimePickerDialogShowing = isTimePickerDialogShowing,
-        moveToBackScreen = moveToBackScreen,
-        moveToFriendsListScreen = { viewModel.updateScreenState(ScheduleEditorViewModel.ScreenState.AddFriends) },
-        moveToSearchLocationScreen = { viewModel.updateScreenState(ScheduleEditorViewModel.ScreenState.SearchLocation) }
+        moveToSearchLocationScreen = moveToSearchLocationScreen,
+        moveToFriendsListScreen = moveToFriendsListScreen,
+        moveToBackScreen = moveToBackScreen
     )
 }
