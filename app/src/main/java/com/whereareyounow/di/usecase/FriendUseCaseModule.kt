@@ -2,12 +2,12 @@ package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.FriendRepository
 import com.whereareyounow.domain.usecase.friend.AcceptFriendRequestUseCase
+import com.whereareyounow.domain.usecase.friend.DeleteFriendUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendIdsListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendRequestListUseCase
 import com.whereareyounow.domain.usecase.friend.RefuseFriendRequestUseCase
 import com.whereareyounow.domain.usecase.friend.SendFriendRequestUseCase
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -57,5 +57,12 @@ object FriendUseCaseModule {
         repository: FriendRepository
     ): SendFriendRequestUseCase {
         return SendFriendRequestUseCase(repository)
+    }
+
+    @Provides
+    fun provideDeleteFriendUseCase(
+        repository: FriendRepository
+    ): DeleteFriendUseCase {
+        return DeleteFriendUseCase(repository)
     }
 }

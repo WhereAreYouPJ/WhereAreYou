@@ -1,6 +1,7 @@
 package com.whereareyounow.api
 
 import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
+import com.whereareyounow.domain.entity.apimessage.friend.DeleteFriendRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListResponse
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
@@ -11,6 +12,7 @@ import com.whereareyounow.domain.entity.apimessage.friend.SendFriendRequestReque
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -60,5 +62,9 @@ interface FriendApi {
     ): Response<Unit>
 
     // 친구 삭제
-
+    @HTTP(method = "DELETE", path = "friend/delete", hasBody = true)
+    suspend fun deleteFriend(
+        @Header("Authorization") token: String,
+        @Body body: DeleteFriendRequest
+    ): Response<Unit>
 }

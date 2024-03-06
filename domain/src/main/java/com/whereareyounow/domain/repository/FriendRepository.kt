@@ -1,6 +1,7 @@
 package com.whereareyounow.domain.repository
 
 import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
+import com.whereareyounow.domain.entity.apimessage.friend.DeleteFriendRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListResponse
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
@@ -49,4 +50,8 @@ interface FriendRepository {
     ): NetworkResult<Unit>
 
     // 친구 삭제
+    suspend fun deleteFriend(
+        token: String,
+        body: DeleteFriendRequest
+    ): NetworkResult<Unit>
 }

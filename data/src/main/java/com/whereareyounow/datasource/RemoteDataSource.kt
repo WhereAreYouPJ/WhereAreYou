@@ -9,6 +9,7 @@ import com.whereareyounow.api.SignUpApi
 import com.whereareyounow.domain.entity.apimessage.fcm.DeleteFCMTokenRequest
 import com.whereareyounow.domain.entity.apimessage.fcm.UpdateFCMTokenRequest
 import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
+import com.whereareyounow.domain.entity.apimessage.friend.DeleteFriendRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListResponse
 import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
@@ -331,6 +332,12 @@ class RemoteDataSource(
     }
 
     // 친구 삭제
+    suspend fun deleteFriend(
+        token: String,
+        body: DeleteFriendRequest
+    ): Response<Unit> {
+        return friendApi.deleteFriend(token, body)
+    }
 
 
     // 그룹 관련
