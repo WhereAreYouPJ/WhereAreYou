@@ -36,6 +36,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -68,6 +69,7 @@ import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.ScrollablePicker
 import com.whereareyounow.ui.component.ScrollableSelectLayout
 import com.whereareyounow.ui.component.rememberScrollableSelectState
 import com.whereareyounow.util.CalendarUtil
@@ -77,6 +79,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun ScheduleEditScreen(
@@ -600,25 +603,32 @@ private fun DateTimePickerDialog(
             usePlatformDefaultWidth = false
         )
     ) {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.YEAR, selectedYear.toInt())
-            set(Calendar.MONTH, selectedMonth.toInt() - 1)
-            set(Calendar.DATE, selectedDate.toInt())
+        val dateMap = remember {
+            Calendar.getInstance().apply {
+                set(Calendar.YEAR, selectedYear)
+                set(Calendar.MONTH, selectedMonth - 1)
+                set(Calendar.DATE, selectedDate)
+            }.let { calendar ->
+                val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(E)", Locale.KOREAN)
+                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - 10)
+                val map = mutableMapOf<Int, String>()
+                repeat(21) {
+                    map[it] = dateFormat.format(calendar.time)
+                    calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 1)
+                }
+                map
+            }
         }
-        val dateList = (-10 .. 10).map {
-            val tmpCalendar = Calendar.getInstance()
-            tmpCalendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + it)
-            tmpCalendar
-        }
+        val dateState = remember { mutableIntStateOf((dateMap.keys.min() + dateMap.keys.max()) / 2) }
         val ampmList = listOf("오전", "오후")
         val hourList = List(40) { 1 .. 12 }.flatten()
         val minuteList = List(40) { 0 .. 11 }.flatten().map { it * 5 }
         val itemHeight = 40
         val itemFontSize = 20
         val dateScrollableSelectState = rememberScrollableSelectState()
-        val ampmScrollableSelectState = rememberScrollableSelectState(if (selectedHour.toInt() >= 12) 1 else 0)
-        val hourScrollableSelectState = rememberScrollableSelectState(120 + selectedHour.toInt() - 1)
-        val minuteScrollableSelectState = rememberScrollableSelectState(120 + selectedMinute.toInt() / 5)
+        val ampmScrollableSelectState = rememberScrollableSelectState(if (selectedHour >= 12) 1 else 0)
+        val hourScrollableSelectState = rememberScrollableSelectState(120 + selectedHour - 1)
+        val minuteScrollableSelectState = rememberScrollableSelectState(120 + selectedMinute / 5)
         Surface(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
@@ -651,18 +661,23 @@ private fun DateTimePickerDialog(
                         modifier = Modifier
                             .weight(3f)
                     ) {
-                        ScrollableSelectLayout(
-                            scrollableSelectState = dateScrollableSelectState,
-                            items = dateList,
-                            itemHeight = itemHeight.dp,
-                            visibleAmount = 3
-                        ) { item, selected ->
-                            Text(
-                                text = "${item.get(Calendar.YEAR)}년 ${item.get(Calendar.MONTH) + 1}월 ${item.get(Calendar.DATE)}일(${CalendarUtil.getDayOfWeekString(item.get(Calendar.YEAR), item.get(Calendar.MONTH) + 1, item.get(Calendar.DATE))})",
-                                fontSize = itemFontSize.sp,
-                                color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
-                            )
-                        }
+                        ScrollablePicker(
+                            map = dateMap,
+                            state = dateState,
+                            range = (dateMap.keys.min() .. dateMap.keys.max())
+                        )
+//                        ScrollableSelectLayout(
+//                            scrollableSelectState = dateScrollableSelectState,
+//                            items = dateList,
+//                            itemHeight = itemHeight.dp,
+//                            visibleAmount = 3
+//                        ) { item, selected ->
+//                            Text(
+//                                text = "${item.get(Calendar.YEAR)}년 ${item.get(Calendar.MONTH) + 1}월 ${item.get(Calendar.DATE)}일(${CalendarUtil.getDayOfWeekString(item.get(Calendar.YEAR), item.get(Calendar.MONTH) + 1, item.get(Calendar.DATE))})",
+//                                fontSize = itemFontSize.sp,
+//                                color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
+//                            )
+//                        }
                     }
                     // 오전, 오후
                     Column(
@@ -730,12 +745,18 @@ private fun DateTimePickerDialog(
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
                             .clickable {
-                                val selectedCalendar = dateList[dateScrollableSelectState.currentSwipeItemIndex]
+                                val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(E)", Locale.KOREAN)
+                                val date = dateFormat.parse(dateMap[dateState.intValue]!!)!!
+                                val selectedCalendar = Calendar.getInstance().apply { time = date }
                                 var hour = hourList[hourScrollableSelectState.currentSwipeItemIndex]
                                 if (ampmScrollableSelectState.currentSwipeItemIndex == 1 && hour != 12) hour += 12
                                 if (ampmScrollableSelectState.currentSwipeItemIndex == 0 && hour == 12) hour = 0
                                 val minute = minuteList[minuteScrollableSelectState.currentSwipeItemIndex]
-                                updateScheduleDate(selectedCalendar.get(Calendar.YEAR), selectedCalendar.get(Calendar.MONTH) + 1, selectedCalendar.get(Calendar.DATE))
+                                updateScheduleDate(
+                                    selectedCalendar.get(Calendar.YEAR),
+                                    selectedCalendar.get(Calendar.MONTH) + 1,
+                                    selectedCalendar.get(Calendar.DATE)
+                                )
                                 updateScheduleTime(hour, minute)
                                 closeDialog()
                             }

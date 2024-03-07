@@ -13,8 +13,8 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -33,17 +33,18 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
-fun NumberPicker(
-    state: MutableState<Long>,
+fun ScrollablePicker(
+    map: Map<Int, String>,
+    state: MutableState<Int>,
     modifier: Modifier = Modifier,
-    range: LongRange,
+    range: IntRange,
     onStateChanged: (Int) -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
     val numbersColumnHeight = 70.dp
     val halvedNumbersColumnHeight = numbersColumnHeight / 2
     val halvedNumbersColumnHeightPx = with(LocalDensity.current) { halvedNumbersColumnHeight.toPx() }
-    fun animatedStateValue(offset: Float): Long = state.value - (offset / halvedNumbersColumnHeightPx).toLong()
+    fun animatedStateValue(offset: Float): Int = state.value - (offset / halvedNumbersColumnHeightPx).toInt()
 
     // 드래그에 의해 변경되는 y축 offset
     val animatedOffset = remember { Animatable(0f) }.apply {
@@ -63,7 +64,7 @@ fun NumberPicker(
 
     Column(
         modifier = modifier
-            .wrapContentSize()
+            .height(numbersColumnHeight * 5)
             .draggable(
                 orientation = Orientation.Vertical,
                 state = rememberDraggableState { deltaY ->
@@ -101,30 +102,30 @@ fun NumberPicker(
         ) {
             val labelModifier = Modifier.align(Alignment.Center)
             Label(
-                text = if ((animatedStateValue - 2) in range) (animatedStateValue - 2).toString() else "",
+                text = if ((animatedStateValue - 2) in range) map[animatedStateValue - 2] ?: "" else "",
                 modifier = labelModifier
                     .offset(y = -(halvedNumbersColumnHeight * 2))
                     .alpha((coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4)
             )
             Label(
-                text = if ((animatedStateValue - 1) in range) (animatedStateValue - 1).toString() else "",
+                text = if ((animatedStateValue - 1) in range) map[animatedStateValue - 1] ?: "" else "",
                 modifier = labelModifier
                     .offset(y = -halvedNumbersColumnHeight)
                     .alpha((coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4 * 3 + 0.25f)
             )
             Label(
-                text = animatedStateValue.toString(),
+                text = map[animatedStateValue] ?: "",
                 modifier = labelModifier
                     .alpha((1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx) / 4 * 3 + 0.25f)
             )
             Label(
-                text = if ((animatedStateValue + 1) in range) (animatedStateValue + 1).toString() else "",
+                text = if ((animatedStateValue + 1) in range) map[animatedStateValue + 1] ?: "" else "",
                 modifier = labelModifier
                     .offset(y = halvedNumbersColumnHeight)
                     .alpha((-coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4 * 3 + 0.25f)
             )
             Label(
-                text = if ((animatedStateValue + 2) in range) (animatedStateValue + 2).toString() else "",
+                text = if ((animatedStateValue + 2) in range) map[animatedStateValue + 2] ?: "" else "",
                 modifier = labelModifier
                     .offset(y = halvedNumbersColumnHeight * 2)
                     .alpha((-coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4)
@@ -138,11 +139,9 @@ private fun Label(text: String, modifier: Modifier) {
     Text(
         text = text,
         modifier = modifier.pointerInput(Unit) {
-            detectTapGestures(onLongPress = {
-                // FIXME: Empty to disable text selection
-            })
+            detectTapGestures(onLongPress = {})
         },
-        fontSize = 30.sp,
+        fontSize = 20.sp,
     )
 }
 

@@ -87,6 +87,7 @@ fun ScheduleScreen(
     val drawerNotificationContentUIState = notificationViewModel.drawerNotificationUIState.collectAsState().value
     val drawerNotificationContentSideEffectFlow = notificationViewModel.drawerNotificationContentSideEffectFlow
     ScheduleScreen(
+        paddingValues = paddingValues,
         calendarScreenUIState = calendarScreenUIState,
         calendarScreenSideEffectFlow = calendarScreenSideEffectFlow,
         drawerNotificationContentUIState = drawerNotificationContentUIState,
@@ -110,6 +111,7 @@ fun ScheduleScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreen(
+    paddingValues: PaddingValues,
     calendarScreenUIState: CalendarScreenUIState,
     calendarScreenSideEffectFlow: SharedFlow<CalendarScreenSideEffect>,
     drawerNotificationContentUIState: DrawerNotificationContentUIState,
@@ -161,6 +163,7 @@ fun ScheduleScreen(
     // 사이드바가 오른쪽에서 열리게 하기 위한 Rtl
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
+//            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
             drawerContent = {
                 DrawerNotificationContent(
                     drawerNotificationContentUIState = drawerNotificationContentUIState,
@@ -467,7 +470,7 @@ private fun ScheduleScreenPreview2() {
         Schedule(2024, 2, 3),
     )
     val briefScheduleList = listOf(
-        BriefSchedule("", "title", "2023-01-02T10:20")
+        BriefSchedule("", "title", "2023-01-02T10:20:00")
     )
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed,

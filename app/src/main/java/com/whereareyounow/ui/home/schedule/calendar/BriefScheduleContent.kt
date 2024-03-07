@@ -2,7 +2,6 @@
 
 package com.whereareyounow.ui.home.schedule.calendar
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -44,9 +43,7 @@ import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.CalendarUtil
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -167,10 +164,6 @@ fun BriefScheduleList(
                 lineHeight = 28.sp
             )
         )
-
-        val currentYear = CalendarUtil.getCurrentYear()
-        val currentMonth = CalendarUtil.getCurrentMonth()
-        val currentDate = CalendarUtil.getCurrentDate()
 
         LazyColumn(
             contentPadding = PaddingValues(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 20.dp)
