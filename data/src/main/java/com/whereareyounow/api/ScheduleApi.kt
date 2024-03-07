@@ -9,13 +9,13 @@ import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefSchedul
 import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.GetTodayScheduleCountResponse
 import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
+import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
 import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.Header
@@ -100,6 +100,13 @@ interface ScheduleApi {
         @Body body: RefuseOrQuitScheduleRequest
     ): Response<Unit>
 
+    // 오늘 일정 개수
+    @GET("schedule/today")
+    suspend fun getTodayScheduleCount(
+        @Header("Authorization") token: String,
+        @Query("memberId") memberId: String
+    ): Response<GetTodayScheduleCountResponse>
+
     // 일정 초대 목록
     @GET("memberschedule/invite")
     suspend fun getScheduleInvitation(
@@ -107,6 +114,7 @@ interface ScheduleApi {
         @Query("memberId") memberId: String
     ): Response<GetScheduleInvitationResponse>
 
+    // 캘린더 삭제
     @HTTP(method = "DELETE", path = "schedule/reset", hasBody = true)
     suspend fun resetCalendar(
         @Header("Authorization") token: String,
