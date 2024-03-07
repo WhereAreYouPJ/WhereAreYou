@@ -22,11 +22,14 @@ fun NewScheduleScreen(
     viewModel: ScheduleEditViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.updateScheduleDate(
-            year = initialYear,
-            month = initialMonth,
-            date = initialDate
-        )
+        if (!viewModel.isInitialized) {
+            viewModel.isInitialized = true
+            viewModel.updateScheduleDate(
+                year = initialYear,
+                month = initialMonth,
+                date = initialDate
+            )
+        }
     }
     val scheduleEditScreenUIState = viewModel.scheduleEditScreenUIState.collectAsState().value
     val scheduleEditScreenSideEffectFlow = viewModel.scheduleEditScreenSideEffectFlow
