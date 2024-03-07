@@ -2,6 +2,8 @@ package com.whereareyounow.ui.home.schedule.calendar
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -31,7 +33,9 @@ fun CalendarContent(
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
     Box(
-        modifier = Modifier.height(((GlobalValue.calendarViewHeight + state.offset) / density.density).dp)
+        modifier = Modifier
+            .height(((GlobalValue.calendarViewHeight + state.offset) / density.density).dp)
+            .anchoredDraggable(state, Orientation.Vertical)
     ) {
         DateCalendar(
             currentMonthCalendarInfo = currentMonthCalendarInfo,
