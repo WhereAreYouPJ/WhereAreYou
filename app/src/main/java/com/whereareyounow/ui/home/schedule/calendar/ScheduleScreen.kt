@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -225,7 +226,7 @@ fun ScheduleScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreenTopBar(
     updateCurrentMonthCalendarInfo: () -> Unit,
@@ -386,11 +387,10 @@ fun ScheduleScreenTopBar(
                 }
             }
         }
+        Spacer(Modifier.weight(1f))
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 20.dp),
-            contentAlignment = Alignment.CenterEnd
+            modifier = Modifier.size(40.dp),
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 modifier = Modifier
@@ -403,7 +403,17 @@ fun ScheduleScreenTopBar(
                 painter = painterResource(id = R.drawable.icon_bell),
                 contentDescription = null
             )
+            Box(
+                modifier = Modifier
+                    .offset(10.dp, (-10).dp)
+                    .size(6.dp)
+                    .background(
+                        color = Color(0xFFFF0000),
+                        shape = CircleShape
+                    )
+            )
         }
+        Spacer(Modifier.width(20.dp))
     }
 }
 
@@ -412,7 +422,7 @@ private val anchoredDraggableState = AnchoredDraggableState(
     initialValue = DetailState.Open,
     positionalThreshold = { it: Float -> it * 0.5f },
     velocityThreshold = { 100f },
-    animationSpec = tween(400)
+    animationSpec = tween(200)
 ).apply {
         updateAnchors(
             DraggableAnchors {

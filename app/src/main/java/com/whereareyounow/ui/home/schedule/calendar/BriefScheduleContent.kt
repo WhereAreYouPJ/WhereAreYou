@@ -120,7 +120,7 @@ fun BriefScheduleContainer(
                 .fillMaxWidth()
                 .height(((GlobalValue.dailyScheduleViewHeight / density) - 20).dp)
                 .background(
-                    color = Color(0xFFFFFF)
+                    color = Color(0xFFFFFFFF)
                 )
         ) {
             briefScheduleList()
