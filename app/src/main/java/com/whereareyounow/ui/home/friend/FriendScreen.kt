@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -109,7 +108,7 @@ fun FriendScreenTopBar(
     ) {
         val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
         Text(
-            modifier = Modifier.clickable { isFriendPage.value = true },
+//            modifier = Modifier.clickable { isFriendPage.value = true },
             text = "친구",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold
@@ -150,34 +149,34 @@ fun FriendScreenTopBar(
                                     fontFamily = nanumSquareNeo
                                 )
                             }
-                            Box(
-                                modifier = Modifier
-                                    .width(1.dp)
-                                    .fillMaxHeight()
-                                    .background(Color(0xFFF9D889))
-                                    .padding(top = 10.dp, bottom = 10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(Color(0xFF000000))
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
-                                    .background(Color(0xFFF9D889))
-                                    .clickable {
-                                        popupState.isVisible = false
-                                        moveToAddGroupScreen()
-                                    }
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(10.dp),
-                                    text = "그룹추가",
-                                    fontFamily = nanumSquareNeo
-                                )
-                            }
+//                            Box(
+//                                modifier = Modifier
+//                                    .width(1.dp)
+//                                    .fillMaxHeight()
+//                                    .background(Color(0xFFF9D889))
+//                                    .padding(top = 10.dp, bottom = 10.dp)
+//                            ) {
+//                                Box(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .background(Color(0xFF000000))
+//                                )
+//                            }
+//                            Box(
+//                                modifier = Modifier
+//                                    .clip(RoundedCornerShape(topEnd = 50f, bottomEnd = 50f))
+//                                    .background(Color(0xFFF9D889))
+//                                    .clickable {
+//                                        popupState.isVisible = false
+//                                        moveToAddGroupScreen()
+//                                    }
+//                            ) {
+//                                Text(
+//                                    modifier = Modifier.padding(10.dp),
+//                                    text = "그룹추가",
+//                                    fontFamily = nanumSquareNeo
+//                                )
+//                            }
                         }
                     }
                 }

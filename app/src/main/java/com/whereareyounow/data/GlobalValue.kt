@@ -13,6 +13,6 @@ object GlobalValue {
     // 캘린더 뷰 높이
     var calendarViewHeight = 1080f
     // 일별 간략 정보 뷰 높이
-    var dailyScheduleViewHeight = 1620f
+    var dailyBriefScheduleViewHeight = 1620f
     // 상단 상태바 높이
 }

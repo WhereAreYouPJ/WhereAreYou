@@ -1,26 +1,16 @@
 package com.whereareyounow
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
@@ -99,7 +89,7 @@ class MainActivity : ComponentActivity() {
         // 캘린더 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 2/5
         GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
         // 일별 간략 정보 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 3/5
-        GlobalValue.dailyScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
+        GlobalValue.dailyBriefScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
         Log.e("ScreenValue", "statusBarHeight: $statusBarHeight ${statusBarHeight / density}\n" +
                 "systemNavigationBarHeight: $systemNavigationBarHeight ${systemNavigationBarHeight / density}\n" +
                 "screenHeightWithoutStatusBar: ${GlobalValue.screenHeightWithoutStatusBar} ${GlobalValue.screenHeightWithoutStatusBar / density}\n" +
@@ -107,7 +97,7 @@ class MainActivity : ComponentActivity() {
                 "bottomNavBarHeight: ${GlobalValue.bottomNavBarHeight} ${GlobalValue.bottomNavBarHeight / density}\n" +
                 "topBarHeight: ${GlobalValue.topBarHeight} ${GlobalValue.topBarHeight / density}\n" +
                 "calendarViewHeight: ${GlobalValue.calendarViewHeight} ${GlobalValue.calendarViewHeight / density}\n" +
-                "dailyScheduleViewHeight: ${GlobalValue.dailyScheduleViewHeight} ${GlobalValue.dailyScheduleViewHeight / density}"
+                "dailyScheduleViewHeight: ${GlobalValue.dailyBriefScheduleViewHeight} ${GlobalValue.dailyBriefScheduleViewHeight / density}"
         )
     }
 }
