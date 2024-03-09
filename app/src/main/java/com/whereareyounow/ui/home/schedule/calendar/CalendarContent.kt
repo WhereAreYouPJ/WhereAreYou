@@ -46,6 +46,7 @@ fun CalendarContent(
             updateMonth = updateMonth,
             selectedDate = selectedDate,
             updateDate = updateDate,
+            anchorOffset = state.offset,
             expandDetailContent = { coroutineScope.launch(Dispatchers.Default) { state.animateTo(DetailState.Open) } }
         )
     }

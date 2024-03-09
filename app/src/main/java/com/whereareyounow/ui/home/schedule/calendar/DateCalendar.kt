@@ -36,6 +36,7 @@ fun DateCalendar(
     updateMonth: (Int) -> Unit,
     selectedDate: Int,
     updateDate: (Int) -> Unit,
+    anchorOffset: Float,
     expandDetailContent: () -> Unit
 ) {
     // 일자 선택 화면
@@ -102,6 +103,9 @@ fun DateCalendar(
                         contentAlignment = Alignment.TopCenter
                     ) {
                         DateBox(
+                            anchorOffset = anchorOffset,
+                            year = currentMonthCalendarInfo[i + idx * 7].year,
+                            month = currentMonthCalendarInfo[i + idx * 7].month,
                             date = currentMonthCalendarInfo[i + idx * 7].date,
                             scheduleCount = currentMonthCalendarInfo[i + idx * 7].scheduleCount,
                             isSelected = selectedYear == currentMonthCalendarInfo[i + idx * 7].year &&
@@ -169,6 +173,7 @@ private fun DateCalendarPreview() {
             updateMonth = {  },
             selectedDate = 2,
             updateDate = {  },
+            anchorOffset = 0f,
             expandDetailContent = {  }
         )
     }
