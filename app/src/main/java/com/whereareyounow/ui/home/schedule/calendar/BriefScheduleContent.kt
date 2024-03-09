@@ -79,7 +79,7 @@ fun BriefScheduleContainer(
     Column(
         modifier = Modifier
             .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density + 2).dp)
-            .height(((GlobalValue.dailyScheduleViewHeight / density)).dp)
+            .height(((GlobalValue.dailyBriefScheduleViewHeight / density)).dp)
             .offset {
                 IntOffset(
                     x = 0,
@@ -118,7 +118,7 @@ fun BriefScheduleContainer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(((GlobalValue.dailyScheduleViewHeight / density) - 20).dp)
+                .height(((GlobalValue.dailyBriefScheduleViewHeight / density) - 20).dp)
                 .background(
                     color = Color(0xFFFFFFFF)
                 )
@@ -257,7 +257,7 @@ private fun BriefScheduleContentPreview() {
         updateAnchors(
             DraggableAnchors {
                 DetailState.Open at 0f
-                DetailState.Close at GlobalValue.dailyScheduleViewHeight
+                DetailState.Close at GlobalValue.dailyBriefScheduleViewHeight
             }
         )
     }

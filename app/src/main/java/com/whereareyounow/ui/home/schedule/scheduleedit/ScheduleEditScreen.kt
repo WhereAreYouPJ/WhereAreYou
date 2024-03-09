@@ -118,6 +118,7 @@ fun ScheduleEditScreen(
                     outPositions: IntArray
                 ) {
                     var currentOffset = 0
+                    Log.e("Arrangement.Vertical.Start", "${totalSize.toDp()}\n${sizes.map { it.toDp() }}\n${outPositions.map { it.toDp() }}")
                     sizes.forEachIndexed { index, size ->
                         if (index == sizes.lastIndex) {
                             outPositions[index] = totalSize - size
@@ -126,6 +127,7 @@ fun ScheduleEditScreen(
                             currentOffset += size
                         }
                     }
+                    Log.e("Arrangement.Vertical.End", "${totalSize.toDp()}\n${sizes.map { it.toDp() }}\n${outPositions.map { it.toDp() }}")
                 }
             }
         }
@@ -220,7 +222,7 @@ fun ScheduleEditScreen(
                 )
             }
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(20.dp))
         }
 
         item {

@@ -403,15 +403,15 @@ fun ScheduleScreenTopBar(
                 painter = painterResource(id = R.drawable.icon_bell),
                 contentDescription = null
             )
-            Box(
-                modifier = Modifier
-                    .offset(10.dp, (-10).dp)
-                    .size(6.dp)
-                    .background(
-                        color = Color(0xFFFF0000),
-                        shape = CircleShape
-                    )
-            )
+//            Box(
+//                modifier = Modifier
+//                    .offset(10.dp, (-10).dp)
+//                    .size(6.dp)
+//                    .background(
+//                        color = Color(0xFFFF0000),
+//                        shape = CircleShape
+//                    )
+//            )
         }
         Spacer(Modifier.width(20.dp))
     }
@@ -427,7 +427,7 @@ private val anchoredDraggableState = AnchoredDraggableState(
         updateAnchors(
             DraggableAnchors {
                 DetailState.Open at 0f
-                DetailState.Close at GlobalValue.dailyScheduleViewHeight
+                DetailState.Close at GlobalValue.dailyBriefScheduleViewHeight
             }
         )
     }
