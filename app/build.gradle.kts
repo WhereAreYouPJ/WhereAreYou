@@ -20,7 +20,8 @@ android {
         versionCode = 43
         versionName = "1.0.1"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.whereareyounow.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -124,8 +125,24 @@ dependencies {
 
     // hilt
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-    implementation("com.google.dagger:hilt-android:2.48")
+    implementation("com.google.dagger:hilt-android:2.37")
     kapt("com.google.dagger:hilt-android-compiler:2.46.1")
+
+    // For Robolectric tests.
+    testImplementation("com.google.dagger:hilt-android-testing:2.37")
+    // ...with Kotlin.
+    kaptTest("com.google.dagger:hilt-android-compiler:2.37")
+    // ...with Java.
+    testAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.37")
+
+
+    // For instrumented tests.
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
+    // ...with Kotlin.
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.37")
+    // ...with Java.
+    androidTestAnnotationProcessor("com.google.dagger:hilt-android-compiler:2.37")
+
 
     // System UI Controller
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
