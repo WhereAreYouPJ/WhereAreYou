@@ -1,15 +1,18 @@
 package com.whereareyounow.util
 
+import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import com.whereareyounow.WhereAreYouApplication
+import javax.inject.Inject
 
-object NetworkManager {
+class NetworkManager @Inject constructor(
+    private val context: Context
+){
 
     fun checkNetworkState(): Boolean {
         val connectivityManager: ConnectivityManager =
-            WhereAreYouApplication.applicationContext().getSystemService(ConnectivityManager::class.java)
+            context.getSystemService(ConnectivityManager::class.java)
 
         val network: Network = connectivityManager.activeNetwork ?: return false
         val actNetwork: NetworkCapabilities =

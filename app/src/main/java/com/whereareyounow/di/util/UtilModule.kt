@@ -8,6 +8,7 @@ import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyounow.util.InputTextValidator
 import com.whereareyounow.util.LocationUtil
+import com.whereareyounow.util.NetworkManager
 import com.whereareyounow.util.TokenManager
 import dagger.Module
 import dagger.Provides
@@ -52,5 +53,13 @@ object UtilModule {
     @Singleton
     fun inputTextValidator(): InputTextValidator {
         return InputTextValidator()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkManager(
+        @ApplicationContext context: Context
+    ): NetworkManager {
+        return NetworkManager(context)
     }
 }
