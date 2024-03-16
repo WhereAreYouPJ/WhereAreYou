@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
 fun BottomOKButton(
+    contentDescription: String = "",
     text: String,
     onClick: () -> Unit,
     isLoading: Boolean = false
@@ -31,6 +33,7 @@ fun BottomOKButton(
     val focusManager = LocalFocusManager.current
     Box(
         modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
             .fillMaxWidth()
             .height(60.dp)
             .clip(RoundedCornerShape(8.dp))
