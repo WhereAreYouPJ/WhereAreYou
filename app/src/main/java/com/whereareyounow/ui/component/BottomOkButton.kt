@@ -37,7 +37,7 @@ fun BottomOKButton(
             .fillMaxWidth()
             .height(60.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF2D2573))
+            .background(Color(0xFF9286FF))
             .clickable {
                 focusManager.clearFocus()
                 onClick()

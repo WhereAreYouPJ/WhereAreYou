@@ -135,9 +135,8 @@ fun ScheduleRequestBox(
                 )
             }
             Spacer(Modifier.height(10.dp))
-            Row(
-            ) {
-                ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptScheduleRequest() }
+            Row {
+                ClickableBox(color = Color(0xFF9286FF), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptScheduleRequest() }
                 Spacer(Modifier.width(10.dp))
                 ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseScheduleRequest() }
             }
