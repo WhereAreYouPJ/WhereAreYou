@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,10 +27,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +55,9 @@ import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.GrayCircle
+import com.whereareyounow.ui.component.YellowCheckCircle
+import com.whereareyounow.ui.component.YellowDoubleCircle
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -138,7 +148,12 @@ private fun SignUpScreen(
         item {
             Column(modifier = Modifier.fillMaxSize()) {
                 SignUpScreenTopBar(moveToBackScreen = moveToBackScreen)
+
                 Spacer(Modifier.height(20.dp))
+
+                TopProgressContent()
+
+                Spacer(Modifier.height(40.dp))
 
                 // 사용자명 입력
                 Title(text = "이름")
@@ -286,7 +301,7 @@ private fun SignUpScreen(
         item {
             // 회원가입 버튼
             BottomOKButton(
-                text = "회원가입",
+                text = "시작하기",
                 onClick = { signUp(moveToSignUpSuccessScreen) }
             )
 
@@ -303,6 +318,103 @@ fun SignUpScreenTopBar(
         title = "회원가입",
         onBackButtonClicked = moveToBackScreen
     )
+}
+
+@Composable
+private fun TopProgressContent() {
+    Layout(
+        content = {
+            TopProgressBar(Modifier.layoutId("TOP_PROGRESS_BAR"))
+            Text(
+                modifier = Modifier.layoutId("TEXT_1"),
+                text = "약관동의",
+                fontSize = 16.sp,
+                color = Color(0xFF5F5F5F)
+            )
+            Text(
+                modifier = Modifier.layoutId("TEXT_2"),
+                text = "정보입력",
+                fontSize = 16.sp,
+                color = Color(0xFF5F5F5F)
+            )
+            Text(
+                modifier = Modifier.layoutId("TEXT_3"),
+                text = "가입완료",
+                fontSize = 16.sp,
+                color = Color(0xFF959595)
+            )
+        },
+        modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+    ) { measurables, constraint ->
+        val text1 = measurables.first { it.layoutId == "TEXT_1" }.measure(constraint)
+        val text2 = measurables.first { it.layoutId == "TEXT_2" }.measure(constraint)
+        val text3 = measurables.first { it.layoutId == "TEXT_3" }.measure(constraint)
+        val topProgressBar = measurables.first { it.layoutId == "TOP_PROGRESS_BAR" }.measure(
+            Constraints(
+                minWidth = 0,
+                minHeight = 0,
+                maxWidth = constraint.maxWidth - text1.width + 20.dp.toPx().toInt(),
+                maxHeight = constraint.maxHeight
+            )
+        )
+        val space = 10
+        val height = topProgressBar.height + space.dp.toPx() + text1.height
+
+        layout(constraint.maxWidth, height.toInt()) {
+            topProgressBar.place((constraint.maxWidth - topProgressBar.width) / 2, 0)
+            text1.place(0, topProgressBar.height + space.dp.toPx().toInt())
+            text2.place((constraint.maxWidth - text2.width) / 2, topProgressBar.height + space.dp.toPx().toInt())
+            text3.place(constraint.maxWidth - text3.width, topProgressBar.height + space.dp.toPx().toInt())
+        }
+    }
+}
+
+@Composable
+private fun TopProgressBar(modifier: Modifier) {
+    val progressBarHeight = 20
+    Layout(
+        content = {
+            YellowCheckCircle(
+                Modifier
+                    .layoutId("YELLOW_CHECK_CIRCLE")
+                    .size(progressBarHeight.dp)
+            )
+            YellowDoubleCircle(
+                Modifier
+                    .layoutId("YELLOW_DOUBLE_CIRCLE")
+                    .size(progressBarHeight.dp)
+            )
+            GrayCircle(
+                Modifier
+                    .layoutId("GRAY_CIRCLE")
+                    .size(progressBarHeight.dp)
+            )
+        },
+        modifier = modifier
+            .drawBehind {
+                drawRect(
+                    color = Color(0xFFFFC34E),
+                    topLeft = Offset((progressBarHeight / 2).dp.toPx(), ((progressBarHeight - 2) / 2).dp.toPx()),
+                    size = Size((size.width - progressBarHeight.dp.toPx()) / 2, 2.dp.toPx())
+                )
+                drawRect(
+                    color = Color(0xFFBBBAB8),
+                    topLeft = Offset(size.width / 2, ((progressBarHeight - 2) / 2).dp.toPx()),
+                    size = Size((size.width - progressBarHeight.dp.toPx()) / 2, 2.dp.toPx())
+                )
+            }
+    ) { measurables, constraint ->
+        val yellowCheckCircle = measurables.first { it.layoutId == "YELLOW_CHECK_CIRCLE" }.measure(constraint)
+        val yellowDoubleCircle = measurables.first { it.layoutId == "YELLOW_DOUBLE_CIRCLE" }.measure(constraint)
+        val grayCircle = measurables.first { it.layoutId == "GRAY_CIRCLE" }.measure(constraint)
+        val height = listOf(yellowCheckCircle.height, yellowDoubleCircle.height, grayCircle.height).min()
+
+        layout(constraint.maxWidth, height) {
+            yellowCheckCircle.place(0, 0)
+            yellowDoubleCircle.place((constraint.maxWidth - yellowDoubleCircle.width) / 2, 0)
+            grayCircle.place(constraint.maxWidth - grayCircle.width, 0)
+        }
+    }
 }
 
 @Composable
