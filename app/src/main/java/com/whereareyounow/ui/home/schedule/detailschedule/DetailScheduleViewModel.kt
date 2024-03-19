@@ -93,7 +93,7 @@ class DetailScheduleViewModel @Inject constructor(
                                 destinationName = data.place.replace("<b>", "").replace("</b>", ""),
                                 destinationRoadAddress = data.roadName,
                                 memo = data.memo,
-                                isLocationCheckEnabled = CalendarUtil.getMinuteDiffWithCurrentTime(data.appointmentTime.replace("T", " ")) <= 60
+                                isLocationCheckEnabled = CalendarUtil.getMinuteDiffWithCurrentTime(data.appointmentTime) <= 60
                             )
                         }
                         memberIdsList = data.friendsIdList.toMutableList()

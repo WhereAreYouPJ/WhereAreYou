@@ -48,6 +48,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -164,6 +166,8 @@ fun ScheduleScreen(
     // 사이드바가 오른쪽에서 열리게 하기 위한 Rtl
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalNavigationDrawer(
+            modifier = Modifier
+                .semantics { contentDescription = "Main Calendar Screen" },
 //            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
             drawerContent = {
                 DrawerNotificationContent(

@@ -131,7 +131,7 @@ fun DrawerNotificationContent(
                         Spacer(Modifier.height(10.dp))
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = "친구 요청 ${drawerNotificationContentUIState.friendRequestsList.size}",
+                            text = "친구요청 ${drawerNotificationContentUIState.friendRequestsList.size}",
                             color = Color(0xFF999999),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
@@ -163,7 +163,7 @@ fun DrawerNotificationContent(
                         Spacer(Modifier.height(20.dp))
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = "일정 초대 ${drawerNotificationContentUIState.scheduleRequestsList.size}",
+                            text = "일정초대 ${drawerNotificationContentUIState.scheduleRequestsList.size}",
                             color = Color(0xFF999999),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
@@ -192,7 +192,7 @@ fun DrawerNotificationContent(
                     }
                     // 하단 네비게이션 바에 가려지는 부분을 위한 여백
                     item {
-                        Spacer(Modifier.height(((GlobalValue.bottomNavBarHeight / density) + 20).dp))
+                        Spacer(Modifier.height(((GlobalValue.bottomNavBarHeight / density) + 60).dp))
                     }
                 }
             }
@@ -204,8 +204,8 @@ fun DrawerNotificationContent(
 @Composable
 fun DrawerNotificationPreview() {
     val friendRequestsList = listOf(
-        FriendRequest("", "id1") to Friend(0, "memberId1", "name1"),
-        FriendRequest("", "id1") to Friend(0, "memberId1", "name2")
+        FriendRequest("", "id1", "2024-03-20T23:43:13") to Friend(0, "memberId1", "name1"),
+        FriendRequest("", "id1", "2024-03-20T23:43:13") to Friend(0, "memberId1", "name2")
     )
     val scheduleRequestsList = listOf(
         ScheduleInvitationInfo(scheduleId = "", title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", inviterUserName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", year = "2023", month = "12", date = "12", hour = "13", minute = "45",

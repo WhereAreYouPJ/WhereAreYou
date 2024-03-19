@@ -1,7 +1,6 @@
 package com.whereareyounow.ui.home.schedule.calendar
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
@@ -61,7 +60,6 @@ class CalendarViewModel @Inject constructor(
         // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
         val calendarList = CalendarUtil.getCalendarInfo(_calendarScreenUIState.value.selectedYear, _calendarScreenUIState.value.selectedMonth).toMutableList()
 
-        Log.e("", "$calendarList")
         // 빈 달력을 먼저 보여주기 위해 먼저 리스트를 초기화한다.
         _calendarScreenUIState.update {
             it.copy(selectedMonthCalendarInfoList = calendarList.toList())

@@ -28,10 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasurePolicy
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
@@ -65,31 +61,25 @@ private fun ScrollableSelectColumn(
 ) {
     Layout(
         content = content,
-        modifier = modifier,
-        measurePolicy = object : MeasurePolicy {
-            override fun MeasureScope.measure(
-                measurables: List<Measurable>,
-                constraints: Constraints
-            ): MeasureResult {
-                val placeable = measurables.map {
-                    it.measure(constraints)
-                }
-                var needHeight = 0
-                placeable.forEach { placeable ->
-                    needHeight += placeable.height
-                }
-                return layout(
-                    constraints.maxWidth, needHeight
-                ) {
-                    var currentY = 0
-                    placeable.forEach { placeable ->
-                        placeable.placeRelative(x = 0, y = currentY)
-                        currentY += placeable.height
-                    }
-                }
+        modifier = modifier
+    ) { measurables, constraints ->
+        val placeable = measurables.map {
+            it.measure(constraints)
+        }
+        var needHeight = 0
+        placeable.forEach { placeable ->
+            needHeight += placeable.height
+        }
+        layout(
+            constraints.maxWidth, needHeight
+        ) {
+            var currentY = 0
+            placeable.forEach { placeable ->
+                placeable.placeRelative(x = 0, y = currentY)
+                currentY += placeable.height
             }
         }
-    )
+    }
 }
 
 @Composable

@@ -104,11 +104,11 @@ object CalendarUtil {
     fun getCalendarFromString(string: String): Calendar {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val date = format.parse(string)
-        return  Calendar.getInstance().apply { time = date }
+        return Calendar.getInstance().apply { time = date }
     }
 
     fun getMinuteDiffWithCurrentTime(time: String): Int {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val t = dateFormat.parse(time)
         val currentDate = Date()
         val diffInMillis = t.time - currentDate.time

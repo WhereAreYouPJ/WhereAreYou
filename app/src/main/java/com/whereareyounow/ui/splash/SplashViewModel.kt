@@ -33,6 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val application: Application,
+    private val networkManager: NetworkManager,
     private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
@@ -64,7 +65,7 @@ class SplashViewModel @Inject constructor(
     }
 
     fun checkNetworkState(): Boolean {
-        return NetworkManager.checkNetworkState()
+        return networkManager.checkNetworkState()
     }
 
     suspend fun checkIsSignedIn(): Boolean {

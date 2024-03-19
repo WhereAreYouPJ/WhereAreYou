@@ -1,11 +1,9 @@
 package com.whereareyounow.ui.component
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomTextField(
+    contentDescription: String = "",
     hint: String,
     inputText: String,
     onValueChange: (String) -> Unit,
@@ -52,6 +53,7 @@ fun CustomTextField(
     val viewRequester = BringIntoViewRequester()
     BasicTextField(
         modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
             .animateContentSize { _, _ -> }
             .bringIntoViewRequester(viewRequester),
         value = inputText,

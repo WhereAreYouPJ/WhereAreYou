@@ -3,8 +3,6 @@ package com.whereareyounow.ui.splash
 import android.Manifest
 import android.content.pm.PackageManager
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareAc
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -112,7 +112,7 @@ private fun SplashScreen(
                 if (flag) updateCheckingState(SplashViewModel.CheckingState.SIGN_IN)
             }
             SplashViewModel.CheckingState.SIGN_IN -> {
-                coroutineScope.launch {
+                coroutineScope.launch(Dispatchers.Main) {
                     delay(1000)
                     if (checkIsSignedIn()) {
                         moveToMainScreen()
@@ -166,6 +166,9 @@ private fun SplashScreen(
                 Spacer(Modifier.height(30.dp))
                 Image(
                     modifier = Modifier
+                        .semantics {
+                            contentDescription = "Splash Logo"
+                        }
                         .fillMaxWidth(0.5f)
                         .height(IntrinsicSize.Min),
                     painter = painterResource(id = R.drawable.splash_logo),

@@ -30,6 +30,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -98,6 +100,7 @@ private fun SignInScreen(
     }
     Column(
         modifier = Modifier
+            .semantics { contentDescription = "Sign In Screen" }
             .fillMaxSize()
             .background(Color(0xFFFFFFFF))
             .padding(start = 20.dp, end = 20.dp),
@@ -125,6 +128,7 @@ private fun SignInScreen(
 
         // 아이디 입력
         UserIdInputBox(
+            contentDescription = "Id TextField",
             inputText = signInScreenUIState.inputUserId,
             onValueChange = updateInputUserId
         )
@@ -133,6 +137,7 @@ private fun SignInScreen(
 
         // 비밀번호 입력
         PasswordInputBox(
+            contentDescription = "Password TextField",
             inputText = signInScreenUIState.inputPassword,
             onValueChange = updateInputPassword
         )
@@ -152,6 +157,7 @@ private fun SignInScreen(
 
 
         BottomOKButton(
+            contentDescription = "Login Button",
             text = "로그인",
             onClick = { signIn(moveToMainHomeScreen) },
             isLoading = signInScreenUIState.isSignInLoading
@@ -246,10 +252,12 @@ private fun SignInScreen(
 
 @Composable
 private fun UserIdInputBox(
+    contentDescription: String,
     inputText: String,
     onValueChange: (String) -> Unit
 ) {
     CustomTextField(
+        contentDescription = contentDescription,
         hint = "아이디",
         inputText = inputText,
         onValueChange = onValueChange,
@@ -260,10 +268,12 @@ private fun UserIdInputBox(
 
 @Composable
 private fun PasswordInputBox(
+    contentDescription: String,
     inputText: String,
     onValueChange: (String) -> Unit
 ) {
     CustomTextField(
+        contentDescription = contentDescription,
         hint = "비밀번호",
         inputText = inputText,
         onValueChange = onValueChange,

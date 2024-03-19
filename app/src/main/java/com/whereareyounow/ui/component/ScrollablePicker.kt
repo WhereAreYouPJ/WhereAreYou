@@ -88,7 +88,7 @@ fun ScrollablePicker(
 
                         state.value = animatedStateValue(endValue)
 //                        onStateChanged(state.value)
-                        // 애니메이션이 끝난 후 0으로 초기화
+                        // 애니메이션이 끝난 후 offset 을 0으로 초기화
                         animatedOffset.snapTo(0f)
                     }
                 }

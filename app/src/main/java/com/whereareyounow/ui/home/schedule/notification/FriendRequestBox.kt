@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +31,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.util.CalendarUtil
 
 @Composable
 fun FriendRequestBox(
@@ -39,6 +39,7 @@ fun FriendRequestBox(
     acceptFriendRequest: () -> Unit,
     refuseFriendRequest: () -> Unit
 ) {
+    val timePassed = CalendarUtil.getMinuteDiffWithCurrentTime(friendRequest.first.createTime.split(".")[0])
     Row(
         modifier = Modifier
             .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
@@ -59,20 +60,42 @@ fun FriendRequestBox(
             imageOptions = ImageOptions(contentScale = ContentScale.Crop)
         )
         Spacer(Modifier.width(10.dp))
-        Column() {
-            Text(
-                text = friendRequest.second.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
-            )
+        Column {
+            Row {
+                Text(
+                    text = friendRequest.second.name,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    style = TextStyle(
+                        lineHeight = 18.sp
+                    )
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = when {
+                        timePassed < 60 -> "${timePassed}분"
+                        timePassed < 1440 -> "${timePassed / 60}시간"
+                        else -> "${timePassed / 1440}일"
+                    },
+                    fontSize = 14.sp,
+                    style = TextStyle(
+                        lineHeight = 14.sp
+                    ),
+                    color = Color(0xFFB3B3B3)
+                )
+            }
+            Spacer(Modifier.height(2.dp))
             Text(
                 text = friendRequest.second.userId,
                 fontSize = 16.sp,
-                color = Color(0xFF999999)
+                color = Color(0xFF999999),
+                style = TextStyle(
+                    lineHeight = 16.sp
+                )
             )
-            Spacer(Modifier.height(4.dp))
-            Row() {
-                ClickableBox(color = Color(0xFF2D2573), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptFriendRequest() }
+            Spacer(Modifier.height(10.dp))
+            Row {
+                ClickableBox(color = Color(0xFF9286FF), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptFriendRequest() }
                 Spacer(Modifier.width(10.dp))
                 ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseFriendRequest() }
             }
@@ -112,7 +135,7 @@ fun RowScope.ClickableBox(
 @Composable
 private fun FriendRequestBoxPreview() {
     FriendRequestBox(
-        FriendRequest("", "") to Friend(0, "홍길동", "hong", "IdId"),
+        FriendRequest("", "", "2024-03-20T23:43:13") to Friend(0, "홍길동", "hong", "IdId"),
         {}, {}
     )
 }

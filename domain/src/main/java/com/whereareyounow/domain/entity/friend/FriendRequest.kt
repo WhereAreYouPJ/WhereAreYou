@@ -6,5 +6,7 @@ data class FriendRequest(
     @SerializedName("friendRequestId")
     val friendRequestId: String,
     @SerializedName("senderId")
-    val senderId: String
+    val senderId: String,
+    @SerializedName("createTime")
+    val createTime: String
 )

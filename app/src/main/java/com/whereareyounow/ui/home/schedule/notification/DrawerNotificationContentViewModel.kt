@@ -97,7 +97,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             }
         }
         _drawerNotificationContentUIState.update { state ->
-            state.copy(friendRequestsList = requestList)
+            state.copy(friendRequestsList = requestList.sortedByDescending { it.first.createTime })
         }
     }
 

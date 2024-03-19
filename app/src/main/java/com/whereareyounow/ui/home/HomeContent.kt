@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -94,8 +95,9 @@ private fun HomeContent(
         floatingActionButton = {
             if (viewType == ViewType.Calendar) {
                 FloatingActionButton(
+                    shape = CircleShape,
                     contentColor = Color(0xFFFFFFFF),
-                    containerColor = Color(0xFF2D2573),
+                    containerColor = Color(0xFF5448BC),
                     onClick = { moveToAddScheduleScreen(calendarScreenUIState.selectedYear, calendarScreenUIState.selectedMonth, calendarScreenUIState.selectedDate) }
                 ) {
                     Icon(
