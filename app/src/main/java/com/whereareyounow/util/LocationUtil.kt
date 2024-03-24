@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -22,16 +23,21 @@ import javax.inject.Singleton
 class LocationUtil @Inject constructor(
     private val context: Context
 ) {
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+
     fun getCurrentLocation(callback: suspend (LatLng) -> Unit) {
-        val request = LocationRequest.Builder(500)
-            .setMaxUpdates(2)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+
+        locationRequest = LocationRequest.Builder(5000)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
 
-        val client = LocationServices.getFusedLocationProviderClient(context)
-        val locationCallback = object : LocationCallback() {
+        locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                locationResult.locations.lastOrNull()?.let {
+                locationResult.lastLocation?.let {
                     Log.e("location", "${it.latitude}, ${it.longitude}")
 //                    latLng.latitude = it.latitude
 //                    latLng.longitude = it.longitude
@@ -39,7 +45,6 @@ class LocationUtil @Inject constructor(
                         callback(LatLng(it.latitude, it.longitude))
                     }
                 }
-                client.removeLocationUpdates(this)
             }
         }
         if (ActivityCompat.checkSelfPermission(
@@ -50,24 +55,16 @@ class LocationUtil @Inject constructor(
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
-        client.requestLocationUpdates(
-            request,
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
             locationCallback,
             Looper.getMainLooper()
         )
     }
-}
 
-data class Coordinate(
-    var latitude: Double,
-    var longitude: Double
-)
+    fun stopUpdateLocation() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+}
