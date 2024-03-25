@@ -52,6 +52,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -159,7 +160,6 @@ fun ScheduleScreen(
             }
         }
     }
-    val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed
     )
@@ -182,7 +182,7 @@ fun ScheduleScreen(
                 )
             },
             drawerState = drawerState,
-            gesturesEnabled = false
+            gesturesEnabled = drawerState.isOpen
         ) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 // 하단 콘텐츠 상태
@@ -200,7 +200,10 @@ fun ScheduleScreen(
                         selectedMonth = calendarScreenUIState.selectedMonth,
                         updateMonth = updateMonth,
                         drawerState = drawerState,
-                        bottomContentState = bottomContentState
+                        bottomContentState = bottomContentState,
+                        loadFriendRequests = loadFriendRequests,
+                        loadScheduleRequests = loadScheduleRequests,
+                        getTodayScheduleCount = getTodayScheduleCount
                     )
                     // 달력 뷰
                     CalendarContent(
@@ -239,7 +242,10 @@ fun ScheduleScreenTopBar(
     selectedMonth: Int,
     updateMonth: (Int) -> Unit,
     drawerState: DrawerState,
-    bottomContentState: AnchoredDraggableState<DetailState>
+    bottomContentState: AnchoredDraggableState<DetailState>,
+    loadFriendRequests: () -> Unit,
+    loadScheduleRequests: () -> Unit,
+    getTodayScheduleCount: () -> Unit,
 ) {
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
@@ -255,6 +261,7 @@ fun ScheduleScreenTopBar(
             .height((GlobalValue.topBarHeight / density.density).dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val density = LocalDensity.current.density
         Spacer(Modifier.width(20.dp))
         // 년도 선택
         Box {
@@ -275,49 +282,51 @@ fun ScheduleScreenTopBar(
                 popupState = yearDropdownPopupState,
                 onDismissRequest = { yearDropdownPopupState.isVisible = false }
             ) {
-                Box(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(200.dp)
-                        .padding(10.dp)
-                        .offset(x = (-10).dp, y = (-8).dp)
-                ) {
-                    Surface(
-                        color = Color(0xFFFFFFFF),
-                        shadowElevation = 2.dp,
-                        shape = RoundedCornerShape(10.dp)
+                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                    Box(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(200.dp)
+                            .padding(10.dp)
+                            .offset(x = (-10).dp, y = (-8).dp)
                     ) {
-                        val listState = rememberLazyListState()
-                        LaunchedEffect(Unit) { listState.scrollToItem(20) }
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .padding(top = 10.dp, bottom = 10.dp),
-                            state = listState
+                        Surface(
+                            color = Color(0xFFFFFFFF),
+                            shadowElevation = 2.dp,
+                            shape = RoundedCornerShape(10.dp)
                         ) {
-                            itemsIndexed(yearList) {_, year ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp)
-                                        .clickable {
-                                            updateYear(year)
-                                            updateCurrentMonthCalendarInfo()
-                                            coroutineScope.launch {
-                                                bottomContentState.animateTo(
-                                                    DetailState.Close
-                                                )
-                                            }
-                                            yearDropdownPopupState.isVisible = false
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "$year",
-                                        color = Color(0xFF000000),
-                                        fontSize = 20.sp
-                                    )
+                            val listState = rememberLazyListState()
+                            LaunchedEffect(Unit) { listState.scrollToItem(20) }
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .padding(top = 10.dp, bottom = 10.dp),
+                                state = listState
+                            ) {
+                                itemsIndexed(yearList) { _, year ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(40.dp)
+                                            .clickable {
+                                                updateYear(year)
+                                                updateCurrentMonthCalendarInfo()
+                                                coroutineScope.launch {
+                                                    bottomContentState.animateTo(
+                                                        DetailState.Close
+                                                    )
+                                                }
+                                                yearDropdownPopupState.isVisible = false
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "$year",
+                                            color = Color(0xFF000000),
+                                            fontSize = 20.sp
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -344,46 +353,48 @@ fun ScheduleScreenTopBar(
                 popupState = monthDropdownPopupState,
                 onDismissRequest = { monthDropdownPopupState.isVisible = false }
             ) {
-                Box(
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(200.dp)
-                        .padding(10.dp)
-                        .offset(x = (-10).dp, y = (-8).dp)
-                ) {
-                    Surface(
-                        color = Color(0xFFFFFFFF),
-                        shadowElevation = 2.dp,
-                        shape = RoundedCornerShape(10.dp)
+                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                    Box(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(200.dp)
+                            .padding(10.dp)
+                            .offset(x = (-10).dp, y = (-8).dp)
                     ) {
-                        val listState = rememberLazyListState()
-                        LaunchedEffect(Unit) { listState.scrollToItem(selectedMonth) }
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
+                        Surface(
+                            color = Color(0xFFFFFFFF),
+                            shadowElevation = 2.dp,
+                            shape = RoundedCornerShape(10.dp)
                         ) {
-                            itemsIndexed(monthList) {_, month ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp)
-                                        .clickable {
-                                            updateMonth(month)
-                                            updateCurrentMonthCalendarInfo()
-                                            coroutineScope.launch {
-                                                bottomContentState.animateTo(
-                                                    DetailState.Close
-                                                )
-                                            }
-                                            monthDropdownPopupState.isVisible = false
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "$month",
-                                        color = Color(0xFF000000),
-                                        fontSize = 20.sp
-                                    )
+                            val listState = rememberLazyListState()
+                            LaunchedEffect(Unit) { listState.scrollToItem(selectedMonth) }
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                itemsIndexed(monthList) { _, month ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(40.dp)
+                                            .clickable {
+                                                updateMonth(month)
+                                                updateCurrentMonthCalendarInfo()
+                                                coroutineScope.launch {
+                                                    bottomContentState.animateTo(
+                                                        DetailState.Close
+                                                    )
+                                                }
+                                                monthDropdownPopupState.isVisible = false
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "$month",
+                                            color = Color(0xFF000000),
+                                            fontSize = 20.sp
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -401,6 +412,9 @@ fun ScheduleScreenTopBar(
                     .size(40.dp)
                     .clip(CircleShape)
                     .clickable {
+                        loadFriendRequests()
+                        loadScheduleRequests()
+                        getTodayScheduleCount()
                         coroutineScope.launch(Dispatchers.Default) { drawerState.open() }
                     }
                     .padding(8.dp),
@@ -504,7 +518,10 @@ private fun ScheduleScreenPreview2() {
             selectedMonth = 1,
             updateMonth = {},
             drawerState = drawerState,
-            bottomContentState = bottomContentState
+            bottomContentState = bottomContentState,
+            loadFriendRequests = {},
+            loadScheduleRequests = {},
+            getTodayScheduleCount = {}
         )
         // 달력 뷰
         CalendarContent(

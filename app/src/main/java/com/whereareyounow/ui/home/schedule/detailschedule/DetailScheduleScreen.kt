@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -35,10 +36,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -214,6 +217,7 @@ fun ScheduleName(
     quitSchedule: () -> Unit
 ) {
     val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
+    val density = LocalDensity.current.density
     Row(modifier = Modifier.height(IntrinsicSize.Min)) {
         Text(
             text = scheduleName,
@@ -227,58 +231,60 @@ fun ScheduleName(
                 popupState = popupState,
                 onDismissRequest = { popupState.isVisible = false }
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(top = 10.dp, bottom = 20.dp)
-                        .width(100.dp)
-                        .shadow(
-                            elevation = 4.dp,
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(color = Color(0xFFFFFFFF),)
-                ) {
-                    if (isScheduleCreator) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    popupState.isVisible = false
-                                    moveToModifyScheduleScreen()
-                                }
-                                .padding(10.dp),
-                            text = "수정",
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            color = Color(0xFF414141)
-                        )
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    popupState.isVisible = false
-                                    deleteSchedule()
-                                }
-                                .padding(10.dp),
-                            text = "삭제",
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            color = Color(0xFFEC5C5C)
-                        )
-                    } else {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    popupState.isVisible = false
-                                    quitSchedule()
-                                }
-                                .padding(10.dp),
-                            text = "나가기",
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            color = Color(0xFFEC5C5C)
-                        )
+                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 10.dp, bottom = 20.dp)
+                            .width(100.dp)
+                            .shadow(
+                                elevation = 4.dp,
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(color = Color(0xFFFFFFFF),)
+                    ) {
+                        if (isScheduleCreator) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        moveToModifyScheduleScreen()
+                                    }
+                                    .padding(10.dp),
+                                text = "수정",
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color(0xFF414141)
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        deleteSchedule()
+                                    }
+                                    .padding(10.dp),
+                                text = "삭제",
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color(0xFFEC5C5C)
+                            )
+                        } else {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        quitSchedule()
+                                    }
+                                    .padding(10.dp),
+                                text = "나가기",
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color(0xFFEC5C5C)
+                            )
+                        }
                     }
                 }
             }
@@ -371,6 +377,7 @@ fun MemberListContent(
     moveToDetailScheduleMapScreen: () -> Unit,
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current.density
     val popupState = remember { PopupState(false, PopupPosition.BottomRight) }
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -392,55 +399,59 @@ fun MemberListContent(
                 popupState = popupState,
                 onDismissRequest = { popupState.isVisible = false }
             ) {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 10.dp, bottom = 20.dp)
-                        .height(if (memberList.size < 5) (memberList.size * 40 + 40).dp else 220.dp)
-                        .width(240.dp)
-                        .shadow(
-                            elevation = 4.dp,
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(color = Color(0xFFFFFFFF),)
-                ) {
-                    LazyColumn(
+                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                    Box(
                         modifier = Modifier
-                            .padding(20.dp)
+                            .padding(top = 10.dp, bottom = 20.dp)
+                            .height(if (memberList.size < 5) (memberList.size * 40 + 40).dp else 220.dp)
+                            .width(240.dp)
+                            .shadow(
+                                elevation = 4.dp,
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(color = Color(0xFFFFFFFF),)
                     ) {
-                        itemsIndexed(memberList) {_, userInfo ->
-                            Row(
-                                modifier = Modifier.height(40.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                GlideImage(
-                                    modifier = Modifier
-                                        .size(30.dp)
-                                        .clip(RoundedCornerShape(50)),
-                                    imageModel = { userInfo.profileImage ?: R.drawable.idle_profile },
-                                    imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-                                )
-                                Spacer(Modifier.width(10.dp))
-                                Text(
-                                    modifier = Modifier.weight(1f),
-                                    text = userInfo.name,
-                                    fontSize = 16.sp
-                                )
-                                Image(
-                                    painter = painterResource(
-                                        when(userInfo.isArrived) {
-                                            true -> R.drawable.check_circle_fill0_wght300_grad0_opsz24
-                                            false -> R.drawable.cancel_fill0_wght300_grad0_opsz24
-                                        }
-                                    ),
-                                    contentDescription = null,
-                                    colorFilter = ColorFilter.tint(
-                                        when(userInfo.isArrived) {
-                                            true -> Color.Green
-                                            false -> Color.Red
-                                        }
-                                    ),
-                                )
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(20.dp)
+                        ) {
+                            itemsIndexed(memberList) { _, userInfo ->
+                                Row(
+                                    modifier = Modifier.height(40.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    GlideImage(
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .clip(RoundedCornerShape(50)),
+                                        imageModel = {
+                                            userInfo.profileImage ?: R.drawable.idle_profile
+                                        },
+                                        imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+                                    )
+                                    Spacer(Modifier.width(10.dp))
+                                    Text(
+                                        modifier = Modifier.weight(1f),
+                                        text = userInfo.name,
+                                        fontSize = 16.sp
+                                    )
+                                    Image(
+                                        painter = painterResource(
+                                            when (userInfo.isArrived) {
+                                                true -> R.drawable.check_circle_fill0_wght300_grad0_opsz24
+                                                false -> R.drawable.cancel_fill0_wght300_grad0_opsz24
+                                            }
+                                        ),
+                                        contentDescription = null,
+                                        colorFilter = ColorFilter.tint(
+                                            when (userInfo.isArrived) {
+                                                true -> Color.Green
+                                                false -> Color.Red
+                                            }
+                                        ),
+                                    )
+                                }
                             }
                         }
                     }

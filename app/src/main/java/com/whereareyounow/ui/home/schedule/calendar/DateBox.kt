@@ -40,9 +40,9 @@ fun DateBox(
     isSelected: Boolean = false,
     textColor: Color
 ) {
+    val density = LocalDensity.current
     var componentWidth by remember { mutableIntStateOf(0) }
     val calendar = remember{ Calendar.getInstance() }
-    val density = LocalDensity.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,7 +59,7 @@ fun DateBox(
                     color = if (isSelected) {
                         Color(0xFF1D1A7D)
                     } else {
-                        if (calendar.get(Calendar.DATE) == date) Color(0xFFFFD990) else Color(0x00000000)
+                        if (calendar.get(Calendar.MONTH) + 1 == month && calendar.get(Calendar.DATE) == date) Color(0xFFFFD990) else Color(0x00000000)
                     },
                     shape = CircleShape
                 ),
