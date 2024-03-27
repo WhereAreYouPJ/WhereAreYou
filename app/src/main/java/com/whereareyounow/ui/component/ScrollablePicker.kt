@@ -13,6 +13,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,9 +36,9 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ScrollablePicker(
+    modifier: Modifier = Modifier,
     map: Map<Int, String>,
     state: MutableState<Int>,
-    modifier: Modifier = Modifier,
     range: IntRange,
     onStateChanged: (Int) -> Unit = {},
 ) {
@@ -57,6 +59,7 @@ fun ScrollablePicker(
         updateBounds(offsetRange.start, offsetRange.endInclusive)
     }
 
+    // column의 실제 offset
     val coercedAnimatedOffset = animatedOffset.value % halvedNumbersColumnHeightPx
 
     // 실시간으로 변경되는 index
@@ -87,7 +90,7 @@ fun ScrollablePicker(
                         ).endState.value
 
                         state.value = animatedStateValue(endValue)
-//                        onStateChanged(state.value)
+                        onStateChanged(state.value)
                         // 애니메이션이 끝난 후 offset 을 0으로 초기화
                         animatedOffset.snapTo(0f)
                     }
@@ -102,30 +105,30 @@ fun ScrollablePicker(
         ) {
             val labelModifier = Modifier.align(Alignment.Center)
             Label(
-                text = if ((animatedStateValue - 2) in range) map[animatedStateValue - 2] ?: "" else "",
+                text = if ((animatedStateValue - 2) in range) "${map[animatedStateValue - 2]}" else "",
                 modifier = labelModifier
                     .offset(y = -(halvedNumbersColumnHeight * 2))
                     .alpha((coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4)
             )
             Label(
-                text = if ((animatedStateValue - 1) in range) map[animatedStateValue - 1] ?: "" else "",
+                text = if ((animatedStateValue - 1) in range) "${map[animatedStateValue - 1]}" else "",
                 modifier = labelModifier
                     .offset(y = -halvedNumbersColumnHeight)
                     .alpha((coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4 * 3 + 0.25f)
             )
             Label(
-                text = map[animatedStateValue] ?: "",
+                text = "${map[animatedStateValue]}",
                 modifier = labelModifier
                     .alpha((1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx) / 4 * 3 + 0.25f)
             )
             Label(
-                text = if ((animatedStateValue + 1) in range) map[animatedStateValue + 1] ?: "" else "",
+                text = if ((animatedStateValue + 1) in range) "${map[animatedStateValue + 1]}" else "",
                 modifier = labelModifier
                     .offset(y = halvedNumbersColumnHeight)
                     .alpha((-coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4 * 3 + 0.25f)
             )
             Label(
-                text = if ((animatedStateValue + 2) in range) map[animatedStateValue + 2] ?: "" else "",
+                text = if ((animatedStateValue + 2) in range) "${map[animatedStateValue + 2]}" else "",
                 modifier = labelModifier
                     .offset(y = halvedNumbersColumnHeight * 2)
                     .alpha((-coercedAnimatedOffset / halvedNumbersColumnHeightPx) / 4)
@@ -138,9 +141,12 @@ fun ScrollablePicker(
 private fun Label(text: String, modifier: Modifier) {
     Text(
         text = text,
-        modifier = modifier.pointerInput(Unit) {
-            detectTapGestures(onLongPress = {})
-        },
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .pointerInput(Unit) {
+                detectTapGestures(onLongPress = {})
+            },
         fontSize = 20.sp,
     )
 }
