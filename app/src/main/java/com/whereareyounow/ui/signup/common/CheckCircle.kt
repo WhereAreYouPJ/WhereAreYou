@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.component
+package com.whereareyounow.ui.signup.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,7 +9,7 @@ import androidx.compose.ui.res.painterResource
 import com.whereareyounow.R
 
 @Composable
-fun YellowCheckCircle(modifier: Modifier) {
+fun CheckCircle(modifier: Modifier) {
     val painter = painterResource(id = R.drawable.check_yellow_2)
     Layout(
         modifier = modifier

@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.component
+package com.whereareyounow.ui.signup.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,12 +9,12 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun YellowDoubleCircle(modifier: Modifier) {
+fun DoubleCircle(modifier: Modifier) {
     Layout(
         modifier = modifier
             .drawBehind {
                 drawCircle(
-                    color = Color(0xFFFFC34E),
+                    color = Color(0xFF726CA5),
                     radius = this.size.width / 2,
                     center = Offset(
                         x = this.size.width / 2,
@@ -30,7 +30,7 @@ fun YellowDoubleCircle(modifier: Modifier) {
                     )
                 )
                 drawCircle(
-                    color = Color(0xFFFFC34E),
+                    color = Color(0xFF726CA5),
                     radius = this.size.width / 2 - 4.dp.toPx(),
                     center = Offset(
                         x = this.size.width / 2,

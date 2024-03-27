@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.component
+package com.whereareyounow.ui.signup.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
