@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -15,8 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,13 +67,6 @@ fun DateCalendar(
             }
         }
         Spacer(Modifier.height(10.dp))
-        Spacer(
-            Modifier
-                .fillMaxWidth()
-                .drawBehind {
-                    drawLine(Color(0xFFA7A7A7), Offset(0f, 0f), Offset(size.width, 0f))
-                }
-        )
 
         for (idx in 0 until (currentMonthCalendarInfo.size / 7)) {
             Row(modifier = Modifier.weight(1f)) {

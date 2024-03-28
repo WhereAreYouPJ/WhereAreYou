@@ -39,7 +39,7 @@ fun FriendRequestBox(
     acceptFriendRequest: () -> Unit,
     refuseFriendRequest: () -> Unit
 ) {
-    val timePassed = CalendarUtil.getMinuteDiffWithCurrentTime(friendRequest.first.createTime.split(".")[0])
+    val timePassed = CalendarUtil.getMinuteDiffWithCurrentTime(friendRequest.first.requestedTime.split(".")[0])
     Row(
         modifier = Modifier
             .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
@@ -56,7 +56,7 @@ fun FriendRequestBox(
             modifier = Modifier
                 .size(80.dp)
                 .clip(RoundedCornerShape(50)),
-            imageModel = { friendRequest.second.profileImgUrl ?: R.drawable.idle_profile },
+            imageModel = { friendRequest.second.profileImgUrl ?: R.drawable.idle_profile3 },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop)
         )
         Spacer(Modifier.width(10.dp))
