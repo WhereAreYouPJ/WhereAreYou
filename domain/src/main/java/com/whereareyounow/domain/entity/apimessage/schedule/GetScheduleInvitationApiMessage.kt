@@ -15,5 +15,7 @@ data class ScheduleInvitation(
     @SerializedName("userName")
     val userName: String,
     @SerializedName("start")
-    val start: String
+    val start: String,
+    @SerializedName("createTime")
+    val createTime: String
 )

@@ -8,5 +8,6 @@ data class ScheduleInvitationInfo(
     val month: String,
     val date: String,
     val hour: String,
-    val minute: String
+    val minute: String,
+    val invitedTime: String
 )

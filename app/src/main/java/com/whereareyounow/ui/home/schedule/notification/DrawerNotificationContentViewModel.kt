@@ -97,7 +97,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             }
         }
         _drawerNotificationContentUIState.update { state ->
-            state.copy(friendRequestsList = requestList.sortedByDescending { it.first.createTime })
+            state.copy(friendRequestsList = requestList.sortedByDescending { it.first.requestedTime })
         }
     }
 
@@ -121,9 +121,10 @@ class DrawerNotificationContentViewModel @Inject constructor(
                                         month = invitation.start.split("-")[1],
                                         date = invitation.start.split("-")[2].split("T")[0],
                                         hour = invitation.start.split("T")[1].split(":")[0],
-                                        minute = invitation.start.split("T")[1].split(":")[1]
+                                        minute = invitation.start.split("T")[1].split(":")[1],
+                                        invitedTime = invitation.createTime
                                     )
-                                }
+                                }.sortedByDescending { it.invitedTime }
                             )
                         }
                     }
@@ -144,9 +145,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val response = acceptFriendRequestUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "친구 요청 수락")
             when (response) {
-                is NetworkResult.Success -> {
-
-                }
+                is NetworkResult.Success -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("친구 요청이 수락되었습니다.")) }
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
@@ -162,9 +161,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val response = refuseFriendRequestUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "친구 요청 거절")
             when (response) {
-                is NetworkResult.Success -> {
-
-                }
+                is NetworkResult.Success -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("친구 요청이 거절되었습니다.")) }
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
@@ -185,8 +182,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val response = acceptScheduleUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "일정 수락")
             when (response) {
-                is NetworkResult.Success -> {
-                }
+                is NetworkResult.Success -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("일정 초대가 수락되었습니다.")) }
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
@@ -208,8 +204,7 @@ class DrawerNotificationContentViewModel @Inject constructor(
             val response = refuseOrQuitScheduleUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "일정 거절")
             when (response) {
-                is NetworkResult.Success -> {
-                }
+                is NetworkResult.Success -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("일정 초대가 거절되었습니다.")) }
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> { drawerNotificationContentSideEffectFlow.emit(DrawerNotificationContentSideEffect.Toast("오류가 발생했습니다.")) }
             }
