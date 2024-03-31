@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
+import com.whereareyounow.util.CalendarUtil
 
 @Composable
 fun ScheduleRequestBox(
@@ -34,6 +36,7 @@ fun ScheduleRequestBox(
     acceptScheduleRequest: () -> Unit,
     refuseScheduleRequest: () -> Unit
 ) {
+    val timePassed = CalendarUtil.getMinuteDiffWithCurrentTime(scheduleRequest.invitedTime.split(".")[0])
     var hour = scheduleRequest.hour.toInt()
     val minute = scheduleRequest.minute.toInt()
     val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}
@@ -75,15 +78,30 @@ fun ScheduleRequestBox(
             }
             Spacer(Modifier.width(20.dp))
             Column {
-                Text(
-                    text = "${scheduleRequest.title}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    letterSpacing = 0.05.em,
-                    color = Color(0xFF030408)
-                )
+                Row {
+                    Text(
+                        text = "${scheduleRequest.title}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        letterSpacing = 0.05.em,
+                        color = Color(0xFF030408)
+                    )
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = when {
+                            timePassed < 60 -> "${timePassed}분"
+                            timePassed < 1440 -> "${timePassed / 60}시간"
+                            else -> "${timePassed / 1440}일"
+                        },
+                        fontSize = 14.sp,
+                        style = TextStyle(
+                            lineHeight = 14.sp
+                        ),
+                        color = Color(0xFFB3B3B3)
+                    )
+                }
                 Text(
                     text = "${scheduleRequest.year}년 ${scheduleRequest.month}월 ${scheduleRequest.date}일",
                     fontSize = 16.sp,
@@ -96,7 +114,7 @@ fun ScheduleRequestBox(
             modifier = Modifier
                 .fillMaxWidth()
                 .height((0.6).dp)
-                .background(color = Color(0xFF000000))
+                .background(color = Color(0xFFDCDCDC))
         )
         Column(
             modifier = Modifier
@@ -157,6 +175,7 @@ private fun ScheduleRequestBoxPreview() {
             date = "12",
             hour = "13",
             minute = "45",
+            invitedTime = ""
         ),
         acceptScheduleRequest = {},
         refuseScheduleRequest = {}
