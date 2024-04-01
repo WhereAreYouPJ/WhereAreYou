@@ -1,10 +1,6 @@
 package com.whereareyounow.ui.home.schedule.detailschedule
 
-import android.content.Context
-import android.content.Intent
 import android.graphics.BitmapFactory
-import android.location.LocationManager
-import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -28,6 +24,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,7 +38,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -83,8 +83,17 @@ fun DetailScheduleMapScreen(
             memberInfosList = passedMemberInfosList
         )
     }
+
+    DisposableEffect(Unit) {
+        viewModel.sendUserLocation()
+        onDispose {
+            viewModel.stopUpdateLocation()
+        }
+    }
+
     val detailScheduleMapScreenUIState = viewModel.detailScheduleMapScreenUIState.collectAsState().value
     val context = LocalContext.current
+    val density = LocalDensity.current.density
     val locationServiceRequestLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -96,26 +105,26 @@ fun DetailScheduleMapScreen(
         }
     }
 
-    val memberInfosList = detailScheduleMapScreenUIState.memberInfosList
+
     val cameraPositionState = rememberCameraPositionState {
         this.position = CameraPosition(
-            LatLng(0.0, 0.0),
+            LatLng(destinationLatitude, destinationLongitude),
             NaverMapConstants.DefaultCameraPosition.zoom,
             0.0,
             0.0
         )
     }
     val popupState = remember { PopupState(false, PopupPosition.TopLeft) }
-    LaunchedEffect(detailScheduleMapScreenUIState) {
-        if (memberInfosList.isNotEmpty()) {
-            cameraPositionState.position = CameraPosition(
-                LatLng(memberInfosList[0].latitude ?: 0.0, memberInfosList[0].longitude ?: 0.0),
-                NaverMapConstants.DefaultCameraPosition.zoom,
-                0.0,
-                0.0
-            )
-        }
-    }
+//    LaunchedEffect(detailScheduleMapScreenUIState) {
+//        if (detailScheduleMapScreenUIState.memberInfosList.isNotEmpty()) {
+//            cameraPositionState.position = CameraPosition(
+//                LatLng(detailScheduleMapScreenUIState.memberInfosList[0].latitude ?: 0.0, detailScheduleMapScreenUIState.memberInfosList[0].longitude ?: 0.0),
+//                NaverMapConstants.DefaultCameraPosition.zoom,
+//                0.0,
+//                0.0
+//            )
+//        }
+//    }
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(maxZoom = 20.0, minZoom = 5.0)
@@ -160,7 +169,7 @@ fun DetailScheduleMapScreen(
                 icon = OverlayImage.fromResource(R.drawable.destination),
                 captionText = "목적지"
             )
-            for (info in memberInfosList) {
+            for (info in detailScheduleMapScreenUIState.memberInfosList) {
                 if (info.longitude != null && info.latitude != null) {
                     val state = rememberMarkerState(
                         position = LatLng(
@@ -195,20 +204,19 @@ fun DetailScheduleMapScreen(
                     .fillMaxWidth()
                     .height(40.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(50))
-                        .background(Color(0xFFFFD97E))
-                        .clickable {
-                            val locationManager =
-                                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-                            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                                locationServiceRequestLauncher.launch(intent)
-                            } else {
-                                viewModel.sendUserLocation()
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxHeight()
+//                        .clip(RoundedCornerShape(50))
+//                        .background(Color(0xFFFFD97E))
+//                        .clickable {
+//                            val locationManager =
+//                                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//
+//                            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//                                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+//                                locationServiceRequestLauncher.launch(intent)
+//                            } else {
 //                                if (memberInfosList.isNotEmpty()) {
 //                                    cameraPositionState.position = CameraPosition(
 //                                        LatLng(
@@ -220,19 +228,19 @@ fun DetailScheduleMapScreen(
 //                                        0.0
 //                                    )
 //                                }
-                            }
-                        }
-                        .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "업데이트",
-                        fontSize = 14.sp,
-                        fontFamily = nanumSquareNeo,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF463119),
-                    )
-                }
+//                            }
+//                        }
+//                        .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "업데이트",
+//                        fontSize = 14.sp,
+//                        fontFamily = nanumSquareNeo,
+//                        fontWeight = FontWeight.Bold,
+//                        color = Color(0xFF463119),
+//                    )
+//                }
 
                 Spacer(Modifier.weight(1f))
 
@@ -247,7 +255,9 @@ fun DetailScheduleMapScreen(
                             popupState = popupState,
                             onDismissRequest = { popupState.isVisible = false }
                         ) {
-                            UserList(cameraPositionState)
+                            CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                                UserList(cameraPositionState)
+                            }
                         }
                         Box(
                             modifier = Modifier
