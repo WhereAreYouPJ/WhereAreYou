@@ -10,7 +10,7 @@ import kotlin.math.absoluteValue
 object CalendarUtil {
 
     // year년 month월에 몇일까지 있는지 return
-    fun getDayOfMonth(year: Int, month: Int, flag: Type = Type.CURRENT): Int {
+    fun getLastDayOfMonth(year: Int, month: Int, flag: Type = Type.CURRENT): Int {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DATE, 1)
         calendar.set(Calendar.YEAR, year)
@@ -54,7 +54,7 @@ object CalendarUtil {
         // month월 첫 날 요일
         val firstDayOfWeek = getDayOfWeek(year, month, 1)
         calendar.set(year, month - 1, 1)
-        calendar.set(Calendar.DATE, getDayOfMonth(year, month))
+        calendar.set(Calendar.DATE, getLastDayOfMonth(year, month))
         // month월이 총 몇주인지 계산
         val weekCount = calendar.get(Calendar.WEEK_OF_MONTH)
 

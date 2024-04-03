@@ -63,9 +63,8 @@ class DetailScheduleMapViewModel @Inject constructor(
         getUsersLocation()
     }
 
-    fun getUsersLocation() {
+    private fun getUsersLocation() {
         viewModelScope.launch(Dispatchers.Default) {
-            val memberId = getMemberIdUseCase().first()
             val accessToken = getAccessTokenUseCase().first()
             // 유저의 위치를 가져온다.
             val request = GetUserLocationRequest(_detailScheduleMapScreenUIState.value.memberInfosList.map { it.memberId }, scheduleId)
@@ -109,11 +108,15 @@ class DetailScheduleMapViewModel @Inject constructor(
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> { detailScheduleMapScreenSideEffect.emit(DetailScheduleMapScreenSideEffect.Toast("오류가 발생했습니다.")) }
             }
-            Log.e("location", "${sqrt((it.latitude - _detailScheduleMapScreenUIState.value.destinationLatitude).pow(2.0) + (it.longitude - _detailScheduleMapScreenUIState.value.destinationLongitude).pow(2.0))}")
+            Log.e("locationDiff", "${sqrt((it.latitude - _detailScheduleMapScreenUIState.value.destinationLatitude).pow(2.0) + (it.longitude - _detailScheduleMapScreenUIState.value.destinationLongitude).pow(2.0))}")
             if (sqrt((it.latitude - _detailScheduleMapScreenUIState.value.destinationLatitude).pow(2.0) + (it.longitude - _detailScheduleMapScreenUIState.value.destinationLongitude).pow(2.0)) < 0.00335) {
                 checkArrival()
             }
         }
+    }
+
+    fun stopUpdateLocation() {
+        locationUtil.stopUpdateLocation()
     }
 
     private suspend fun checkArrival() {

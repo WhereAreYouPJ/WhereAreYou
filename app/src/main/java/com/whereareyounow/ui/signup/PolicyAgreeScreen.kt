@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTopBar
-import com.whereareyounow.ui.component.GrayCircle
-import com.whereareyounow.ui.component.YellowDoubleCircle
+import com.whereareyounow.ui.signup.common.DoubleCircle
+import com.whereareyounow.ui.signup.common.GrayCircle
 
 @Composable
 fun PolicyAgreeScreen(
@@ -231,25 +231,30 @@ private fun TermsOfServiceScreenTopBar(
     )
 }
 
-@Composable
+private const val TOP_PROGRESS_BAR = "TOP_PROGRESS_BAR"
+private const val TEXT_1 = "TEXT_1"
+private const val TEXT_2 = "TEXT_2"
+private const val TEXT_3 = "TEXT_3"
+
+        @Composable
 private fun TopProgressContent() {
     Layout(
         content = {
-            TopProgressBar(Modifier.layoutId("TOP_PROGRESS_BAR"))
+            TopProgressBar(Modifier.layoutId(TOP_PROGRESS_BAR))
             Text(
-                modifier = Modifier.layoutId("TEXT_1"),
+                modifier = Modifier.layoutId(TEXT_1),
                 text = "약관동의",
                 fontSize = 16.sp,
                 color = Color(0xFF5F5F5F)
             )
             Text(
-                modifier = Modifier.layoutId("TEXT_2"),
+                modifier = Modifier.layoutId(TEXT_2),
                 text = "정보입력",
                 fontSize = 16.sp,
                 color = Color(0xFF959595)
             )
             Text(
-                modifier = Modifier.layoutId("TEXT_3"),
+                modifier = Modifier.layoutId(TEXT_3),
                 text = "가입완료",
                 fontSize = 16.sp,
                 color = Color(0xFF959595)
@@ -257,10 +262,10 @@ private fun TopProgressContent() {
         },
         modifier = Modifier.padding(start = 10.dp, end = 10.dp)
     ) { measurables, constraint ->
-        val text1 = measurables.first { it.layoutId == "TEXT_1" }.measure(constraint)
-        val text2 = measurables.first { it.layoutId == "TEXT_2" }.measure(constraint)
-        val text3 = measurables.first { it.layoutId == "TEXT_3" }.measure(constraint)
-        val topProgressBar = measurables.first { it.layoutId == "TOP_PROGRESS_BAR" }.measure(
+        val text1 = measurables.first { it.layoutId == TEXT_1 }.measure(constraint)
+        val text2 = measurables.first { it.layoutId == TEXT_2 }.measure(constraint)
+        val text3 = measurables.first { it.layoutId == TEXT_3 }.measure(constraint)
+        val topProgressBar = measurables.first { it.layoutId == TOP_PROGRESS_BAR }.measure(
             Constraints(
                 minWidth = 0,
                 minHeight = 0,
@@ -280,24 +285,28 @@ private fun TopProgressContent() {
     }
 }
 
+private const val DOUBLE_CIRCLE = "DOUBLE_CIRCLE"
+private const val GRAY_CIRCLE_1 = "GRAY_CIRCLE_1"
+private const val GRAY_CIRCLE_2 = "GRAY_CIRCLE_2"
+
 @Composable
 private fun TopProgressBar(modifier: Modifier) {
     val progressBarHeight = 20
     Layout(
         content = {
-            YellowDoubleCircle(
+            DoubleCircle(
                 Modifier
-                    .layoutId("YELLOW_DOUBLE_CIRCLE")
+                    .layoutId(DOUBLE_CIRCLE)
                     .size(progressBarHeight.dp)
             )
             GrayCircle(
                 Modifier
-                    .layoutId("GRAY_CIRCLE_1")
+                    .layoutId(GRAY_CIRCLE_1)
                     .size(progressBarHeight.dp)
             )
             GrayCircle(
                 Modifier
-                    .layoutId("GRAY_CIRCLE_2")
+                    .layoutId(GRAY_CIRCLE_2)
                     .size(progressBarHeight.dp)
             )
         },
@@ -310,13 +319,13 @@ private fun TopProgressBar(modifier: Modifier) {
                 )
             }
     ) { measurables, constraint ->
-        val yellowCircle = measurables.first { it.layoutId == "YELLOW_DOUBLE_CIRCLE" }.measure(constraint)
-        val grayCircle1 = measurables.first { it.layoutId == "GRAY_CIRCLE_1" }.measure(constraint)
-        val grayCircle2 = measurables.first { it.layoutId == "GRAY_CIRCLE_2" }.measure(constraint)
-        val height = listOf(yellowCircle.height, grayCircle1.height, grayCircle2.height).min()
+        val doubleCircle = measurables.first { it.layoutId == DOUBLE_CIRCLE }.measure(constraint)
+        val grayCircle1 = measurables.first { it.layoutId == GRAY_CIRCLE_1 }.measure(constraint)
+        val grayCircle2 = measurables.first { it.layoutId == GRAY_CIRCLE_2 }.measure(constraint)
+        val height = listOf(doubleCircle.height, grayCircle1.height, grayCircle2.height).min()
 
         layout(constraint.maxWidth, height) {
-            yellowCircle.place(0, 0)
+            doubleCircle.place(0, 0)
             grayCircle1.place((constraint.maxWidth - grayCircle1.width) / 2, 0)
             grayCircle2.place(constraint.maxWidth - grayCircle2.width, 0)
         }

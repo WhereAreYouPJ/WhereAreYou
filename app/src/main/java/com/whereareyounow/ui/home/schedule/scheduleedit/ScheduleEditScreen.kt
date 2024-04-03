@@ -35,6 +35,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -70,16 +72,12 @@ import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.ScrollablePicker
-import com.whereareyounow.ui.component.ScrollableSelectLayout
-import com.whereareyounow.ui.component.rememberScrollableSelectState
 import com.whereareyounow.util.CalendarUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 @Composable
 fun ScheduleEditScreen(
@@ -333,6 +331,7 @@ fun ScheduleTitleTextField(
     ) {
         Box(
             modifier = Modifier
+                .width(IntrinsicSize.Max)
                 .drawBehind {
                     val borderSize = 1.dp.toPx()
                     drawLine(
@@ -347,7 +346,7 @@ fun ScheduleTitleTextField(
             it()
             if (scheduleName == "") {
                 Text(
-                    text = "일정명을 입력하세요",
+                    text = "제목",
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF7C7C7C)
@@ -599,173 +598,174 @@ private fun DateTimePickerDialog(
     updateScheduleTime: (Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
+    val density = LocalDensity.current.density
     Dialog(
         onDismissRequest = closeDialog,
         properties = DialogProperties(
             usePlatformDefaultWidth = false
         )
     ) {
-        val dateMap = remember {
-            Calendar.getInstance().apply {
-                set(Calendar.YEAR, selectedYear)
-                set(Calendar.MONTH, selectedMonth - 1)
-                set(Calendar.DATE, selectedDate)
-            }.let { calendar ->
-                val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(E)", Locale.KOREAN)
-                calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) - 10)
-                val map = mutableMapOf<Int, String>()
-                repeat(21) {
-                    map[it] = dateFormat.format(calendar.time)
-                    calendar.set(Calendar.DATE, calendar.get(Calendar.DATE) + 1)
+        CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+            val yearScrollableState = remember { mutableIntStateOf(20) }
+            val monthScrollableState = remember { mutableIntStateOf(200) }
+            val dateScrollableState = remember { mutableIntStateOf(200) }
+            val hourScrollableState = remember { mutableIntStateOf(200) }
+            val minuteScrollableState = remember { mutableIntStateOf(200) }
+            val currDate = remember { mutableIntStateOf(selectedDate) }
+            val yearMap = (0..40).associateWith { "${selectedYear + it - 20}년" }
+            val monthMap = (0..400).associateWith { "${((selectedMonth + it + 3) % 12) + 1}월" }
+            val dateMap = remember(yearScrollableState.intValue, monthScrollableState.intValue) {
+                val lastDate = CalendarUtil.getLastDayOfMonth(
+                    yearMap[yearScrollableState.intValue]!!.replace(
+                        "년",
+                        ""
+                    ).toInt(), monthMap[monthScrollableState.intValue]!!.replace("월", "").toInt()
+                )
+                if (lastDate < currDate.intValue) currDate.intValue = lastDate
+                val map = (0..400).associateWith { "${(it % lastDate) + 1}일" }
+                dateScrollableState.intValue = 200
+                while (map[dateScrollableState.intValue]!!.replace("일", "")
+                        .toInt() != currDate.intValue
+                ) {
+                    dateScrollableState.intValue++
                 }
                 map
             }
-        }
-        val dateState = remember { mutableIntStateOf((dateMap.keys.min() + dateMap.keys.max()) / 2) }
-        val ampmList = listOf("오전", "오후")
-        val hourList = List(40) { 1 .. 12 }.flatten()
-        val minuteList = List(40) { 0 .. 11 }.flatten().map { it * 5 }
-        val itemHeight = 40
-        val itemFontSize = 20
-        val dateScrollableSelectState = rememberScrollableSelectState()
-        val ampmScrollableSelectState = rememberScrollableSelectState(if (selectedHour >= 12) 1 else 0)
-        val hourScrollableSelectState = rememberScrollableSelectState(120 + selectedHour - 1)
-        val minuteScrollableSelectState = rememberScrollableSelectState(120 + selectedMinute / 5)
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .height(220.dp),
-            shape = RoundedCornerShape(10.dp),
-            color = Color(0xFFFFFFFF)
-        ) {
-            Column(
-                modifier = Modifier.padding(bottom = 10.dp)
+            val ampmMap = mapOf(0 to "오전", 1 to "오후")
+            val ampmScrollableState =
+                remember { mutableIntStateOf(if (selectedHour < 12) 0 else 1) }
+            val hourMap = (0..400).associateWith { "${((selectedHour + it + 3) % 12) + 1}" }
+            val minuteMap = (0..400).associateWith {
+                String.format(
+                    "%02d",
+                    (((selectedMinute / 5) + it + 4) * 5) % 60
+                )
+            }
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .height(220.dp),
+                shape = RoundedCornerShape(10.dp),
+                color = Color(0xFFFFFFFF)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .drawBehind {
-                            val width = this.size.width
-                            val height = this.size.height
-                            drawRoundRect(
-                                color = Color(0xFFDDDDDD),
-                                topLeft = Offset(20.dp.toPx(), height / 2 - (20.dp.toPx())),
-                                size = Size(width - 40.dp.toPx(), 40.dp.toPx()),
-                                cornerRadius = CornerRadius(10f, 10f)
-                            )
-                        }
-                        .padding(start = 20.dp, end = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.padding(bottom = 10.dp)
                 ) {
-                    // 날짜, 요일
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .weight(3f)
-                    ) {
-                        ScrollablePicker(
-                            map = dateMap,
-                            state = dateState,
-                            range = (dateMap.keys.min() .. dateMap.keys.max())
-                        )
-//                        ScrollableSelectLayout(
-//                            scrollableSelectState = dateScrollableSelectState,
-//                            items = dateList,
-//                            itemHeight = itemHeight.dp,
-//                            visibleAmount = 3
-//                        ) { item, selected ->
-//                            Text(
-//                                text = "${item.get(Calendar.YEAR)}년 ${item.get(Calendar.MONTH) + 1}월 ${item.get(Calendar.DATE)}일(${CalendarUtil.getDayOfWeekString(item.get(Calendar.YEAR), item.get(Calendar.MONTH) + 1, item.get(Calendar.DATE))})",
-//                                fontSize = itemFontSize.sp,
-//                                color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
-//                            )
-//                        }
-                    }
-                    // 오전, 오후
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        ScrollableSelectLayout(
-                            scrollableSelectState = ampmScrollableSelectState,
-                            items = ampmList,
-                            itemHeight = itemHeight.dp,
-                            visibleAmount = 3
-                        ) { item, selected ->
-                            Text(
-                                text = item,
-                                fontSize = itemFontSize.sp,
-                                color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
-                            )
-                        }
-                    }
-                    // 시
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        ScrollableSelectLayout(
-                            scrollableSelectState = hourScrollableSelectState,
-                            items = hourList,
-                            itemHeight = itemHeight.dp,
-                            visibleAmount = 3
-                        ) { item, selected ->
-                            Text(
-                                text = item.toString(),
-                                fontSize = itemFontSize.sp,
-                                color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
-                            )
-                        }
-                    }
-                    // 분
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        ScrollableSelectLayout(
-                            scrollableSelectState = minuteScrollableSelectState,
-                            items = minuteList,
-                            itemHeight = itemHeight.dp,
-                            visibleAmount = 3
-                        ) { item, selected ->
-                            Text(
-                                text = String.format("%02d", item),
-                                fontSize = itemFontSize.sp,
-                                color = if (selected) Color(0xFF000000) else Color(0xFFAAAAAA)
-                            )
-                        }
-                    }
-                }
-                Spacer(Modifier.weight(1f))
-                Box(
-                    modifier = Modifier
-                        .padding(end = 20.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .clickable {
-                                val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(E)", Locale.KOREAN)
-                                val date = dateFormat.parse(dateMap[dateState.intValue]!!)!!
-                                val selectedCalendar = Calendar.getInstance().apply { time = date }
-                                var hour = hourList[hourScrollableSelectState.currentSwipeItemIndex]
-                                if (ampmScrollableSelectState.currentSwipeItemIndex == 1 && hour != 12) hour += 12
-                                if (ampmScrollableSelectState.currentSwipeItemIndex == 0 && hour == 12) hour = 0
-                                val minute = minuteList[minuteScrollableSelectState.currentSwipeItemIndex]
-                                updateScheduleDate(
-                                    selectedCalendar.get(Calendar.YEAR),
-                                    selectedCalendar.get(Calendar.MONTH) + 1,
-                                    selectedCalendar.get(Calendar.DATE)
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .drawBehind {
+                                val width = this.size.width
+                                val height = this.size.height
+                                drawRoundRect(
+                                    color = Color(0xFFDDDDDD),
+                                    topLeft = Offset(20.dp.toPx(), height / 2 - (20.dp.toPx())),
+                                    size = Size(width - 40.dp.toPx(), 40.dp.toPx()),
+                                    cornerRadius = CornerRadius(10f, 10f)
                                 )
-                                updateScheduleTime(hour, minute)
-                                closeDialog()
                             }
-                            .padding(10.dp),
-                        text = "확인",
-                        fontSize = 20.sp
-                    )
+                            .padding(start = 20.dp, end = 20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 년도
+                        Box(
+                            modifier = Modifier.weight(2f)
+                        ) {
+                            ScrollablePicker(
+                                map = yearMap,
+                                state = yearScrollableState,
+                                range = (yearMap.keys.min()..yearMap.keys.max())
+                            )
+                        }
+                        // 월
+                        Box(
+                            modifier = Modifier.weight(2f)
+                        ) {
+                            ScrollablePicker(
+                                map = monthMap,
+                                state = monthScrollableState,
+                                range = (monthMap.keys.min()..monthMap.keys.max())
+                            )
+                        }
+                        // 일
+                        Box(
+                            modifier = Modifier.weight(2f)
+                        ) {
+                            ScrollablePicker(
+                                map = dateMap,
+                                state = dateScrollableState,
+                                range = (dateMap.keys.min()..dateMap.keys.max())
+                            ) {
+                                currDate.intValue = dateMap[it]!!.replace("일", "").toInt()
+                            }
+                        }
+                        // 오전, 오후
+                        Box(
+                            modifier = Modifier.weight(2f)
+                        ) {
+                            ScrollablePicker(
+                                map = ampmMap,
+                                state = ampmScrollableState,
+                                range = (ampmMap.keys.min()..ampmMap.keys.max())
+                            )
+                        }
+                        // 시
+                        Box(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            ScrollablePicker(
+                                map = hourMap,
+                                state = hourScrollableState,
+                                range = (hourMap.keys.min()..hourMap.keys.max())
+                            )
+                        }
+                        //분
+                        Box(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            ScrollablePicker(
+                                map = minuteMap,
+                                state = minuteScrollableState,
+                                range = (minuteMap.keys.min()..minuteMap.keys.max())
+                            )
+                        }
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .clickable {
+                                    val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(E)")
+                                    val year =
+                                        yearMap[yearScrollableState.intValue]!!.replace("년", "")
+                                            .toInt()
+                                    val month =
+                                        monthMap[monthScrollableState.intValue]!!.replace("월", "")
+                                            .toInt()
+                                    val date =
+                                        dateMap[dateScrollableState.intValue]!!.replace("일", "")
+                                            .toInt()
+                                    val ampm = ampmScrollableState.intValue
+                                    var hour = hourMap[hourScrollableState.intValue]!!.toInt()
+                                    if (ampm == 1 && hour != 12) hour += 12
+                                    if (ampm == 0 && hour == 12) hour = 0
+                                    val minute = minuteMap[minuteScrollableState.intValue]!!.toInt()
+                                    updateScheduleDate(year, month, date)
+                                    updateScheduleTime(hour, minute)
+                                    closeDialog()
+                                }
+                                .padding(10.dp),
+                            text = "확인",
+                            fontSize = 20.sp
+                        )
+                    }
                 }
             }
         }

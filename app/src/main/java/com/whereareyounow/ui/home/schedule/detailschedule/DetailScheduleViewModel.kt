@@ -56,7 +56,7 @@ class DetailScheduleViewModel @Inject constructor(
 
     private var scheduleId = ""
     private var memberIdsList = emptyList<String>()
-    private val arrivedMemberIdsList = emptyList<String>()
+    private var arrivedMemberIdsList = emptyList<String>()
     var destinationLatitude = 0.0
     var destinationLongitude = 0.0
     private val _isScheduleCreator = MutableStateFlow(false)
@@ -80,7 +80,9 @@ class DetailScheduleViewModel @Inject constructor(
                         destinationLatitude = data.destinationLatitude
                         destinationLongitude = data.destinationLongitude
                         _detailScheduleScreenUIState.update {
+                            // {년, 월, 일}
                             val appointmentDateList = data.appointmentTime.split("T")[0].split("-").map { num -> num.toInt() }
+                            // {시, 분}
                             val appointmentTimeList = data.appointmentTime.split("T")[1].split(":").map { num -> num.toInt() }
                             it.copy(
                                 scheduleName = data.title,
@@ -97,7 +99,8 @@ class DetailScheduleViewModel @Inject constructor(
                             )
                         }
                         memberIdsList = data.friendsIdList.toMutableList()
-                        getUserInfo()
+                        arrivedMemberIdsList = data.arrivedFriendsIdList
+                        getUsersInfo()
                     }
                 }
                 is NetworkResult.Error -> {  }
@@ -110,7 +113,7 @@ class DetailScheduleViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserInfo() {
+    private suspend fun getUsersInfo() {
         val accessToken = getAccessTokenUseCase().first()
         val memberInfosList = mutableListOf<MemberInfo>()
 
