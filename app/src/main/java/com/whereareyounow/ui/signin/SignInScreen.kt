@@ -40,7 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.signin.SignInScreenSideEffect
 import com.whereareyounow.data.signin.SignInScreenUIState
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.theme.WhereAreYouTheme
@@ -156,7 +156,7 @@ private fun SignInScreen(
         }
 
 
-        BottomOKButton(
+        RoundedCornerButton(
             contentDescription = "Login Button",
             text = "로그인",
             onClick = { signIn(moveToMainHomeScreen) },
@@ -262,7 +262,7 @@ private fun UserIdInputBox(
         inputText = inputText,
         onValueChange = onValueChange,
         guideLine = "",
-        textFieldState = CustomTextFieldState.IDLE
+        textFieldState = CustomTextFieldState.Idle
     )
 }
 
@@ -278,7 +278,7 @@ private fun PasswordInputBox(
         inputText = inputText,
         onValueChange = onValueChange,
         guideLine = "",
-        textFieldState = CustomTextFieldState.IDLE,
+        textFieldState = CustomTextFieldState.Idle,
         isPassword = true
     )
 }

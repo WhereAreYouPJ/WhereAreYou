@@ -2,45 +2,45 @@ package com.whereareyounow.data.signup
 
 data class SignUpScreenUIState(
     val inputUserName: String = "",
-    val inputUserNameState: UserNameState = UserNameState.EMPTY,
+    val inputUserNameState: UserNameState = UserNameState.Empty,
     val inputUserId: String = "",
-    val inputUserIdState: UserIdState = UserIdState.EMPTY,
+    val inputUserIdState: UserIdState = UserIdState.Empty,
     val inputPassword: String = "",
-    val inputPasswordState: PasswordState = PasswordState.EMPTY,
+    val inputPasswordState: PasswordState = PasswordState.Empty,
     val inputPasswordForChecking: String = "",
-    val inputPasswordForCheckingState: PasswordCheckingState = PasswordCheckingState.EMPTY,
+    val inputPasswordForCheckingState: PasswordCheckingState = PasswordCheckingState.Empty,
     val inputEmail: String = "",
-    val inputEmailState: EmailState = EmailState.EMPTY,
-    val emailVerificationProgressState: EmailVerificationProgressState = EmailVerificationProgressState.DUPLICATE_UNCHECKED,
+    val inputEmailState: EmailState = EmailState.Empty,
+    val emailVerificationProgressState: EmailVerificationProgressState = EmailVerificationProgressState.DuplicateUnchecked,
     val inputVerificationCode: String = "",
-    val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.EMPTY,
+    val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.Empty,
     val emailVerificationCodeLeftTime: Int = 0
 )
 
 enum class UserNameState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }
 
 enum class UserIdState {
-    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
+    Empty, Satisfied, Unsatisfied, Duplicated, Unique
 }
 
 enum class PasswordState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }
 
 enum class PasswordCheckingState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }
 
 enum class EmailState {
-    EMPTY, SATISFIED, UNSATISFIED, DUPLICATED, UNIQUE
+    Empty, Satisfied, Unsatisfied, Duplicated, Unique
 }
 
 enum class EmailVerificationProgressState {
-    DUPLICATE_UNCHECKED, DUPLICATE_CHECKED, VERIFICATION_REQUESTED
+    DuplicateUnchecked, DuplicateChecked, VerificationRequested
 }
 
 enum class VerificationCodeState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }

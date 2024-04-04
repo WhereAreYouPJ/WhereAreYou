@@ -55,7 +55,7 @@ class SignUpViewModel @Inject constructor(
         _signUpScreenUIState.update {
             it.copy(
                 inputUserName = userName,
-                inputUserNameState = if (inputTextValidator.validateUserName(userName).result) UserNameState.SATISFIED else UserNameState.UNSATISFIED
+                inputUserNameState = if (inputTextValidator.validateUserName(userName).result) UserNameState.Satisfied else UserNameState.Unsatisfied
             )
         }
     }
@@ -64,7 +64,7 @@ class SignUpViewModel @Inject constructor(
         _signUpScreenUIState.update {
             it.copy(
                 inputUserId = userId,
-                inputUserIdState = if (inputTextValidator.validateUserId(userId).result) UserIdState.SATISFIED else UserIdState.UNSATISFIED
+                inputUserIdState = if (inputTextValidator.validateUserId(userId).result) UserIdState.Satisfied else UserIdState.Unsatisfied
             )
         }
     }
@@ -73,8 +73,8 @@ class SignUpViewModel @Inject constructor(
         _signUpScreenUIState.update {
             it.copy(
                 inputPassword = password,
-                inputPasswordState = if (inputTextValidator.validatePassword(password).result) PasswordState.SATISFIED else PasswordState.UNSATISFIED,
-                inputPasswordForCheckingState = if (password == it.inputPasswordForChecking) PasswordCheckingState.SATISFIED else PasswordCheckingState.UNSATISFIED
+                inputPasswordState = if (inputTextValidator.validatePassword(password).result) PasswordState.Satisfied else PasswordState.Unsatisfied,
+                inputPasswordForCheckingState = if (password == it.inputPasswordForChecking) PasswordCheckingState.Satisfied else PasswordCheckingState.Unsatisfied
             )
         }
     }
@@ -83,7 +83,7 @@ class SignUpViewModel @Inject constructor(
         _signUpScreenUIState.update {
             it.copy(
                 inputPasswordForChecking = password,
-                inputPasswordForCheckingState = if (password == it.inputPassword) PasswordCheckingState.SATISFIED else PasswordCheckingState.UNSATISFIED
+                inputPasswordForCheckingState = if (password == it.inputPassword) PasswordCheckingState.Satisfied else PasswordCheckingState.Unsatisfied
             )
         }
     }
@@ -92,8 +92,8 @@ class SignUpViewModel @Inject constructor(
         _signUpScreenUIState.update {
             it.copy(
                 inputEmail = email,
-                inputEmailState = if (inputTextValidator.validateEmail(email).result)  EmailState.SATISFIED else EmailState.UNSATISFIED,
-                emailVerificationProgressState = EmailVerificationProgressState.DUPLICATE_UNCHECKED
+                inputEmailState = if (inputTextValidator.validateEmail(email).result)  EmailState.Satisfied else EmailState.Unsatisfied,
+                emailVerificationProgressState = EmailVerificationProgressState.DuplicateUnchecked
             )
         }
     }
@@ -109,22 +109,22 @@ class SignUpViewModel @Inject constructor(
     fun checkIdDuplicate() {
         viewModelScope.launch {
             when (_signUpScreenUIState.value.inputUserIdState) {
-                UserIdState.EMPTY -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 입력해주세요.")) }
-                UserIdState.UNSATISFIED -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 확인해주세요.")) }
-                UserIdState.DUPLICATED -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("중복된 아이디입니다.")) }
-                UserIdState.UNIQUE -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이미 확인되었습니다. 다음 단계를 진행해주세요.")) }
+                UserIdState.Empty -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 입력해주세요.")) }
+                UserIdState.Unsatisfied -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 확인해주세요.")) }
+                UserIdState.Duplicated -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("중복된 아이디입니다.")) }
+                UserIdState.Unique -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이미 확인되었습니다. 다음 단계를 진행해주세요.")) }
                 else -> {
                     val response = checkIdDuplicateUseCase(_signUpScreenUIState.value.inputUserId)
                     LogUtil.printNetworkLog("userId = ${_signUpScreenUIState.value.inputUserId}", response, "아이디 중복 체크")
                     when (response) {
                         is NetworkResult.Success -> {
                             _signUpScreenUIState.update {
-                                it.copy(inputUserIdState = UserIdState.UNIQUE)
+                                it.copy(inputUserIdState = UserIdState.Unique)
                             }
                         }
                         is NetworkResult.Error -> {
                             _signUpScreenUIState.update {
-                                it.copy(inputUserIdState = UserIdState.DUPLICATED)
+                                it.copy(inputUserIdState = UserIdState.Duplicated)
                             }
                         }
                         is NetworkResult.Exception -> { signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("오류가 발생했습니다.")) }
@@ -136,23 +136,23 @@ class SignUpViewModel @Inject constructor(
 
     fun checkEmailDuplicate() {
             viewModelScope.launch {
-                if (_signUpScreenUIState.value.inputEmailState == EmailState.SATISFIED) {
+                if (_signUpScreenUIState.value.inputEmailState == EmailState.Satisfied) {
                     val response = checkEmailDuplicateUseCase(_signUpScreenUIState.value.inputEmail)
                     LogUtil.printNetworkLog("email = ${_signUpScreenUIState.value.inputEmail}", response, "이메일 중복 확인")
                     when (response) {
                         is NetworkResult.Success -> {
                             _signUpScreenUIState.update {
                                 it.copy(
-                                    inputEmailState = EmailState.UNIQUE,
-                                    emailVerificationProgressState = EmailVerificationProgressState.DUPLICATE_CHECKED
+                                    inputEmailState = EmailState.Unique,
+                                    emailVerificationProgressState = EmailVerificationProgressState.DuplicateChecked
                                 )
                             }
                         }
                         is NetworkResult.Error -> {
                             _signUpScreenUIState.update {
                                 it.copy(
-                                    inputEmailState = EmailState.DUPLICATED,
-                                    emailVerificationProgressState = EmailVerificationProgressState.DUPLICATE_UNCHECKED
+                                    inputEmailState = EmailState.Duplicated,
+                                    emailVerificationProgressState = EmailVerificationProgressState.DuplicateUnchecked
                                 )
                             }
                         }
@@ -174,8 +174,8 @@ class SignUpViewModel @Inject constructor(
         startTimer = viewModelScope.launch {
             _signUpScreenUIState.update {
                 it.copy(
-                    emailVerificationProgressState = EmailVerificationProgressState.VERIFICATION_REQUESTED,
-                    inputVerificationCodeState = VerificationCodeState.EMPTY
+                    emailVerificationProgressState = EmailVerificationProgressState.VerificationRequested,
+                    inputVerificationCodeState = VerificationCodeState.Empty
                 )
             }
             _signUpScreenUIState.update {
@@ -210,7 +210,7 @@ class SignUpViewModel @Inject constructor(
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("유효시간이 만료되었습니다. 인증코드를 재전송해주세요."))
                 return@launch
             }
-            if (_signUpScreenUIState.value.inputVerificationCodeState == VerificationCodeState.SATISFIED) {
+            if (_signUpScreenUIState.value.inputVerificationCodeState == VerificationCodeState.Satisfied) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이미 확인되었습니다. 다음 단계를 진행해주세요."))
                 return@launch
             }
@@ -221,14 +221,14 @@ class SignUpViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     _signUpScreenUIState.update {
                         it.copy(
-                            inputVerificationCodeState = VerificationCodeState.SATISFIED
+                            inputVerificationCodeState = VerificationCodeState.Satisfied
                         )
                     }
                 }
                 is NetworkResult.Error -> {
                     _signUpScreenUIState.update {
                         it.copy(
-                            inputVerificationCodeState = VerificationCodeState.UNSATISFIED
+                            inputVerificationCodeState = VerificationCodeState.Unsatisfied
                         )
                     }
                 }
@@ -241,27 +241,27 @@ class SignUpViewModel @Inject constructor(
         moveToSignUpSuccessScreen: () -> Unit
     ) {
         viewModelScope.launch {
-            if (_signUpScreenUIState.value.inputUserNameState != UserNameState.SATISFIED) {
+            if (_signUpScreenUIState.value.inputUserNameState != UserNameState.Satisfied) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("사용자명을 확인해주세요."))
                 return@launch
             }
-            if (_signUpScreenUIState.value.inputUserIdState != UserIdState.UNIQUE) {
+            if (_signUpScreenUIState.value.inputUserIdState != UserIdState.Unique) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("아이디를 확인해주세요."))
                 return@launch
             }
-            if (_signUpScreenUIState.value.inputPasswordState != PasswordState.SATISFIED) {
+            if (_signUpScreenUIState.value.inputPasswordState != PasswordState.Satisfied) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호를 확인해주세요."))
                 return@launch
             }
-            if (_signUpScreenUIState.value.inputPasswordForCheckingState != PasswordCheckingState.SATISFIED) {
+            if (_signUpScreenUIState.value.inputPasswordForCheckingState != PasswordCheckingState.Satisfied) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호 확인을 다시해주세요."))
                 return@launch
             }
-            if (_signUpScreenUIState.value.inputEmailState != EmailState.UNIQUE) {
+            if (_signUpScreenUIState.value.inputEmailState != EmailState.Unique) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이메일을 확인해주세요."))
                 return@launch
             }
-            if (_signUpScreenUIState.value.inputVerificationCodeState != VerificationCodeState.SATISFIED) {
+            if (_signUpScreenUIState.value.inputVerificationCodeState != VerificationCodeState.Satisfied) {
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("인증코드를 확인해주세요."))
                 return@launch
             }

@@ -33,7 +33,7 @@ import com.whereareyounow.data.findpw.FindPasswordScreenSideEffect
 import com.whereareyounow.data.findpw.FindPasswordScreenUIState
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.findpw.VerificationCodeState
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
@@ -116,7 +116,7 @@ private fun FindPasswordScreen(
                     updateInputEmail = updateInputEmail,
                     inputEmailState = findPasswordScreenUIState.inputEmailState,
                     guideLine = when (findPasswordScreenUIState.inputEmailState) {
-                        EmailState.UNSATISFIED -> "올바른 이메일 형식으로 입력해주세요."
+                        EmailState.Unsatisfied -> "올바른 이메일 형식으로 입력해주세요."
                         else -> ""
                     }
                 )
@@ -142,7 +142,7 @@ private fun FindPasswordScreen(
 
         Spacer(Modifier.weight(1f))
 
-        BottomOKButton(
+        RoundedCornerButton(
             text = "확인",
             onClick = { verifyPasswordResetCode(moveToPasswordResettingScreen) }
         )
@@ -171,7 +171,7 @@ private fun UserIdInputBox(
         inputText = inputText,
         onValueChange = onValueChange,
         guideLine = "",
-        textFieldState = CustomTextFieldState.IDLE
+        textFieldState = CustomTextFieldState.Idle
     )
 }
 
@@ -188,9 +188,9 @@ fun EmailInputBox(
         onValueChange = updateInputEmail,
         guideLine = guideLine,
         textFieldState = when (inputEmailState) {
-            EmailState.EMPTY -> CustomTextFieldState.IDLE
-            EmailState.SATISFIED -> CustomTextFieldState.SATISFIED
-            EmailState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            EmailState.Empty -> CustomTextFieldState.Idle
+            EmailState.Satisfied -> CustomTextFieldState.Satisfied
+            EmailState.Unsatisfied -> CustomTextFieldState.Unsatisfied
         }
     )
 }
@@ -209,8 +209,8 @@ private fun VerificationCodeTextField(
         onValueChange = onValueChange,
         guideLine = guideLine,
         textFieldState = when (inputVerificationCodeState) {
-            VerificationCodeState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
-            else -> CustomTextFieldState.IDLE
+            VerificationCodeState.Unsatisfied -> CustomTextFieldState.Unsatisfied
+            else -> CustomTextFieldState.Idle
         },
         leftTime = leftTime
     )

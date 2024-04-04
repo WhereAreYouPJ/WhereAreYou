@@ -2,15 +2,15 @@ package com.whereareyounow.data.findpw
 
 data class PasswordResettingScreenUIState(
     val inputPassword: String = "",
-    val inputPasswordState: PasswordState = PasswordState.EMPTY,
+    val inputPasswordState: PasswordState = PasswordState.Empty,
     val inputPasswordForChecking: String = "",
-    val passwordCheckingState: PasswordCheckingState = PasswordCheckingState.EMPTY
+    val passwordCheckingState: PasswordCheckingState = PasswordCheckingState.Empty
 )
 
 enum class PasswordState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }
 
 enum class PasswordCheckingState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }

@@ -90,28 +90,28 @@ private fun SplashScreen(
     )
     LaunchedEffect(checkingState) {
         when (checkingState) {
-            SplashViewModel.CheckingState.NETWORK -> {
+            SplashViewModel.CheckingState.Network -> {
                 coroutineScope.launch {
                     delay(1000)
                     if (checkNetworkState()) {
-                        updateCheckingState(SplashViewModel.CheckingState.LOCATION_PERMISSION)
+                        updateCheckingState(SplashViewModel.CheckingState.LocationPermission)
                     } else {
                         updateIsNetworkConnectionErrorDialogShowing(true)
                     }
                 }
             }
-            SplashViewModel.CheckingState.LOCATION_PERMISSION -> {
+            SplashViewModel.CheckingState.LocationPermission -> {
                 var flag = true
                 for (permission in locationPermissions) {
                     if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
-                        updateScreenState(SplashViewModel.ScreenState.PERMISSION)
+                        updateScreenState(SplashViewModel.ScreenState.Permission)
                         flag = false
                         break
                     }
                 }
-                if (flag) updateCheckingState(SplashViewModel.CheckingState.SIGN_IN)
+                if (flag) updateCheckingState(SplashViewModel.CheckingState.SignIn)
             }
-            SplashViewModel.CheckingState.SIGN_IN -> {
+            SplashViewModel.CheckingState.SignIn -> {
                 coroutineScope.launch(Dispatchers.Main) {
                     delay(1000)
                     if (checkIsSignedIn()) {
@@ -124,7 +124,7 @@ private fun SplashScreen(
         }
     }
     when (screenState) {
-        SplashViewModel.ScreenState.SPLASH -> {
+        SplashViewModel.ScreenState.Splash -> {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -183,7 +183,7 @@ private fun SplashScreen(
                 )
             }
         }
-        SplashViewModel.ScreenState.PERMISSION -> {
+        SplashViewModel.ScreenState.Permission -> {
             PermissionCheckingScreen(
                 locationPermissions = locationPermissions,
                 updateScreenState = updateScreenState,
@@ -231,7 +231,7 @@ fun NetworkConnectionErrorDialog(
                         .clickable {
                             if (checkNetworkState()) {
                                 updateIsNetworkConnectionErrorDialogShowing(false)
-                                updateCheckingState(SplashViewModel.CheckingState.LOCATION_PERMISSION)
+                                updateCheckingState(SplashViewModel.CheckingState.LocationPermission)
                             } else {
                                 Toast
                                     .makeText(context, "네트워크 연결을 확인해주세요", Toast.LENGTH_SHORT)
@@ -274,9 +274,9 @@ fun NetworkConnectionErrorDialog(
 fun SplashScreenPreview() {
     WhereAreYouTheme {
         SplashScreen(
-            screenState = SplashViewModel.ScreenState.SPLASH,
+            screenState = SplashViewModel.ScreenState.Splash,
             updateScreenState = {  },
-            checkingState = SplashViewModel.CheckingState.SIGN_IN,
+            checkingState = SplashViewModel.CheckingState.SignIn,
             isNetworkConnectionErrorDialogShowing = false,
             checkNetworkState = { true },
             updateCheckingState = {  },

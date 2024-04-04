@@ -6,8 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 
 
 @Composable
@@ -57,8 +55,8 @@ fun PermissionCheckingScreen(
             result.entries.contains(mapOf(Manifest.permission.ACCESS_FINE_LOCATION to true).entries.first())
             && result.entries.contains(mapOf(Manifest.permission.ACCESS_COARSE_LOCATION to true).entries.first())) {
             Toast.makeText(context, "위치 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show()
-            updateScreenState(SplashViewModel.ScreenState.SPLASH)
-            updateCheckingState(SplashViewModel.CheckingState.SIGN_IN)
+            updateScreenState(SplashViewModel.ScreenState.Splash)
+            updateCheckingState(SplashViewModel.CheckingState.SignIn)
         } else {
             Toast.makeText(context, "위치 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }
@@ -124,7 +122,7 @@ fun PermissionCheckingScreen(
 
         Spacer(Modifier.weight(1f))
 
-        BottomOKButton(
+        RoundedCornerButton(
             text = "확인",
             onClick = {
                 permissionRequestLauncher.launch(locationPermissions)

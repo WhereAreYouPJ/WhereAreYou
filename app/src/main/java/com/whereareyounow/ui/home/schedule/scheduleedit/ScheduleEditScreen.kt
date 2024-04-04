@@ -69,7 +69,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.ScrollablePicker
 import com.whereareyounow.util.CalendarUtil
@@ -777,7 +777,7 @@ private fun CompleteButton(
     moveToBackScreen: () -> Unit,
     onComplete: (() -> Unit) -> Unit
 ) {
-    BottomOKButton(
+    RoundedCornerButton(
         text = "완료",
         onClick = { onComplete(moveToBackScreen) }
     )

@@ -44,11 +44,11 @@ class SplashViewModel @Inject constructor(
     private val getFriendListUseCase: GetFriendListUseCase,
 ) : AndroidViewModel(application) {
 
-    private val _checkingState = MutableStateFlow(CheckingState.NETWORK)
+    private val _checkingState = MutableStateFlow(CheckingState.Network)
     val checkingState: StateFlow<CheckingState> = _checkingState
     private val _isNetworkConnectionErrorDialogShowing = MutableStateFlow(false)
     val isNetworkConnectionErrorDialogShowing: StateFlow<Boolean> = _isNetworkConnectionErrorDialogShowing
-    private val _screenState = MutableStateFlow(ScreenState.SPLASH)
+    private val _screenState = MutableStateFlow(ScreenState.Splash)
     val screenState: StateFlow<ScreenState> = _screenState
     private var isSignedIn = false
 
@@ -171,10 +171,10 @@ class SplashViewModel @Inject constructor(
     }
 
     enum class CheckingState {
-        NETWORK, LOCATION_PERMISSION, SIGN_IN
+        Network, LocationPermission, SignIn
     }
 
     enum class ScreenState {
-        SPLASH, PERMISSION
+        Splash, Permission
     }
 }

@@ -93,7 +93,7 @@ fun CustomTextField(
                 }
                 Spacer(Modifier.width(20.dp))
                 when (textFieldState) {
-                    CustomTextFieldState.SATISFIED -> {
+                    CustomTextFieldState.Satisfied -> {
                         Image(
                             modifier = Modifier.size(20.dp),
                             painter = painterResource(id = R.drawable.check_circle_fill0_wght300_grad0_opsz24),
@@ -101,7 +101,7 @@ fun CustomTextField(
                             colorFilter = ColorFilter.tint(color = Color(0xFF78C480))
                         )
                     }
-                    CustomTextFieldState.UNSATISFIED -> {
+                    CustomTextFieldState.Unsatisfied -> {
                         Image(
                             modifier = Modifier.size(20.dp),
                             painter = painterResource(id = R.drawable.cancel_fill0_wght300_grad0_opsz24),
@@ -112,7 +112,7 @@ fun CustomTextField(
                     else -> {}
                 }
             }
-            if (textFieldState == CustomTextFieldState.UNSATISFIED) {
+            if (textFieldState == CustomTextFieldState.Unsatisfied) {
                 Spacer(Modifier.height(10.dp))
                 Text(
                     text = guideLine,
@@ -125,7 +125,7 @@ fun CustomTextField(
 }
 
 enum class CustomTextFieldState {
-    IDLE, SATISFIED, UNSATISFIED
+    Idle, Satisfied, Unsatisfied
 }
 
 @Preview(showBackground = true)
@@ -137,7 +137,7 @@ private fun IdleCustomTextFieldPreview() {
             inputText = "",
             onValueChange = {  },
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.IDLE
+            textFieldState = CustomTextFieldState.Idle
         )
     }
 }
@@ -151,7 +151,7 @@ private fun IdlePasswordCustomTextFieldPreview() {
             inputText = "",
             onValueChange = {  },
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.IDLE,
+            textFieldState = CustomTextFieldState.Idle,
             isPassword = true
         )
     }
@@ -166,7 +166,7 @@ private fun SatisfiedCustomTextFieldPreview() {
             inputText = "Satisfied",
             onValueChange = {  },
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.SATISFIED
+            textFieldState = CustomTextFieldState.Satisfied
         )
     }
 }
@@ -180,7 +180,7 @@ private fun SatisfiedPasswordCustomTextFieldPreview() {
             inputText = "Satisfied",
             onValueChange = {  },
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.SATISFIED,
+            textFieldState = CustomTextFieldState.Satisfied,
             isPassword = true
         )
     }
@@ -195,7 +195,7 @@ private fun UnsatisfiedCustomTextFieldPreview() {
             inputText = "Unsatisfied",
             onValueChange = {  },
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.UNSATISFIED
+            textFieldState = CustomTextFieldState.Unsatisfied
         )
     }
 }
@@ -209,7 +209,7 @@ private fun UnsatisfiedPasswordCustomTextFieldPreview() {
             inputText = "Unsatisfied",
             onValueChange = {  },
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.UNSATISFIED,
+            textFieldState = CustomTextFieldState.Unsatisfied,
             isPassword = true
         )
     }

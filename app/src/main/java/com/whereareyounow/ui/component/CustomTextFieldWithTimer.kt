@@ -91,7 +91,7 @@ fun CustomTextFieldWithTimer(
                 }
                 Spacer(Modifier.width(20.dp))
                 when (textFieldState) {
-                    CustomTextFieldState.SATISFIED -> {
+                    CustomTextFieldState.Satisfied -> {
                         Image(
                             modifier = Modifier.size(20.dp),
                             painter = painterResource(id = R.drawable.check_circle_fill0_wght300_grad0_opsz24),
@@ -99,7 +99,7 @@ fun CustomTextFieldWithTimer(
                             colorFilter = ColorFilter.tint(color = Color(0xFF78C480))
                         )
                     }
-                    CustomTextFieldState.UNSATISFIED -> {
+                    CustomTextFieldState.Unsatisfied -> {
                         Text(
                             text = "${leftTime / 60}:${String.format("%02d", leftTime % 60)}",
                             color = Color(0xFFE59090)
@@ -120,7 +120,7 @@ fun CustomTextFieldWithTimer(
                     }
                 }
             }
-            if (textFieldState == CustomTextFieldState.UNSATISFIED) {
+            if (textFieldState == CustomTextFieldState.Unsatisfied) {
                 Spacer(Modifier.height(10.dp))
                 Text(
                     text = guideLine,
@@ -141,7 +141,7 @@ private fun CustomTextFieldWithTimerPreview() {
             inputText = "123456",
             onValueChange = {},
             guideLine = "GuideLine",
-            textFieldState = CustomTextFieldState.UNSATISFIED,
+            textFieldState = CustomTextFieldState.Unsatisfied,
             leftTime = 120
         )
     }

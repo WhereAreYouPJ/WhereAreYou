@@ -48,11 +48,11 @@ class InfoModificationViewModel @Inject constructor(
 
     private val _inputUserName = MutableStateFlow("")
     val inputUserName: StateFlow<String> = _inputUserName
-    private val _inputUserNameState = MutableStateFlow(UserNameState.SATISFIED)
+    private val _inputUserNameState = MutableStateFlow(UserNameState.Satisfied)
     val inputUserNameState: StateFlow<UserNameState> = _inputUserNameState
     private val _inputUserId = MutableStateFlow("")
     val inputUserId: StateFlow<String> = _inputUserId
-    private val _inputUserIdState = MutableStateFlow(UserIdState.SATISFIED)
+    private val _inputUserIdState = MutableStateFlow(UserIdState.Satisfied)
     val inputUserIdState: StateFlow<UserIdState> = _inputUserIdState
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
@@ -64,9 +64,9 @@ class InfoModificationViewModel @Inject constructor(
         _inputUserName.update { name }
         _inputUserNameState.update {
             if (name == "") {
-                UserNameState.EMPTY
+                UserNameState.Empty
             } else {
-                if (name.matches(nameCondition)) UserNameState.SATISFIED else UserNameState.UNSATISFIED
+                if (name.matches(nameCondition)) UserNameState.Satisfied else UserNameState.Unsatisfied
             }
         }
     }
@@ -75,9 +75,9 @@ class InfoModificationViewModel @Inject constructor(
         _inputUserId.update { id }
         _inputUserIdState.update {
             if (id == "") {
-                UserIdState.EMPTY
+                UserIdState.Empty
             } else {
-                if (id.matches(idCondition)) UserIdState.SATISFIED else UserIdState.UNSATISFIED
+                if (id.matches(idCondition)) UserIdState.Satisfied else UserIdState.Unsatisfied
             }
         }
     }
@@ -117,18 +117,18 @@ class InfoModificationViewModel @Inject constructor(
     fun checkIdDuplicate() {
         viewModelScope.launch {
             if (_inputUserId.value == originalUserId) {
-                _inputUserIdState.update { UserIdState.UNIQUE }
+                _inputUserIdState.update { UserIdState.Unique }
                 return@launch
             }
-            if (_inputUserIdState.value == UserIdState.SATISFIED) {
+            if (_inputUserIdState.value == UserIdState.Satisfied) {
                 val response = checkIdDuplicateUseCase(_inputUserId.value)
                 LogUtil.printNetworkLog("userId = ${_inputUserId.value}", response, "아이디 중복 체크")
                 when (response) {
                     is NetworkResult.Success -> {
-                        _inputUserIdState.update { UserIdState.UNIQUE }
+                        _inputUserIdState.update { UserIdState.Unique }
                     }
                     is NetworkResult.Error -> {
-                        _inputUserIdState.update { UserIdState.DUPLICATED }
+                        _inputUserIdState.update { UserIdState.Duplicated }
                     }
                     is NetworkResult.Exception -> {
                         withContext(Dispatchers.Main) {
@@ -150,36 +150,36 @@ class InfoModificationViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.Default) {
             when (_inputUserIdState.value) {
-                UserIdState.EMPTY -> {
+                UserIdState.Empty -> {
                     infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디를 입력해주세요."))
                     return@launch
                 }
-                UserIdState.SATISFIED -> {
+                UserIdState.Satisfied -> {
                     if (_inputUserId.value != originalUserId) {
                         infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디 중복확인을 해주세요."))
                         return@launch
                     }
                 }
-                UserIdState.DUPLICATED -> {
+                UserIdState.Duplicated -> {
                     infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디가 중복되었습니다."))
                     return@launch
                 }
-                UserIdState.UNSATISFIED -> {
+                UserIdState.Unsatisfied -> {
                     infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("아이디를 확인해주세요."))
                     return@launch
                 }
-                UserIdState.UNIQUE -> {}
+                UserIdState.Unique -> {}
             }
             when (_inputUserNameState.value) {
-                UserNameState.EMPTY -> {
+                UserNameState.Empty -> {
                     infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("이름을 입력해주세요."))
                     return@launch
                 }
-                UserNameState.UNSATISFIED -> {
+                UserNameState.Unsatisfied -> {
                     infoModificationScreenSideEffectFlow.emit(InfoModificationScreenSideEffect.Toast("이름을 확인해주세요."))
                     return@launch
                 }
-                UserNameState.SATISFIED -> {}
+                UserNameState.Satisfied -> {}
             }
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
@@ -196,7 +196,7 @@ class InfoModificationViewModel @Inject constructor(
                 }
             } else {
                 val newUserName = if (_inputUserName.value == originalUserName) "" else _inputUserName.value
-                val newUserId = if (_inputUserIdState.value == UserIdState.UNIQUE) _inputUserId.value else ""
+                val newUserId = if (_inputUserIdState.value == UserIdState.Unique) _inputUserId.value else ""
                 val response: NetworkResult<Unit> = modifyMyInfoUseCase(accessToken, memberId, imageFile, newUserName, newUserId)
                 LogUtil.printNetworkLog("memberId = $memberId\nimageFile = $imageFile\nnewUserName = $newUserName\nnewUserId = $newUserId", response, "내 정보 수정하기")
                 when (response) {

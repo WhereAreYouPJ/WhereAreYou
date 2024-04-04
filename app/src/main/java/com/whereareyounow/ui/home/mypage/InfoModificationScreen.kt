@@ -187,7 +187,7 @@ private fun InfoModificationScreen(
                 updateInputUserName = updateInputUserName,
                 inputUserNameState = inputUserNameState
             )
-            if (inputUserNameState == UserNameState.UNSATISFIED) {
+            if (inputUserNameState == UserNameState.Unsatisfied) {
                 Guideline(text = "사용자명은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요.")
             }
 
@@ -216,10 +216,10 @@ private fun InfoModificationScreen(
                 // 중복확인 버튼
                 CheckingButton(text = "중복확인") { checkIdDuplicate() }
             }
-            if (inputUserIdState == UserIdState.UNSATISFIED) {
+            if (inputUserIdState == UserIdState.Unsatisfied) {
                 Guideline(text = "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요.")
             }
-            if (inputUserIdState == UserIdState.DUPLICATED) {
+            if (inputUserIdState == UserIdState.Duplicated) {
                 Guideline(text = "이미 존재하는 아이디입니다.")
             }
         }
@@ -281,9 +281,9 @@ private fun UserNameTextField(
         onValueChange = updateInputUserName,
         guideLine = "",
         textFieldState = when (inputUserNameState) {
-            UserNameState.EMPTY -> CustomTextFieldState.IDLE
-            UserNameState.SATISFIED -> CustomTextFieldState.SATISFIED
-            UserNameState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
+            UserNameState.Empty -> CustomTextFieldState.Idle
+            UserNameState.Satisfied -> CustomTextFieldState.Satisfied
+            UserNameState.Unsatisfied -> CustomTextFieldState.Unsatisfied
         }
     )
 }
@@ -300,11 +300,11 @@ private fun UserIdTextField(
         onValueChange = updateInputUserId,
         guideLine = "",
         textFieldState = when (inputUserIdState) {
-            UserIdState.EMPTY -> CustomTextFieldState.IDLE
-            UserIdState.SATISFIED -> CustomTextFieldState.IDLE
-            UserIdState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
-            UserIdState.DUPLICATED -> CustomTextFieldState.UNSATISFIED
-            UserIdState.UNIQUE -> CustomTextFieldState.SATISFIED
+            UserIdState.Empty -> CustomTextFieldState.Idle
+            UserIdState.Satisfied -> CustomTextFieldState.Idle
+            UserIdState.Unsatisfied -> CustomTextFieldState.Unsatisfied
+            UserIdState.Duplicated -> CustomTextFieldState.Unsatisfied
+            UserIdState.Unique -> CustomTextFieldState.Satisfied
         }
     )
 }
@@ -317,11 +317,11 @@ private fun InfoModificationScreenPreview() {
             infoModificationScreenSideEffectFlow = MutableSharedFlow(),
             inputUserName = "아이디",
             updateInputUserName = {},
-            inputUserNameState = UserNameState.EMPTY,
+            inputUserNameState = UserNameState.Empty,
             inputUserId = "유저 아이디",
             updateInputUserId = {},
             checkIdDuplicate = {},
-            inputUserIdState = UserIdState.EMPTY,
+            inputUserIdState = UserIdState.Empty,
             email = "example@gmail.com",
             profileImageUri = "",
             updateProfileImageUri = {},

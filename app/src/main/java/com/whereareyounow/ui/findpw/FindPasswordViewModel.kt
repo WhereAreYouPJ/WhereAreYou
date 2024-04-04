@@ -59,7 +59,7 @@ class FindPasswordViewModel @Inject constructor(
         _findPasswordScreenUIState.update {
             it.copy(
                 inputEmail = email,
-                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.SATISFIED else EmailState.UNSATISFIED
+                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.Satisfied else EmailState.Unsatisfied
             )
         }
     }
@@ -74,7 +74,7 @@ class FindPasswordViewModel @Inject constructor(
         _passwordResettingScreenUIState.update {
             it.copy(
                 inputPassword = password,
-                inputPasswordState = if (inputTextValidator.validatePassword(password).result) PasswordState.SATISFIED else PasswordState.UNSATISFIED
+                inputPasswordState = if (inputTextValidator.validatePassword(password).result) PasswordState.Satisfied else PasswordState.Unsatisfied
             )
         }
     }
@@ -83,7 +83,7 @@ class FindPasswordViewModel @Inject constructor(
         _passwordResettingScreenUIState.update {
             it.copy(
                 inputPasswordForChecking = passwordForChecking,
-                passwordCheckingState = if (it.inputPassword == passwordForChecking) PasswordCheckingState.SATISFIED else PasswordCheckingState.UNSATISFIED
+                passwordCheckingState = if (it.inputPassword == passwordForChecking) PasswordCheckingState.Satisfied else PasswordCheckingState.Unsatisfied
             )
         }
     }
@@ -91,9 +91,9 @@ class FindPasswordViewModel @Inject constructor(
     fun sendEmailVerificationCode() {
         viewModelScope.launch(Dispatchers.Default) {
             when (_findPasswordScreenUIState.value.inputEmailState) {
-                EmailState.EMPTY -> { findPasswordScreenSideEffectFlow.emit(FindPasswordScreenSideEffect.Toast("이메일을 입력해주세요.")) }
-                EmailState.UNSATISFIED -> { findPasswordScreenSideEffectFlow.emit(FindPasswordScreenSideEffect.Toast("이메일을 확인해주세요.")) }
-                EmailState.SATISFIED -> {
+                EmailState.Empty -> { findPasswordScreenSideEffectFlow.emit(FindPasswordScreenSideEffect.Toast("이메일을 입력해주세요.")) }
+                EmailState.Unsatisfied -> { findPasswordScreenSideEffectFlow.emit(FindPasswordScreenSideEffect.Toast("이메일을 확인해주세요.")) }
+                EmailState.Satisfied -> {
                     if (_findPasswordScreenUIState.value.emailVerificationLeftTime > 120) {
                         findPasswordScreenSideEffectFlow.emit(FindPasswordScreenSideEffect.Toast("${_findPasswordScreenUIState.value.emailVerificationLeftTime - 120}초 후에 다시 발송할 수 있습니다."))
                         return@launch
@@ -156,7 +156,7 @@ class FindPasswordViewModel @Inject constructor(
                             withContext(Dispatchers.Main) {
                                 moveToPasswordResettingScreen(
                                     "",
-                                    ResultState.MEMBER_MISMATCH
+                                    ResultState.MemberMismatch
                                 )
                             }
                         }
@@ -164,7 +164,7 @@ class FindPasswordViewModel @Inject constructor(
                             withContext(Dispatchers.Main) {
                                 moveToPasswordResettingScreen(
                                     "",
-                                    ResultState.EMAIL_NOT_FOUND
+                                    ResultState.EmailNotFound
                                 )
                             }
                         }
@@ -181,26 +181,26 @@ class FindPasswordViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.Default) {
             when (_passwordResettingScreenUIState.value.inputPasswordState) {
-                PasswordState.EMPTY -> {
+                PasswordState.Empty -> {
                     passwordResettingScreenSideEffectFlow.emit(PasswordResettingScreenSideEffect.Toast("비밀번호를 입력해주세요."))
                     return@launch
                 }
-                PasswordState.UNSATISFIED -> {
+                PasswordState.Unsatisfied -> {
                     passwordResettingScreenSideEffectFlow.emit(PasswordResettingScreenSideEffect.Toast("비밀번호를 확인해주세요."))
                     return@launch
                 }
-                PasswordState.SATISFIED -> {}
+                PasswordState.Satisfied -> {}
             }
             when (_passwordResettingScreenUIState.value.passwordCheckingState) {
-                PasswordCheckingState.EMPTY -> {
+                PasswordCheckingState.Empty -> {
                     passwordResettingScreenSideEffectFlow.emit(PasswordResettingScreenSideEffect.Toast("비밀번호를 다시 한 번 입력해주세요."))
                     return@launch
                 }
-                PasswordCheckingState.UNSATISFIED -> {
+                PasswordCheckingState.Unsatisfied -> {
                     passwordResettingScreenSideEffectFlow.emit(PasswordResettingScreenSideEffect.Toast("비밀번호가 일치하지 않습니다."))
                     return@launch
                 }
-                PasswordCheckingState.SATISFIED -> {
+                PasswordCheckingState.Satisfied -> {
                     val request = ResetPasswordRequest(
                         userId = userId,
                         password = _passwordResettingScreenUIState.value.inputPassword,

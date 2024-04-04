@@ -39,20 +39,20 @@ class AddFriendViewModel @Inject constructor(
     private val _inputId = MutableStateFlow("")
     val inputId: StateFlow<String> = _inputId
     private var friendMemberId: String = ""
-    private val _buttonState = MutableStateFlow(ButtonState.SEARCH)
+    private val _buttonState = MutableStateFlow(ButtonState.Search)
     val buttonState: StateFlow<ButtonState> = _buttonState
 
     fun updateInputId(inputId: String) {
         _inputId.update { inputId }
-        if (_buttonState.value == ButtonState.REQUEST) {
-            _buttonState.update { ButtonState.SEARCH }
+        if (_buttonState.value == ButtonState.Request) {
+            _buttonState.update { ButtonState.Search }
         }
     }
 
     fun clearInputId() {
         _inputId.update { "" }
-        if (_buttonState.value == ButtonState.REQUEST) {
-            _buttonState.update { ButtonState.SEARCH }
+        if (_buttonState.value == ButtonState.Request) {
+            _buttonState.update { ButtonState.Search }
         }
     }
 
@@ -115,7 +115,7 @@ class AddFriendViewModel @Inject constructor(
                             profileImgUrl = data.profileImage
                         )
                     }
-                    _buttonState.update { ButtonState.REQUEST }
+                    _buttonState.update { ButtonState.Request }
                 } ?: withContext(Dispatchers.Main) { Toast.makeText(application, "null data", Toast.LENGTH_SHORT).show() }
             }
             is NetworkResult.Error -> {
@@ -170,6 +170,6 @@ class AddFriendViewModel @Inject constructor(
     }
 
     enum class ButtonState {
-        SEARCH, REQUEST
+        Search, Request
     }
 }

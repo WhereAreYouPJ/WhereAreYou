@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
-fun BottomOKButton(
+fun RoundedCornerButton(
     contentDescription: String = "",
     text: String,
     onClick: () -> Unit,
@@ -66,7 +66,7 @@ fun BottomOKButton(
 @Composable
 private fun BottomOkButtonPreview() {
     WhereAreYouTheme {
-        BottomOKButton(
+        RoundedCornerButton(
             text = "완료",
             onClick = {  }
         )
@@ -77,7 +77,7 @@ private fun BottomOkButtonPreview() {
 @Composable
 private fun LoadingBottomOkButtonPreview() {
     WhereAreYouTheme {
-        BottomOKButton(
+        RoundedCornerButton(
             text = "완료",
             onClick = {  },
             isLoading = true

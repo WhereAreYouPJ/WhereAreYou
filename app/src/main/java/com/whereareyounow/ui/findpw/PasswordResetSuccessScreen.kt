@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 
 
 @Composable
@@ -58,7 +58,7 @@ fun PasswordResetSuccessScreen(
             )
         }
         Spacer(Modifier.weight(1f))
-        BottomOKButton(
+        RoundedCornerButton(
             text = "확인",
             onClick = { moveToSignInScreen() }
         )

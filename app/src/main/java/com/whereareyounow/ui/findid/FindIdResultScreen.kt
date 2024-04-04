@@ -15,7 +15,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
@@ -69,7 +69,7 @@ fun FindIdResultScreen(
 
         Spacer(Modifier.weight(1f))
 
-        BottomOKButton(
+        RoundedCornerButton(
             text = "로그인하러 가기",
             onClick = moveToSignInScreen
         )

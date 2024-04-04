@@ -43,7 +43,7 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
@@ -118,7 +118,7 @@ private fun FriendsListScreen(
 
         Spacer(Modifier.weight(1f))
 
-        BottomOKButton(
+        RoundedCornerButton(
             text = "완료",
             onClick = {
                 updateFriendsList(selectedFriendsList.map { it.memberId })

@@ -3,17 +3,17 @@ package com.whereareyounow.data.findid
 
 data class FindIdScreenUIState(
     val inputEmail: String = "",
-    val inputEmailState: EmailState = EmailState.EMPTY,
+    val inputEmailState: EmailState = EmailState.Empty,
     val inputVerificationCode: String = "",
-    val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.EMPTY,
+    val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.Empty,
     val isVerificationCodeSent: Boolean = false,
     val emailVerificationLeftTime: Int = 0,
 )
 
 enum class EmailState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }
 
 enum class VerificationCodeState {
-    EMPTY, SATISFIED, UNSATISFIED
+    Empty, Satisfied, Unsatisfied
 }

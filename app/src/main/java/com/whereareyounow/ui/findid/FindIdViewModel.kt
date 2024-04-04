@@ -44,7 +44,7 @@ class FindIdViewModel @Inject constructor(
         _findIdScreenUIState.update {
             it.copy(
                 inputEmail = email,
-                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.SATISFIED else EmailState.UNSATISFIED
+                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.Satisfied else EmailState.Unsatisfied
             )
         }
     }
@@ -58,9 +58,9 @@ class FindIdViewModel @Inject constructor(
     fun sendEmailVerificationCode() {
         viewModelScope.launch(Dispatchers.Default) {
             when (_findIdScreenUIState.value.inputEmailState) {
-                EmailState.EMPTY -> { findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("이메일을 입력해주세요.")) }
-                EmailState.UNSATISFIED -> { findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("이메일을 확인해주세요.")) }
-                EmailState.SATISFIED -> {
+                EmailState.Empty -> { findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("이메일을 입력해주세요.")) }
+                EmailState.Unsatisfied -> { findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("이메일을 확인해주세요.")) }
+                EmailState.Satisfied -> {
                     if (_findIdScreenUIState.value.emailVerificationLeftTime > 120) {
                         findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("${_findIdScreenUIState.value.emailVerificationLeftTime - 120}초 후에 다시 발송할 수 있습니다."))
                         return@launch
@@ -117,7 +117,7 @@ class FindIdViewModel @Inject constructor(
                     when (response.code) {
                         400 -> {
                             _findIdScreenUIState.update {
-                                it.copy(inputVerificationCodeState = VerificationCodeState.UNSATISFIED)
+                                it.copy(inputVerificationCodeState = VerificationCodeState.Unsatisfied)
                             }
                         }
                         404 -> {

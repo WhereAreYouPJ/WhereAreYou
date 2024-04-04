@@ -33,11 +33,11 @@ import com.whereareyounow.data.findid.EmailState
 import com.whereareyounow.data.findid.FindIdScreenSideEffect
 import com.whereareyounow.data.findid.FindIdScreenUIState
 import com.whereareyounow.data.findid.VerificationCodeState
-import com.whereareyounow.ui.component.BottomOKButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -129,7 +129,7 @@ private fun FindIdScreen(
 
         Spacer(Modifier.weight(1f))
 
-        BottomOKButton(
+        RoundedCornerButton(
             text = "확인",
             onClick = { findId(moveToFindIdResultScreen) }
         )
@@ -160,8 +160,8 @@ fun EmailTextField(
         onValueChange = onValueChange,
         guideLine = "올바른 이메일 형식으로 입력해주세요.",
         textFieldState = when (inputEmailState) {
-            EmailState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
-            else -> CustomTextFieldState.IDLE
+            EmailState.Unsatisfied -> CustomTextFieldState.Unsatisfied
+            else -> CustomTextFieldState.Idle
         }
     )
 }
@@ -181,8 +181,8 @@ private fun VerificationCodeTextField(
         onValueChange = onValueChange,
         guideLine = guideLine,
         textFieldState = when (inputVerificationCodeState) {
-            VerificationCodeState.UNSATISFIED -> CustomTextFieldState.UNSATISFIED
-            else -> CustomTextFieldState.IDLE
+            VerificationCodeState.Unsatisfied -> CustomTextFieldState.Unsatisfied
+            else -> CustomTextFieldState.Idle
         },
         leftTime = leftTime
     )

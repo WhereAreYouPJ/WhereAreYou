@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.GlobalValue
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.common.CheckCircle
 
 @Composable
@@ -72,7 +72,7 @@ fun SignUpSuccessScreen(
             )
         }
         Spacer(Modifier.weight(1f))
-        BottomOKButton(
+        RoundedCornerButton(
             text = "확인",
             onClick = { moveToBackScreen() }
         )

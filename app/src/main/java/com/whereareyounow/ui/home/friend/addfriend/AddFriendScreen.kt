@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,10 +27,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,9 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.ui.component.BottomOKButton
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
@@ -104,14 +100,14 @@ private fun AddFriendScreen(
 
         Spacer(Modifier.weight(1f))
 
-        BottomOKButton(
+        RoundedCornerButton(
             text = when (buttonState) {
-                AddFriendViewModel.ButtonState.SEARCH -> "검색"
-                AddFriendViewModel.ButtonState.REQUEST -> "친구추가"
+                AddFriendViewModel.ButtonState.Search -> "검색"
+                AddFriendViewModel.ButtonState.Request -> "친구추가"
             },
             onClick = when (buttonState) {
-                AddFriendViewModel.ButtonState.SEARCH -> searchFriend
-                AddFriendViewModel.ButtonState.REQUEST -> sendFriendRequest
+                AddFriendViewModel.ButtonState.Search -> searchFriend
+                AddFriendViewModel.ButtonState.Request -> sendFriendRequest
             }
         )
     }
@@ -231,7 +227,7 @@ private fun AddFriendScreenPreview1() {
             updateInputId = {  },
             clearInputId = {  },
             friendInfo = null,
-            buttonState = AddFriendViewModel.ButtonState.SEARCH,
+            buttonState = AddFriendViewModel.ButtonState.Search,
             searchFriend = {  },
             sendFriendRequest = {  },
             moveToBackScreen = {  }
@@ -248,7 +244,7 @@ private fun AddFriendScreenPreview2() {
             updateInputId = {  },
             clearInputId = {  },
             friendInfo = null,
-            buttonState = AddFriendViewModel.ButtonState.REQUEST,
+            buttonState = AddFriendViewModel.ButtonState.Request,
             searchFriend = {  },
             sendFriendRequest = {  },
             moveToBackScreen = {  }

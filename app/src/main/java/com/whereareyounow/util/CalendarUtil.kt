@@ -10,14 +10,14 @@ import kotlin.math.absoluteValue
 object CalendarUtil {
 
     // year년 month월에 몇일까지 있는지 return
-    fun getLastDayOfMonth(year: Int, month: Int, flag: Type = Type.CURRENT): Int {
+    fun getLastDayOfMonth(year: Int, month: Int, flag: Type = Type.Current): Int {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DATE, 1)
         calendar.set(Calendar.YEAR, year)
         when (flag) {
-            Type.PREVIOUS -> calendar.set(Calendar.MONTH, month - 2)
-            Type.CURRENT -> calendar.set(Calendar.MONTH, month - 1)
-            Type.NEXT -> calendar.set(Calendar.MONTH, month)
+            Type.Previous -> calendar.set(Calendar.MONTH, month - 2)
+            Type.Current -> calendar.set(Calendar.MONTH, month - 1)
+            Type.Next -> calendar.set(Calendar.MONTH, month)
         }
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
     }
@@ -75,7 +75,7 @@ object CalendarUtil {
     }
 
     enum class Type {
-        PREVIOUS, CURRENT, NEXT
+        Previous, Current, Next
     }
 
     // 현재 년으로부터 +- 100년의 정보를 리스트로 return
