@@ -40,9 +40,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.signin.SignInScreenSideEffect
 import com.whereareyounow.data.signin.SignInScreenUIState
-import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
+import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareAc
 import kotlinx.coroutines.Dispatchers
@@ -108,25 +108,11 @@ private fun SignInScreen(
     ) {
         Spacer(Modifier.height(160.dp))
 
-        Image(
-            modifier = Modifier.size(80.dp),
-            painter = painterResource(R.drawable.logo),
-            contentDescription = null
-        )
-        Spacer(Modifier.height(6.dp))
-        Text(
-            modifier = Modifier
-                .padding(start = 6.dp),
-            text = "지금어디?",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = nanumSquareAc,
-            color = Color(0xFF271F58)
-        )
+        LogoContent()
 
         Spacer(Modifier.height(40.dp))
 
-        // 아이디 입력
+        // 아이디 입력 창
         UserIdInputBox(
             contentDescription = "Id TextField",
             inputText = signInScreenUIState.inputUserId,
@@ -135,7 +121,7 @@ private fun SignInScreen(
 
         Spacer(Modifier.height(10.dp))
 
-        // 비밀번호 입력
+        // 비밀번호 입력 창
         PasswordInputBox(
             contentDescription = "Password TextField",
             inputText = signInScreenUIState.inputPassword,
@@ -248,6 +234,23 @@ private fun SignInScreen(
             )
         }
     }
+}
+
+@Composable
+fun LogoContent() {
+    Image(
+        modifier = Modifier.size(80.dp),
+        painter = painterResource(R.drawable.logo),
+        contentDescription = null
+    )
+    Spacer(Modifier.height(6.dp))
+    Text(
+        text = "지금어디?",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        fontFamily = nanumSquareAc,
+        color = Color(0xFF271F58)
+    )
 }
 
 @Composable
