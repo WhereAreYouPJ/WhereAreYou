@@ -48,7 +48,7 @@ interface ScheduleApi {
     suspend fun getDetailSchedule(
         @Header("Authorization") token: String,
         @Query("memberId") memberId: String,
-        @Query("scheduleId") scheduleId: String
+        @Query("scheduleId") scheduleId: String,
     ): Response<GetDetailScheduleResponse>
 
     // 일정 추가

@@ -103,7 +103,7 @@ private const val TEXT_1 = "TEXT_1"
 private const val TEXT_2 = "TEXT_2"
 private const val TEXT_3 = "TEXT_3"
 
-        @Composable
+@Composable
 private fun TopProgressContent() {
     Layout(
         content = {
@@ -140,14 +140,14 @@ private fun TopProgressContent() {
                 maxHeight = constraint.maxHeight
             )
         )
-        val space = 10
-        val height = topProgressBar.height + space.dp.toPx() + text1.height
+        val space = 10.dp
+        val height = topProgressBar.height + space.toPx() + text1.height
 
         layout(constraint.maxWidth, height.toInt()) {
             topProgressBar.place((constraint.maxWidth - topProgressBar.width) / 2, 0)
-            text1.place(0, topProgressBar.height + space.dp.toPx().toInt())
-            text2.place((constraint.maxWidth - text2.width) / 2, topProgressBar.height + space.dp.toPx().toInt())
-            text3.place(constraint.maxWidth - text3.width, topProgressBar.height + space.dp.toPx().toInt())
+            text1.place(0, topProgressBar.height + space.toPx().toInt())
+            text2.place((constraint.maxWidth - text2.width) / 2, topProgressBar.height + space.toPx().toInt())
+            text3.place(constraint.maxWidth - text3.width, topProgressBar.height + space.toPx().toInt())
         }
     }
 }
@@ -403,9 +403,65 @@ fun AgreeAndSignUpButton(
 @Composable
 private fun PolicyAgreeScreenPreview() {
     PolicyAgreeScreen(
-        moveToBackScreen = {  },
-        moveToSignUpScreen = {  },
-        moveToTermsOfServiceDetailsScreen = {  },
-        moveToPrivacyPolicyDetailsScreen = {  }
+        moveToBackScreen = {},
+        moveToSignUpScreen = {},
+        moveToTermsOfServiceDetailsScreen = {},
+        moveToPrivacyPolicyDetailsScreen = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TopProgressContentPreview() {
+    TopProgressContent()
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AgreementSelectionContentPreview_AllTrue() {
+    val trueState = rememberSaveable { mutableStateOf(true) }
+    AgreementSelectionContent(
+        isTermsOfServiceAgreed = trueState,
+        isPrivacyPolicyAgreed = trueState,
+        moveToTermsOfServiceDetailsScreen = {},
+        moveToPrivacyPolicyDetailsScreen = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AgreementSelectionContentPreview_AllFalse() {
+    val falseState = rememberSaveable { mutableStateOf(false) }
+    AgreementSelectionContent(
+        isTermsOfServiceAgreed = falseState,
+        isPrivacyPolicyAgreed = falseState,
+        moveToTermsOfServiceDetailsScreen = {},
+        moveToPrivacyPolicyDetailsScreen = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AgreementSelectionContentPreview_TermsOfServiceTrue_PrivacyPolicyFalse() {
+    val trueState = rememberSaveable { mutableStateOf(true) }
+    val falseState = rememberSaveable { mutableStateOf(false) }
+    AgreementSelectionContent(
+        isTermsOfServiceAgreed = trueState,
+        isPrivacyPolicyAgreed = falseState,
+        moveToTermsOfServiceDetailsScreen = {},
+        moveToPrivacyPolicyDetailsScreen = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AgreementSelectionContentPreview_TermsOfServiceFalse_PrivacyPolicyTrue() {
+    val trueState = rememberSaveable { mutableStateOf(true) }
+    val falseState = rememberSaveable { mutableStateOf(false) }
+    AgreementSelectionContent(
+        isTermsOfServiceAgreed = falseState,
+        isPrivacyPolicyAgreed = trueState,
+        moveToTermsOfServiceDetailsScreen = {},
+        moveToPrivacyPolicyDetailsScreen = {}
     )
 }
