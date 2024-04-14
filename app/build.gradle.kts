@@ -47,18 +47,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
         languageVersion = "1.9"
     }
     buildFeatures {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.5"
     }
     packagingOptions {
         resources.excludes += "/META-INF/AL2.0"
@@ -82,7 +82,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
-    implementation(platform("androidx.compose:compose-bom:2023.05.01"))
+    implementation(platform("androidx.compose:compose-bom:2024.04.00"))
     implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -105,7 +105,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -150,8 +150,9 @@ dependencies {
     // System UI Controller
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.0")
 
-    // Naver Map
-    implementation("io.github.fornewid:naver-map-compose:1.5.0")
+    // Naver Map for Compose
+    implementation("io.github.fornewid:naver-map-compose:1.4.1")
+//    implementation("com.naver.maps:map-sdk:3.18.0")
 
     // Firebase Bom
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
@@ -167,7 +168,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // GMS - Google Mobile Services
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 
     // Landscapist
     implementation("com.github.skydoves:landscapist-glide:2.2.12")
@@ -175,6 +176,14 @@ dependencies {
     // Orbit
 //    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
 //    implementation("org.orbit-mvi:orbit-compose:6.1.0")
+    // Kakao API
+//    implementation("com.kakao.sdk:v2-all:2.20.1") // 전체 모듈 설치, 2.11.0 버전부터 지원
+    implementation("com.kakao.sdk:v2-user:2.20.1") // 카카오 로그인 API 모듈
+//    implementation("com.kakao.sdk:v2-share:2.20.1") // 카카오톡 공유 API 모듈
+//    implementation("com.kakao.sdk:v2-talk:2.20.1") // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
+//    implementation("com.kakao.sdk:v2-friend:2.20.1") // 피커 API 모듈
+//    implementation("com.kakao.sdk:v2-navi:2.20.1") // 카카오내비 API 모듈
+//    implementation("com.kakao.sdk:v2-cert:2.20.1") // 카카오톡 인증 서비스 API 모듈
 }
 
 kapt {
