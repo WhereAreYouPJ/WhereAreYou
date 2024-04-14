@@ -18,6 +18,11 @@ import com.whereareyounow.R
 //    Font(R.font.nanumsquareneo_extrabold, FontWeight.ExtraBold),
 //    Font(R.font.nanumsquareneo_heavy, FontWeight.Black),
 //)
+val ttangs = FontFamily(
+    Font(R.font.ttangs_light, FontWeight.Light),
+    Font(R.font.ttangs_medium, FontWeight.Medium),
+    Font(R.font.ttangs_bold, FontWeight.Bold)
+)
 
 val lato = FontFamily(
     Font(R.font.lato_thin, FontWeight.Thin),

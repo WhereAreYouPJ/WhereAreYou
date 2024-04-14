@@ -6,20 +6,20 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,14 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -42,7 +41,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.ui.theme.WhereAreYouTheme
-import com.whereareyounow.ui.theme.nanumSquareAc
+import com.whereareyounow.ui.theme.ttangs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -125,56 +124,7 @@ private fun SplashScreen(
     }
     when (screenState) {
         SplashViewModel.ScreenState.Splash -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xFF2D2573)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(Modifier.width(50.dp))
-                    Image(
-                        painterResource(R.drawable.bottomnavbar_home),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(Color(0xFFFFD390))
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = "가장 실용적인 약속관리",
-                        fontSize = 20.sp,
-                        fontFamily = nanumSquareAc,
-                        color = Color(0xFFFFD390),
-                    )
-                }
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 50.dp),
-                    text = "지금 어디?",
-                    fontSize = 44.sp,
-                    fontFamily = nanumSquareAc,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.End,
-                    color = Color(0xFFFFFFFF),
-                )
-                Spacer(Modifier.height(30.dp))
-                Image(
-                    modifier = Modifier
-                        .semantics {
-                            contentDescription = "Splash Logo"
-                        }
-                        .fillMaxWidth(0.5f)
-                        .height(IntrinsicSize.Min),
-                    painter = painterResource(id = R.drawable.splash_logo),
-                    contentDescription = null
-                )
-            }
+            SplashContent()
             if (isNetworkConnectionErrorDialogShowing) {
                 NetworkConnectionErrorDialog(
                     checkNetworkState = checkNetworkState,
@@ -194,75 +144,125 @@ private fun SplashScreen(
 }
 
 @Composable
-fun NetworkConnectionErrorDialog(
+private fun SplashContent() {
+    Layout(
+        content = {
+            Text(
+                modifier = Modifier,
+                text = "지금 어디?",
+                fontSize = 52.sp,
+                fontFamily = ttangs,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFFFFFF),
+            )
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = "위치기반 일정관리 플랫폼",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFFFFFFFF),
+            )
+        },
+        modifier = Modifier
+            .wrapContentSize()
+            .background(color = Color(0xFF7B50FF)),
+    ) { measurables, constraint ->
+        val placeables = measurables.map { it.measure(constraint) }
+        layout(constraint.maxWidth, constraint.maxHeight) {
+            var currentY = (constraint.maxHeight / 5)
+            placeables.forEach { placeable ->
+                placeable.place(x = (constraint.maxWidth - placeable.width) / 2, y = currentY)
+                currentY += placeable.height
+            }
+        }
+    }
+}
+
+@Composable
+private fun NetworkConnectionErrorDialog(
     checkNetworkState: () -> Boolean,
     updateCheckingState: (SplashViewModel.CheckingState) -> Unit,
     updateIsNetworkConnectionErrorDialogShowing: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current.density
     Dialog(
         onDismissRequest = {}
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(
-                    color = Color(0xFFFFFFFF),
-                    shape = RoundedCornerShape(10.dp)
+        CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(R.drawable.warning_gray),
+                    contentDescription = null
                 )
-                .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "네트워크 연결을 확인해주세요"
-            )
-            Spacer(Modifier.weight(1f))
-            Row {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            color = Color(0xFF2D2573),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .clickable {
-                            if (checkNetworkState()) {
-                                updateIsNetworkConnectionErrorDialogShowing(false)
-                                updateCheckingState(SplashViewModel.CheckingState.LocationPermission)
-                            } else {
-                                Toast
-                                    .makeText(context, "네트워크 연결을 확인해주세요", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "확인",
-                        color = Color(0xFFFFFFFF)
-                    )
-                }
-                Spacer(Modifier.width(10.dp))
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            color = Color(0xFFD9DCE7),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .clickable {
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = "인터넷 연결을 확인해주세요.",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(Modifier.weight(1.5f))
+                Row {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(46.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                color = Color(0xFFD9DCE7),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable {
 
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "닫기"
-                    )
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "닫기",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    Spacer(Modifier.width(10.dp))
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(46.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                color = Color(0xFF6236E9),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable {
+                                if (checkNetworkState()) {
+                                    updateIsNetworkConnectionErrorDialogShowing(false)
+                                    updateCheckingState(SplashViewModel.CheckingState.LocationPermission)
+                                } else {
+                                    Toast
+                                        .makeText(context, "네트워크 연결을 확인해주세요", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "확인",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFFFFFFFF)
+                        )
+                    }
                 }
             }
         }
@@ -271,20 +271,31 @@ fun NetworkConnectionErrorDialog(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SplashScreenPreview() {
+private fun SplashScreenPreview() {
     WhereAreYouTheme {
         SplashScreen(
             screenState = SplashViewModel.ScreenState.Splash,
-            updateScreenState = {  },
+            updateScreenState = {},
             checkingState = SplashViewModel.CheckingState.SignIn,
             isNetworkConnectionErrorDialogShowing = false,
             checkNetworkState = { true },
-            updateCheckingState = {  },
-            updateIsNetworkConnectionErrorDialogShowing = {  },
+            updateCheckingState = {},
+            updateIsNetworkConnectionErrorDialogShowing = {},
             checkIsSignedIn = { true },
             moveToSignInScreen = { /*TODO*/ },
-            moveToMainScreen = {  }
+            moveToMainScreen = {}
         )
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun NetworkConnectionErrorDialogPreview() {
+    WhereAreYouTheme {
+        NetworkConnectionErrorDialog(
+            checkNetworkState = { true },
+            updateCheckingState = {},
+            updateIsNetworkConnectionErrorDialogShowing = {}
+        )
+    }
+}
