@@ -97,7 +97,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1")
     testImplementation("com.google.truth:truth:1.0.1")
     testImplementation("androidx.test.ext:junit:1.1.2")
-    testImplementation("org.robolectric:robolectric:4.4")
 
     androidTestImplementation("junit:junit:4.13")
     androidTestImplementation("androidx.arch.core:core-testing:2.1.0")
