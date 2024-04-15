@@ -12,7 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.calendar.Schedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ fun CalendarContent(
     val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
-            .height(((GlobalValue.calendarViewHeight + state.offset) / density.density).dp)
+            .height(((CALENDAR_VIEW_HEIGHT + state.offset) / density.density).dp)
             .anchoredDraggable(state, Orientation.Vertical)
     ) {
         DateCalendar(

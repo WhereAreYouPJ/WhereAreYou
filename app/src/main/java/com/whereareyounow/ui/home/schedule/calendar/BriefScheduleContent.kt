@@ -38,7 +38,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
@@ -78,8 +80,8 @@ fun BriefScheduleContainer(
     val density = LocalDensity.current.density
     Column(
         modifier = Modifier
-            .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density + 2).dp)
-            .height(((GlobalValue.dailyBriefScheduleViewHeight / density)).dp)
+            .padding(top = ((CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT) / density + 2).dp)
+            .height(((DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT / density)).dp)
             .offset {
                 IntOffset(
                     x = 0,
@@ -118,7 +120,7 @@ fun BriefScheduleContainer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(((GlobalValue.dailyBriefScheduleViewHeight / density) - 20).dp)
+                .height(((DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT / density) - 20).dp)
                 .background(
                     color = Color(0xFFFFFFFF)
                 )
@@ -257,7 +259,7 @@ private fun BriefScheduleContentPreview() {
         updateAnchors(
             DraggableAnchors {
                 DetailState.Open at 0f
-                DetailState.Close at GlobalValue.dailyBriefScheduleViewHeight
+                DetailState.Close at DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
             }
         )
     }

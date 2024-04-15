@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -50,7 +49,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable
@@ -131,7 +131,7 @@ fun MyPageScreen(
             drawCircle(
 //                brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
                 color = Color(0xFF333C4C),
-                center = Offset(size.width / 2, GlobalValue.calendarViewHeight + GlobalValue.topBarHeight - size.width),
+                center = Offset(size.width / 2, CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT - size.width),
                 radius = size.width,
                 style = Fill
             )
@@ -144,7 +144,7 @@ fun MyPageScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((GlobalValue.topBarHeight / density).dp),
+                    .height((TOP_BAR_HEIGHT / density).dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -157,14 +157,14 @@ fun MyPageScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height((GlobalValue.calendarViewHeight / density).dp),
+                    .height((CALENDAR_VIEW_HEIGHT / density).dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 GlideImage(
                     modifier = Modifier
-                        .width(((GlobalValue.calendarViewHeight / density) / 3).dp)
-                        .height(((GlobalValue.calendarViewHeight / density) / 3).dp)
+                        .width(((CALENDAR_VIEW_HEIGHT / density) / 3).dp)
+                        .height(((CALENDAR_VIEW_HEIGHT / density) / 3).dp)
                         .clip(RoundedCornerShape(50)),
                     imageModel = { profileImageUri ?: R.drawable.idle_profile },
                     imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
@@ -187,7 +187,7 @@ fun MyPageScreen(
         // 하단 설정 메뉴
         Column(
             modifier = Modifier
-                .padding(top = ((GlobalValue.calendarViewHeight + GlobalValue.topBarHeight) / density).dp)
+                .padding(top = ((CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT) / density).dp)
                 .fillMaxWidth()
         ) {
             Box(

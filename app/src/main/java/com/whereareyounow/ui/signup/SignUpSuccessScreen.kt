@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.common.CheckCircle
 
@@ -41,7 +41,7 @@ fun SignUpSuccessScreen(
     ) {
 
         val density = LocalDensity.current.density
-        Spacer((Modifier.height((GlobalValue.topBarHeight / density + 20).dp)))
+        Spacer((Modifier.height((TOP_BAR_HEIGHT / density + 20).dp)))
 
         TopProgressContent()
 

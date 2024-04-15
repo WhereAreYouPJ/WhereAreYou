@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.ui.theme.lato
 import java.util.Calendar
 
@@ -81,7 +81,7 @@ fun DateBox(
             Box(
                 modifier = Modifier
                     .size(8.dp)
-                    .alpha(1f - anchorOffset / GlobalValue.dailyBriefScheduleViewHeight)
+                    .alpha(1f - anchorOffset / DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT)
                     .background(
                         shape = CircleShape,
                         color = Color(0xFF5B58B3)

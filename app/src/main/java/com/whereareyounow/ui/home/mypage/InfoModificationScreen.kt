@@ -41,7 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
 import com.whereareyounow.data.signup.UserIdState
 import com.whereareyounow.data.signup.UserNameState
@@ -152,7 +153,7 @@ private fun InfoModificationScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height((GlobalValue.calendarViewHeight / density).dp),
+                .height((CALENDAR_VIEW_HEIGHT / density).dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -235,12 +236,12 @@ fun TopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density).dp),
+            .height((TOP_BAR_HEIGHT / density).dp),
         contentAlignment = Alignment.CenterStart
     ) {
         Image(
             modifier = Modifier
-                .size((GlobalValue.topBarHeight / density / 2).dp)
+                .size((TOP_BAR_HEIGHT / density / 2).dp)
                 .clip(RoundedCornerShape(50))
                 .clickable { moveToBackScreen() },
             painter = painterResource(id = R.drawable.arrow_back),

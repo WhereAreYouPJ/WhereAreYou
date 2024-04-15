@@ -42,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareNeo
@@ -103,7 +103,7 @@ fun FriendScreenTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density).dp),
+            .height((TOP_BAR_HEIGHT / density).dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }

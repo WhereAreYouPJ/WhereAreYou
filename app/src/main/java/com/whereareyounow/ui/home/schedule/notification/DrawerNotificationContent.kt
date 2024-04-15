@@ -41,7 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.BOTTOM_NAVIGATION_BAR_HEIGHT
+import com.whereareyounow.data.SCREEN_WIDTH
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
@@ -67,7 +69,7 @@ fun DrawerNotificationContent(
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
             modifier = Modifier
-                .width((GlobalValue.screenWidth * 4 / 5 / density).dp)
+                .width((SCREEN_WIDTH * 4 / 5 / density).dp)
                 .fillMaxHeight()
                 .background(color = Color(0xFFFAFAFA))
                 .pointerInput(Unit) {
@@ -86,13 +88,13 @@ fun DrawerNotificationContent(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height((GlobalValue.topBarHeight / density).dp),
+                                    .height((TOP_BAR_HEIGHT / density).dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Spacer(Modifier.width(20.dp))
                                 Image(
                                     modifier = Modifier
-                                        .size((GlobalValue.topBarHeight / density / 2).dp)
+                                        .size((TOP_BAR_HEIGHT / density / 2).dp)
                                         .clip(RoundedCornerShape(50))
                                         .clickable {
                                             coroutineScope.launch { drawerState.close() }
@@ -197,7 +199,7 @@ fun DrawerNotificationContent(
                     }
                     // 하단 네비게이션 바에 가려지는 부분을 위한 여백
                     item {
-                        Spacer(Modifier.height(((GlobalValue.bottomNavBarHeight / density) + 60).dp))
+                        Spacer(Modifier.height(((BOTTOM_NAVIGATION_BAR_HEIGHT / density) + 60).dp))
                     }
                 }
             }

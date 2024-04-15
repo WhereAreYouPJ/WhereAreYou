@@ -59,7 +59,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
 import com.whereareyounow.data.calendar.Schedule
@@ -258,7 +259,7 @@ fun ScheduleScreenTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalValue.topBarHeight / density.density).dp),
+            .height((TOP_BAR_HEIGHT / density.density).dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val density = LocalDensity.current.density
@@ -445,7 +446,7 @@ private val anchoredDraggableState = AnchoredDraggableState(
         updateAnchors(
             DraggableAnchors {
                 DetailState.Open at 0f
-                DetailState.Close at GlobalValue.dailyBriefScheduleViewHeight
+                DetailState.Close at DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
             }
         )
     }

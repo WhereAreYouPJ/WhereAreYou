@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.RoundedCornerButton
 
 
@@ -70,7 +70,7 @@ fun PermissionCheckingScreen(
     ) {
         Spacer(Modifier.height(40.dp))
         Text(
-            modifier = Modifier.height((GlobalValue.topBarHeight / density).dp),
+            modifier = Modifier.height((TOP_BAR_HEIGHT / density).dp),
             text = "앱 접근 권한 안내",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold
