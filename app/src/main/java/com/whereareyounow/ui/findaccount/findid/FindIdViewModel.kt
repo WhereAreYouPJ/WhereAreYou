@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.findid
+package com.whereareyounow.ui.findaccount.findid
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -10,6 +10,7 @@ import com.whereareyounow.data.findid.VerificationCodeState
 import com.whereareyounow.domain.entity.apimessage.signin.FindIdRequest
 import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
 import com.whereareyounow.domain.usecase.signin.FindIdUseCase
+import com.whereareyounow.domain.usecase.signup.AuthenticateEmailCodeUseCase
 import com.whereareyounow.domain.usecase.signup.AuthenticateEmailUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
@@ -31,6 +32,7 @@ class FindIdViewModel @Inject constructor(
     private val application: Application,
     private val inputTextValidator: InputTextValidator,
     private val authenticateEmailUseCase: AuthenticateEmailUseCase,
+    private val authenticateEmailCodeUseCase: AuthenticateEmailCodeUseCase,
     private val findIdUseCase: FindIdUseCase
 
 ) : AndroidViewModel(application) {
@@ -69,6 +71,7 @@ class FindIdViewModel @Inject constructor(
                     startTimer = launch {
                         _findIdScreenUIState.update {
                             it.copy(
+                                inputVerificationCodeState = VerificationCodeState.Empty,
                                 isVerificationCodeSent = true,
                                 emailVerificationLeftTime = 180
                             )
@@ -95,7 +98,7 @@ class FindIdViewModel @Inject constructor(
         }
     }
 
-    fun findId(moveToFindIdResultScreen: (String) -> Unit) {
+    fun findId() {
         viewModelScope.launch(Dispatchers.Default) {
             // 유효시간이 지나면 인증을 다시 받아야 한다.
             if (_findIdScreenUIState.value.emailVerificationLeftTime <= 0) {
@@ -109,7 +112,12 @@ class FindIdViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     response.data?.let { data ->
                         withContext(Dispatchers.Main) {
-                            moveToFindIdResultScreen(data.userId)
+                            _findIdScreenUIState.update {
+                                it.copy(
+                                    userIdReceived = data.userId,
+                                    inputVerificationCodeState = VerificationCodeState.Satisfied
+                                )
+                            }
                         }
                     }
                 }
@@ -122,7 +130,7 @@ class FindIdViewModel @Inject constructor(
                         }
                         404 -> {
                             withContext(Dispatchers.Main) {
-                                moveToFindIdResultScreen("")
+
                             }
                         }
                     }

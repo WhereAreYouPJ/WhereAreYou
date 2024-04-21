@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.findpw
+package com.whereareyounow.ui.findaccount.findpw
 
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
@@ -33,7 +33,6 @@ import com.whereareyounow.data.findpw.FindPasswordScreenSideEffect
 import com.whereareyounow.data.findpw.FindPasswordScreenUIState
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.findpw.VerificationCodeState
-import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
@@ -134,7 +133,7 @@ private fun FindPasswordScreen(
             VerificationCodeTextField(
                 inputText = findPasswordScreenUIState.inputVerificationCode,
                 onValueChange = updateInputVerificationCode,
-                guideLine = "인증코드가 일치하지 않습니다.",
+                warningText = "인증코드가 일치하지 않습니다.",
                 inputVerificationCodeState = findPasswordScreenUIState.inputVerificationCodeState,
                 leftTime = findPasswordScreenUIState.emailVerificationLeftTime
             )
@@ -142,10 +141,10 @@ private fun FindPasswordScreen(
 
         Spacer(Modifier.weight(1f))
 
-        RoundedCornerButton(
-            text = "확인",
-            onClick = { verifyPasswordResetCode(moveToPasswordResettingScreen) }
-        )
+//        RoundedCornerButton(
+//            text = "확인",
+//            onClick = { verifyPasswordResetCode(moveToPasswordResettingScreen) }
+//        )
 
         Spacer(Modifier.height(20.dp))
     }
@@ -170,7 +169,7 @@ private fun UserIdInputBox(
         hint = "아이디",
         inputText = inputText,
         onValueChange = onValueChange,
-        guideLine = "",
+        warningText = "",
         textFieldState = CustomTextFieldState.Idle
     )
 }
@@ -186,7 +185,7 @@ fun EmailInputBox(
         hint = "이메일",
         inputText = inputEmail,
         onValueChange = updateInputEmail,
-        guideLine = guideLine,
+        warningText = guideLine,
         textFieldState = when (inputEmailState) {
             EmailState.Empty -> CustomTextFieldState.Idle
             EmailState.Satisfied -> CustomTextFieldState.Satisfied
@@ -199,7 +198,7 @@ fun EmailInputBox(
 private fun VerificationCodeTextField(
     inputText: String,
     onValueChange: (String) -> Unit,
-    guideLine: String,
+    warningText: String,
     inputVerificationCodeState: VerificationCodeState,
     leftTime: Int
 ) {
@@ -207,7 +206,7 @@ private fun VerificationCodeTextField(
         hint = "이메일 인증코드",
         inputText = inputText,
         onValueChange = onValueChange,
-        guideLine = guideLine,
+        warningText = warningText,
         textFieldState = when (inputVerificationCodeState) {
             VerificationCodeState.Unsatisfied -> CustomTextFieldState.Unsatisfied
             else -> CustomTextFieldState.Idle

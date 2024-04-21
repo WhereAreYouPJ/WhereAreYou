@@ -1,6 +1,7 @@
-package com.whereareyounow.ui.findid
+package com.whereareyounow.ui.findaccount.findid
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,11 +35,14 @@ import com.whereareyounow.data.findid.EmailState
 import com.whereareyounow.data.findid.FindIdScreenSideEffect
 import com.whereareyounow.data.findid.FindIdScreenUIState
 import com.whereareyounow.data.findid.VerificationCodeState
+import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.ui.signup.InstructionContent
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,7 +51,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun FindIdScreen(
-    moveToSignInScreen: () -> Unit,
+    moveToFindAccountScreen: () -> Unit,
     moveToFindIdResultScreen: (String) -> Unit,
     viewModel: FindIdViewModel = hiltViewModel()
 ) {
@@ -59,7 +64,7 @@ fun FindIdScreen(
         updateInputVerificationCode = viewModel::updateInputVerificationCode,
         sendEmailVerificationCode = viewModel::sendEmailVerificationCode,
         findId = viewModel::findId,
-        moveToSignInScreen = moveToSignInScreen,
+        moveToFindAccountScreen = moveToFindAccountScreen,
         moveToFindIdResultScreen = moveToFindIdResultScreen
     )
 }
@@ -71,10 +76,13 @@ private fun FindIdScreen(
     updateInputEmail: (String) -> Unit,
     updateInputVerificationCode: (String) -> Unit,
     sendEmailVerificationCode: () -> Unit,
-    findId: ((String) -> Unit) -> Unit,
-    moveToSignInScreen: () -> Unit,
+    findId: () -> Unit,
+    moveToFindAccountScreen: () -> Unit,
     moveToFindIdResultScreen: (String) -> Unit,
 ) {
+    BackHandler {
+        moveToFindAccountScreen()
+    }
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         findIdScreenSideEffectFlow.collect { sideEffect ->
@@ -85,56 +93,98 @@ private fun FindIdScreen(
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp)
-            .imePadding()
-    ) {
-        FindIdScreenTopBar(moveToSignInScreen)
+    CustomSurface {
+        Column {
+            FindIdScreenTopBar(moveToFindAccountScreen)
 
-        Spacer(Modifier.height(20.dp))
+            HorizontalDivider()
 
-        Row(
-            modifier = Modifier
-                .animateContentSize { _, _ -> }
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth()
-        ) {
-            Box(modifier = Modifier.weight(1f)) {
-                EmailTextField(
-                    inputEmail = findIdScreenUIState.inputEmail,
-                    onValueChange = updateInputEmail,
-                    inputEmailState = findIdScreenUIState.inputEmailState
-                )
+            Spacer(Modifier.height(40.dp))
+
+            InstructionContent(
+                text = "지금어디 가입 정보로\n아이디를 확인하세요"
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 15.dp, end = 15.dp)
+                    .imePadding()
+            ) {
+
+                Spacer(Modifier.height(30.dp))
+
+                Row(
+                    modifier = Modifier
+                        .animateContentSize { _, _ -> }
+                        .height(IntrinsicSize.Min)
+                        .fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        EmailTextField(
+                            inputEmail = findIdScreenUIState.inputEmail,
+                            onValueChange = updateInputEmail,
+                            inputEmailState = findIdScreenUIState.inputEmailState,
+                            isVerificationCodeSent = findIdScreenUIState.isVerificationCodeSent
+                        )
+                    }
+
+                    Spacer(Modifier.width(4.dp))
+
+                    VerificationButton(
+                        text = "인증요청",
+                        onClick = sendEmailVerificationCode
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                if (findIdScreenUIState.isVerificationCodeSent) {
+                    Row(
+                        modifier = Modifier
+                            .animateContentSize { _, _ -> }
+                            .height(IntrinsicSize.Min)
+                            .fillMaxWidth()
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            VerificationCodeTextField(
+                                inputText = findIdScreenUIState.inputVerificationCode,
+                                onValueChange = updateInputVerificationCode,
+                                inputVerificationCodeState = findIdScreenUIState.inputVerificationCodeState,
+                                leftTime = findIdScreenUIState.emailVerificationLeftTime
+                            )
+                        }
+
+                        Spacer(Modifier.width(4.dp))
+
+                        VerificationButton(
+                            text = "확인",
+                            onClick = findId
+                        )
+                    }
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                RoundedCornerButton(
+                    onClick = {
+                        if (findIdScreenUIState.inputVerificationCodeState == VerificationCodeState.Satisfied) {
+                            moveToFindIdResultScreen(findIdScreenUIState.userIdReceived)
+                        } else {
+                            Toast.makeText(context, "이메일 인증을 진행해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                ) {
+                    Text(
+                        text = "확인",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFF2F2F2)
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
             }
-            Spacer(Modifier.width(10.dp))
-            VerificationButton(
-                text = "인증요청",
-                onClick = sendEmailVerificationCode
-            )
         }
-
-        Spacer(Modifier.height(20.dp))
-
-        if (findIdScreenUIState.isVerificationCodeSent) {
-            VerificationCodeTextField(
-                inputText = findIdScreenUIState.inputVerificationCode,
-                onValueChange = updateInputVerificationCode,
-                guideLine = "인증코드가 일치하지 않습니다.",
-                inputVerificationCodeState = findIdScreenUIState.inputVerificationCodeState,
-                leftTime = findIdScreenUIState.emailVerificationLeftTime
-            )
-        }
-
-        Spacer(Modifier.weight(1f))
-
-        RoundedCornerButton(
-            text = "확인",
-            onClick = { findId(moveToFindIdResultScreen) }
-        )
-
-        Spacer(Modifier.height(20.dp))
     }
 }
 
@@ -152,16 +202,18 @@ fun FindIdScreenTopBar(
 fun EmailTextField(
     inputEmail: String,
     onValueChange: (String) -> Unit,
-    inputEmailState: EmailState
+    inputEmailState: EmailState,
+    isVerificationCodeSent: Boolean
 ) {
     CustomTextField(
         hint = "이메일",
         inputText = inputEmail,
         onValueChange = onValueChange,
-        guideLine = "올바른 이메일 형식으로 입력해주세요.",
+        warningText = "이메일 형식에 알맞지 않습니다.",
+        onSuccessText = "코드가 발송되었습니다.\n인증 코드를 하단에 입력해주세요.",
         textFieldState = when (inputEmailState) {
             EmailState.Unsatisfied -> CustomTextFieldState.Unsatisfied
-            else -> CustomTextFieldState.Idle
+            else -> if (isVerificationCodeSent) CustomTextFieldState.Satisfied else CustomTextFieldState.Idle
         }
     )
 }
@@ -171,7 +223,6 @@ fun EmailTextField(
 private fun VerificationCodeTextField(
     inputText: String,
     onValueChange: (String) -> Unit,
-    guideLine: String,
     inputVerificationCodeState: VerificationCodeState,
     leftTime: Int
 ) {
@@ -179,10 +230,12 @@ private fun VerificationCodeTextField(
         hint = "이메일 인증코드",
         inputText = inputText,
         onValueChange = onValueChange,
-        guideLine = guideLine,
+        warningText = "인증코드가 일치하지 않습니다.",
+        onSuccessText = "인증코드가 일치합니다.",
         textFieldState = when (inputVerificationCodeState) {
+            VerificationCodeState.Empty -> CustomTextFieldState.Idle
             VerificationCodeState.Unsatisfied -> CustomTextFieldState.Unsatisfied
-            else -> CustomTextFieldState.Idle
+            VerificationCodeState.Satisfied -> CustomTextFieldState.Satisfied
         },
         leftTime = leftTime
     )
@@ -195,15 +248,14 @@ fun VerificationButton(
 ) {
     Box(
         modifier = Modifier
-            .height(50.dp)
+            .width(100.dp)
+            .height(44.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF2D2573))
+            .background(Color(0xFF7B50FF))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp),
             text = text,
             color = Color(0xFFFFFFFF),
             fontSize = 16.sp
@@ -222,7 +274,7 @@ private fun FindIdScreenPreview() {
             updateInputVerificationCode = {},
             sendEmailVerificationCode = {},
             findId = {},
-            moveToSignInScreen = {},
+            moveToFindAccountScreen = {},
             moveToFindIdResultScreen = {}
         )
     }

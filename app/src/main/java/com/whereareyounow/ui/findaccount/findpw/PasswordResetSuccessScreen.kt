@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.findpw
+package com.whereareyounow.ui.findaccount.findpw
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.ui.component.RoundedCornerButton
 
 
 @Composable
@@ -58,10 +57,10 @@ fun PasswordResetSuccessScreen(
             )
         }
         Spacer(Modifier.weight(1f))
-        RoundedCornerButton(
-            text = "확인",
-            onClick = { moveToSignInScreen() }
-        )
+//        RoundedCornerButton(
+//            text = "확인",
+//            onClick = { moveToSignInScreen() }
+//        )
         Spacer(Modifier.height(20.dp))
     }
 }

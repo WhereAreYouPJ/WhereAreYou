@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.findpw
+package com.whereareyounow.ui.findaccount.findpw
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
