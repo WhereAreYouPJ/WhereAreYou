@@ -6,7 +6,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 
@@ -64,34 +63,117 @@ val nanumSquareAc = FontFamily(
     Font(R.font.nanumsquare_ac_regular, FontWeight.Normal),
     Font(R.font.nanumsquare_ac_bold, FontWeight.Bold),
     Font(R.font.nanumsquare_ac_extrabold, FontWeight.ExtraBold),
-
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    displayMedium = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    displaySmall = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    titleLarge = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    titleMedium = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    titleSmall = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
     bodyLarge = TextStyle(
         fontFamily = notoSanskr,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 1.1.em,
-        letterSpacing = 0.05.sp,
-        platformStyle = PlatformTextStyle(
-            includeFontPadding = false
-        )
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        platformStyle = PlatformTextStyle(false)
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    bodySmall = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    labelLarge = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+    labelMedium = TextStyle(
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+        fontFamily = notoSanskr,
+        platformStyle = PlatformTextStyle(false)
+    ),
+)
+
+private const val baseFontSize = 10
+val medium10pt = TextStyle(
+    fontSize = (baseFontSize + 0).sp,
+    fontWeight = FontWeight.Medium,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val medium12pt = TextStyle(
+    fontSize = (baseFontSize + 2).sp,
+    fontWeight = FontWeight.Medium,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val medium14pt = TextStyle(
+    fontSize = (baseFontSize + 4).sp,
+    fontWeight = FontWeight.Medium,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val medium16pt = TextStyle(
+    fontSize = (baseFontSize + 6).sp,
+    fontWeight = FontWeight.Medium,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val medium18pt = TextStyle(
+    fontSize = (baseFontSize + 8).sp,
+    fontWeight = FontWeight.Medium,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val bold18pt = TextStyle(
+    fontSize = (baseFontSize + 8).sp,
+    fontWeight = FontWeight.Bold,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val medium20pt = TextStyle(
+    fontSize = (baseFontSize + 10).sp,
+    fontWeight = FontWeight.Medium,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
+)
+val bold22pt = TextStyle(
+    fontSize = (baseFontSize + 12).sp,
+    fontWeight = FontWeight.Bold,
+    fontFamily = notoSanskr,
+    platformStyle = PlatformTextStyle(false)
 )
