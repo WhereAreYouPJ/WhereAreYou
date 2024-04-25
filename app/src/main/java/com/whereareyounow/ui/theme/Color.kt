@@ -43,42 +43,17 @@ fun customLightColorScheme(
         thinnest = thinnest,
     )
 
-//fun customDarkColorScheme(
-//    brightest: Color = Color(0xFFC5C5C5),
-//    brandText: Color = Color(0xFF6236E9),
-//    warning: Color = Color(0xFFF14242),
-//    brandColor: Color = Color(0xFF7B50FF),
-//    thinner: Color = Color(0xFFEEEEEE),
-//    calendarRed: Color = Color(0xFFFFAAAA),
-//    calendarYellow: Color = Color(0xFFFFE589),
-//    calendarPurple: Color = Color(0xFFCEA8FF),
-//    calendarGreen: Color = Color(0xFFA3F39C),
-//    thinnest: Color = Color(0xFFEFEFEF)
-//): CustomColorScheme =
-//    CustomColorScheme(
-//        brightest = brightest,
-//        brandText = brandText,
-//        warning = warning,
-//        brandColor = brandColor,
-//        thinner = thinner,
-//        calendarRed = calendarRed,
-//        calendarYellow = calendarYellow,
-//        calendarPurple = calendarPurple,
-//        calendarGreen = calendarGreen,
-//        thinnest = thinnest,
-//    )
-
 fun customDarkColorScheme(
-    brightest: Color = Color.Cyan,
-    brandText: Color = Color.Cyan,
-    warning: Color = Color.Cyan,
-    brandColor: Color = Color.Cyan,
-    thinner: Color = Color.Cyan,
-    calendarRed: Color = Color.Cyan,
-    calendarYellow: Color = Color.Cyan,
-    calendarPurple: Color = Color.Cyan,
-    calendarGreen: Color = Color.Cyan,
-    thinnest: Color = Color.Cyan
+    brightest: Color = Color(0xFFC5C5C5),
+    brandText: Color = Color(0xFF6236E9),
+    warning: Color = Color(0xFFF14242),
+    brandColor: Color = Color(0xFF7B50FF),
+    thinner: Color = Color(0xFFEEEEEE),
+    calendarRed: Color = Color(0xFFFFAAAA),
+    calendarYellow: Color = Color(0xFFFFE589),
+    calendarPurple: Color = Color(0xFFCEA8FF),
+    calendarGreen: Color = Color(0xFFA3F39C),
+    thinnest: Color = Color(0xFFEFEFEF)
 ): CustomColorScheme =
     CustomColorScheme(
         brightest = brightest,
@@ -92,6 +67,31 @@ fun customDarkColorScheme(
         calendarGreen = calendarGreen,
         thinnest = thinnest,
     )
+
+//fun customDarkColorScheme(
+//    brightest: Color = Color.Cyan,
+//    brandText: Color = Color.Cyan,
+//    warning: Color = Color.Cyan,
+//    brandColor: Color = Color.Cyan,
+//    thinner: Color = Color.Cyan,
+//    calendarRed: Color = Color.Cyan,
+//    calendarYellow: Color = Color.Cyan,
+//    calendarPurple: Color = Color.Cyan,
+//    calendarGreen: Color = Color.Cyan,
+//    thinnest: Color = Color.Cyan
+//): CustomColorScheme =
+//    CustomColorScheme(
+//        brightest = brightest,
+//        brandText = brandText,
+//        warning = warning,
+//        brandColor = brandColor,
+//        thinner = thinner,
+//        calendarRed = calendarRed,
+//        calendarYellow = calendarYellow,
+//        calendarPurple = calendarPurple,
+//        calendarGreen = calendarGreen,
+//        thinnest = thinnest,
+//    )
 
 @Stable
 class CustomColorScheme(
