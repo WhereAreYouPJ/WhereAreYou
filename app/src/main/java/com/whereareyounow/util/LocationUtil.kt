@@ -47,6 +47,7 @@ class LocationUtil @Inject constructor(
                 }
             }
         }
+
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -57,6 +58,7 @@ class LocationUtil @Inject constructor(
         ) {
             return
         }
+
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest,
             locationCallback,

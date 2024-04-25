@@ -2,7 +2,6 @@ package com.whereareyounow.util
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLinkRequest
@@ -18,15 +17,11 @@ fun NavController.navigate(
     navigatorExtras: Navigator.Extras? = null
 ) {
     val routeLink = NavDeepLinkRequest
-        .Builder
-        .fromUri(NavDestination.createRoute(route).toUri())
-        .build()
-
+        .Builder.fromUri(NavDestination.createRoute(route).toUri()).build()
     val deepLinkMatch = graph.matchDeepLink(routeLink)
     if (deepLinkMatch != null) {
         val destination = deepLinkMatch.destination
         val id = destination.id
-        Log.e("", "${args}")
         navigate(id, args, navOptions, navigatorExtras)
     } else {
         navigate(route, navOptions, navigatorExtras)
