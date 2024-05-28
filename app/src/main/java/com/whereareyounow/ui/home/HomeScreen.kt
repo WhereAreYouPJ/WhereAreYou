@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -23,27 +24,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.calendar.CalendarScreenUIState
+import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
+import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.home.friend.FriendScreen
 import com.whereareyounow.ui.home.mypage.MyPageScreen
 import com.whereareyounow.ui.home.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.home.schedule.calendar.ScheduleScreen
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareNeo
+import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
-fun HomeContent(
+fun HomeScreen(
     moveToAddScheduleScreen: (Int, Int, Int) -> Unit,
     moveToDetailScreen: (String) -> Unit,
     moveToAddFriendScreen: () -> Unit,
@@ -56,7 +58,7 @@ fun HomeContent(
     val viewType = viewModel.viewType.collectAsState().value
     val navigationItemContentList = viewModel.getNavigationItemContent()
     val calendarScreenUIState = calendarViewModel.calendarScreenUIState.collectAsState().value
-    HomeContent(
+    HomeScreen(
         viewType = viewType,
         calendarScreenUIState = calendarScreenUIState,
         navigationItemContentList = navigationItemContentList,
@@ -71,7 +73,7 @@ fun HomeContent(
 }
 
 @Composable
-private fun HomeContent(
+private fun HomeScreen(
     viewType: ViewType,
     calendarScreenUIState: CalendarScreenUIState,
     navigationItemContentList: List<HomeViewModel.NavigationItemContent>,
@@ -83,52 +85,55 @@ private fun HomeContent(
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit
 ) {
-    Scaffold(
-        topBar = {},
-        bottomBar = {
-            HomeNavigationBar(
-                viewType,
-                navigationItemContentList,
-                updateViewType = updateViewType
-            )
-        },
-        floatingActionButton = {
-            if (viewType == ViewType.Calendar) {
-                FloatingActionButton(
-                    shape = CircleShape,
-                    contentColor = Color(0xFFFFFFFF),
-                    containerColor = Color(0xFF5448BC),
-                    onClick = { moveToAddScheduleScreen(calendarScreenUIState.selectedYear, calendarScreenUIState.selectedMonth, calendarScreenUIState.selectedDate) }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(20.dp),
-                        imageVector = ImageVector.vectorResource(R.drawable.plus),
-                        contentDescription = null
+    CustomSurface {
+        Scaffold(
+            topBar = {},
+            bottomBar = {
+                HomeNavigationBar(
+                    viewType,
+                    navigationItemContentList,
+                    updateViewType = updateViewType
+                )
+            },
+            floatingActionButton = {
+                if (viewType == ViewType.Calendar) {
+                    FloatingActionButton(
+                        shape = CircleShape,
+                        contentColor = Color(0xFFFFFFFF),
+                        containerColor = Color(0xFF5448BC),
+                        onClick = { moveToAddScheduleScreen(calendarScreenUIState.selectedYear, calendarScreenUIState.selectedMonth, calendarScreenUIState.selectedDate) }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.plus),
+                            contentDescription = null
+                        )
+                    }
+                }
+            },
+            containerColor = Color(0xFFFFFFFF),
+        ) {
+            when (viewType) {
+                ViewType.Calendar -> {
+                    ScheduleScreen(
+                        paddingValues = it,
+                        moveToDetailScreen = moveToDetailScreen
                     )
                 }
-            }
-        }
-    ) {
-        when (viewType) {
-            ViewType.Calendar -> {
-                ScheduleScreen(
-                    paddingValues = it,
-                    moveToDetailScreen = moveToDetailScreen
-                )
-            }
-            ViewType.Friends -> {
-                FriendScreen(
-                    paddingValues = it,
-                    moveToAddFriendScreen = moveToAddFriendScreen,
-                    moveToAddGroupScreen = moveToAddGroupScreen
-                )
-            }
-            ViewType.MyPage -> {
-                MyPageScreen(
-                    paddingValues = it,
-                    moveToSignInScreen = moveToSignInScreen,
-                    moveToModifyInfoScreen = moveToModifyInfoScreen
-                )
+                ViewType.Friends -> {
+                    FriendScreen(
+                        paddingValues = it,
+                        moveToAddFriendScreen = moveToAddFriendScreen,
+                        moveToAddGroupScreen = moveToAddGroupScreen
+                    )
+                }
+                ViewType.MyPage -> {
+                    MyPageScreen(
+                        paddingValues = it,
+                        moveToSignInScreen = moveToSignInScreen,
+                        moveToModifyInfoScreen = moveToModifyInfoScreen
+                    )
+                }
             }
         }
     }
@@ -140,18 +145,16 @@ fun HomeNavigationBar(
     navigationItemContentList: List<HomeViewModel.NavigationItemContent>,
     updateViewType: (ViewType) -> Unit,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-
     NavigationBar(
-        modifier = Modifier
-            .height((screenHeight / 15).dp)
-            .shadow(
-                elevation = 40.dp
-            ),
-        containerColor = Color(0xFFFFFFFF)
+        modifier = Modifier.height(BOTTOM_NAVIGATION_BAR_HEIGHT.dp)
+            .shadow(elevation = 40.dp),
+        containerColor = Color(0xFFFFFFFF),
+        // 이걸 안해주면 navigationbar 아래가 system navigation bar만큼 가려진다.
+        windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         navigationItemContentList.forEachIndexed { _, navItem ->
             NavigationBarItem(
+                modifier = Modifier.fillMaxHeight(),
                 selected = viewType == navItem.viewType,
                 onClick = { updateViewType(navItem.viewType) },
                 icon = {
@@ -197,7 +200,7 @@ class NoRippleInteractionSource : MutableInteractionSource {
     override fun tryEmit(interaction: Interaction) = false
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun HomeNavigationBarPreview() {
     val navigationItemContentList = listOf(

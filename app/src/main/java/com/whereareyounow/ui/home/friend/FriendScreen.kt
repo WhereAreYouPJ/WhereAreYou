@@ -42,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.TOP_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.nanumSquareNeo

@@ -41,8 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
-import com.whereareyounow.data.TOP_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
 import com.whereareyounow.data.signup.UserIdState
 import com.whereareyounow.data.signup.UserNameState
@@ -244,7 +244,7 @@ fun TopBar(
                 .size((TOP_BAR_HEIGHT / density / 2).dp)
                 .clip(RoundedCornerShape(50))
                 .clickable { moveToBackScreen() },
-            painter = painterResource(id = R.drawable.arrow_back),
+            painter = painterResource(id = R.drawable.ic_back),
             contentDescription = null
         )
         Box(
@@ -280,7 +280,7 @@ private fun UserNameTextField(
         hint = "사용자명",
         inputText = inputUserName,
         onValueChange = updateInputUserName,
-        guideLine = "",
+        warningText = "",
         textFieldState = when (inputUserNameState) {
             UserNameState.Empty -> CustomTextFieldState.Idle
             UserNameState.Satisfied -> CustomTextFieldState.Satisfied
@@ -299,7 +299,7 @@ private fun UserIdTextField(
         hint = "아이디",
         inputText = inputUserId,
         onValueChange = updateInputUserId,
-        guideLine = "",
+        warningText = "",
         textFieldState = when (inputUserIdState) {
             UserIdState.Empty -> CustomTextFieldState.Idle
             UserIdState.Satisfied -> CustomTextFieldState.Idle

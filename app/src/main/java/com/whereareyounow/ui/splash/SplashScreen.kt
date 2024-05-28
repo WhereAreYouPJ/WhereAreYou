@@ -2,7 +2,6 @@ package com.whereareyounow.ui.splash
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,7 +17,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,26 +26,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.whereareyounow.R
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.ttangs
+import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(
-    moveToSignInScreen: () -> Unit,
+    moveToSignInMethodSelectionScreen: () -> Unit,
     moveToMainScreen: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
@@ -62,9 +60,8 @@ fun SplashScreen(
         isNetworkConnectionErrorDialogShowing = isNetworkConnectionErrorDialogShowing,
         checkNetworkState = viewModel::checkNetworkState,
         updateCheckingState = viewModel::updateCheckingState,
-        updateIsNetworkConnectionErrorDialogShowing = viewModel::updateIsNetworkConnectionErrorDialogShowing,
         checkIsSignedIn = viewModel::checkIsSignedIn,
-        moveToSignInScreen = moveToSignInScreen,
+        moveToSignInScreen = moveToSignInMethodSelectionScreen,
         moveToMainScreen = moveToMainScreen
     )
 }
@@ -75,13 +72,13 @@ private fun SplashScreen(
     updateScreenState: (SplashViewModel.ScreenState) -> Unit,
     checkingState: SplashViewModel.CheckingState,
     isNetworkConnectionErrorDialogShowing: Boolean,
-    checkNetworkState: () -> Boolean,
+    checkNetworkState: () -> Unit,
     updateCheckingState: (SplashViewModel.CheckingState) -> Unit,
-    updateIsNetworkConnectionErrorDialogShowing: (Boolean) -> Unit,
     checkIsSignedIn: suspend () -> Boolean,
     moveToSignInScreen: () -> Unit,
     moveToMainScreen: () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val locationPermissions = arrayOf(
@@ -91,12 +88,16 @@ private fun SplashScreen(
         when (checkingState) {
             SplashViewModel.CheckingState.Network -> {
                 coroutineScope.launch {
+                    systemUiController.setStatusBarColor(
+                        color = Color(0x00000000),
+                        darkIcons = false
+                    )
+                    systemUiController.setNavigationBarColor(
+                        color = Color(0x00000000),
+                        darkIcons = false
+                    )
                     delay(1000)
-                    if (checkNetworkState()) {
-                        updateCheckingState(SplashViewModel.CheckingState.LocationPermission)
-                    } else {
-                        updateIsNetworkConnectionErrorDialogShowing(true)
-                    }
+                    checkNetworkState()
                 }
             }
             SplashViewModel.CheckingState.LocationPermission -> {
@@ -113,6 +114,14 @@ private fun SplashScreen(
             SplashViewModel.CheckingState.SignIn -> {
                 coroutineScope.launch(Dispatchers.Main) {
                     delay(1000)
+                    systemUiController.setStatusBarColor(
+                        color = Color(0x00000000),
+                        darkIcons = true
+                    )
+                    systemUiController.setNavigationBarColor(
+                        color = Color(0x00000000),
+                        darkIcons = true
+                    )
                     if (checkIsSignedIn()) {
                         moveToMainScreen()
                     } else {
@@ -127,9 +136,7 @@ private fun SplashScreen(
             SplashContent()
             if (isNetworkConnectionErrorDialogShowing) {
                 NetworkConnectionErrorDialog(
-                    checkNetworkState = checkNetworkState,
-                    updateCheckingState = updateCheckingState,
-                    updateIsNetworkConnectionErrorDialogShowing = updateIsNetworkConnectionErrorDialogShowing
+                    checkNetworkState = checkNetworkState
                 )
             }
         }
@@ -155,12 +162,11 @@ private fun SplashContent() {
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFFFFFFF),
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(4.dp))
             Text(
                 text = "위치기반 일정관리 플랫폼",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
                 color = Color(0xFFFFFFFF),
+                style = medium14pt
             )
         },
         modifier = Modifier
@@ -180,44 +186,47 @@ private fun SplashContent() {
 
 @Composable
 private fun NetworkConnectionErrorDialog(
-    checkNetworkState: () -> Boolean,
-    updateCheckingState: (SplashViewModel.CheckingState) -> Unit,
-    updateIsNetworkConnectionErrorDialogShowing: (Boolean) -> Unit
+    checkNetworkState: () -> Unit
 ) {
-    val context = LocalContext.current
-    val density = LocalDensity.current.density
     Dialog(
         onDismissRequest = {}
     ) {
-        CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+        WhereAreYouTheme {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
+                    .width(280.dp)
+                    .height(160.dp)
                     .background(
                         color = Color(0xFFFFFFFF),
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(20.dp),
+                    .padding(start = 14.dp, end = 14.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(Modifier.height(18.dp))
+
                 Image(
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(32.dp),
                     painter = painterResource(R.drawable.warning_gray),
                     contentDescription = null
                 )
-                Spacer(Modifier.weight(1f))
+
+                Spacer(Modifier.height(12.dp))
+
                 Text(
                     text = "인터넷 연결을 확인해주세요.",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF222222)
                 )
-                Spacer(Modifier.weight(1.5f))
+
+                Spacer(Modifier.weight(1f))
+
                 Row {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(46.dp)
+                            .height(42.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(
                                 color = Color(0xFFD9DCE7),
@@ -230,46 +239,38 @@ private fun NetworkConnectionErrorDialog(
                     ) {
                         Text(
                             text = "닫기",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
+                            color = Color(0xFF444444),
+                            style = medium16pt
                         )
                     }
-                    Spacer(Modifier.width(10.dp))
+                    Spacer(Modifier.width(8.dp))
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(46.dp)
+                            .height(42.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(
                                 color = Color(0xFF6236E9),
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .clickable {
-                                if (checkNetworkState()) {
-                                    updateIsNetworkConnectionErrorDialogShowing(false)
-                                    updateCheckingState(SplashViewModel.CheckingState.LocationPermission)
-                                } else {
-                                    Toast
-                                        .makeText(context, "네트워크 연결을 확인해주세요", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-                            },
+                            .clickable { checkNetworkState() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "확인",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFFFFFFFF)
+                            color = Color(0xFFFFFFFF),
+                            style = medium16pt
                         )
                     }
                 }
+
+                Spacer(Modifier.height(14.dp))
             }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun SplashScreenPreview() {
     WhereAreYouTheme {
@@ -280,7 +281,6 @@ private fun SplashScreenPreview() {
             isNetworkConnectionErrorDialogShowing = false,
             checkNetworkState = { true },
             updateCheckingState = {},
-            updateIsNetworkConnectionErrorDialogShowing = {},
             checkIsSignedIn = { true },
             moveToSignInScreen = { /*TODO*/ },
             moveToMainScreen = {}
@@ -288,14 +288,12 @@ private fun SplashScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@CustomPreview
 @Composable
 private fun NetworkConnectionErrorDialogPreview() {
     WhereAreYouTheme {
         NetworkConnectionErrorDialog(
-            checkNetworkState = { true },
-            updateCheckingState = {},
-            updateIsNetworkConnectionErrorDialogShowing = {}
+            checkNetworkState = { true }
         )
     }
 }

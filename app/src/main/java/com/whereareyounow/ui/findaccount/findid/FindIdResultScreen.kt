@@ -22,19 +22,20 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomSurface
-import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.InfinityLoader
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
-import com.whereareyounow.ui.theme.CustomColor
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.bold18pt
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium18pt
+import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
@@ -45,15 +46,13 @@ fun FindIdResultScreen(
 ) {
     CustomSurface {
         Column {
-            UserIdCheckingScreenTopBar(moveToSignInScreen)
+            UserIdCheckingScreenTopBar()
 
             HorizontalDivider()
 
             Spacer(Modifier.height(40.dp))
 
-            InstructionContent(
-                text = "회원님의 아이디를\n확인해주세요"
-            )
+            InstructionContent(text = "회원님의 아이디를\n확인해주세요")
 
             Spacer(Modifier.height(50.dp))
 
@@ -67,6 +66,7 @@ fun FindIdResultScreen(
                     )
                 } else {
                     Text(
+                        modifier = Modifier.padding(start = 6.dp),
                         text = buildAnnotatedString {
                             withStyle(
                                 style = medium14pt.toSpanStyle().copy(
@@ -77,7 +77,7 @@ fun FindIdResultScreen(
                             }
                             withStyle(
                                 style = bold18pt.toSpanStyle().copy(
-                                    color = CustomColor().brandText
+                                    color = getColor().brandText
                                 )
                             ) {
                                 append(searchedUserId)
@@ -97,7 +97,10 @@ fun FindIdResultScreen(
 
                 HorizontalDivider()
 
+                Spacer(Modifier.height(10.dp))
+
                 Text(
+                    modifier = Modifier.padding(start = 6.dp),
                     text = "로그인 또는 비밀번호 찾기 버튼을 눌러주세요.",
                     color = Color(0xFF666666),
                     style = medium14pt
@@ -122,7 +125,7 @@ fun FindIdResultScreen(
                 ) {
                     Text(
                         text = "비밀번호 찾기",
-                        color = CustomColor().brandText,
+                        color = getColor().brandText,
                         style = bold18pt
                     )
                 }
@@ -134,13 +137,20 @@ fun FindIdResultScreen(
 }
 
 @Composable
-private fun UserIdCheckingScreenTopBar(
-    moveToSignInScreen: () -> Unit
-) {
-    CustomTopBar(
-        title = "아이디 찾기",
-        onBackButtonClicked = moveToSignInScreen
-    )
+private fun UserIdCheckingScreenTopBar() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(TOP_BAR_HEIGHT.dp)
+            .padding(start = 15.dp, end = 15.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "아이디 찾기",
+            color = Color(0xFF000000),
+            style = medium18pt
+        )
+    }
 }
 
 @Composable
@@ -160,7 +170,7 @@ private fun RoundedCornerOutlinedButton(
             .border(
                 border = BorderStroke(
                     width = (1.5).dp,
-                    color = CustomColor().brandColor
+                    color = getColor().brandColor
                 ),
                 shape = RoundedCornerShape(6.dp)
             )
@@ -183,7 +193,7 @@ private fun RoundedCornerOutlinedButton(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun UserIdCheckingScreenPreview() {
     WhereAreYouTheme {

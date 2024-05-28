@@ -12,8 +12,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.calendar.Schedule
+import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

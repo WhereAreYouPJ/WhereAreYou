@@ -777,10 +777,10 @@ private fun CompleteButton(
     moveToBackScreen: () -> Unit,
     onComplete: (() -> Unit) -> Unit
 ) {
-    RoundedCornerButton(
-        text = "완료",
-        onClick = { onComplete(moveToBackScreen) }
-    )
+//    RoundedCornerButton(
+//        text = "완료",
+//        onClick = { onComplete(moveToBackScreen) }
+//    )
 }
 
 @SuppressLint("UnrememberedMutableState")

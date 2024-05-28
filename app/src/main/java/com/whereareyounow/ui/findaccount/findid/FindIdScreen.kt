@@ -27,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +43,7 @@ import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -101,9 +101,7 @@ private fun FindIdScreen(
 
             Spacer(Modifier.height(40.dp))
 
-            InstructionContent(
-                text = "지금어디 가입 정보로\n아이디를 확인하세요"
-            )
+            InstructionContent(text = "지금어디 가입 정보로\n아이디를 확인하세요")
 
             Column(
                 modifier = Modifier
@@ -250,7 +248,7 @@ fun VerificationButton(
         modifier = Modifier
             .width(100.dp)
             .height(44.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(6.dp))
             .background(Color(0xFF7B50FF))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
@@ -263,7 +261,7 @@ fun VerificationButton(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun FindIdScreenPreview() {
     WhereAreYouTheme {

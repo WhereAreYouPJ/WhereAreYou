@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.whereareyounow.data.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.ui.theme.lato
 import java.util.Calendar
 

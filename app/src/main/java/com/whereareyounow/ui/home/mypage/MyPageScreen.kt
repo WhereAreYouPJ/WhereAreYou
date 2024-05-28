@@ -49,8 +49,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
-import com.whereareyounow.data.TOP_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 
 @Composable

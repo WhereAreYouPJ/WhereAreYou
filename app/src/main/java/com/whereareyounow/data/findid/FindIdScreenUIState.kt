@@ -8,6 +8,7 @@ data class FindIdScreenUIState(
     val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.Empty,
     val isVerificationCodeSent: Boolean = false,
     val emailVerificationLeftTime: Int = 0,
+    val userIdReceived: String = ""
 )
 
 enum class EmailState {

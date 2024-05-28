@@ -51,7 +51,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -59,11 +58,11 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.data.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
-import com.whereareyounow.data.TOP_BAR_HEIGHT
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
 import com.whereareyounow.data.calendar.Schedule
+import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.data.notification.DrawerNotificationContentSideEffect
 import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.domain.entity.friend.FriendRequest
@@ -71,6 +70,7 @@ import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationContent
 import com.whereareyounow.ui.home.schedule.notification.DrawerNotificationContentViewModel
 import com.whereareyounow.ui.theme.lato
+import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -189,9 +189,7 @@ fun ScheduleScreen(
                 // 하단 콘텐츠 상태
                 val bottomContentState = remember { anchoredDraggableState }
                 Column(
-                    modifier = Modifier
-                        .background(color = Color(0xFFF8F8F8))
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     // 상단바
                     ScheduleScreenTopBar(
@@ -458,7 +456,7 @@ enum class DetailState {
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun ScheduleScreenPreview2() {
     val previewSchedule = listOf(

@@ -24,20 +24,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.findpw.EmailState
 import com.whereareyounow.data.findpw.FindPasswordScreenSideEffect
 import com.whereareyounow.data.findpw.FindPasswordScreenUIState
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.findpw.VerificationCodeState
+import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.HorizontalDivider
+import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -87,66 +93,80 @@ private fun FindPasswordScreen(
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp)
-    ) {
-        FindIdScreenTopBar(moveToSignInScreen)
+    CustomSurface {
+        Column {
+            FindIdScreenTopBar(moveToSignInScreen)
 
-        Spacer(Modifier.height(20.dp))
+            HorizontalDivider()
 
-        UserIdInputBox(
-            inputText = findPasswordScreenUIState.inputUserId,
-            onValueChange = updateInputUserId
-        )
+            Spacer(Modifier.height(40.dp))
 
-        Spacer(Modifier.height(20.dp))
+            InstructionContent(text = "아이디와 이메일을 확인 후\n인증코드를 입력해주세요")
 
-        Row(
-            modifier = Modifier
-                .animateContentSize { _, _ -> }
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth()
-        ) {
-            Box(modifier = Modifier.weight(1f)) {
-                EmailInputBox(
-                    inputEmail = findPasswordScreenUIState.inputEmail,
-                    updateInputEmail = updateInputEmail,
-                    inputEmailState = findPasswordScreenUIState.inputEmailState,
-                    guideLine = when (findPasswordScreenUIState.inputEmailState) {
-                        EmailState.Unsatisfied -> "올바른 이메일 형식으로 입력해주세요."
-                        else -> ""
-                    }
+            Spacer(Modifier.height(40.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 15.dp, end = 15.dp)
+            ) {
+                UserIdInputBox(
+                    inputText = findPasswordScreenUIState.inputUserId,
+                    onValueChange = updateInputUserId
                 )
+
+                Spacer(Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier
+                        .animateContentSize { _, _ -> }
+                        .height(IntrinsicSize.Min)
+                        .fillMaxWidth()
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        EmailInputBox(
+                            inputEmail = findPasswordScreenUIState.inputEmail,
+                            updateInputEmail = updateInputEmail,
+                            inputEmailState = findPasswordScreenUIState.inputEmailState,
+                            guideLine = when (findPasswordScreenUIState.inputEmailState) {
+                                EmailState.Unsatisfied -> "올바른 이메일 형식으로 입력해주세요."
+                                else -> ""
+                            }
+                        )
+                    }
+                    Spacer(Modifier.width(10.dp))
+                    AuthenticationButton(
+                        onClick = authenticateEmail
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                if (findPasswordScreenUIState.isVerificationCodeSent) {
+                    VerificationCodeTextField(
+                        inputText = findPasswordScreenUIState.inputVerificationCode,
+                        onValueChange = updateInputVerificationCode,
+                        warningText = "인증코드가 일치하지 않습니다.",
+                        inputVerificationCodeState = findPasswordScreenUIState.inputVerificationCodeState,
+                        leftTime = findPasswordScreenUIState.emailVerificationLeftTime
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                RoundedCornerButton(
+                    onClick = { verifyPasswordResetCode(moveToPasswordResettingScreen) }
+                ) {
+                    Text(
+                        text = "확인",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFF2F2F2)
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
             }
-            Spacer(Modifier.width(10.dp))
-            AuthenticationButton(
-                text = "인증요청",
-                onClick = authenticateEmail
-            )
         }
-
-        Spacer(Modifier.height(20.dp))
-
-        if (findPasswordScreenUIState.isVerificationCodeSent) {
-            VerificationCodeTextField(
-                inputText = findPasswordScreenUIState.inputVerificationCode,
-                onValueChange = updateInputVerificationCode,
-                warningText = "인증코드가 일치하지 않습니다.",
-                inputVerificationCodeState = findPasswordScreenUIState.inputVerificationCodeState,
-                leftTime = findPasswordScreenUIState.emailVerificationLeftTime
-            )
-        }
-
-        Spacer(Modifier.weight(1f))
-
-//        RoundedCornerButton(
-//            text = "확인",
-//            onClick = { verifyPasswordResetCode(moveToPasswordResettingScreen) }
-//        )
-
-        Spacer(Modifier.height(20.dp))
     }
 }
 
@@ -217,31 +237,29 @@ private fun VerificationCodeTextField(
 
 @Composable
 private fun AuthenticationButton(
-    text: String,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .height(50.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .width(100.dp)
+            .height(44.dp)
+            .clip(RoundedCornerShape(6.dp))
             .background(
-                color = Color(0xFF2D2573),
-                shape = RoundedCornerShape(10.dp)
+                color = getColor().brandColor,
+                shape = RoundedCornerShape(6.dp)
             )
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
-            modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp),
-            text = text,
+            text = "인증요청",
             color = Color(0xFFFFFFFF),
-            fontSize = 16.sp
+            style = medium14pt
         )
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun FindPasswordScreenPreview() {
     WhereAreYouTheme {

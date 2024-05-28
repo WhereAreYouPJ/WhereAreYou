@@ -1,7 +1,6 @@
 package com.whereareyounow.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,28 +16,29 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.bold18pt
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun RoundedCornerButton(
     contentDescription: String = "",
-    text: String,
     onClick: () -> Unit,
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    textContent: @Composable () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     Box(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
             .fillMaxWidth()
-            .height(60.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFF9286FF))
-            .clickable {
+            .height(50.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .background(getColor().brandColor)
+            .clickableNoEffect {
                 focusManager.clearFocus()
                 onClick()
             },
@@ -47,17 +47,12 @@ fun RoundedCornerButton(
         if (isLoading) {
             InfinityLoader(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(40.dp),
+                    .width(32.dp)
+                    .height(32.dp),
                 brush = SolidColor(Color(0xFFFFFFFF))
             )
         } else {
-            Text(
-                text = text,
-                color = Color(0xFFFFFFFF),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
-            )
+            textContent()
         }
     }
 }
@@ -67,9 +62,14 @@ fun RoundedCornerButton(
 private fun BottomOkButtonPreview() {
     WhereAreYouTheme {
         RoundedCornerButton(
-            text = "완료",
-            onClick = {  }
-        )
+            onClick = {}
+        ) {
+            Text(
+                text = "로그인하기",
+                color = Color(0xFFF2F2F2),
+                style = bold18pt
+            )
+        }
     }
 }
 
@@ -78,9 +78,14 @@ private fun BottomOkButtonPreview() {
 private fun LoadingBottomOkButtonPreview() {
     WhereAreYouTheme {
         RoundedCornerButton(
-            text = "완료",
-            onClick = {  },
+            onClick = {},
             isLoading = true
-        )
+        ) {
+            Text(
+                text = "로그인하기",
+                color = Color(0xFFF2F2F2),
+                style = bold18pt
+            )
+        }
     }
 }

@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,8 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.data.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 
 
 @Composable
@@ -44,7 +42,6 @@ fun PermissionCheckingScreen(
 ) {
 
     val context = LocalContext.current
-    val density = LocalDensity.current.density
 
     // ACCESS_FINE_LOCATION: 정확한 위치
     // ACCESS_COARSE_LOCATION: 대략적인 위치
@@ -70,7 +67,7 @@ fun PermissionCheckingScreen(
     ) {
         Spacer(Modifier.height(40.dp))
         Text(
-            modifier = Modifier.height((TOP_BAR_HEIGHT / density).dp),
+            modifier = Modifier.height(TOP_BAR_HEIGHT.dp),
             text = "앱 접근 권한 안내",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold
@@ -122,12 +119,12 @@ fun PermissionCheckingScreen(
 
         Spacer(Modifier.weight(1f))
 
-        RoundedCornerButton(
-            text = "확인",
-            onClick = {
-                permissionRequestLauncher.launch(locationPermissions)
-            }
-        )
+//        RoundedCornerButton(
+//            text = "확인",
+//            onClick = {
+//                permissionRequestLauncher.launch(locationPermissions)
+//            }
+//        )
 
         Spacer(Modifier.height(20.dp))
     }

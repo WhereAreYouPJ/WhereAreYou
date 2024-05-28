@@ -53,6 +53,7 @@ fun WhereAreYouTheme(
 
     val view = LocalView.current
     val customDensity = LocalContext.current.resources.displayMetrics.widthPixels.toFloat() / 375f
+
     if (!view.isInEditMode) {
         SideEffect {
             // 타입 캐스팅이 가능한지 확인. 다이얼로그는 이걸 확인 안해주면 에러가 발생.
@@ -66,6 +67,7 @@ fun WhereAreYouTheme(
     }
 
     val rippleIndication = androidx.compose.material.ripple.rememberRipple()
+
     CompositionLocalProvider(
         LocalColor provides colorScheme,
         LocalDensity provides Density(customDensity, fontScale = 1f),

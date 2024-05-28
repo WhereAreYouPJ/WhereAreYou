@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.findpw
+package com.whereareyounow.ui.findaccount.findpw
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -11,20 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.findpw.PasswordCheckingState
 import com.whereareyounow.data.findpw.PasswordResettingScreenSideEffect
 import com.whereareyounow.data.findpw.PasswordResettingScreenUIState
 import com.whereareyounow.data.findpw.PasswordState
 import com.whereareyounow.data.findpw.ResultState
-import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.HorizontalDivider
+import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -75,84 +79,102 @@ private fun PasswordResettingScreen(
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp)
-    ) {
-        PasswordResettingScreenTopBar(moveToSignInScreen)
+    CustomSurface {
+        Column {
+            PasswordResettingScreenTopBar(moveToSignInScreen)
 
-        Spacer(Modifier.height(20.dp))
-        when (resultState) {
-            ResultState.EmailNotFound -> {
-                Text(
-                    text = "이메일이 존재하지 않습니다.",
-                    fontSize = 20.sp
-                )
+            HorizontalDivider()
 
-                Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(40.dp))
 
-                RoundedCornerButton(
-                    text = "로그인하러 가기",
-                    onClick = { moveToSignInScreen() }
-                )
+            InstructionContent(
+                text = when (resultState) {
+                    ResultState.EmailNotFound -> "이메일이 존재하지 않습니다."
+                    ResultState.MemberMismatch -> "아이디에 연동된 이메일이 아닙니다."
+                    ResultState.OK -> "비밀번호를 변경해주세요."
+                }
+            )
 
-                Spacer(Modifier.height(20.dp))
-            }
-            ResultState.MemberMismatch -> {
-                Text(
-                    text = "아이디에 연동된 이메일이 아닙니다.",
-                    fontSize = 20.sp
-                )
 
-                Spacer(Modifier.weight(1f))
 
-                RoundedCornerButton(
-                    text = "로그인하러 가기",
-                    onClick = { moveToSignInScreen() }
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 15.dp, end = 15.dp)
+            ) {
 
                 Spacer(Modifier.height(20.dp))
-            }
-            ResultState.OK -> {
-                Text(
-                    text = "비밀번호를 변경해주세요.",
-                    fontSize = 20.sp
-                )
+                when (resultState) {
+                    ResultState.EmailNotFound -> {
+                        Spacer(Modifier.weight(1f))
 
-                Spacer(Modifier.height(20.dp))
+                        RoundedCornerButton(
+                            onClick = { moveToSignInScreen() }
+                        ) {
+                            Text(
+                                text = "로그인하기",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFF2F2F2)
+                            )
+                        }
 
-                NewPasswordTextField(
-                    inputPassword = passwordResettingScreenUIState.inputPassword,
-                    updateInputPassword = updateInputPassword,
-                    inputPasswordState = passwordResettingScreenUIState.inputPasswordState,
-                    guideLine = when (passwordResettingScreenUIState.inputPasswordState) {
-                        PasswordState.Unsatisfied -> "비밀번호는 영문 대/소문자로 시작하는 4~10자의 영문 대/소문자, 숫자 조합으로 입력해주세요." +
-                                "\n* 영문 대문자, 소문자, 숫자를 최소 하나 이상씩 포함해야합니다."
-                        else -> ""
+                        Spacer(Modifier.height(20.dp))
                     }
-                )
+                    ResultState.MemberMismatch -> {
+                        Spacer(Modifier.weight(1f))
 
-                Spacer(Modifier.height(20.dp))
+                        RoundedCornerButton(
+                            onClick = { moveToSignInScreen() }
+                        ) {
+                            Text(
+                                text = "로그인하기",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFF2F2F2)
+                            )
+                        }
 
-                NewPasswordCheckingTextField(
-                    inputPasswordForChecking = passwordResettingScreenUIState.inputPasswordForChecking,
-                    updateInputPasswordForChecking = updateInputPasswordForChecking,
-                    passwordCheckingState = passwordResettingScreenUIState.passwordCheckingState,
-                    guideLine = when (passwordResettingScreenUIState.passwordCheckingState) {
-                        PasswordCheckingState.Unsatisfied -> "비밀번호가 일치하지 않습니다."
-                        else -> ""
+                        Spacer(Modifier.height(20.dp))
                     }
-                )
+                    ResultState.OK -> {
+                        Spacer(Modifier.height(20.dp))
 
-                Spacer(Modifier.weight(1f))
+                        NewPasswordTextField(
+                            inputPassword = passwordResettingScreenUIState.inputPassword,
+                            updateInputPassword = updateInputPassword,
+                            inputPasswordState = passwordResettingScreenUIState.inputPasswordState,
+                            guideLine = when (passwordResettingScreenUIState.inputPasswordState) {
+                                PasswordState.Unsatisfied -> "영문 대문자와 소문자, 숫자를 적어도 하나씩 사용하여, 영문으로 시작하는 6~20자의 비밀번호를 입력해주세요."
+                                else -> ""
+                            }
+                        )
 
-                RoundedCornerButton(
-                    text = "비밀번호 변경",
-                    onClick = { resetPassword(userId, moveToPasswordResetSuccessScreen) }
-                )
+                        Spacer(Modifier.height(10.dp))
 
-                Spacer(Modifier.height(20.dp))
+                        NewPasswordCheckingTextField(
+                            inputPasswordForChecking = passwordResettingScreenUIState.inputPasswordForChecking,
+                            updateInputPasswordForChecking = updateInputPasswordForChecking,
+                            passwordCheckingState = passwordResettingScreenUIState.passwordCheckingState,
+                            guideLine = when (passwordResettingScreenUIState.passwordCheckingState) {
+                                PasswordCheckingState.Unsatisfied -> "비밀번호가 일치하지 않습니다."
+                                else -> ""
+                            }
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        RoundedCornerButton(
+                            onClick = { resetPassword(userId, moveToPasswordResetSuccessScreen) }
+                        ) {
+                            Text(
+                                text = "확인",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFF2F2F2)
+                            )
+                        }
+
+                        Spacer(Modifier.height(20.dp))
+                    }
+                }
             }
         }
     }
@@ -179,7 +201,7 @@ private fun NewPasswordTextField(
         hint = "새 비밀번호",
         inputText = inputPassword,
         onValueChange = updateInputPassword,
-        guideLine = guideLine,
+        warningText = guideLine,
         textFieldState = when (inputPasswordState) {
             PasswordState.Empty -> CustomTextFieldState.Idle
             PasswordState.Satisfied -> CustomTextFieldState.Satisfied
@@ -200,7 +222,7 @@ private fun NewPasswordCheckingTextField(
         hint = "새 비밀번호 확인",
         inputText = inputPasswordForChecking,
         onValueChange = updateInputPasswordForChecking,
-        guideLine = guideLine,
+        warningText = guideLine,
         textFieldState = when (passwordCheckingState) {
             PasswordCheckingState.Empty -> CustomTextFieldState.Idle
             PasswordCheckingState.Satisfied -> CustomTextFieldState.Satisfied
@@ -210,7 +232,7 @@ private fun NewPasswordCheckingTextField(
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun OKPasswordResettingScreenPreview() {
     PasswordResettingScreen(
@@ -226,7 +248,7 @@ private fun OKPasswordResettingScreenPreview() {
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun EmailNotFoundPasswordResettingScreenPreview() {
     PasswordResettingScreen(
@@ -242,7 +264,7 @@ private fun EmailNotFoundPasswordResettingScreenPreview() {
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@CustomPreview
 @Composable
 private fun MemberMismatchPasswordResettingScreenPreview() {
     PasswordResettingScreen(

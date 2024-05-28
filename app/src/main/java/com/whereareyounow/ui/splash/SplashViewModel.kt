@@ -64,8 +64,13 @@ class SplashViewModel @Inject constructor(
         _screenState.update { state }
     }
 
-    fun checkNetworkState(): Boolean {
-        return networkManager.checkNetworkState()
+    fun checkNetworkState() {
+        if (networkManager.checkNetworkState()) {
+            _checkingState.update { CheckingState.LocationPermission }
+            _isNetworkConnectionErrorDialogShowing.update { false }
+        } else {
+            _isNetworkConnectionErrorDialogShowing.update { true }
+        }
     }
 
     suspend fun checkIsSignedIn(): Boolean {

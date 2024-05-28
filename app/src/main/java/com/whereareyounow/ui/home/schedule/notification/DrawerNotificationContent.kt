@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.data.BOTTOM_NAVIGATION_BAR_HEIGHT
-import com.whereareyounow.data.SCREEN_WIDTH
-import com.whereareyounow.data.TOP_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.SCREEN_WIDTH
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
@@ -99,7 +99,7 @@ fun DrawerNotificationContent(
                                         .clickable {
                                             coroutineScope.launch { drawerState.close() }
                                         },
-                                    painter = painterResource(id = R.drawable.arrow_back),
+                                    painter = painterResource(id = R.drawable.ic_back),
                                     contentDescription = null
                                 )
                                 Spacer(Modifier.weight(1f))

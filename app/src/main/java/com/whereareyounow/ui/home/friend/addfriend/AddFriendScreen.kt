@@ -100,16 +100,16 @@ private fun AddFriendScreen(
 
         Spacer(Modifier.weight(1f))
 
-        RoundedCornerButton(
-            text = when (buttonState) {
-                AddFriendViewModel.ButtonState.Search -> "검색"
-                AddFriendViewModel.ButtonState.Request -> "친구추가"
-            },
-            onClick = when (buttonState) {
-                AddFriendViewModel.ButtonState.Search -> searchFriend
-                AddFriendViewModel.ButtonState.Request -> sendFriendRequest
-            }
-        )
+//        RoundedCornerButton(
+//            text = when (buttonState) {
+//                AddFriendViewModel.ButtonState.Search -> "검색"
+//                AddFriendViewModel.ButtonState.Request -> "친구추가"
+//            },
+//            onClick = when (buttonState) {
+//                AddFriendViewModel.ButtonState.Search -> searchFriend
+//                AddFriendViewModel.ButtonState.Request -> sendFriendRequest
+//            }
+//        )
     }
 }
 

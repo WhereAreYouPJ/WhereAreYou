@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.whereareyounow.data.CALENDAR_VIEW_HEIGHT
-import com.whereareyounow.data.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
-import com.whereareyounow.data.TOP_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato

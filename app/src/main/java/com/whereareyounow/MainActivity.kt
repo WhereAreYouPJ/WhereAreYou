@@ -3,21 +3,26 @@ package com.whereareyounow
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.whereareyounow.data.GlobalValue
+import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+import com.whereareyounow.data.globalvalue.SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR
+import com.whereareyounow.data.globalvalue.SCREEN_WIDTH
+import com.whereareyounow.data.globalvalue.STATUS_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.SYSTEM_NAVIGATION_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.MainNavigation
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,32 +36,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         viewModel.getToken()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        enableEdgeToEdge()
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
 
         setContent {
-            val density = LocalDensity.current.density
             WhereAreYouTheme {
-                // 시스템 글꼴 크기에 상관없이 같은 폰트 사이즈 적용
-                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .onGloballyPositioned {
-                                // 화면 크기 정보 저장
-                                updateGlobalValue(it.size)
-                            },
-                        color = Color(0xFFFFFFFF)
-                    ) {
-                        val systemUiController = rememberSystemUiController()
-
-                        systemUiController.setStatusBarColor(
-                            color = Color(0xFFFFFFFF),
-                            darkIcons = true
-                        )
-                        MainNavigation()
-                    }
+                val density = LocalDensity.current.density
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned {
+                            updateGlobalValue(it.size, density)
+                        },
+                    color = Color(0xFFFFFFFF)
+                ) {
+                    MainNavigation()
                 }
             }
         }
@@ -64,40 +63,32 @@ class MainActivity : ComponentActivity() {
 
     // 모든 영역의 단위는 기본적으로 pixel
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
-    private fun updateGlobalValue(size: IntSize) {
+    private fun updateGlobalValue(size: IntSize, density: Float) {
         val resources = application.resources
-        val metrics = resources.displayMetrics
-        val density = metrics.density
-        val xdpi = metrics.xdpi
-        val ydpi = metrics.ydpi
         val statusBarResourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val systemNavigationBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
 
         // getDimension(): dimen.xml에 정의한 dp값을 기기에 맞게 px로 변환하여 반올림한 값을 int로 반환한다.
-        val screenHeight = metrics.heightPixels
-        val screenWidth = metrics.widthPixels
         val statusBarHeight = resources.getDimension(statusBarResourceId)
         val systemNavigationBarHeight = resources.getDimension(systemNavigationBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
 //        GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
-        GlobalValue.screenHeightWithoutStatusBar = size.height - statusBarHeight - systemNavigationBarHeight
-        GlobalValue.screenWidth = screenWidth.toFloat()
-        // 하단 네비게이션 바 높이는 전체 화면의 1/15
-        GlobalValue.bottomNavBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15
-        // 상단 영역 높이는 전체 화면의 1/15
-        GlobalValue.topBarHeight = GlobalValue.screenHeightWithoutStatusBar / 15
-        // 캘린더 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 2/5
-        GlobalValue.calendarViewHeight = GlobalValue.screenHeightWithoutStatusBar * 26 / 75
-        // 일별 간략 정보 뷰의 높이는 상단 상태바, 상단 영역, 하단 네비게이션 바, 시스템 네비게이션 바를 제외한 영역의 3/5
-        GlobalValue.dailyBriefScheduleViewHeight = GlobalValue.screenHeightWithoutStatusBar * 39 / 75
+        STATUS_BAR_HEIGHT = statusBarHeight / density
+        SYSTEM_NAVIGATION_BAR_HEIGHT = systemNavigationBarHeight / density
+        SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR = size.height - statusBarHeight - systemNavigationBarHeight
+        SCREEN_WIDTH = size.width.toFloat() / density
+        BOTTOM_NAVIGATION_BAR_HEIGHT = 60f
+        TOP_BAR_HEIGHT = 42f
+        CALENDAR_VIEW_HEIGHT = SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR * 26 / 75
+        DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT = SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR * 39 / 75
         Log.e("ScreenValue", "statusBarHeight: $statusBarHeight ${statusBarHeight / density}\n" +
                 "systemNavigationBarHeight: $systemNavigationBarHeight ${systemNavigationBarHeight / density}\n" +
-                "screenHeightWithoutStatusBar: ${GlobalValue.screenHeightWithoutStatusBar} ${GlobalValue.screenHeightWithoutStatusBar / density}\n" +
-                "screenWidth: ${GlobalValue.screenWidth} ${GlobalValue.screenWidth / density}\n" +
-                "bottomNavBarHeight: ${GlobalValue.bottomNavBarHeight} ${GlobalValue.bottomNavBarHeight / density}\n" +
-                "topBarHeight: ${GlobalValue.topBarHeight} ${GlobalValue.topBarHeight / density}\n" +
-                "calendarViewHeight: ${GlobalValue.calendarViewHeight} ${GlobalValue.calendarViewHeight / density}\n" +
-                "dailyScheduleViewHeight: ${GlobalValue.dailyBriefScheduleViewHeight} ${GlobalValue.dailyBriefScheduleViewHeight / density}"
+                "screenHeightWithoutStatusBar: $SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR ${SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR / density}\n" +
+                "screenWidth: $SCREEN_WIDTH ${SCREEN_WIDTH / density}\n" +
+                "bottomNavBarHeight: $BOTTOM_NAVIGATION_BAR_HEIGHT\n" +
+                "topBarHeight: $TOP_BAR_HEIGHT ${TOP_BAR_HEIGHT / density}\n" +
+                "calendarViewHeight: $CALENDAR_VIEW_HEIGHT ${CALENDAR_VIEW_HEIGHT / density}\n" +
+                "dailyScheduleViewHeight: $DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT ${DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT / density}"
         )
     }
 }

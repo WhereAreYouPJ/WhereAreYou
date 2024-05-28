@@ -92,7 +92,7 @@ class SignUpViewModel @Inject constructor(
         _signUpScreenUIState.update {
             it.copy(
                 inputEmail = email,
-                inputEmailState = if (inputTextValidator.validateEmail(email).result)  EmailState.Satisfied else EmailState.Unsatisfied,
+                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.Satisfied else EmailState.Unsatisfied,
                 emailVerificationProgressState = EmailVerificationProgressState.DuplicateUnchecked
             )
         }

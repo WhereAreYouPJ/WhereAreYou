@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -125,15 +124,7 @@ class CalendarViewModel @Inject constructor(
             )
             LogUtil.printNetworkLog("memberId = $memberId\nselectedYear = ${_calendarScreenUIState.value.selectedYear}\nselectedMonth = ${_calendarScreenUIState.value.selectedMonth}\nselectedDate = ${_calendarScreenUIState.value.selectedDate}", response, "일별 간략정보 가져오기")
             when (response) {
-                is NetworkResult.Success -> {
-                    response.data?.let { data ->
-                        withContext(Dispatchers.Main) {
-                            _calendarScreenUIState.update {
-                                it.copy(selectedDateBriefScheduleInfoList = data.schedules.sortedBy { it.appointmentTime })
-                            }
-                        }
-                    }
-                }
+                is NetworkResult.Success -> {  }
                 is NetworkResult.Error -> {  }
                 is NetworkResult.Exception -> { calendarScreenSideEffectFlow.emit(CalendarScreenSideEffect.Toast("오류가 발생했습니다.")) }
             }

@@ -118,13 +118,13 @@ private fun FriendsListScreen(
 
         Spacer(Modifier.weight(1f))
 
-        RoundedCornerButton(
-            text = "완료",
-            onClick = {
-                updateFriendsList(selectedFriendsList.map { it.memberId })
-                moveToBackScreen()
-            }
-        )
+//        RoundedCornerButton(
+//            text = "완료",
+//            onClick = {
+//                updateFriendsList(selectedFriendsList.map { it.memberId })
+//                moveToBackScreen()
+//            }
+//        )
 
         Spacer(Modifier.height(20.dp))
     }
