@@ -8,7 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.rule.GrantPermissionRule
-import com.whereareyounow.ui.home.schedule.calendar.CalendarViewModel
+import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.DelicateCoroutinesApi

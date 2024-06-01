@@ -1,9 +1,9 @@
 package com.whereareyounow.data.globalvalue
 
 // 상단 상태바 높이
-var STATUS_BAR_HEIGHT = 0f
+var SYSTEM_STATUS_BAR_HEIGHT = 26f
 // 시스템 네비게이션 바 높이
-var SYSTEM_NAVIGATION_BAR_HEIGHT = 0f
+var SYSTEM_NAVIGATION_BAR_HEIGHT = 48f
 // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
 var SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR = 3116f
 // 화면 가로 너비

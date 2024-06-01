@@ -1,5 +1,5 @@
 package com.whereareyounow.data
 
 enum class ViewType {
-    Calendar, Friends, MyPage
+    Home, Calendar, Friends, MyPage
 }
