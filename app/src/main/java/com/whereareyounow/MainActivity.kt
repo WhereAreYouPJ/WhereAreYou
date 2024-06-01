@@ -20,7 +20,7 @@ import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR
 import com.whereareyounow.data.globalvalue.SCREEN_WIDTH
-import com.whereareyounow.data.globalvalue.STATUS_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.SYSTEM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.MainNavigation
@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
         val systemNavigationBarHeight = resources.getDimension(systemNavigationBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
 //        GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
-        STATUS_BAR_HEIGHT = statusBarHeight / density
+        SYSTEM_STATUS_BAR_HEIGHT = statusBarHeight / density
         SYSTEM_NAVIGATION_BAR_HEIGHT = systemNavigationBarHeight / density
         SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR = size.height - statusBarHeight - systemNavigationBarHeight
         SCREEN_WIDTH = size.width.toFloat() / density

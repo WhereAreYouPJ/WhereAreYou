@@ -22,7 +22,7 @@ import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_SUCCESS
-import com.whereareyounow.data.globalvalue.ROUTE_HOME
+import com.whereareyounow.data.globalvalue.ROUTE_MAIN
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_NEW_SCHEDULE
@@ -44,16 +44,16 @@ import com.whereareyounow.ui.findaccount.findid.FindIdScreen
 import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
-import com.whereareyounow.ui.home.HomeScreen
-import com.whereareyounow.ui.home.friend.addfriend.AddFriendScreen
-import com.whereareyounow.ui.home.mypage.InfoModificationScreen
-import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleMapScreen
-import com.whereareyounow.ui.home.schedule.detailschedule.DetailScheduleScreen
-import com.whereareyounow.ui.home.schedule.modifyschedule.ModifyScheduleScreen
-import com.whereareyounow.ui.home.schedule.newschedule.NewScheduleScreen
-import com.whereareyounow.ui.home.schedule.scheduleedit.FriendsListScreen
-import com.whereareyounow.ui.home.schedule.scheduleedit.SearchLocationMapScreen
-import com.whereareyounow.ui.home.schedule.scheduleedit.SearchLocationScreen
+import com.whereareyounow.ui.main.MainScreen
+import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
+import com.whereareyounow.ui.main.mypage.InfoModificationScreen
+import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
+import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
+import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
+import com.whereareyounow.ui.main.schedule.newschedule.NewScheduleScreen
+import com.whereareyounow.ui.main.schedule.scheduleedit.FriendsListScreen
+import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
+import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
 import com.whereareyounow.ui.signin.SignInMethodSelectionScreen
 import com.whereareyounow.ui.signin.SignInWithAccountScreen
 import com.whereareyounow.ui.signup.PolicyAgreeScreen
@@ -71,7 +71,7 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE_SPLASH
+        startDestination = ROUTE_MAIN
     ) {
         // 스플래시 화면
         composable(route = ROUTE_SPLASH) {
@@ -82,7 +82,7 @@ fun MainNavigation(
                     }
                 },
                 moveToMainScreen = {
-                    navController.navigate(ROUTE_HOME) {
+                    navController.navigate(ROUTE_MAIN) {
                         popUpTo(ROUTE_SPLASH) { inclusive = true }
                     }
                 },
@@ -148,7 +148,7 @@ fun MainNavigation(
                     navController.popBackStack(ROUTE_SIGN_IN_METHOD_SELECTION, false)
                 },
                 moveToMainHomeScreen = {
-                    navController.navigate(ROUTE_HOME) {
+                    navController.navigate(ROUTE_MAIN) {
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     }
                 },
@@ -232,8 +232,8 @@ fun MainNavigation(
         }
 
         // 홈 화면
-        composable(route = ROUTE_HOME) {
-            HomeScreen(
+        composable(route = ROUTE_MAIN) {
+            MainScreen(
                 moveToAddScheduleScreen = { year, month, date ->
                     val bundle = bundleOf(
                         "year" to year,
