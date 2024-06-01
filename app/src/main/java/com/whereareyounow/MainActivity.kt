@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
         val statusBarResourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val systemNavigationBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
 
-        // getDimension(): dimen.xml에 정의한 dp값을 기기에 맞게 px로 변환하여 반올림한 값을 int로 반환한다
+        // getDimension(): dimen.xml에 정의한 dp값을 기기에 맞게 px로 변환하여 반올림한 값을 int로 반환한다.
         val statusBarHeight = resources.getDimension(statusBarResourceId)
         val systemNavigationBarHeight = resources.getDimension(systemNavigationBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
