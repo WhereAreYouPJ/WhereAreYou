@@ -27,6 +27,7 @@ import com.whereareyounow.ui.MainNavigation
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
