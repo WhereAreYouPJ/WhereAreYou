@@ -53,6 +53,7 @@ fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
+    moveToMyPageScreen : () -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel()
 ) {
@@ -69,7 +70,8 @@ fun MainScreen(
         moveToAddFriendScreen = moveToAddFriendScreen,
         moveToAddGroupScreen = moveToAddGroupScreen,
         moveToSignInScreen = moveToSignInScreen,
-        moveToModifyInfoScreen = moveToModifyInfoScreen
+        moveToModifyInfoScreen = moveToModifyInfoScreen,
+        moveToMyPageScreen = moveToMyPageScreen
     )
 }
 
@@ -84,7 +86,8 @@ private fun MainScreen(
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
-    moveToModifyInfoScreen: () -> Unit
+    moveToModifyInfoScreen: () -> Unit,
+    moveToMyPageScreen : () -> Unit
 ) {
     CustomSurface {
         Scaffold(
@@ -117,7 +120,8 @@ private fun MainScreen(
             when (viewType) {
                 ViewType.Home -> {
                     HomeScreen(
-                        paddingValues = it
+                        paddingValues = it,
+
                     )
                 }
                 ViewType.Calendar -> {
