@@ -23,26 +23,26 @@ class HomeViewModel @Inject constructor(
         var image: String
     )
 
-            private val _secondImage = MutableStateFlow<List<SecondDataModel>>(emptyList())
-//    private val _secondImage = MutableStateFlow(
-//        listOf(
-//            SecondDataModel(
-//                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
-//            ),
-//            SecondDataModel(
-//                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
-//            ),
-//            SecondDataModel(
-//                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
-//            ),
-//            SecondDataModel(
-//                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
-//            ),
-//            SecondDataModel(
-//                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
-//            )
-//        )
-//    )
+//            private val _secondImage = MutableStateFlow<List<SecondDataModel>>(emptyList())
+    private val _secondImage = MutableStateFlow(
+        listOf(
+            SecondDataModel(
+                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
+            ),
+            SecondDataModel(
+                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
+            ),
+            SecondDataModel(
+                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
+            ),
+            SecondDataModel(
+                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
+            ),
+            SecondDataModel(
+                "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg"
+            )
+        )
+    )
     val secondImage = _secondImage.asStateFlow()
 
 
@@ -82,35 +82,35 @@ class HomeViewModel @Inject constructor(
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
-                "d", "d", "d"
+                "d", "d", "정말 간만에 다녀온 96즈끼리 다녀온 여의도 한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 모르겠고 치킨과 맥주를 먹었는데 정말 맛있었다."
             ),
             FourthDataModel(
                 "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",

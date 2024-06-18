@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
@@ -47,6 +48,7 @@ import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
+import com.whereareyounow.ui.main.mypage.MyPageScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
@@ -254,7 +256,11 @@ fun MainNavigation(
                     navController.popBackStack()
                     navController.navigate(ROUTE_SIGN_IN_WITH_ACCOUNT)
                 },
-                moveToModifyInfoScreen = { navController.navigate(ROUTE_MODIFY_INFO) }
+                moveToModifyInfoScreen = { navController.navigate(ROUTE_MODIFY_INFO) },
+                moveToMyPageScreen = {
+                    // TODO
+                    navController.navigate(ViewType.MyPage.name)
+                }
             )
         }
 
