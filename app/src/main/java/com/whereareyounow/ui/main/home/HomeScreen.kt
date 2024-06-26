@@ -1,20 +1,9 @@
 package com.whereareyounow.ui.main.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,8 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
@@ -57,15 +45,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -83,7 +67,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,16 +74,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.ViewType
-import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.main.MainViewModel
-import com.whereareyounow.ui.theme.medium18pt
-import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     paddingValues: PaddingValues,
@@ -112,23 +90,15 @@ fun HomeScreen(
     val testThirdData = viewModel.thirdData.collectAsState().value
     val testSecondImage = viewModel.secondImage.collectAsState().value
     val testSeventhData = viewModel.sevenData.collectAsState().value
-    val isVisible1 by remember { mutableStateOf(MutableTransitionState(false)) }
-    var isVisible2 by remember { mutableStateOf(false) }
     val density = LocalDensity.current
-
-    val viewType = mainViewModel.viewType.collectAsState().value
-
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = SheetState(
-            initialValue = SheetValue.Hidden,
+            initialValue = SheetValue.Expanded,
             skipPartiallyExpanded = false,
-            density = density
+            density = density,
+            skipHiddenState = true
         )
     )
-    val scope = rememberCoroutineScope()
-    val bottomSheetHeight by remember { mutableStateOf(0.dp) }
-
-
     HomeScreens(
         isContent = true,
         testSecondImage,
@@ -137,139 +107,17 @@ fun HomeScreen(
         testSeventhData,
         paddingValues,
         onAlarmIconClick = {
-            // TODO 알림페이지로 이동
-            isVisible1.targetState = isVisible1.currentState.not()
-//            isVisible2 = !isVisible2
-
+            // TODO 알림페이지로 이동 (내가 ㄴㄴ건들ㄴ) 친구 ㅇㅇ
         },
         onMyIconClick = {
             // TODO 마이페이지로 이동
             mainViewModel.updateViewType(ViewType.MyPage)
-
         },
-//        isVisible = isVisible,
         sheetState = scaffoldState,
-        sheetHeignt = bottomSheetHeight
+        alarmBoolean = true
     )
-    LaunchedEffect(isVisible1) {
-        isVisible1.targetState = isVisible1.currentState
-    }
-
-//    if (isVisible1.currentState) {
-    AnimatedVisibility(
-        visibleState = isVisible1,
-//            visibleState = MutableTransitionState<Boolean>(true),
-        enter = slideInHorizontally(
-            animationSpec = tween(durationMillis = 3000),
-            initialOffsetX = { it }
-        ),
-        exit = slideOutHorizontally(
-            animationSpec = tween(durationMillis = 3000),
-            targetOffsetX = { it }
-
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 100.dp)
-        ) {
-
-            TestDa(isVisible1)
-
-            AlertDialog(onDismissRequest = { /*TODO*/ }, confirmButton = { /*TODO*/ })
-            
-        }
-    }
-//    }
-
 }
 
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////////
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!네비게이션루트해야되는지말아야되는지??????????????????????????? //
-@Composable
-fun TestDa(isVisible1 : MutableTransitionState<Boolean>) {
-//    CustomTopBar(
-//        title = "알림",
-//        onBackButtonClicked = {
-//        //TODO 값변경
-//        }
-//    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        AlarmTopBar(
-            title = "알림",
-            onBackButtonClicked = {
-                isVisible1.targetState = isVisible1.currentState.not()
-
-            }
-        )
-
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-        Text("아날나러ㅣㄴ러ㅣ너리널", color = Color.White)
-    }
-}
-
-
-@Composable
-fun AlarmTopBar(
-    modifier: Modifier = Modifier,
-    title: String,
-    onBackButtonClicked: () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(TOP_BAR_HEIGHT.dp)
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                val y = size.height - strokeWidth / 2
-                drawLine(
-                    color = Color(0xFFC9C9C9),
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
-                    strokeWidth = strokeWidth
-                )
-            },
-//            .padding(start = 15.dp, end = 15.dp),
-        contentAlignment = Alignment.Center,
-
-    ) {
-        Image(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .size(30.dp)
-                .padding(end = 8.dp)
-                .clickableNoEffect { onBackButtonClicked() },
-            painter = painterResource(id = R.drawable.icon_delete),
-            contentDescription = null
-        )
-        Text(
-            text = title,
-            color = Color(0xFF000000),
-            style = medium18pt,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 15.dp),
-        )
-    }
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -277,14 +125,14 @@ private fun HomeScreens(
     isContent: Boolean,
     testSecondImage: List<HomeViewModel.SecondDataModel>,
     testThirdData: List<HomeViewModel.ThirdDataModel>,
-
     testFourthData: List<HomeViewModel.FourthDataModel>,
     testSeventhData: List<HomeViewModel.SevenDataModel>,
     paddingValues: PaddingValues,
     onMyIconClick: () -> Unit,
     onAlarmIconClick: () -> Unit,
     sheetState: BottomSheetScaffoldState,
-    sheetHeignt: Dp
+    // 서버알림 데이터에서따로봅아올거임 예삐
+    alarmBoolean: Boolean
 ) {
     val horizontalPagerState = rememberPagerState(
         pageCount = {
@@ -293,51 +141,70 @@ private fun HomeScreens(
         },
         initialPage = 0
     )
-    val scope = rememberCoroutineScope()
-
-
+    LaunchedEffect(sheetState.bottomSheetState.currentValue) {
+        snapshotFlow { sheetState.bottomSheetState.currentValue }
+            .collect { value ->
+                Log.d("sfjlsiefj", value.toString())
+            }
+    }
     BottomSheetScaffold(
         scaffoldState = sheetState,
         sheetContainerColor = Color.White,
         sheetContentColor = Color.Black,
         sheetContent = {
+            // currentvlaue : 손대고 때면 state바낌
+            // targetValue : 손대고움직이자마자 state바낌
+            // hide는 상태에서 제거했음위에서
+            when (sheetState.bottomSheetState.currentValue) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(442.dp)
-                    .padding(paddingValues)
-            ) {
+                // 1~99 화면
+                SheetValue.PartiallyExpanded -> {
 
-                SeventhScreen(testSeventhData, sheetState, sheetHeignt)
+                    when (sheetState.bottomSheetState.targetValue) {
+                        // 위로 올릴때
+                        SheetValue.Expanded -> {
+                            SeventhScreen(testSeventhData)
+                        }
+
+                        else -> {
+                            Column(
+                                modifier = Modifier.height(442.dp)
+                            ) {
+                                // 여백처리
+                            }
+                        }
+                    }
+                }
+
+                // 100 호면
+                SheetValue.Expanded -> {
+                    SeventhScreen(testSeventhData)
+                }
+
+                // 0 -> pass
+                else -> {
+                    SeventhScreen(testSeventhData)
+                }
 
             }
-
         },
-        // TODO 물어보기
         modifier = Modifier.padding(paddingValues),
-        sheetPeekHeight = 110.dp,
+        sheetPeekHeight = 115.dp,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetDragHandle = {
-            Column(
-            ) {
+            Column {
                 Spacer(Modifier.height(10.dp))
                 Column(
                     modifier = Modifier
                         .width(133.dp)
                         .height(6.dp)
-                        .background(Color.Black)
-                        .clickable {
-                            scope.launch {
-                                sheetState.bottomSheetState.expand()
-                            }
-                        },
+                        .background(Color.Black),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     BottomSheetDefaults.DragHandle()
+
                 }
             }
-
         }
     ) {
         Box(
@@ -349,7 +216,7 @@ private fun HomeScreens(
                     .fillMaxWidth()
                     .padding(start = 15.dp, end = 15.dp)
             ) {
-                First(onAlarmIconClick, onMyIconClick)
+                First(onAlarmIconClick, onMyIconClick, alarmBoolean)
             }
             LazyColumn(
                 modifier = Modifier
@@ -363,10 +230,8 @@ private fun HomeScreens(
                             .padding(start = 15.dp, end = 15.dp)
                     ) {
                         Spacer(Modifier.size(10.dp))
-
                         Second(horizontalPagerState, testSecondImage)
                         Spacer(Modifier.size(16.dp))
-
                         ThirdScreen(testThirdData)
                     }
                 }
@@ -384,23 +249,17 @@ private fun HomeScreens(
                         FifthScreen()
                     }
                     Spacer(Modifier.size(12.dp))
-
                 }
                 item {
                     SixthScreen(testFourthData)
                 }
-
-
             }
         }
-
     }
-
-
 }
 
 @Composable
-fun First(onIconClick: () -> Unit, onMyIconClick: () -> Unit) {
+fun First(onIconClick: () -> Unit, onMyIconClick: () -> Unit, alarmBoolean: Boolean) {
     Row(
         modifier = Modifier
             .height(46.dp),
@@ -413,45 +272,36 @@ fun First(onIconClick: () -> Unit, onMyIconClick: () -> Unit) {
             color = Color(0xFF6236E9),
             fontFamily = FontFamily(Font(R.font.ttangsbudaejjigae))
         )
-        Image(
-            painter = painterResource(id = R.drawable.icon_bell),
-            contentDescription = "",
-            modifier = Modifier
-                .size(width = 16.dp, height = 19.dp)
-                .clickable {
-                    onIconClick()
-                },
-            colorFilter = ColorFilter.tint(Color(0xFF6236E9)),
-
+        //TODO 준성님 -> 아이콘빨간색다운
+        if (alarmBoolean) {
+            FirstIconBadge(
+                onIconClick = { onIconClick() },
             )
-        Spacer(Modifier.size(7.53.dp))
+        } else {
+            Icon(
+                painter = painterResource(id = R.drawable.icon_bell),
+                contentDescription = "",
+                modifier = Modifier.clickable { onIconClick() },
+            )
+        }
         Icon(
-            painter = painterResource(id = R.drawable.person),
+            painter = painterResource(id = R.drawable.ic_user),
             contentDescription = "",
             tint = Color(0xFF6236E9),
-            modifier = Modifier
-                .size(width = 16.dp, height = 19.dp)
-                .clickable {
-                    onMyIconClick()
-                }
+            modifier = Modifier.clickable { onMyIconClick() }
         )
-
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Second(pagerState: PagerState, testSecondImage: List<HomeViewModel.SecondDataModel>) {
+fun Second(pagerState: PagerState, testSecondImages: List<HomeViewModel.SecondDataModel>) {
     val isVisible = remember { mutableStateOf(false) }
-    val testSecondImages = testSecondImage
-
     if (testSecondImages.isEmpty()) {
         Box(
             modifier = Modifier.height(190.dp),
             contentAlignment = Alignment.Center,
-
-            ) {
-
+        ) {
             Text("사지 없을 때", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
         }
     } else {
@@ -460,16 +310,15 @@ fun Second(pagerState: PagerState, testSecondImage: List<HomeViewModel.SecondDat
                 delay(2000L)
                 val nextPage =
                     if (pagerState.currentPage + 1 == pagerState.pageCount) 0 else pagerState.currentPage + 1
-
                 pagerState.animateScrollToPage(
                     nextPage,
                     animationSpec = tween(
+                        //TODO 사진 몇촌지 , 5번째->1번째스크롤하는지안하는지 : 부교님
                         durationMillis = 100,
                         easing = LinearEasing
                     )
                 )
             }
-
         }
         Column {
             Box(
@@ -477,19 +326,16 @@ fun Second(pagerState: PagerState, testSecondImage: List<HomeViewModel.SecondDat
                     .fillMaxSize()
                     .clip(RoundedCornerShape(20.dp))
             ) {
-
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
                         .height(190.dp)
-//                .onGloballyPositioned { isVisible.value = true }
                         .onSizeChanged {
                             if (it.width > 0 && it.height > 0) isVisible.value = true
-                        },
+                        }
                 ) { page ->
                     Card(
                         modifier = Modifier.fillMaxSize(),
-//                    .applyCubic(pagerState, page),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Box(
@@ -501,12 +347,9 @@ fun Second(pagerState: PagerState, testSecondImage: List<HomeViewModel.SecondDat
                             GlideImage(
                                 imageModel = { testSecondImages[page].image },
                             )
-
-
                         }
                     }
                 }
-
                 Box(
                     modifier = Modifier.fillMaxSize(),
                 ) {
@@ -526,17 +369,13 @@ fun Second(pagerState: PagerState, testSecondImage: List<HomeViewModel.SecondDat
                     )
                 }
             }
-
         }
-
     }
-
 }
 
 @Composable
-fun ThirdScreen(testThirdData: List<HomeViewModel.ThirdDataModel>) {
-
-    if (testThirdData.isEmpty()) {
+fun ThirdScreen(testThirdDatas: List<HomeViewModel.ThirdDataModel>) {
+    if (testThirdDatas.isEmpty()) {
         Card(
             modifier = Modifier
                 .height(52.dp)
@@ -553,8 +392,8 @@ fun ThirdScreen(testThirdData: List<HomeViewModel.ThirdDataModel>) {
             }
         }
     } else {
-        val day = testThirdData[0].day
-        val dayContent = testThirdData[0].dayContent
+        val day = testThirdDatas[0].day
+        val dayContent = testThirdDatas[0].dayContent
         Card(
             modifier = Modifier
                 .height(52.dp)
@@ -571,7 +410,6 @@ fun ThirdScreen(testThirdData: List<HomeViewModel.ThirdDataModel>) {
                 Text(day, color = Color.Red)
                 Spacer(Modifier.size(19.dp))
                 Text(dayContent, color = Color.Black)
-
             }
         }
     }
@@ -612,9 +450,7 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
                     .padding(start = 20.dp, end = 20.dp),
             ) {
                 Column {
-                    Row(
-
-                    ) {
+                    Row {
                         GlideImage(
                             imageModel = { data.image1 },
                             modifier = Modifier
@@ -642,51 +478,19 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
                         }
                     }
                     Spacer(Modifier.size(4.dp))
+                    SixthText(data.content)
+                    Spacer(Modifier.size(10.dp))
+                    Box(modifier = Modifier
+                        .background(Color.Gray)
+                        .height(1.dp)
+                        .fillMaxWidth())
+                    Spacer(Modifier.size(12.dp))
 
-                    JJinText(data.content)
-//                    Text(
-////                        text = data.content,
-//                        text = AnnotatedString.Builder().apply {
-//                            withStyle(
-//                                style = SpanStyle(
-//                                    fontWeight = FontWeight.Bold,
-//                                    color = Color(0xFF999999),
-//                                    fontFamily = FontFamily(Font(R.font.notosanskr_medium)),
-//                                    fontSize = 14.sp
-//                                )
-//                            ) {
-//                                append(
-//                                    if (data.content.length > 92) data.content.take(88) else data.content
-////                                    data.content
-//                                )
-//                            }
-//                            if (data.content.length > 92) {
-//                                withStyle(
-//                                    style = SpanStyle(
-//                                        color = Color(0xFF6236E9),
-//                                        fontFamily = FontFamily(Font(R.font.notosanskr_bold))
-//                                    )
-//                                ) {
-//                                    append("... 더 보기")
-//
-//                                }
-//                            }
-//
-//                        }.toAnnotatedString(),
-//                        maxLines = 3,
-//                        onTextLayout = { layoutResult ->
-//                            if (layoutResult.lineCount > 3) {
-//                                Log.d("sjflsejiljesflsj", "3줄넘음")
-//                            }
-//                        },
-//                        overflow = TextOverflow.Clip
-//                    )
-                    Spacer(Modifier.size(22.dp))
+                    //10 회색선 12
+                    // TODO 마지막에도 회색선 + 여백-> 부교님
 
                 }
-
             }
-
         }
     } else {
         Box(
@@ -701,182 +505,139 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
                 Text("", fontSize = 20.sp)
                 Text("하루의 소중한 시간을 기록하고", fontSize = 20.sp)
                 Text("오래 기억될 수 있도록 간직해보세요!", fontSize = 20.sp)
-
             }
         }
     }
-
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeventhScreen(
-    SevenDataModel: List<HomeViewModel.SevenDataModel>,
-    scaffoldState: BottomSheetScaffoldState,
-    sheetHeignt: Dp
+    sevenDataModel: List<HomeViewModel.SevenDataModel>,
 ) {
-    // TODO 예비
-    //    Spacer(Modifier.size(11.41.dp))
     LazyColumn(
         modifier = Modifier
             .height(442.dp)
             .padding(start = 20.dp, end = 20.dp)
     ) {
         item {
+            //TODO 묶어서처리하기
             Spacer(Modifier.size(11.dp))
             Text(
-                SevenDataModel[0].day,
+                sevenDataModel[0].day,
                 color = Color(0xFF7B50FF),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
+            // 시간되면 위치확인하기 버튼색상변경
             val timeAble by remember { mutableStateOf(true) }
             val timeOkColor = if (timeAble) Color(0xFF7B50FF) else Color(0xFFABABAB)
-
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                ) {
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Column {
-                    Text(SevenDataModel[0].title1, fontSize = 18.sp)
-                    Text(SevenDataModel[0].subTitle1, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title1, fontSize = 18.sp)
+                    Text(sevenDataModel[0].subTitle1, fontSize = 14.sp, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(containerColor = timeOkColor),
                     shape = RoundedCornerShape(4.dp)
-
-
                 ) {
                     Text("위치 확인하기", color = Color.White)
-
                 }
             }
             Spacer(Modifier.size(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-
-                ) {
+            ) {
                 Column {
-                    Text(SevenDataModel[0].title2, fontSize = 18.sp)
-                    Text(SevenDataModel[0].subTitle2, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title2, fontSize = 18.sp)
+                    Text(sevenDataModel[0].subTitle2, fontSize = 14.sp, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
-
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(containerColor = timeOkColor),
                     shape = RoundedCornerShape(4.dp)
-
-
                 ) {
                     Text("위치 확인하기", color = Color.White)
-
                 }
             }
             Spacer(Modifier.size(12.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-
-                ) {
+            ) {
                 Column {
-                    Text(SevenDataModel[0].title3, fontSize = 18.sp)
-                    Text(SevenDataModel[0].subTitle3, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title3, fontSize = 18.sp)
+                    Text(sevenDataModel[0].subTitle3, fontSize = 14.sp, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
-
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(containerColor = timeOkColor),
                     shape = RoundedCornerShape(4.dp)
-
                 ) {
                     Text("위치 확인하기", color = Color.White)
-
                 }
             }
             Spacer(Modifier.size(12.dp))
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                ) {
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Column {
-                    Text(SevenDataModel[0].title4, fontSize = 18.sp)
-                    Text(SevenDataModel[0].subTitle4, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title4, fontSize = 18.sp)
+                    Text(sevenDataModel[0].subTitle4, fontSize = 14.sp, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
-
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(containerColor = timeOkColor),
                     shape = RoundedCornerShape(4.dp)
-
                 ) {
                     Text("위치 확인하기", color = Color.White)
-
                 }
             }
             Spacer(Modifier.size(12.dp))
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                ) {
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Column {
-                    Text(SevenDataModel[0].title5, fontSize = 18.sp)
-                    Text(SevenDataModel[0].subTitle5, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title5, fontSize = 18.sp)
+                    Text(sevenDataModel[0].subTitle5, fontSize = 14.sp, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
-
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(containerColor = timeOkColor),
                     shape = RoundedCornerShape(4.dp)
-
                 ) {
                     Text("위치 확인하기", color = Color.White)
-
                 }
             }
             Spacer(Modifier.size(12.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-
-                ) {
+            ) {
                 Column {
-                    Text(SevenDataModel[0].title6, fontSize = 18.sp)
-                    Text(SevenDataModel[0].subTitle6, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title6, fontSize = 18.sp)
+                    Text(sevenDataModel[0].subTitle6, fontSize = 14.sp, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
-
                 Button(
                     onClick = {},
                     colors = ButtonDefaults.buttonColors(containerColor = timeOkColor),
                     shape = RoundedCornerShape(4.dp)
-
                 ) {
                     Text("위치 확인하기", color = Color.White)
-
                 }
             }
             Spacer(Modifier.size(22.dp))
         }
-
     }
-
 }
 
-
-@Composable
-fun JJinText(text: String) {
-    SixthText(text = text)
-}
 
 @Composable
 fun SixthText(
@@ -892,24 +653,8 @@ fun SixthText(
     textAlign: TextAlign? = null,
     lineHeight: TextUnit = TextUnit.Unspecified,
     softWrap: Boolean = true,
-    onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current,
 ) {
-    // 비포 -> 리컴포지션 ㅈㄹ ㅈ같네씨이발
-//    val ellipsis = "... 더보기"
-//    val textLayoutResultState = remember { mutableStateOf<TextLayoutResult?>(null) }
-//
-//    val finalText = remember(text, textLayoutResultState.value) {
-//        val textLayoutResult = textLayoutResultState.value ?: return@remember text
-//        if (textLayoutResult.lineCount == 3) {
-//            val lastVisibleCharIndex = textLayoutResult.getLineEnd(2, true) - 5
-//            val truncatedText = text.substring(0, lastVisibleCharIndex).trimEnd()
-//            truncatedText + ellipsis
-//        } else {
-//            text
-//        }
-//    }
-
     val customEllipsis = "... 더보기"
     val textLayoutResultState = remember { mutableStateOf<TextLayoutResult?>(null) }
     val finalTextState = remember { mutableStateOf(text) }
@@ -917,26 +662,24 @@ fun SixthText(
     LaunchedEffect(Unit) {
         val textLayoutResult = textLayoutResultState.value
         if (textLayoutResult != null && textLayoutResult.lineCount == 3) {
-            val lastTextIndexNumber = textLayoutResult.getLineEnd(2, true) - 5
+            val lastTextIndexNumber = textLayoutResult.getLineEnd(2, true) - 4
             val truncatedText = text.substring(0, lastTextIndexNumber).trimEnd()
             finalTextState.value = truncatedText + customEllipsis
         } else {
             finalTextState.value = text
         }
     }
-
     val annotatedText = buildAnnotatedString {
         append(finalTextState.value)
         if (finalTextState.value.endsWith(customEllipsis)) {
             val ellipsisStartIndex = finalTextState.value.indexOf(customEllipsis)
             addStyle(
-                style = SpanStyle(color = Color.Red),
+                style = SpanStyle(color = Color(0xFF7B50FF), fontWeight = FontWeight.Bold),
                 start = ellipsisStartIndex,
                 end = ellipsisStartIndex + customEllipsis.length
             )
         }
     }
-
     Text(
         text = annotatedText,
         modifier = modifier,
@@ -962,6 +705,40 @@ fun SixthText(
 @Composable
 private fun PreviewExpandableText() {
     SixthText(" 정말 간만에 다녀온 96즈끼리 다녀온 여의도한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 몰랐는데 티원은 젠지를 언제쯤이길수있을까 하하슬프네")
+}
+
+
+@Composable
+fun FirstIconBadge(
+    onIconClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.clickable { onIconClick() }
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.icon_bell),
+            contentDescription = "",
+            modifier = Modifier
+                .size(24.dp),
+            tint = Color(0xFF6236E9)
+        )
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(Color.Red, shape = CircleShape)
+                .align(Alignment.BottomEnd)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_redcircle),
+                contentDescription = "",
+                tint = Color.Red,
+                modifier = Modifier
+                    .size(8.dp)
+                    .align(Alignment.Center)
+            )
+        }
+
+    }
 }
 
 
