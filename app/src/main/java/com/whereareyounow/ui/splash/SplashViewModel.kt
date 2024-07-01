@@ -14,7 +14,7 @@ import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
-import com.whereareyounow.domain.usecase.signin.ReissueTokenUseCase
+import com.whereareyounow.domain.usecase.signin.ReissueAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyounow.domain.util.LogUtil
@@ -37,7 +37,7 @@ class SplashViewModel @Inject constructor(
     private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
-    private val reissueTokenUseCase: ReissueTokenUseCase,
+    private val reissueAccessTokenUseCase: ReissueAccessTokenUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
     private val getMemberIdUseCase: GetMemberIdUseCase,
     private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
@@ -99,7 +99,7 @@ class SplashViewModel @Inject constructor(
         refreshToken: String
     ) {
         val request = ReissueTokenRequest(refreshToken)
-        val response = reissueTokenUseCase(request)
+        val response = reissueAccessTokenUseCase(request)
         LogUtil.printNetworkLog(request, response, "토큰 재발급")
         when (response) {
             is NetworkResult.Success -> {

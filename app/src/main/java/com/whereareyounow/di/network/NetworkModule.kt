@@ -1,11 +1,11 @@
-package com.whereareyounow.di
+package com.whereareyounow.di.network
 
 import com.whereareyounow.BuildConfig
 import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
-import com.whereareyounow.api.SearchLocationApi
 import com.whereareyounow.api.ScheduleApi
+import com.whereareyounow.api.SearchLocationApi
 import com.whereareyounow.api.SignInApi
 import com.whereareyounow.api.SignUpApi
 import dagger.Module
@@ -25,15 +25,19 @@ object NetworkModule {
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class SearchLocationAPIClass
+    annotation class SearchLocationApiClass
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class NaverMapAPIClass
+    annotation class NaverMapApi
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class RemoteApiClass
+    annotation class RemoteAccessTokenAutoAdded
+
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class RemoteHeaderManuallyAdded
 
 
     @Singleton
@@ -48,7 +52,7 @@ object NetworkModule {
     // 네이버 검색 url
     @Singleton
     @Provides
-    @SearchLocationAPIClass
+    @SearchLocationApiClass
     fun provideSearchLocationRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://openapi.naver.com/")
@@ -60,14 +64,14 @@ object NetworkModule {
     // 네이버 검색 Api
     @Singleton
     @Provides
-    fun provideSearchLocationApi(@SearchLocationAPIClass retrofit: Retrofit): SearchLocationApi {
+    fun provideSearchLocationApi(@SearchLocationApiClass retrofit: Retrofit): com.whereareyounow.api.SearchLocationApi {
         return retrofit.create(SearchLocationApi::class.java)
     }
 
     // 백엔드 서버 url
     @Singleton
     @Provides
-    @RemoteApiClass
+    @RemoteAccessTokenAutoAdded
     fun provideRemoteRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
@@ -79,42 +83,42 @@ object NetworkModule {
     // 일정 Api
     @Singleton
     @Provides
-    fun provideScheduleApi(@RemoteApiClass retrofit: Retrofit): ScheduleApi {
+    fun provideScheduleApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): ScheduleApi {
         return retrofit.create(ScheduleApi::class.java)
     }
 
     // 회원가입 Api
     @Singleton
     @Provides
-    fun provideSignUpApi(@RemoteApiClass retrofit: Retrofit): SignUpApi {
+    fun provideSignUpApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): SignUpApi {
         return retrofit.create(SignUpApi::class.java)
     }
 
     // 로그인 Api
     @Singleton
     @Provides
-    fun provideSignInApi(@RemoteApiClass retrofit: Retrofit): SignInApi {
+    fun provideSignInApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): SignInApi {
         return retrofit.create(SignInApi::class.java)
     }
 
     // 친구 Api
     @Singleton
     @Provides
-    fun provideFriendApi(@RemoteApiClass retrofit: Retrofit): FriendApi {
+    fun provideFriendApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FriendApi {
         return retrofit.create(FriendApi::class.java)
     }
 
     // 위치 공유 Api
     @Singleton
     @Provides
-    fun provideLocationApi(@RemoteApiClass retrofit: Retrofit): LocationApi {
+    fun provideLocationApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): LocationApi {
         return retrofit.create(LocationApi::class.java)
     }
 
     // FCM Api
     @Singleton
     @Provides
-    fun provideFCMApi(@RemoteApiClass retrofit: Retrofit): FCMApi {
+    fun provideFCMApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FCMApi {
         return retrofit.create(FCMApi::class.java)
     }
 }

@@ -3,7 +3,7 @@ package com.whereareyounow.di.util
 import android.content.Context
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
-import com.whereareyounow.domain.usecase.signin.ReissueTokenUseCase
+import com.whereareyounow.domain.usecase.signin.ReissueAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyounow.util.InputTextValidator
@@ -36,7 +36,7 @@ object UtilModule {
         getRefreshTokenUseCase: GetRefreshTokenUseCase,
         saveAccessTokenUseCase: SaveAccessTokenUseCase,
         saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
-        reissueTokenUseCase: ReissueTokenUseCase,
+        reissueAccessTokenUseCase: ReissueAccessTokenUseCase,
         @ApplicationContext context: Context
     ): TokenManager {
         return TokenManager(
@@ -44,7 +44,7 @@ object UtilModule {
             getRefreshTokenUseCase,
             saveAccessTokenUseCase,
             saveRefreshTokenUseCase,
-            reissueTokenUseCase,
+            reissueAccessTokenUseCase,
             context
         )
     }
