@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.whereareyounow"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 48
         versionName = "1.0.1"

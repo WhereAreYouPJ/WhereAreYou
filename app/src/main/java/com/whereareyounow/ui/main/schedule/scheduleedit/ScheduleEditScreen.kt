@@ -71,7 +71,8 @@ import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.ScrollablePicker
-import com.whereareyounow.util.CalendarUtil
+import com.whereareyounow.util.getDayOfWeekString
+import com.whereareyounow.util.getLastDayOfMonth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -362,7 +363,7 @@ private fun DateComponent(
     scheduleDate: Int
 ) {
     Text(
-        text = "${scheduleYear}년 ${scheduleMonth}월 ${scheduleDate}일(${CalendarUtil.getDayOfWeekString(scheduleYear, scheduleMonth, scheduleDate)})",
+        text = "${scheduleYear}년 ${scheduleMonth}월 ${scheduleDate}일(${getDayOfWeekString(scheduleYear, scheduleMonth, scheduleDate)})",
         textAlign = TextAlign.Center,
         fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
@@ -614,7 +615,7 @@ private fun DateTimePickerDialog(
             val yearMap = (0..40).associateWith { "${selectedYear + it - 20}년" }
             val monthMap = (0..400).associateWith { "${((selectedMonth + it + 3) % 12) + 1}월" }
             val dateMap = remember(yearScrollableState.intValue, monthScrollableState.intValue) {
-                val lastDate = CalendarUtil.getLastDayOfMonth(
+                val lastDate = getLastDayOfMonth(
                     yearMap[yearScrollableState.intValue]!!.replace(
                         "년",
                         ""
