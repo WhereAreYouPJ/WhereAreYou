@@ -26,7 +26,8 @@ import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
-import com.whereareyounow.util.CalendarUtil
+import com.whereareyounow.util.getDayOfWeekString
+import com.whereareyounow.util.getMinuteDiffWithCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,13 +90,13 @@ class DetailScheduleViewModel @Inject constructor(
                                 scheduleYear = appointmentDateList[0],
                                 scheduleMonth = appointmentDateList[1],
                                 scheduleDate = appointmentDateList[2],
-                                scheduleDayOfWeek = CalendarUtil.getDayOfWeekString(appointmentDateList[0], appointmentDateList[1], appointmentDateList[2]),
+                                scheduleDayOfWeek = getDayOfWeekString(appointmentDateList[0], appointmentDateList[1], appointmentDateList[2]),
                                 scheduleHour = appointmentTimeList[0],
                                 scheduleMinute = appointmentTimeList[1],
                                 destinationName = data.place.replace("<b>", "").replace("</b>", ""),
                                 destinationRoadAddress = data.roadName,
                                 memo = data.memo,
-                                isLocationCheckEnabled = CalendarUtil.getMinuteDiffWithCurrentTime(data.appointmentTime) <= 60
+                                isLocationCheckEnabled = getMinuteDiffWithCurrentTime(data.appointmentTime) <= 60
                             )
                         }
                         memberIdsList = data.friendsIdList.toMutableList()

@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -69,8 +70,10 @@ import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.main.schedule.notification.DrawerNotificationContent
 import com.whereareyounow.ui.main.schedule.notification.DrawerNotificationContentViewModel
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -193,16 +196,8 @@ fun ScheduleScreen(
                 ) {
                     // 상단바
                     ScheduleScreenTopBar(
-                        updateCurrentMonthCalendarInfo = updateCurrentMonthCalendarInfo,
-                        selectedYear = calendarScreenUIState.selectedYear,
-                        updateYear = updateYear,
-                        selectedMonth = calendarScreenUIState.selectedMonth,
-                        updateMonth = updateMonth,
-                        drawerState = drawerState,
-                        bottomContentState = bottomContentState,
-                        loadFriendRequests = loadFriendRequests,
-                        loadScheduleRequests = loadScheduleRequests,
-                        getTodayScheduleCount = getTodayScheduleCount
+                        onNotificationIconClicked = {},
+                        onPlusIconClicked = {}
                     )
                     // 달력 뷰
                     CalendarContent(
@@ -216,221 +211,45 @@ fun ScheduleScreen(
                         updateDate = updateDate,
                         state = bottomContentState
                     )
+
+                    Spacer(Modifier.height(paddingValues.calculateBottomPadding()))
                 }
-                // 일별 간략한 일정
-                BriefScheduleContent(
-                    selectedYear = calendarScreenUIState.selectedYear,
-                    selectedMonth = calendarScreenUIState.selectedMonth,
-                    selectedDate = calendarScreenUIState.selectedDate,
-                    dayOfWeek = calendarScreenUIState.selectedDayOfWeek,
-                    currentDateBriefSchedule = calendarScreenUIState.selectedDateBriefScheduleInfoList,
-                    moveToDetailScreen = moveToDetailScreen,
-                    state = bottomContentState
-                )
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreenTopBar(
-    updateCurrentMonthCalendarInfo: () -> Unit,
-    selectedYear: Int,
-    updateYear: (Int) -> Unit,
-    selectedMonth: Int,
-    updateMonth: (Int) -> Unit,
-    drawerState: DrawerState,
-    bottomContentState: AnchoredDraggableState<DetailState>,
-    loadFriendRequests: () -> Unit,
-    loadScheduleRequests: () -> Unit,
-    getTodayScheduleCount: () -> Unit,
+    onNotificationIconClicked: () -> Unit,
+    onPlusIconClicked: () -> Unit,
 ) {
-    val density = LocalDensity.current
-    val coroutineScope = rememberCoroutineScope()
-    val yearDropdownPopupState = remember { PopupState(false, PopupPosition.BottomRight) }
-    val monthDropdownPopupState = remember { PopupState(false, PopupPosition.BottomRight) }
-    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-    val yearList = (currentYear - 20 .. currentYear + 20).toList()
-    val monthList = (1..12).toList()
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height((TOP_BAR_HEIGHT / density.density).dp),
+            .height(TOP_BAR_HEIGHT.dp)
+            .padding(start = 15.dp, end = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val density = LocalDensity.current.density
-        Spacer(Modifier.width(20.dp))
-        // 년도 선택
-        Box {
-            Text(
-                modifier = Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { yearDropdownPopupState.isVisible = true },
-                text = "${selectedYear}.",
-                fontSize = 26.sp,
-                fontFamily = lato,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.em,
-                color = Color(0xFF373737)
-            )
-            // 년도 선택 팝업
-            CustomPopup(
-                popupState = yearDropdownPopupState,
-                onDismissRequest = { yearDropdownPopupState.isVisible = false }
-            ) {
-                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
-                    Box(
-                        modifier = Modifier
-                            .width(100.dp)
-                            .height(200.dp)
-                            .padding(10.dp)
-                            .offset(x = (-10).dp, y = (-8).dp)
-                    ) {
-                        Surface(
-                            color = Color(0xFFFFFFFF),
-                            shadowElevation = 2.dp,
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            val listState = rememberLazyListState()
-                            LaunchedEffect(Unit) { listState.scrollToItem(20) }
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                                    .padding(top = 10.dp, bottom = 10.dp),
-                                state = listState
-                            ) {
-                                itemsIndexed(yearList) { _, year ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(40.dp)
-                                            .clickable {
-                                                updateYear(year)
-                                                updateCurrentMonthCalendarInfo()
-                                                coroutineScope.launch {
-                                                    bottomContentState.animateTo(
-                                                        DetailState.Close
-                                                    )
-                                                }
-                                                yearDropdownPopupState.isVisible = false
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = "$year",
-                                            color = Color(0xFF000000),
-                                            fontSize = 20.sp
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        Spacer(Modifier.width(10.dp))
-        // 월 선택
-        Box {
-            Text(
-                modifier = Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) { monthDropdownPopupState.isVisible = true },
-                text = "$selectedMonth",
-                fontSize = 26.sp,
-                fontFamily = lato,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.em
-            )
-            // 월 선택 팝업
-            CustomPopup(
-                popupState = monthDropdownPopupState,
-                onDismissRequest = { monthDropdownPopupState.isVisible = false }
-            ) {
-                CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
-                    Box(
-                        modifier = Modifier
-                            .width(100.dp)
-                            .height(200.dp)
-                            .padding(10.dp)
-                            .offset(x = (-10).dp, y = (-8).dp)
-                    ) {
-                        Surface(
-                            color = Color(0xFFFFFFFF),
-                            shadowElevation = 2.dp,
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            val listState = rememberLazyListState()
-                            LaunchedEffect(Unit) { listState.scrollToItem(selectedMonth) }
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            ) {
-                                itemsIndexed(monthList) { _, month ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(40.dp)
-                                            .clickable {
-                                                updateMonth(month)
-                                                updateCurrentMonthCalendarInfo()
-                                                coroutineScope.launch {
-                                                    bottomContentState.animateTo(
-                                                        DetailState.Close
-                                                    )
-                                                }
-                                                monthDropdownPopupState.isVisible = false
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = "$month",
-                                            color = Color(0xFF000000),
-                                            fontSize = 20.sp
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         Spacer(Modifier.weight(1f))
-        Box(
-            modifier = Modifier.size(40.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .clickable {
-                        loadFriendRequests()
-                        loadScheduleRequests()
-                        getTodayScheduleCount()
-                        coroutineScope.launch(Dispatchers.Default) { drawerState.open() }
-                    }
-                    .padding(8.dp),
-                painter = painterResource(id = R.drawable.icon_bell),
-                contentDescription = null
-            )
-//            Box(
-//                modifier = Modifier
-//                    .offset(10.dp, (-10).dp)
-//                    .size(6.dp)
-//                    .background(
-//                        color = Color(0xFFFF0000),
-//                        shape = CircleShape
-//                    )
-//            )
-        }
-        Spacer(Modifier.width(20.dp))
+
+        Image(
+            modifier = Modifier
+                .size(34.dp)
+                .clickableNoEffect { onNotificationIconClicked() },
+            painter = painterResource(R.drawable.ic_bell),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(getColor().brandColor)
+        )
+
+        Image(
+            modifier = Modifier
+                .size(34.dp)
+                .clickableNoEffect { onPlusIconClicked() },
+            painter = painterResource(id = R.drawable.ic_plus),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(getColor().brandColor)
+        )
     }
 }
 
@@ -459,90 +278,4 @@ enum class DetailState {
 @CustomPreview
 @Composable
 private fun ScheduleScreenPreview2() {
-    val previewSchedule = listOf(
-        Schedule(2024, 12, 31),
-        Schedule(2024, 1, 1),
-        Schedule(2024, 1, 2),
-        Schedule(2024, 1, 3),
-        Schedule(2024, 1, 4, 1),
-        Schedule(2024, 1, 5, 2),
-        Schedule(2024, 1, 6, 3),
-        Schedule(2024, 1, 7, 4),
-        Schedule(2024, 1, 8, 5),
-        Schedule(2024, 1, 9, 6),
-        Schedule(2024, 1, 10),
-        Schedule(2024, 1, 11),
-        Schedule(2024, 1, 12),
-        Schedule(2024, 1, 13),
-        Schedule(2024, 1, 14),
-        Schedule(2024, 1, 15),
-        Schedule(2024, 1, 16),
-        Schedule(2024, 1, 17),
-        Schedule(2024, 1, 18),
-        Schedule(2024, 1, 19),
-        Schedule(2024, 1, 20),
-        Schedule(2024, 1, 21),
-        Schedule(2024, 1, 22),
-        Schedule(2024, 1, 23),
-        Schedule(2024, 1, 24),
-        Schedule(2024, 1, 25),
-        Schedule(2024, 1, 26),
-        Schedule(2024, 1, 27),
-        Schedule(2024, 1, 28),
-        Schedule(2024, 1, 29),
-        Schedule(2024, 1, 30),
-        Schedule(2024, 1, 31),
-        Schedule(2024, 2, 1),
-        Schedule(2024, 2, 2),
-        Schedule(2024, 2, 3),
-    )
-    val briefScheduleList = listOf(
-        BriefSchedule("", "title", "2023-01-02T10:20:00")
-    )
-    val drawerState = rememberDrawerState(
-        initialValue = DrawerValue.Closed,
-        confirmStateChange = { true }
-    )
-    val bottomContentState = remember { anchoredDraggableState }
-    Column(
-        modifier = Modifier
-            .background(color = Color(0xFFF8F8F8))
-            .fillMaxSize()
-    ) {
-        // 상단바
-        ScheduleScreenTopBar(
-            updateCurrentMonthCalendarInfo = {},
-            selectedYear = 2024,
-            updateYear = {},
-            selectedMonth = 1,
-            updateMonth = {},
-            drawerState = drawerState,
-            bottomContentState = bottomContentState,
-            loadFriendRequests = {},
-            loadScheduleRequests = {},
-            getTodayScheduleCount = {}
-        )
-        // 달력 뷰
-        CalendarContent(
-            currentMonthCalendarInfo = previewSchedule,
-            updateCurrentMonthCalendarInfo = {},
-            selectedYear = 2024,
-            updateYear = {},
-            selectedMonth = 1,
-            updateMonth = {},
-            selectedDate = 2,
-            updateDate = {},
-            state = bottomContentState
-        )
-    }
-    // 일별 간략한 일정
-    BriefScheduleContent(
-        selectedYear = 2024,
-        selectedMonth = 1,
-        selectedDate = 2,
-        dayOfWeek = 3,
-        currentDateBriefSchedule = briefScheduleList,
-        moveToDetailScreen = {},
-        state = bottomContentState
-    )
 }

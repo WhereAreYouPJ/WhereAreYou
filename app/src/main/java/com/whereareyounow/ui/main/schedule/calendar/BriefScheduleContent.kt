@@ -44,7 +44,7 @@ import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.lato
-import com.whereareyounow.util.CalendarUtil
+import com.whereareyounow.util.getCalendarFromString
 import java.util.Calendar
 import kotlin.math.roundToInt
 
@@ -192,7 +192,7 @@ fun BriefScheduleList(
                 }
             } else {
                 itemsIndexed(currentDateBriefSchedule) { _, item ->
-                    val calendar = CalendarUtil.getCalendarFromString(item.appointmentTime)
+                    val calendar = getCalendarFromString(item.appointmentTime)
                     var appointmentHour = calendar.get(Calendar.HOUR)
                     val appointmentMinute = calendar.get(Calendar.MINUTE)
                     val appointmentTimeAMPM: String = if (calendar.get(Calendar.AM_PM) == 0) "오전" else "오후"

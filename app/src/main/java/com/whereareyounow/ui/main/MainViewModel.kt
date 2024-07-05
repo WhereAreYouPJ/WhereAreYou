@@ -21,26 +21,26 @@ class MainViewModel @Inject constructor(
     private val navigationItemContent = listOf(
         NavigationItemContent(
             viewType = ViewType.Home,
-            iconSelected = R.drawable.bottomnavbar_home,
-            iconUnselected = R.drawable.bottomnavbar_home,
+            iconSelected = R.drawable.ic_home_filled,
+            iconUnselected = R.drawable.ic_home_outlined,
             label = "홈"
         ),
         NavigationItemContent(
             viewType = ViewType.Calendar,
-            iconSelected = R.drawable.bottomnavbar_home,
-            iconUnselected = R.drawable.bottomnavbar_home,
+            iconSelected = R.drawable.ic_note_filled,
+            iconUnselected = R.drawable.ic_note_outlined,
             label = "홈"
         ),
         NavigationItemContent(
             viewType = ViewType.Friends,
-            iconSelected = R.drawable.bottomnavbar_friend,
-            iconUnselected = R.drawable.bottomnavbar_friend,
+            iconSelected = R.drawable.ic_users_filled,
+            iconUnselected = R.drawable.ic_users_outlined,
             label = "친구목록"
         ),
         NavigationItemContent(
             viewType = ViewType.MyPage,
-            iconSelected = R.drawable.bottomnavbar_mypage,
-            iconUnselected = R.drawable.bottomnavbar_mypage,
+            iconSelected = R.drawable.ic_user_filled,
+            iconUnselected = R.drawable.ic_user_outlined,
             label = "마이페이지"
         )
     )

@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
-import com.whereareyounow.util.CalendarUtil
+import com.whereareyounow.util.getMinuteDiffWithCurrentTime
 
 @Composable
 fun ScheduleRequestBox(
@@ -36,7 +36,7 @@ fun ScheduleRequestBox(
     acceptScheduleRequest: () -> Unit,
     refuseScheduleRequest: () -> Unit
 ) {
-    val timePassed = CalendarUtil.getMinuteDiffWithCurrentTime(scheduleRequest.invitedTime.split(".")[0])
+    val timePassed = getMinuteDiffWithCurrentTime(scheduleRequest.invitedTime.split(".")[0])
     var hour = scheduleRequest.hour.toInt()
     val minute = scheduleRequest.minute.toInt()
     val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}

@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -41,8 +44,11 @@ import com.whereareyounow.ui.main.mypage.MyPageScreen
 import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.main.schedule.calendar.ScheduleScreen
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium10pt
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
@@ -99,50 +105,39 @@ private fun MainScreen(
                     updateViewType = updateViewType
                 )
             },
-            floatingActionButton = {
-                if (viewType == ViewType.Calendar) {
-                    FloatingActionButton(
-                        shape = CircleShape,
-                        contentColor = Color(0xFFFFFFFF),
-                        containerColor = Color(0xFF5448BC),
-                        onClick = { moveToAddScheduleScreen(calendarScreenUIState.selectedYear, calendarScreenUIState.selectedMonth, calendarScreenUIState.selectedDate) }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.plus),
-                            contentDescription = null
-                        )
-                    }
-                }
-            },
             containerColor = Color(0xFFFFFFFF),
         ) {
-            when (viewType) {
-                ViewType.Home -> {
-                    HomeScreen(
-                        paddingValues = it,
+            Column(
+                modifier = Modifier
+                    .padding(bottom = it.calculateBottomPadding())
+            ) {
+                when (viewType) {
+                    ViewType.Home -> {
+                        HomeScreen(
+                            paddingValues = it,
 
-                    )
-                }
-                ViewType.Calendar -> {
-                    ScheduleScreen(
-                        paddingValues = it,
-                        moveToDetailScreen = moveToDetailScreen
-                    )
-                }
-                ViewType.Friends -> {
-                    FriendScreen(
-                        paddingValues = it,
-                        moveToAddFriendScreen = moveToAddFriendScreen,
-                        moveToAddGroupScreen = moveToAddGroupScreen
-                    )
-                }
-                ViewType.MyPage -> {
-                    MyPageScreen(
-                        paddingValues = it,
-                        moveToSignInScreen = moveToSignInScreen,
-                        moveToModifyInfoScreen = moveToModifyInfoScreen
-                    )
+                            )
+                    }
+                    ViewType.Calendar -> {
+                        ScheduleScreen(
+                            paddingValues = it,
+                            moveToDetailScreen = moveToDetailScreen
+                        )
+                    }
+                    ViewType.Friends -> {
+                        FriendScreen(
+                            paddingValues = it,
+                            moveToAddFriendScreen = moveToAddFriendScreen,
+                            moveToAddGroupScreen = moveToAddGroupScreen
+                        )
+                    }
+                    ViewType.MyPage -> {
+                        MyPageScreen(
+                            paddingValues = it,
+                            moveToSignInScreen = moveToSignInScreen,
+                            moveToModifyInfoScreen = moveToModifyInfoScreen
+                        )
+                    }
                 }
             }
         }
@@ -164,43 +159,63 @@ fun HomeNavigationBar(
         windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         navigationItemContentList.forEachIndexed { _, navItem ->
-            NavigationBarItem(
-                modifier = Modifier.fillMaxHeight(),
-                selected = viewType == navItem.viewType,
-                onClick = { updateViewType(navItem.viewType) },
-                icon = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.fillMaxHeight(0.5f),
-                            painter = painterResource(id = when (viewType == navItem.viewType) {
-                                true -> navItem.iconSelected
-                                false -> navItem.iconUnselected
-                            }),
-                            contentDescription = null,
-                        )
-                        Text(
-                            text = navItem.label,
-                            fontSize = 12.sp,
-                            fontFamily = nanumSquareNeo,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF2D2573),
-                    selectedTextColor = Color(0xFF2D2573),
-                    indicatorColor = Color(0x00FFFFFF),
-                    unselectedIconColor = Color(0xFF9F9EA7),
-                    unselectedTextColor = Color(0xFF9F9EA7)
-                ),
-                interactionSource = NoRippleInteractionSource(),
-                alwaysShowLabel = true
-            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickableNoEffect { updateViewType(navItem.viewType) },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    modifier = Modifier.fillMaxHeight(0.5f),
+                    painter = painterResource(id = if (viewType == navItem.viewType) navItem.iconSelected else navItem.iconUnselected),
+                    contentDescription = null
+                )
+                Text(
+                    text = navItem.label,
+                    style = medium10pt,
+                    color = Color(0xFF222222)
+                )
+            }
+//            NavigationBarItem(
+//                modifier = Modifier.fillMaxHeight(),
+//                selected = viewType == navItem.viewType,
+//                onClick = { updateViewType(navItem.viewType) },
+//                icon = {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxSize(),
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                        verticalArrangement = Arrangement.Center
+//                    ) {
+//                        Icon(
+//                            modifier = Modifier.fillMaxHeight(0.5f),
+//                            painter = painterResource(id = when (viewType == navItem.viewType) {
+//                                true -> navItem.iconSelected
+//                                false -> navItem.iconUnselected
+//                            }),
+//                            contentDescription = null,
+////                            tint = Color.Red
+//                        )
+//                        Text(
+//                            text = navItem.label,
+//                            fontSize = 12.sp,
+//                            fontFamily = nanumSquareNeo,
+//                            fontWeight = FontWeight.Bold,
+//                            color = Color.Black
+//                        )
+//                    }
+//                },
+//                colors = NavigationBarItemDefaults.colors(
+////                    selectedIconColor = getColor().brandColor,
+//                    selectedTextColor = Color(0xFF222222),
+//                    indicatorColor = Color(0x00FFFFFF),
+//                    unselectedIconColor = getColor().brandColor,
+//                    unselectedTextColor = Color(0xFF222222)
+//                ),
+//                interactionSource = NoRippleInteractionSource(),
+//                alwaysShowLabel = true
+//            )
         }
     }
 }

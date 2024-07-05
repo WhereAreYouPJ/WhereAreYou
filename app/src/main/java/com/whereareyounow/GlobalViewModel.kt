@@ -22,7 +22,7 @@ class GlobalViewModel @Inject constructor(
                 }
 
                 val token = task.result
-                Log.e("GlobalViewModel-token", token)
+                Log.e("GlobalViewModel-token FCM", token)
 
                 val msg = token.toString()
 //                Toast.makeText(application, msg, Toast.LENGTH_SHORT).show()

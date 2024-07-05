@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // 모든 영역의 단위는 기본적으로 pixel
+    // 모든 영역의 단위는 기본적으로 dp.
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
     private fun updateGlobalValue(size: IntSize, density: Float) {
         val resources = application.resources

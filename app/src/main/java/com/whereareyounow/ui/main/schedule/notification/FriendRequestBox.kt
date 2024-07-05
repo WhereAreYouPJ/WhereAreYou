@@ -31,7 +31,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.util.CalendarUtil
+import com.whereareyounow.util.getMinuteDiffWithCurrentTime
 
 @Composable
 fun FriendRequestBox(
@@ -39,7 +39,7 @@ fun FriendRequestBox(
     acceptFriendRequest: () -> Unit,
     refuseFriendRequest: () -> Unit
 ) {
-    val timePassed = CalendarUtil.getMinuteDiffWithCurrentTime(friendRequest.first.requestedTime.split(".")[0])
+    val timePassed = getMinuteDiffWithCurrentTime(friendRequest.first.requestedTime.split(".")[0])
     Row(
         modifier = Modifier
             .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
