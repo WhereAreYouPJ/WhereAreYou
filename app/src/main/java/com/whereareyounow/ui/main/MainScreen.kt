@@ -53,7 +53,15 @@ fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
-    moveToMyPageScreen : () -> Unit,
+
+    moveToMyPageScreen: () -> Unit,
+
+
+    moveToMyInfoScreen: () -> Unit,
+    moveToLocationFavorites : () -> Unit,
+    moveToFeedBookmarks : () -> Unit,
+    moveToFeedSaved : () -> Unit,
+    moveToDetailProfileScreen: (String, String) -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel()
 ) {
@@ -71,7 +79,19 @@ fun MainScreen(
         moveToAddGroupScreen = moveToAddGroupScreen,
         moveToSignInScreen = moveToSignInScreen,
         moveToModifyInfoScreen = moveToModifyInfoScreen,
-        moveToMyPageScreen = moveToMyPageScreen
+        moveToMyPageScreen = moveToMyPageScreen,
+
+        // 새로 추가 된 것 일 : { "내 정보 관리" , "위치 즐겨찾기" , "피드 책갈피" , "피드 보관함" }
+        moveToMyInfoScreen = moveToMyInfoScreen,
+        moveToLocationFavorites = moveToLocationFavorites,
+        moveToFeedBookmarks = moveToFeedBookmarks,
+        moveToFeedSaved = moveToFeedSaved,
+
+        // 새로 추가 된 것 이 : { "공지사항" , "1:1 이용문의" }
+
+
+        moveToDetailProfileScreen = moveToDetailProfileScreen,
+
     )
 }
 
@@ -87,7 +107,12 @@ private fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
-    moveToMyPageScreen : () -> Unit
+    moveToMyPageScreen: () -> Unit,
+    moveToDetailProfileScreen : (String, String) -> Unit,
+    moveToMyInfoScreen: () -> Unit,
+    moveToLocationFavorites : () -> Unit,
+    moveToFeedBookmarks : () -> Unit,
+    moveToFeedSaved : () -> Unit,
 ) {
     CustomSurface {
         Scaffold(
@@ -105,7 +130,13 @@ private fun MainScreen(
                         shape = CircleShape,
                         contentColor = Color(0xFFFFFFFF),
                         containerColor = Color(0xFF5448BC),
-                        onClick = { moveToAddScheduleScreen(calendarScreenUIState.selectedYear, calendarScreenUIState.selectedMonth, calendarScreenUIState.selectedDate) }
+                        onClick = {
+                            moveToAddScheduleScreen(
+                                calendarScreenUIState.selectedYear,
+                                calendarScreenUIState.selectedMonth,
+                                calendarScreenUIState.selectedDate
+                            )
+                        }
                     ) {
                         Icon(
                             modifier = Modifier.size(20.dp),
@@ -122,26 +153,33 @@ private fun MainScreen(
                     HomeScreen(
                         paddingValues = it,
 
-                    )
+                        )
                 }
+
                 ViewType.Calendar -> {
                     ScheduleScreen(
                         paddingValues = it,
                         moveToDetailScreen = moveToDetailScreen
                     )
                 }
+
                 ViewType.Friends -> {
                     FriendScreen(
                         paddingValues = it,
                         moveToAddFriendScreen = moveToAddFriendScreen,
-                        moveToAddGroupScreen = moveToAddGroupScreen
+                        moveToAddGroupScreen = moveToAddGroupScreen,
+                        moveToDetailProfileScreen = moveToDetailProfileScreen
                     )
                 }
+
                 ViewType.MyPage -> {
                     MyPageScreen(
                         paddingValues = it,
                         moveToSignInScreen = moveToSignInScreen,
-                        moveToModifyInfoScreen = moveToModifyInfoScreen
+                        moveToMyInfoScreen = moveToMyInfoScreen,
+                        moveToLocationFavorites = moveToLocationFavorites,
+                        moveToFeedBookmarks = moveToFeedBookmarks,
+                        moveToFeedSaved = moveToFeedSaved
                     )
                 }
             }
@@ -177,10 +215,12 @@ fun HomeNavigationBar(
                     ) {
                         Icon(
                             modifier = Modifier.fillMaxHeight(0.5f),
-                            painter = painterResource(id = when (viewType == navItem.viewType) {
-                                true -> navItem.iconSelected
-                                false -> navItem.iconUnselected
-                            }),
+                            painter = painterResource(
+                                id = when (viewType == navItem.viewType) {
+                                    true -> navItem.iconSelected
+                                    false -> navItem.iconUnselected
+                                }
+                            ),
                             contentDescription = null,
                         )
                         Text(

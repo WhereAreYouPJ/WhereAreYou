@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.main.friend
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -65,6 +68,7 @@ fun FriendScreen(
     paddingValues: PaddingValues,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToDetailProfileScreen : (String, String) -> Unit,
     viewModel: FriendViewModel = hiltViewModel()
 ) {
     val friendsList = viewModel.friendsList
@@ -72,21 +76,24 @@ fun FriendScreen(
         paddingValues = paddingValues,
         friendsList = friendsList,
         moveToAddFriendScreen = moveToAddFriendScreen,
-        moveToAddGroupScreen = moveToAddGroupScreen
+        moveToAddGroupScreen = moveToAddGroupScreen,
+        moveToDetailProfileScreen = moveToDetailProfileScreen
     )
 }
 
 @Composable
-fun FriendScreen(
+private fun FriendScreen(
     paddingValues: PaddingValues,
     friendsList: List<Friend>,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
-
+    moveToDetailProfileScreen : (String, String) -> Unit
 ) {
     val isFriendPage = remember { mutableStateOf(true) }
 //    val starExpand = remember { mutableStateOf(false) }
 //    val friendExpand = remember { mutableStateOf(false) }
+
+    // 이거 true 되면 프로필 사진 보이게
     val upProfileBoolean = remember { mutableStateOf(false) }
     FriendScreenTopBar(
         isFriendPage = isFriendPage,
@@ -99,14 +106,15 @@ fun FriendScreen(
             paddingValues = paddingValues,
             friendsList = friendsList,
             upProfileBoolean = upProfileBoolean,
-            upProfile = {
-                // 누르면 프로필사진보이게
-                upProfileBoolean.value = true
-            }
+            upProfile = moveToDetailProfileScreen
         )
     } else {
         GroupContent()
     }
+
+//    if(upProfileBoolean.value) {
+//        moveToDetailProfileScreen()
+//    }
 
 }
 
@@ -115,20 +123,67 @@ fun FriendContent(
     paddingValues: PaddingValues,
     friendsList: List<Friend>,
     upProfileBoolean : MutableState<Boolean>,
-    upProfile : () -> Unit
+    upProfile : (String, String) -> Unit
 ) {
 //    val isFriendPage = remember { mutableStateOf(true) }
     val starExpand = remember { mutableStateOf(false) }
     val friendExpand = remember { mutableStateOf(false) }
 
-    if(upProfileBoolean.value) {
-
-    }
+//    if(upProfileBoolean.value) {
+//        Box(
+//            modifier = Modifier.fillMaxSize()
+//        ) {
+//            Column(
+//
+//            ) {
+//                Spacer(Modifier.size(TOP_BAR_HEIGHT.dp))
+//
+//                Image(
+//                    painter = painterResource(id = R.drawable.ic_x),
+//                    contentDescription = "",
+//                    modifier = Modifier.padding(start = 20.dp , top = 11.dp),
+//                    colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))
+//                )
+//
+//
+//                Column(
+//                    modifier = Modifier.fillMaxSize().padding(top  = 491.dp)
+//                ) {
+//                    Box(
+////                modifier = Modifier.padding(491.dp)
+//                    ) {
+////            GlideImage(
+////                imageModel = "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: painterResource(id = R.drawable.ic_default_profile_image),
+////                contentDescription = ""
+////
+////            )
+//
+//                        GlideImage(
+//                            modifier = Modifier
+//                                .padding(start = 137.5.dp , end = 137.5.dp)
+//                                .size(100.dp)
+//                                .clip(RoundedCornerShape(18.dp)),
+//                            imageModel = { "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: R.drawable.idle_profile2 },
+//                        )
+//                    }
+//                    Text( ?: "유민혁")
+//
+//
+//                }
+//
+//
+//
+//                Text("sfsss")
+//
+//            }
+//        }
+//    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding(top = 18.dp)
+//            .padding(paddingValues)
     ) {
         Spacer(Modifier.height(6.dp))
         MyRow()
@@ -150,12 +205,14 @@ fun FriendContent(
                         FriendBox(
                             imageUrl = pinnedFriendList[it].profileImgUrl,
                             friendName = pinnedFriendList[it].userId,
-                            upProfile = upProfile
+                            upProfile = upProfile,
+//                            upProfileBoolean = upProfileBoolean
                         )
                     }
                 }
             }
         }
+
         Spacer(Modifier.height(10.dp))
         GrayLine()
         Spacer(Modifier.height(10.dp))
@@ -171,7 +228,8 @@ fun FriendContent(
                         FriendBox(
                             imageUrl = friendsList[index].profileImgUrl,
                             friendName = friendsList[index].userId,
-                            upProfile = upProfile
+                            upProfile = upProfile,
+//                            upProfileBoolean = upProfileBoolean
 
                         )
                     }
@@ -290,35 +348,6 @@ fun FriendScreenTopBar(
 //    }
 //}
 
-@Composable
-fun FriendBox(
-    imageUrl: String?,
-    friendName: String,
-    upProfile : () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, bottom = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        GlideImage(
-            modifier = Modifier
-                .size(30.dp)
-                .clip(RoundedCornerShape(50))
-                .clickable {
-                    upProfile()
-                },
-            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-        )
-        Spacer(Modifier.width(10.dp))
-        Text(
-            text = friendName,
-            fontSize = 20.sp
-        )
-    }
-}
 
 // 내사진 로우
 @Composable
@@ -392,7 +421,7 @@ fun AddIconPopUp(
                                     popupState.isVisible = false
                                     moveToAddFriendScreen()
                                 },
-                            text = "친구추가",
+                            text = "친구 추가",
                             style = medium14pt,
                             color = Color.White
                         )
@@ -413,7 +442,7 @@ fun AddIconPopUp(
                                     popupState.isVisible = false
                                     moveToAddGroupScreen()
                                 },
-                            text = "친구관리",
+                            text = "친구 관리",
                             style = medium14pt,
                             color = Color.White
                         )
@@ -425,6 +454,9 @@ fun AddIconPopUp(
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // 1dp 짜리 회색선
 @Composable
 fun GrayLine() {
@@ -434,6 +466,54 @@ fun GrayLine() {
             .fillMaxWidth()
             .height(1.dp)
     )
+}
+
+// 친구 로우
+@Composable
+fun FriendBox(
+    imageUrl: String?,
+    friendName: String,
+    upProfile : (String, String) -> Unit,
+//    upProfileBoolean : MutableState<Boolean>
+    // 친구사진전달하기
+) {
+//    Log.d("sfsjflsjf" , upProfileBoolean.toString())
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp, bottom = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        GlideImage(
+            modifier = Modifier
+                .size(30.dp)
+                .clip(RoundedCornerShape(50))
+                .clickable {
+                    upProfile(imageUrl ?: "", friendName)
+//                    upProfileBoolean.value = !upProfileBoolean.value
+                },
+            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = friendName,
+            fontSize = 20.sp
+        )
+    }
+
+
+
+//    if(upProfileBoolean.value) {
+//
+//
+//        sfsfdjslefjsoefin(imageUrl , friendName)
+//
+//        }
+
+
+
+
 }
 
 // 누르면 즐겨찾기랑 친구 창 확장
@@ -480,7 +560,6 @@ fun ClickAleText(
     }
 }
 
-
 //@Preview(showBackground = true, showSystemUi = true)
 //@Composable
 //private fun FriendScreenPreview() {
@@ -498,3 +577,62 @@ fun ClickAleText(
 //        )
 //    }
 //}
+
+
+@Composable
+fun sfsfdjslefjsoefin(
+    imageUrl: String?,
+    friendName: String
+){
+    Dialog(
+        onDismissRequest = {}
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.White)
+        ) {
+            Column(
+
+            ) {
+                Spacer(Modifier.size(TOP_BAR_HEIGHT.dp))
+
+                Image(
+                    painter = painterResource(id = R.drawable.ic_x),
+                    contentDescription = "",
+                    modifier = Modifier.padding(start = 20.dp , top = 11.dp),
+                    colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))
+                )
+
+
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(top  = 491.dp)
+                ) {
+                    Box(
+//                modifier = Modifier.padding(491.dp)
+                    ) {
+//            GlideImage(
+//                imageModel = "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: painterResource(id = R.drawable.ic_default_profile_image),
+//                contentDescription = ""
+//
+//            )
+
+                        GlideImage(
+                            modifier = Modifier
+                                .padding(start = 137.5.dp , end = 137.5.dp)
+                                .size(100.dp)
+                                .clip(RoundedCornerShape(18.dp)),
+                            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
+                        )
+                    }
+                    Text(friendName ?: "유민혁")
+
+
+                }
+
+
+
+                Text("sfsss")
+
+            }
+        }
+    }
+}

@@ -1,8 +1,10 @@
 package com.whereareyounow.ui.main.mypage
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -36,6 +41,8 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,15 +58,26 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium16pt
+import com.whereareyounow.ui.theme.medium20pt
 
 @Composable
 fun MyPageScreen(
     paddingValues: PaddingValues,
     moveToSignInScreen: () -> Unit,
-    moveToModifyInfoScreen: () -> Unit,
+    moveToMyInfoScreen: () -> Unit,
+    moveToLocationFavorites : () -> Unit,
+    moveToFeedBookmarks : () -> Unit,
+    moveToFeedSaved : () -> Unit,
+
+
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+
+
     val name = viewModel.name.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
@@ -72,7 +90,10 @@ fun MyPageScreen(
         deleteCalendar = viewModel::deleteCalendar,
         withdrawAccount = viewModel::withdrawAccount,
         moveToSignInScreen = moveToSignInScreen,
-        moveToModifyInfoScreen = moveToModifyInfoScreen
+        moveToMyInfoScreen = moveToMyInfoScreen,
+        moveToLocationFavorites = moveToLocationFavorites,
+        moveToFeedBookmarks = moveToFeedBookmarks,
+        moveToFeedSaved = moveToFeedSaved
     )
 }
 
@@ -86,7 +107,11 @@ fun MyPageScreen(
     deleteCalendar: () -> Unit,
     withdrawAccount: (() -> Unit) -> Unit,
     moveToSignInScreen: () -> Unit,
-    moveToModifyInfoScreen: () -> Unit
+    moveToMyInfoScreen : () -> Unit,
+    moveToLocationFavorites : () -> Unit,
+    moveToFeedBookmarks : () -> Unit,
+    moveToFeedSaved : () -> Unit
+
 ) {
     LaunchedEffect(Unit) {
         getMyInfo()
@@ -125,35 +150,67 @@ fun MyPageScreen(
     }
 
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0XFFF0F0F0))
+    )
+    {
         // 파란 원 배경
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawCircle(
-//                brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
-                color = Color(0xFF333C4C),
-                center = Offset(size.width / 2, CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT - size.width),
-                radius = size.width,
-                style = Fill
-            )
+//        Canvas(modifier = Modifier.fillMaxSize()) {
+//            drawCircle(
+////                brush = Brush.horizontalGradient(listOf(Color(0xFF362A9C), Color(0xFF214BB7))),
+//                color = Color(0xFF7B50FF),
+//                center = Offset(size.width / 2, CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT - size.width),
+//                radius = size.width,
+//                style = Fill
+//            )
+//        }
+        Image(
+            painter = painterResource(id = R.drawable.ic_mypage_canvas),
+            contentDescription = ""
+        )
+        Box(
+            modifier = Modifier
+                .padding(start = 17.dp, end = 18.dp, top = 253.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .fillMaxWidth()
+                .height(60.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+//                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "내코드",
+                    style = medium14pt
+                )
+                Spacer(Modifier.size(6.dp))
+                Text(
+                    text = "123456",
+                    style = medium16pt,
+                    color = Color(0XFF6236E9)
+                )
+            }
         }
-        // 상단 유저 정보
+
+
+        //            Row{
+//                Text("내 코드" , style = medium14pt)
+//                Spacer(Modifier.size(6.dp))
+//                Text("코드 입력창" , style = medium16pt)
+//            }
+
+
+        // 민혁쓰까지
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height((TOP_BAR_HEIGHT / density).dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "설정",
-                    color = Color(0xFFFFFFFF),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,59 +218,201 @@ fun MyPageScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                GlideImage(
+                Box(
+                ) {
+                    GlideImage(
+                        modifier = Modifier
+                            .width(((CALENDAR_VIEW_HEIGHT / density) / 3).dp)
+                            .height(((CALENDAR_VIEW_HEIGHT / density) / 3).dp)
+                            .clip(RoundedCornerShape(20)),
+                        imageModel = { profileImageUri ?: R.drawable.idle_profile },
+                        imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 82.dp)
+                            .align(Alignment.BottomEnd)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_mypage_camera),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+
+                }
+
+                Spacer(Modifier.height(6.dp))
+                Row(
                     modifier = Modifier
-                        .width(((CALENDAR_VIEW_HEIGHT / density) / 3).dp)
-                        .height(((CALENDAR_VIEW_HEIGHT / density) / 3).dp)
-                        .clip(RoundedCornerShape(50)),
-                    imageModel = { profileImageUri ?: R.drawable.idle_profile },
-                    imageOptions = ImageOptions(contentScale = ContentScale.Crop,)
-                )
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    text = name,
-                    fontSize = 20.sp,
-                    color = Color(0xFFFFFFFF),
-                    letterSpacing = 0.05.em
-                )
-                Text(
-                    text = email,
-                    fontSize = 16.sp,
-                    color = Color(0xFFFFFFFF),
-                    fontWeight = FontWeight.Light
-                )
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = name,
+                        style = medium20pt,
+                        color = Color(0xFFFFFFFF),
+                        letterSpacing = 0.05.em
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_mypage_modify),
+                        contentDescription = "",
+                        modifier = Modifier.clickable {
+
+                        }
+                    )
+                }
             }
         }
-        // 하단 설정 메뉴
+        // 내정보관리부터
         Column(
             modifier = Modifier
                 .padding(top = ((CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT) / density).dp)
-                .fillMaxWidth()
+//                .padding(top = 280.dp)
+                .fillMaxWidth(),
+//            verticalArrangement = Arrangement.Center
         ) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(40.dp)
+////                    .padding(start = 17.dp , end = 18.dp),
+////                contentAlignment = Alignment.CenterStart
+//            ) {
+//                Row(
+//                    horizontalArrangement = Arrangement.Center,
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier.fillMaxWidth()
+//                ){
+//                    Text(
+//                        text = "내코드",
+//                        style = medium14pt
+//                    )
+//                    Spacer(Modifier.size(6.dp))
+//                    Text(
+//                        text = "123456",
+//                        style = medium16pt,
+//                        color = Color(0XFF6236E9)
+//                    )
+//                }
+//
+//            }
+            Spacer(Modifier.size(50.dp))
+
+            // 내 정보 관리 , 위치 즐겨찾기 , 피드 책갈피 , 피드 보관함
             Box(
                 modifier = Modifier
+                    .clip(RoundedCornerShape(50.dp))
+                    .padding(start = 17.dp, end = 18.dp)
+                    .background(Color.White)
                     .fillMaxWidth()
-                    .height(40.dp)
-                    .padding(start = 20.dp),
-                contentAlignment = Alignment.CenterStart
+//                    .height(200.dp)
             ) {
-                Text(
-                    text = "일반",
-                    fontSize = 18.sp
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val firstMypageList = listOf("내 정보 관리", "위치 즐겨찾기", "피드 책갈피", "피드 보관함")
+
+                    firstMypageList.forEach {
+                        // top 11 bottom 12
+                        Spacer(Modifier.size(11.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 12.dp)
+                                .clickable {
+                                    when (it) {
+                                        "내 정보 관리" -> moveToMyInfoScreen()
+                                        "위치 즐겨찾기" -> moveToLocationFavorites()
+                                        "피드 책갈피" -> moveToFeedBookmarks()
+                                        "피드 보관함" -> moveToFeedSaved()
+                                    }
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                            ) {
+                            Text(it, style = medium16pt)
+                        }
+                        Spacer(Modifier.size(12.dp))
+                        if(it != "피드 보관함") {
+
+                            GrayLine()
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.size(12.dp))
+            // 공지사항 , 1:1 이용문의
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50.dp))
+//                    .border(
+//                        BorderStroke(
+//                            width = 2.dp,
+//                            color = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(14.dp)
+//                    )
+                    .padding(start = 17.dp, end = 18.dp)
+                    .background(Color.White)
+                    .fillMaxWidth()
+//                    .height(200.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val firstMypageList = listOf("공지사항", "1:1 이용문의")
+
+                    firstMypageList.forEach {
+                        // top 11 bottom 12
+                        Spacer(Modifier.size(11.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(it, style = medium16pt)
+                        }
+                        Spacer(Modifier.size(12.dp))
+                        if(it != "1:1 이용문의") {
+
+                            GrayLine()
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.size(34.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 119.dp, end = 120.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_logout),
+                    contentDescription = ""
+                )
+                Spacer(Modifier.size(4.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.ic_vertical_small_grayline),
+                    contentDescription = ""
+                )
+                Spacer(Modifier.size(4.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.ic_authout),
+                    contentDescription = ""
                 )
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height((0.6).dp)
-                    .background(color = Color(0xFFBEBEBE))
-            )
 
-            SettingsMenuItem(
-                menuName = "프로필 변경",
-                onClick = moveToModifyInfoScreen,
-                color = Color(0xFF3E3E3E)
-            )
+//            SettingsMenuItem(
+//                menuName = "프로필 변경",
+//                onClick = moveToModifyInfoScreen,
+//                color = Color(0xFF3E3E3E)
+//            )
 
             SettingsMenuItem(
                 menuName = "로그아웃",
@@ -383,34 +582,34 @@ enum class WarningState {
     SignOut, DeleteCalendar, Withdrawal
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun MyPageScreenPreview() {
-    WhereAreYouTheme {
-        MyPageScreen(
-            name = "Name",
-            email = "Email",
-            profileImageUri = null,
-            getMyInfo = {  },
-            signOut = {  },
-            deleteCalendar = {  },
-            withdrawAccount = {  },
-            moveToSignInScreen = {  },
-            moveToModifyInfoScreen = {  }
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun MyPageWarningDialogPreview() {
-    WhereAreYouTheme {
-        MyPageWarningDialog(
-            warningTitle = "로그아웃하시겠습니까?",
-            warningText = "경고",
-            okText = "확인",
-            onDismissRequest = {},
-            onConfirm = {}
-        )
-    }
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//private fun MyPageScreenPreview() {
+//    WhereAreYouTheme {
+//        MyPageScreen(
+//            name = "Name",
+//            email = "Email",
+//            profileImageUri = null,
+//            getMyInfo = { },
+//            signOut = { },
+//            deleteCalendar = { },
+//            withdrawAccount = { },
+//            moveToSignInScreen = { },
+//            moveToModifyInfoScreen = { }
+//        )
+//    }
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//private fun MyPageWarningDialogPreview() {
+//    WhereAreYouTheme {
+//        MyPageWarningDialog(
+//            warningTitle = "로그아웃하시겠습니까?",
+//            warningText = "경고",
+//            okText = "확인",
+//            onDismissRequest = {},
+//            onConfirm = {}
+//        )
+//    }
+//}
