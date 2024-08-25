@@ -1,16 +1,16 @@
 package com.whereareyounow.domain.usecase.friend
 
-import com.whereareyounow.domain.entity.apimessage.friend.SendFriendRequestRequest
 import com.whereareyounow.domain.repository.FriendRepository
-import com.whereareyounow.domain.util.NetworkResult
+import com.whereareyounow.domain.request.friend.SendFriendRequestRequest
+import kotlinx.coroutines.flow.flow
 
 class SendFriendRequestUseCase(
     private val repository: FriendRepository
 ) {
-    suspend operator fun invoke(
-        token: String,
-        body: SendFriendRequestRequest
-    ): NetworkResult<Unit> {
-        return repository.sendFriendRequest(token, body)
+    operator fun invoke(
+        data: SendFriendRequestRequest
+    ) = flow {
+        val response = repository.sendFriendRequest(data)
+        emit(response)
     }
 }

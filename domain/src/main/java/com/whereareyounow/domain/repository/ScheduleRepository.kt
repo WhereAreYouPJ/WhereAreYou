@@ -1,104 +1,49 @@
 package com.whereareyounow.domain.repository
 
-import com.whereareyounow.domain.entity.apimessage.schedule.AcceptScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.CheckArrivalRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.DeleteScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetTodayScheduleCountResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
+import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
+import com.whereareyounow.domain.entity.schedule.MonthlyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.ScheduleSeq
+import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
+import com.whereareyounow.domain.request.schedule.CreateNewScheduleRequest
+import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetDailyScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
+import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
 import com.whereareyounow.domain.util.NetworkResult
 
 interface ScheduleRepository {
 
-    // 월별 일정 정보
-    suspend fun getMonthlySchedule(
-        token: String,
-        memberId: String,
-        year: Int,
-        month: Int
-    ): NetworkResult<GetMonthlyScheduleResponse>
-
-    // 일별 간략 정보
-    suspend fun getDailyBriefSchedule(
-        token: String,
-        memberId: String,
-        year: Int,
-        month: Int,
-        date: Int
-    ): NetworkResult<GetDailyBriefScheduleResponse>
-
-    // 일별 일정 상세 정보
     suspend fun getDetailSchedule(
-        token: String,
-        memberId: String,
-        scheduleId: String
-    ): NetworkResult<GetDetailScheduleResponse>
+        data: GetDetailScheduleRequest
+    ): NetworkResult<DetailScheduleInfo>
 
-    // 일정 추가
-    suspend fun addNewSchedule(
-        token: String,
-        body: AddNewScheduleRequest
-    ): NetworkResult<AddNewScheduleResponse>
+    suspend fun modifyScheduleInfo(
+        data: ModifyScheduleInfoRequest
+    ): NetworkResult<ScheduleSeq>
 
-    // 일정 내용 수정
-    suspend fun modifyScheduleDetails(
-        token: String,
-        body: ModifyScheduleDetailsRequest
+    suspend fun createNewSchedule(
+        data: CreateNewScheduleRequest
+    ): NetworkResult<ScheduleSeq>
+
+    suspend fun acceptScheduleRequest(
+        data: AcceptScheduleRequestRequest
     ): NetworkResult<Unit>
 
-    // 일정 멤버 수정
-    suspend fun modifyScheduleMember(
-        token: String,
-        body: ModifyScheduleMemberRequest
+    suspend fun getMonthlySchedule(
+        data: GetMonthlyScheduleRequest
+    ): NetworkResult<MonthlyScheduleInfo>
+
+    suspend fun getDailySchedule(
+        data: GetDailyScheduleRequest
+    ): NetworkResult<DailyScheduleInfo>
+
+    suspend fun deleteScheduleByInvitor(
+        data: DeleteScheduleRequest
     ): NetworkResult<Unit>
 
-    // 일정 삭제
-    suspend fun deleteSchedule(
-        token: String,
-        body: DeleteScheduleRequest
+    suspend fun deleteScheduleByCreator(
+        data: DeleteScheduleRequest
     ): NetworkResult<Unit>
-
-    // 일정 수락
-    suspend fun acceptSchedule(
-        token: String,
-        body: AcceptScheduleRequest
-    ): NetworkResult<Boolean>
-
-    // 일정 거절 및 나가기
-    suspend fun refuseOrQuitSchedule(
-        token: String,
-        body: RefuseOrQuitScheduleRequest
-    ): NetworkResult<Unit>
-
-    // 도착 여부
-    suspend fun checkArrival(
-        token: String,
-        body: CheckArrivalRequest
-    ): NetworkResult<Boolean>
-
-    // 일정 초대 목록
-    suspend fun getScheduleInvitation(
-        token: String,
-        memberId: String
-    ): NetworkResult<GetScheduleInvitationResponse>
-
-    // 캘린더 삭제
-    suspend fun resetCalendar(
-        token: String,
-        body: ResetCalendarRequest
-    ): NetworkResult<Boolean>
-
-    // 오늘 일정
-    suspend fun getTodayScheduleCount(
-        token: String,
-        memberId: String
-    ): NetworkResult<GetTodayScheduleCountResponse>
 }

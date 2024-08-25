@@ -4,10 +4,9 @@ import com.whereareyounow.BuildConfig
 import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
+import com.whereareyounow.api.MemberApi
 import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.api.SearchLocationApi
-import com.whereareyounow.api.SignInApi
-import com.whereareyounow.api.SignUpApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -87,18 +86,11 @@ object NetworkModule {
         return retrofit.create(ScheduleApi::class.java)
     }
 
-    // 회원가입 Api
+    // 회원 Api
     @Singleton
     @Provides
-    fun provideSignUpApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): SignUpApi {
-        return retrofit.create(SignUpApi::class.java)
-    }
-
-    // 로그인 Api
-    @Singleton
-    @Provides
-    fun provideSignInApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): SignInApi {
-        return retrofit.create(SignInApi::class.java)
+    fun provideMemberApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): MemberApi {
+        return retrofit.create(MemberApi::class.java)
     }
 
     // 친구 Api

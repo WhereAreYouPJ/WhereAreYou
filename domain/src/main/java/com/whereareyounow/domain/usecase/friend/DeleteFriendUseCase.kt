@@ -1,16 +1,16 @@
 package com.whereareyounow.domain.usecase.friend
 
-import com.whereareyounow.domain.entity.apimessage.friend.DeleteFriendRequest
 import com.whereareyounow.domain.repository.FriendRepository
-import com.whereareyounow.domain.util.NetworkResult
+import com.whereareyounow.domain.request.friend.DeleteFriendRequest
+import kotlinx.coroutines.flow.flow
 
 class DeleteFriendUseCase(
     private val repository: FriendRepository
 ) {
-    suspend operator fun invoke(
-        token: String,
-        body: DeleteFriendRequest
-    ): NetworkResult<Unit> {
-        return repository.deleteFriend(token, body)
+    operator fun invoke(
+        data: DeleteFriendRequest
+    ) = flow {
+        val response = repository.deleteFriend(data)
+        emit(response)
     }
 }

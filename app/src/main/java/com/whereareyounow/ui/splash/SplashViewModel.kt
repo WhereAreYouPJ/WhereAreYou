@@ -6,10 +6,6 @@ import androidx.annotation.Keep
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.FriendProvider
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
-import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
-import com.whereareyounow.domain.usecase.friend.GetFriendIdsListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
@@ -19,6 +15,7 @@ import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
+import com.whereareyounow.globalvalue.type.SplashCheckingState
 import com.whereareyounow.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,25 +31,26 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val application: Application,
     private val networkManager: NetworkManager,
-    private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
-    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
-    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
-    private val reissueAccessTokenUseCase: ReissueAccessTokenUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getMemberIdUseCase: GetMemberIdUseCase,
-    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
     private val getFriendListUseCase: GetFriendListUseCase,
+//    private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
+//    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
+//    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
+//    private val reissueAccessTokenUseCase: ReissueAccessTokenUseCase,
+//    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+//    private val getMemberIdUseCase: GetMemberIdUseCase,
+//    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
+//    private val getFriendListUseCase: GetFriendListUseCase,
 ) : AndroidViewModel(application) {
 
-    private val _checkingState = MutableStateFlow(CheckingState.Network)
-    val checkingState: StateFlow<CheckingState> = _checkingState
+    private val _checkingState = MutableStateFlow(SplashCheckingState.Network)
+    val checkingState: StateFlow<SplashCheckingState> = _checkingState
     private val _isNetworkConnectionErrorDialogShowing = MutableStateFlow(false)
     val isNetworkConnectionErrorDialogShowing: StateFlow<Boolean> = _isNetworkConnectionErrorDialogShowing
     private val _screenState = MutableStateFlow(ScreenState.Splash)
     val screenState: StateFlow<ScreenState> = _screenState
     private var isSignedIn = false
 
-    fun updateCheckingState(state: CheckingState) {
+    fun updateCheckingState(state: SplashCheckingState) {
         _checkingState.update { state }
     }
 
@@ -66,7 +64,7 @@ class SplashViewModel @Inject constructor(
 
     fun checkNetworkState() {
         if (networkManager.checkNetworkState()) {
-            _checkingState.update { CheckingState.LocationPermission }
+            _checkingState.update { SplashCheckingState.LocationPermission }
             _isNetworkConnectionErrorDialogShowing.update { false }
         } else {
             _isNetworkConnectionErrorDialogShowing.update { true }
@@ -98,7 +96,7 @@ class SplashViewModel @Inject constructor(
     private suspend fun reissueToken(
         refreshToken: String
     ) {
-        val request = ReissueTokenRequest(refreshToken)
+        val request = com.whereareyounow.domain.request.signin.ReissueTokenRequest(refreshToken)
         val response = reissueAccessTokenUseCase(request)
         LogUtil.printNetworkLog(request, response, "토큰 재발급")
         when (response) {
@@ -120,11 +118,11 @@ class SplashViewModel @Inject constructor(
     }
 
     @Keep
-    private suspend fun getFriendIdsList(
+    private suspend fun getFriendList(
         accessToken: String,
         memberId: String
     ) {
-        val request = GetFriendIdsListRequest(memberId)
+        val request = com.whereareyounow.domain.request.friend.GetFriendIdsListRequest(memberId)
         val response = getFriendIdsListUseCase(accessToken, request)
         LogUtil.printNetworkLog(request, response, "친구 memberId 리스트 획득")
         when (response) {
@@ -148,10 +146,10 @@ class SplashViewModel @Inject constructor(
     }
 
     private suspend fun getFriendsList(
-        accessToken: String,
         friendIdsList: List<String>
     ) {
-        val request = GetFriendListRequest(friendIdsList)
+        val request =
+            com.whereareyounow.domain.request.friend.GetFriendListRequest(friendIdsList)
         val response = getFriendListUseCase(accessToken, request)
         LogUtil.printNetworkLog(request, response, "친구 리스트 획득")
         when (response) {
@@ -175,9 +173,7 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    enum class CheckingState {
-        Network, LocationPermission, SignIn
-    }
+
 
     enum class ScreenState {
         Splash, Permission

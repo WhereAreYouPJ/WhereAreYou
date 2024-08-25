@@ -1,7 +1,7 @@
 package com.whereareyounow.api
 
-import com.whereareyounow.domain.entity.apimessage.fcm.DeleteFCMTokenRequest
-import com.whereareyounow.domain.entity.apimessage.fcm.UpdateFCMTokenRequest
+import com.whereareyounow.domain.request.fcm.DeleteFCMTokenRequest
+import com.whereareyounow.domain.request.fcm.UpdateFCMTokenRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

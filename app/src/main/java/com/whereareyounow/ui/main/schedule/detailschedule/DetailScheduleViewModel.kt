@@ -16,11 +16,6 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyounow.R
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
-import com.whereareyounow.domain.entity.apimessage.schedule.DeleteScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
-import com.whereareyounow.domain.usecase.schedule.DeleteScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
@@ -174,7 +169,10 @@ class DetailScheduleViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = RefuseOrQuitScheduleRequest(memberId, scheduleId)
+            val request = com.whereareyounow.domain.request.schedule.RefuseOrQuitScheduleRequest(
+                memberId,
+                scheduleId
+            )
             val response = refuseOrQuitScheduleUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "일정 나가기")
             when (response) {
@@ -197,7 +195,10 @@ class DetailScheduleViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = DeleteScheduleRequest(memberId, scheduleId)
+            val request = com.whereareyounow.domain.request.schedule.DeleteScheduleRequest(
+                memberId,
+                scheduleId
+            )
             val response = deleteScheduleUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "일정 삭제하기")
             when (response) {

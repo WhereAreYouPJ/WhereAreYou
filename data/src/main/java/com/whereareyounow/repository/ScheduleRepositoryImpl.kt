@@ -1,174 +1,79 @@
 package com.whereareyounow.repository
 
-import com.whereareyounow.datasource.RemoteDataSource
-import com.whereareyounow.domain.entity.apimessage.schedule.AcceptScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.CheckArrivalRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.DeleteScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetTodayScheduleCountResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
+import com.whereareyounow.api.ScheduleApi
+import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
+import com.whereareyounow.domain.entity.schedule.MonthlyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.repository.ScheduleRepository
+import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
+import com.whereareyounow.domain.request.schedule.CreateNewScheduleRequest
+import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetDailyScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
+import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
 class ScheduleRepositoryImpl(
-    private val dataSource: RemoteDataSource
+    private val scheduleApi: ScheduleApi
 ) : ScheduleRepository, NetworkResultHandler {
 
-    /**
-     * 월별 일정 정보
-     * implements [ScheduleRepository.getMonthlySchedule]
-     */
-    override suspend fun getMonthlySchedule(
-        token: String,
-        memberId: String,
-        year: Int,
-        month: Int
-    ): NetworkResult<GetMonthlyScheduleResponse> {
-        return handleResult { dataSource.getMonthlySchedule(token, memberId, year, month) }
-    }
-
-    /**
-     * 일별 간략 정보
-     * implements [ScheduleRepository.getDailyBriefSchedule]
-     */
-    override suspend fun getDailyBriefSchedule(
-        token: String,
-        memberId: String,
-        year: Int,
-        month: Int,
-        date: Int
-    ): NetworkResult<GetDailyBriefScheduleResponse> {
-        return handleResult { dataSource.getDailyBriefSchedule(token, memberId, year, month, date) }
-    }
-
-    /**
-     * 일별 일정 상세 정보
-     * implements [ScheduleRepository.getDetailSchedule]
-     */
     override suspend fun getDetailSchedule(
-        token: String,
-        memberId: String,
-        scheduleId: String
-    ): NetworkResult<GetDetailScheduleResponse> {
-        return handleResult { dataSource.getDetailSchedule(token, memberId, scheduleId) }
+        data: GetDetailScheduleRequest
+    ): NetworkResult<DetailScheduleInfo> {
+        return handleResult { scheduleApi.getDetailSchedule(
+            scheduleSeq = data.scheduleSeq,
+            memberSeq = data.memberSeq
+        ) }
     }
 
-    /**
-     * 일정 추가
-     * implements [ScheduleRepository.addNewSchedule]
-     */
-    override suspend fun addNewSchedule(
-        token: String,
-        body: AddNewScheduleRequest
-    ): NetworkResult<AddNewScheduleResponse> {
-        return handleResult { dataSource.addNewSchedule(token, body) }
+    override suspend fun modifyScheduleInfo(
+        data: ModifyScheduleInfoRequest
+    ): NetworkResult<ScheduleSeq> {
+        return handleResult { scheduleApi.modifyScheduleInfo(body = data) }
     }
 
-    /**
-     * 일정 내용 수정
-     * implements [ScheduleRepository.modifyScheduleDetails]
-     */
-    override suspend fun modifyScheduleDetails(
-        token: String,
-        body: ModifyScheduleDetailsRequest
+    override suspend fun createNewSchedule(
+        data: CreateNewScheduleRequest
+    ): NetworkResult<ScheduleSeq> {
+        return handleResult { scheduleApi.createNewSchedule(body = data) }
+    }
+
+    override suspend fun acceptScheduleRequest(
+        data: AcceptScheduleRequestRequest
     ): NetworkResult<Unit> {
-        return handleResult { dataSource.modifyScheduleDetails(token, body) }
+        return handleResult { scheduleApi.acceptScheduleRequest(body = data) }
     }
 
-    /**
-     * 일정 멤버 수정
-     * implements [ScheduleRepository.modifyScheduleMember]
-     */
-    override suspend fun modifyScheduleMember(
-        token: String,
-        body: ModifyScheduleMemberRequest
+    override suspend fun getMonthlySchedule(
+        data: GetMonthlyScheduleRequest
+    ): NetworkResult<MonthlyScheduleInfo> {
+        return handleResult { scheduleApi.getMonthlySchedule(
+            yearMonth = data.yearMonth,
+            memberSeq = data.memberSeq
+        ) }
+    }
+
+    override suspend fun getDailySchedule(
+        data: GetDailyScheduleRequest
+    ): NetworkResult<DailyScheduleInfo> {
+        return handleResult { scheduleApi.getDailySchedule(
+            date = data.date,
+            memberSeq = data.memberSeq
+        ) }
+    }
+
+    override suspend fun deleteScheduleByInvitor(
+        data: DeleteScheduleRequest
     ): NetworkResult<Unit> {
-        return handleResult { dataSource.modifyScheduleMember(token, body) }
+        return handleResult { scheduleApi.deleteScheduleByInvitor(body = data) }
     }
 
-    /**
-     * 일정 삭제
-     * implements [ScheduleRepository.deleteSchedule]
-     */
-    override suspend fun deleteSchedule(
-        token: String,
-        body: DeleteScheduleRequest
+    override suspend fun deleteScheduleByCreator(
+        data: DeleteScheduleRequest
     ): NetworkResult<Unit> {
-        return handleResult { dataSource.deleteSchedule(token, body) }
-    }
-
-    /**
-     * 일정 수락
-     * implements [ScheduleRepository.acceptSchedule]
-     */
-    override suspend fun acceptSchedule(
-        token: String,
-        body: AcceptScheduleRequest
-    ): NetworkResult<Boolean> {
-        return handleResult { dataSource.acceptSchedule(token, body) }
-    }
-
-    /**
-     * 일정 거절 또는 나가기
-     * implements [ScheduleRepository.refuseOrQuitSchedule]
-     */
-    override suspend fun refuseOrQuitSchedule(
-        token: String,
-        body: RefuseOrQuitScheduleRequest
-    ): NetworkResult<Unit> {
-        return handleResult { dataSource.refuseOrQuitSchedule(token, body) }
-    }
-
-    /**
-     * 도착 여부
-     * implements [ScheduleRepository.checkArrival]
-     */
-    override suspend fun checkArrival(
-        token: String,
-        body: CheckArrivalRequest
-    ): NetworkResult<Boolean> {
-        return handleResult { dataSource.checkArrival(token, body) }
-    }
-
-    /**
-     * 일정 초대 목록
-     * implements [ScheduleRepository.checkArrival]
-     */
-    override suspend fun getScheduleInvitation(
-        token: String,
-        memberId: String
-    ): NetworkResult<GetScheduleInvitationResponse> {
-        return handleResult { dataSource.getScheduleInvitation(token, memberId) }
-    }
-
-    /**
-     * 일정 초대 목록
-     * implements [ScheduleRepository.resetCalendar]
-     */
-    override suspend fun resetCalendar(
-        token: String,
-        body: ResetCalendarRequest
-    ): NetworkResult<Boolean> {
-        return handleResult { dataSource.resetCalendar(token, body) }
-    }
-
-    /**
-     * 일정 초대 목록
-     * implements [ScheduleRepository.getTodayScheduleCount]
-     */
-    override suspend fun getTodayScheduleCount(
-        token: String,
-        memberId: String
-    ): NetworkResult<GetTodayScheduleCountResponse> {
-        return handleResult { dataSource.getTodayScheduleCount(token, memberId) }
+        return handleResult { scheduleApi.deleteScheduleByCreator(body = data) }
     }
 }

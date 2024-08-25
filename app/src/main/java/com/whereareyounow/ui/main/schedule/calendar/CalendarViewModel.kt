@@ -5,8 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
-import com.whereareyounow.domain.usecase.schedule.GetDailyBriefScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.util.LogUtil

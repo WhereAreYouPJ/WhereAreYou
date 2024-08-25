@@ -7,12 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.detailschedule.DetailScheduleMapScreenSideEffect
 import com.whereareyounow.data.detailschedule.DetailScheduleMapScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
-import com.whereareyounow.domain.entity.apimessage.location.GetUserLocationRequest
-import com.whereareyounow.domain.entity.apimessage.location.SendUserLocationRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.CheckArrivalRequest
 import com.whereareyounow.domain.usecase.location.GetUserLocationUseCase
 import com.whereareyounow.domain.usecase.location.SendUserLocationUseCase
-import com.whereareyounow.domain.usecase.schedule.CheckArrivalUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.util.LogUtil
@@ -67,7 +63,10 @@ class DetailScheduleMapViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             // 유저의 위치를 가져온다.
-            val request = GetUserLocationRequest(_detailScheduleMapScreenUIState.value.memberInfosList.map { it.memberId }, scheduleId)
+            val request = com.whereareyounow.domain.request.location.GetUserLocationRequest(
+                _detailScheduleMapScreenUIState.value.memberInfosList.map { it.memberId },
+                scheduleId
+            )
             val response = getUserLocationUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "유저 위치 가져오기")
             when (response) {
@@ -98,7 +97,11 @@ class DetailScheduleMapViewModel @Inject constructor(
         locationUtil.getCurrentLocation {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = SendUserLocationRequest(memberId, it.latitude, it.longitude)
+            val request = com.whereareyounow.domain.request.location.SendUserLocationRequest(
+                memberId,
+                it.latitude,
+                it.longitude
+            )
             val response = sendUserLocationUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "유저 위치 전송하기")
             when (response) {
@@ -122,7 +125,8 @@ class DetailScheduleMapViewModel @Inject constructor(
     private suspend fun checkArrival() {
         val accessToken = getAccessTokenUseCase().first()
         val memberId = getMemberIdUseCase().first()
-        val request = CheckArrivalRequest(memberId, scheduleId)
+        val request =
+            com.whereareyounow.domain.request.schedule.CheckArrivalRequest(memberId, scheduleId)
         val response = checkArrivalUseCase(accessToken, request)
         LogUtil.printNetworkLog(request, response, "도착 여부")
         when (response) {

@@ -251,7 +251,7 @@ fun SearchedLocationList(
                         .clip(CircleShape)
                         .clickable { moveToMapScreen(lat, lng) }
                         .padding(10.dp),
-                    painter = painterResource(id = R.drawable.location),
+                    painter = painterResource(id = R.drawable.ic_location),
                     contentDescription = null
                 )
             }

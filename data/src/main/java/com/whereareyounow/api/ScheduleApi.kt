@@ -1,123 +1,73 @@
 package com.whereareyounow.api
 
-import com.whereareyounow.domain.entity.apimessage.schedule.AcceptScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.CheckArrivalRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.DeleteScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.GetDailyBriefScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetDetailScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetMonthlyScheduleResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetScheduleInvitationResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.GetTodayScheduleCountResponse
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
+import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
+import com.whereareyounow.domain.request.schedule.CreateNewScheduleRequest
+import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
+import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
+import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
+import com.whereareyounow.domain.entity.schedule.MonthlyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.ScheduleSeq
+import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HTTP
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface ScheduleApi {
-    // 월별 일정 정보
-    @GET("schedule/month")
-    suspend fun getMonthlySchedule(
-        @Header("Authorization") token: String,
-        @Query("memberId") memberId: String,
-        @Query("year") year: Int,
-        @Query("month") month: Int
-    ): Response<GetMonthlyScheduleResponse>
-
-    // 일별 간략 정보
-    @GET("schedule/date")
-    suspend fun getDailyBriefSchedule(
-        @Header("Authorization") token: String,
-        @Query("memberId") memberId: String,
-        @Query("year") year: Int,
-        @Query("month") month: Int,
-        @Query("date") date: Int
-    ): Response<GetDailyBriefScheduleResponse>
 
     // 일별 일정 상세 정보
-    @GET("schedule/details")
+    @GET("schedule")
     suspend fun getDetailSchedule(
-        @Header("Authorization") token: String,
-        @Query("memberId") memberId: String,
-        @Query("scheduleId") scheduleId: String,
-    ): Response<GetDetailScheduleResponse>
-
-    // 일정 추가
-    @POST("schedule")
-    suspend fun addNewSchedule(
-        @Header("Authorization") token: String,
-        @Body body: AddNewScheduleRequest
-    ): Response<AddNewScheduleResponse>
+        @Query("scheduleSeq") scheduleSeq: Int,
+        @Query("memberSeq") memberSeq: Int,
+    ): Response<ResponseWrapper<DetailScheduleInfo>>
 
     // 일정 내용 수정
     @PUT("schedule")
-    suspend fun modifyScheduleDetails(
-        @Header("Authorization") token: String,
-        @Body body: ModifyScheduleDetailsRequest
-    ): Response<Unit>
+    suspend fun modifyScheduleInfo(
+        @Body body: ModifyScheduleInfoRequest
+    ): Response<ResponseWrapper<ScheduleSeq>>
 
-    // 일정 멤버 수정
-    @PUT("memberschedule")
-    suspend fun modifyScheduleMember(
-        @Header("Authorization") token: String,
-        @Body body: ModifyScheduleMemberRequest
-    ): Response<Unit>
+    // 일정 생성
+    @POST("schedule")
+    suspend fun createNewSchedule(
+        @Body body: CreateNewScheduleRequest
+    ): Response<ResponseWrapper<ScheduleSeq>>
 
-    // 일정 삭제
-    @HTTP(method = "DELETE", path = "schedule", hasBody = true)
-    suspend fun deleteSchedule(
-        @Header("Authorization") token: String,
+    // 일정 초대 수락
+    @POST("schedule/accept-schedule")
+    suspend fun acceptScheduleRequest(
+        @Body body: AcceptScheduleRequestRequest
+    ): Response<ResponseWrapper<Unit>>
+
+    // 월별 일정 조회
+    @GET("schedule/month-schedule")
+    suspend fun getMonthlySchedule(
+        @Query("yearMonth") yearMonth: String,
+        @Query("memberSeq") memberSeq: Int
+    ): Response<ResponseWrapper<MonthlyScheduleInfo>>
+
+    // 해당 날짜 일정 조회
+    @GET("schedule/date")
+    suspend fun getDailySchedule(
+        @Query("date") date: String,
+        @Query("memberSeq") memberSeq: Int
+    ): Response<ResponseWrapper<DailyScheduleInfo>>
+
+    // 일정 삭제(일정 초대자인 경우)
+    @HTTP(method = "DELETE", path = "schedule/invited", hasBody = true)
+    suspend fun deleteScheduleByInvitor(
         @Body body: DeleteScheduleRequest
-    ): Response<Unit>
+    ): Response<ResponseWrapper<Unit>>
 
-    // 일정 수락
-    @PUT("memberschedule/accept")
-    suspend fun acceptSchedule(
-        @Header("Authorization") token: String,
-        @Body body: AcceptScheduleRequest
-    ): Response<Boolean>
+    // 일정 삭제(일정 생성자인 경우)
+    @HTTP(method = "DELETE", path = "schedule/creator", hasBody = true)
+    suspend fun deleteScheduleByCreator(
+        @Body body: DeleteScheduleRequest
+    ): Response<ResponseWrapper<Unit>>
 
-    // 도착 여부
-    @PUT("schedule/arrived")
-    suspend fun checkArrival(
-        @Header("Authorization") token: String,
-        @Body body: CheckArrivalRequest
-    ): Response<Boolean>
-
-    // 일정 거절 또는 나가기
-    @HTTP(method = "DELETE", path = "memberschedule/refuse", hasBody = true)
-    suspend fun refuseOrQuitSchedule(
-        @Header("Authorization") token: String,
-        @Body body: RefuseOrQuitScheduleRequest
-    ): Response<Unit>
-
-    // 오늘 일정 개수
-    @GET("schedule/today")
-    suspend fun getTodayScheduleCount(
-        @Header("Authorization") token: String,
-        @Query("memberId") memberId: String
-    ): Response<GetTodayScheduleCountResponse>
-
-    // 일정 초대 목록
-    @GET("memberschedule/invite")
-    suspend fun getScheduleInvitation(
-        @Header("Authorization") token: String,
-        @Query("memberId") memberId: String
-    ): Response<GetScheduleInvitationResponse>
-
-    // 캘린더 삭제
-    @HTTP(method = "DELETE", path = "schedule/reset", hasBody = true)
-    suspend fun resetCalendar(
-        @Header("Authorization") token: String,
-        @Body body: ResetCalendarRequest
-    ): Response<Boolean>
 }

@@ -1,8 +1,8 @@
 package com.whereareyounow.api
 
-import com.whereareyounow.domain.entity.apimessage.location.GetUserLocationRequest
-import com.whereareyounow.domain.entity.apimessage.location.SendUserLocationRequest
-import com.whereareyounow.domain.entity.apimessage.location.UserLocation
+import com.whereareyounow.domain.request.location.GetUserLocationRequest
+import com.whereareyounow.domain.request.location.SendUserLocationRequest
+import com.whereareyounow.domain.request.location.UserLocation
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header

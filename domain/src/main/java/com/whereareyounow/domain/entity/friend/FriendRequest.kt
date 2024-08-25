@@ -3,10 +3,10 @@ package com.whereareyounow.domain.entity.friend
 import com.google.gson.annotations.SerializedName
 
 data class FriendRequest(
-    @SerializedName("friendRequestId")
-    val friendRequestId: String,
-    @SerializedName("senderId")
-    val senderId: String,
+    @SerializedName("friendRequestSeq")
+    val friendRequestSeq: Int,
+    @SerializedName("senderSeq")
+    val senderSeq: Int,
     @SerializedName("createTime")
-    val requestedTime: String
+    val createTime: String
 )

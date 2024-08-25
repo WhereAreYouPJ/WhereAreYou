@@ -11,9 +11,8 @@ import com.whereareyounow.data.findpw.PasswordResettingScreenSideEffect
 import com.whereareyounow.data.findpw.PasswordResettingScreenUIState
 import com.whereareyounow.data.findpw.PasswordState
 import com.whereareyounow.data.findpw.ResultState
-import com.whereareyounow.domain.entity.apimessage.signin.ResetPasswordRequest
-import com.whereareyounow.domain.entity.apimessage.signin.VerifyPasswordResetCodeRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
+import com.whereareyounow.domain.request.member.ResetPasswordRequest
+import com.whereareyounow.domain.request.member.VerifyPasswordResetCodeRequest
 import com.whereareyounow.domain.usecase.signin.ResetPasswordUseCase
 import com.whereareyounow.domain.usecase.signin.VerifyPasswordResetCodeUseCase
 import com.whereareyounow.domain.usecase.signup.AuthenticateEmailUseCase
@@ -113,7 +112,10 @@ class FindPasswordViewModel @Inject constructor(
                             delay(1000)
                         }
                     }
-                    val request = AuthenticateEmailRequest(_findPasswordScreenUIState.value.inputEmail)
+                    val request =
+                        com.whereareyounow.domain.request.signup.AuthenticateEmailRequest(
+                            _findPasswordScreenUIState.value.inputEmail
+                        )
                     val response = authenticateEmailUseCase(request)
                     LogUtil.printNetworkLog(request, response, "이메일 인증")
                     when (response) {
@@ -135,10 +137,12 @@ class FindPasswordViewModel @Inject constructor(
                 findPasswordScreenSideEffectFlow.emit(FindPasswordScreenSideEffect.Toast("유효시간이 만료되었습니다. 인증 코드를 재전송해주세요."))
                 return@launch
             }
-            val request = VerifyPasswordResetCodeRequest(
-                userId = _findPasswordScreenUIState.value.inputUserId,
-                email = _findPasswordScreenUIState.value.inputEmail,
-                code = _findPasswordScreenUIState.value.inputVerificationCode)
+            val request =
+                VerifyPasswordResetCodeRequest(
+                    userId = _findPasswordScreenUIState.value.inputUserId,
+                    email = _findPasswordScreenUIState.value.inputEmail,
+                    code = _findPasswordScreenUIState.value.inputVerificationCode
+                )
             val response = verifyPasswordResetCodeUseCase(request)
             LogUtil.printNetworkLog(request, response, "비밀번호 재설정 코드 인증")
             when (response) {
@@ -204,7 +208,8 @@ class FindPasswordViewModel @Inject constructor(
                     val request = ResetPasswordRequest(
                         userId = userId,
                         password = _passwordResettingScreenUIState.value.inputPassword,
-                        checkPassword = _passwordResettingScreenUIState.value.inputPasswordForChecking)
+                        checkPassword = _passwordResettingScreenUIState.value.inputPasswordForChecking
+                    )
                     val response = resetPasswordUseCase(request)
                     LogUtil.printNetworkLog(request, response, "비밀번호 재설정")
                     when (response) {

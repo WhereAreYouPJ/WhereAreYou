@@ -1,18 +1,12 @@
 package com.whereareyounow.ui.main.friend
 
 import android.app.Application
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.FriendProvider
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.domain.usecase.friend.GetFriendIdsListUseCase
-import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.util.LogUtil
@@ -238,7 +232,8 @@ class FriendViewModel @Inject constructor(
             // 친구 memberId 리스트를 가져온다.
             val accessToken = getAccessTokenUseCase().first()
             val myMemberId = getMemberIdUseCase().first()
-            val request = GetFriendIdsListRequest(myMemberId)
+            val request =
+                com.whereareyounow.domain.request.friend.GetFriendIdsListRequest(myMemberId)
             val response = getFriendIdsListUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "친구 memberId 리스트 가져오기")
             when (response) {
@@ -263,7 +258,8 @@ class FriendViewModel @Inject constructor(
         // 친구 memberId 리스트로 친구 상세정보 리스트를 가져온다.
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
-            val request = GetFriendListRequest(friendIds)
+            val request =
+                com.whereareyounow.domain.request.friend.GetFriendListRequest(friendIds)
             val response = getFriendListUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "친구 리스트 가져오기")
             when (response) {

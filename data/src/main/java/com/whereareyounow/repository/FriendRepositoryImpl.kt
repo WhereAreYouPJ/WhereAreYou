@@ -1,97 +1,59 @@
 package com.whereareyounow.repository
 
-import com.whereareyounow.datasource.RemoteDataSource
-import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
-import com.whereareyounow.domain.entity.apimessage.friend.DeleteFriendRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListResponse
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListResponse
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendRequestListResponse
-import com.whereareyounow.domain.entity.apimessage.friend.RefuseFriendRequestRequest
-import com.whereareyounow.domain.entity.apimessage.friend.SendFriendRequestRequest
+import com.whereareyounow.api.FriendApi
+import com.whereareyounow.domain.entity.friend.FriendInfo
+import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.repository.FriendRepository
+import com.whereareyounow.domain.request.friend.AcceptFriendRequestRequest
+import com.whereareyounow.domain.request.friend.DeleteFriendRequest
+import com.whereareyounow.domain.request.friend.GetFriendListRequest
+import com.whereareyounow.domain.request.friend.GetFriendRequestListRequest
+import com.whereareyounow.domain.request.friend.RefuseFriendRequestRequest
+import com.whereareyounow.domain.request.friend.SendFriendRequestRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
 class FriendRepositoryImpl(
-    private val dataSource: RemoteDataSource
+    private val friendApi: FriendApi
 ) : FriendRepository, NetworkResultHandler {
 
-    /**
-     * 친구 MemberId 목록
-     * [FriendRepository.getFriendIdsList]
-     */
-    override suspend fun getFriendIdsList(
-        token: String,
-        body: GetFriendIdsListRequest
-    ): NetworkResult<GetFriendIdsListResponse> {
-        return handleResult { dataSource.getFriendIdsList(token, body) }
-    }
-
-    /**
-     * 친구 목록
-     * [FriendRepository.getFriendList]
-     */
     override suspend fun getFriendList(
-        token: String,
-        body: GetFriendListRequest
-    ): NetworkResult<GetFriendListResponse> {
-        return handleResult { dataSource.getFriendList(token, body) }
+        data: GetFriendListRequest
+    ): NetworkResult<List<FriendInfo>> {
+        return handleResult { friendApi.getFriendList(
+            memberSeq = data.memberSeq
+        ) }
     }
 
-    /**
-     * 친구 요청 조회(사이드바)
-     * [FriendRepository.getFriendRequestList]
-     */
-    override suspend fun getFriendRequestList(
-        token: String,
-        memberId: String
-    ): NetworkResult<GetFriendRequestListResponse> {
-        return handleResult { dataSource.getFriendRequestList(token, memberId) }
-    }
-
-    /**
-     * 친구 신청
-     * [FriendRepository.sendFriendRequest]
-     */
-    override suspend fun sendFriendRequest(
-        token: String,
-        body: SendFriendRequestRequest
-    ): NetworkResult<Unit> {
-        return handleResult { dataSource.sendFriendRequest(token, body) }
-    }
-
-    /**
-     * 친구 수락
-     * [FriendRepository.acceptFriendRequest]
-     */
-    override suspend fun acceptFriendRequest(
-        token: String,
-        body: AcceptFriendRequestRequest
-    ): NetworkResult<Unit> {
-        return handleResult { dataSource.acceptFriendRequest(token, body) }
-    }
-
-    /**
-     * 친구 거절
-     * [FriendRepository.refuseFriendRequest]
-     */
-    override suspend fun refuseFriendRequest(
-        token: String,
-        body: RefuseFriendRequestRequest
-    ): NetworkResult<Unit> {
-        return handleResult { dataSource.refuseFriendRequest(token, body) }
-    }
-
-    /**
-     * 친구 삭제
-     * [FriendRepository.deleteFriend]
-     */
     override suspend fun deleteFriend(
-        token: String,
-        body: DeleteFriendRequest
+        data: DeleteFriendRequest
+    ): NetworkResult<String> {
+        return handleResult { friendApi.deleteFriend(body = data) }
+    }
+
+    override suspend fun getFriendRequestList(
+        data: GetFriendRequestListRequest
+    ): NetworkResult<List<FriendRequest>> {
+        return handleResult { friendApi.getFriendRequestList(
+            memberSeq = data.memberSeq
+        ) }
+    }
+
+    override suspend fun sendFriendRequest(
+        data: SendFriendRequestRequest
+    ): NetworkResult<String> {
+        return handleResult { friendApi.sendFriendRequest(body = data) }
+    }
+
+    override suspend fun acceptFriendRequest(
+        data: AcceptFriendRequestRequest
     ): NetworkResult<Unit> {
-        return handleResult { dataSource.deleteFriend(token, body) }
+        return handleResult { friendApi.acceptFriendRequest(body = data) }
+    }
+
+    override suspend fun refuseFriendRequest(
+        data: RefuseFriendRequestRequest
+    ): NetworkResult<Unit> {
+        return handleResult { friendApi.refuseFriendRequest(body = data) }
     }
 }

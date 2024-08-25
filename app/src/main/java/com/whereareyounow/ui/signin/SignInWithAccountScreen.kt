@@ -260,7 +260,7 @@ private fun OtherButtons(
         ) {
             Text(
                 text = "계정이 없으신가요?",
-                color = getColor().brightest,
+                color = getColor().thinnest,
                 style = medium14pt
             )
 

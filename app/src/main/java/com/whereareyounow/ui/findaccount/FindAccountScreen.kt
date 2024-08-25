@@ -72,7 +72,7 @@ private fun FindAccountScreen(
                         .border(
                             border = BorderStroke(
                                 width = 1.dp,
-                                color = getColor().brightest
+                                color = getColor().thinnest
                             ),
                             shape = RoundedCornerShape(10.dp)
                         )
@@ -111,7 +111,7 @@ private fun FindAccountScreen(
                         .border(
                             border = BorderStroke(
                                 width = 1.dp,
-                                color = getColor().brightest
+                                color = getColor().thinnest
                             ),
                             shape = RoundedCornerShape(10.dp)
                         )

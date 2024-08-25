@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.whereareyounow.R
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
@@ -152,21 +154,27 @@ private fun SplashScreen(
 
 @Composable
 private fun SplashContent() {
+    val density = LocalDensity.current.density
     Layout(
         content = {
-            Text(
-                modifier = Modifier,
-                text = "지금 어디?",
-                fontSize = 52.sp,
-                fontFamily = ttangs,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFFFFFFF),
+            Image(
+                modifier = Modifier.width(158.dp),
+                painter = painterResource(R.drawable.img_splash_logo),
+                contentDescription = null
             )
-            Spacer(Modifier.height(4.dp))
+//            Text(
+//                modifier = Modifier,
+//                text = "지금 어디?",
+//                fontSize = 52.sp,
+//                fontFamily = ttangs,
+//                fontWeight = FontWeight.Bold,
+//                color = Color(0xFFFFFFFF),
+//            )
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = "위치기반 일정관리 플랫폼",
                 color = Color(0xFFFFFFFF),
-                style = medium14pt
+                style = medium16pt
             )
         },
         modifier = Modifier
@@ -175,8 +183,10 @@ private fun SplashContent() {
     ) { measurables, constraint ->
         val placeables = measurables.map { it.measure(constraint) }
         layout(constraint.maxWidth, constraint.maxHeight) {
-            var currentY = (constraint.maxHeight / 5)
+//            var currentY = (constraint.maxHeight / 5)
+            var currentY = (150 * density).toInt()
             placeables.forEach { placeable ->
+                LogUtil.e("", "${density.toDp()}")
                 placeable.place(x = (constraint.maxWidth - placeable.width) / 2, y = currentY)
                 currentY += placeable.height
             }

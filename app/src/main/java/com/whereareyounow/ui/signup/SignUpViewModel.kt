@@ -12,9 +12,7 @@ import com.whereareyounow.data.signup.SignUpScreenUIState
 import com.whereareyounow.data.signup.UserIdState
 import com.whereareyounow.data.signup.UserNameState
 import com.whereareyounow.data.signup.VerificationCodeState
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailCodeRequest
-import com.whereareyounow.domain.entity.apimessage.signup.AuthenticateEmailRequest
-import com.whereareyounow.domain.entity.apimessage.signup.SignUpRequest
+import com.whereareyounow.domain.request.member.SignUpRequest
 import com.whereareyounow.domain.usecase.signup.AuthenticateEmailCodeUseCase
 import com.whereareyounow.domain.usecase.signup.AuthenticateEmailUseCase
 import com.whereareyounow.domain.usecase.signup.CheckEmailDuplicateUseCase
@@ -190,7 +188,9 @@ class SignUpViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val request = AuthenticateEmailRequest(_signUpScreenUIState.value.inputEmail)
+            val request = com.whereareyounow.domain.request.signup.AuthenticateEmailRequest(
+                _signUpScreenUIState.value.inputEmail
+            )
             val response = authenticateEmailUseCase(request)
             LogUtil.printNetworkLog(request, response, "이메일 인증 코드 전송")
             when (response) {
@@ -214,7 +214,10 @@ class SignUpViewModel @Inject constructor(
                 signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이미 확인되었습니다. 다음 단계를 진행해주세요."))
                 return@launch
             }
-            val request = AuthenticateEmailCodeRequest(_signUpScreenUIState.value.inputEmail, _signUpScreenUIState.value.inputVerificationCode)
+            val request = com.whereareyounow.domain.request.signup.AuthenticateEmailCodeRequest(
+                _signUpScreenUIState.value.inputEmail,
+                _signUpScreenUIState.value.inputVerificationCode
+            )
             val response = authenticateEmailCodeUseCase(request)
             LogUtil.printNetworkLog(request, response, "이메일 인증 코드 확인")
             when (response) {

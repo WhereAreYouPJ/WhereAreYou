@@ -72,7 +72,7 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE_MAIN
+        startDestination = ROUTE_NEW_SCHEDULE
     ) {
         // 스플래시 화면
         composable(route = ROUTE_SPLASH) {

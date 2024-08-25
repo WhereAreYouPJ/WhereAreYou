@@ -8,13 +8,8 @@ import com.whereareyounow.data.FriendProvider
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
-import com.whereareyounow.domain.entity.apimessage.schedule.AddNewScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleDetailsRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.ModifyScheduleMemberRequest
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.domain.usecase.schedule.AddNewScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleDetailsUseCase
-import com.whereareyounow.domain.usecase.schedule.ModifyScheduleMemberUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.util.LogUtil
@@ -148,13 +143,26 @@ class ScheduleEditViewModel @Inject constructor(
             }
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = AddNewScheduleRequest(
+            val request = com.whereareyounow.domain.request.schedule.AddNewScheduleRequest(
                 memberId = memberId,
-                scheduleTime = String.format("%04d", _scheduleEditScreenUIState.value.scheduleYear) +
-                        "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMonth)}" +
+                scheduleTime = String.format(
+                    "%04d",
+                    _scheduleEditScreenUIState.value.scheduleYear
+                ) +
+                        "-${
+                            String.format(
+                                "%02d",
+                                _scheduleEditScreenUIState.value.scheduleMonth
+                            )
+                        }" +
                         "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleDate)}" +
                         "T${String.format("%02d", _scheduleEditScreenUIState.value.scheduleHour)}" +
-                        ":${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMinute)}:00",
+                        ":${
+                            String.format(
+                                "%02d",
+                                _scheduleEditScreenUIState.value.scheduleMinute
+                            )
+                        }:00",
                 scheduleName = _scheduleEditScreenUIState.value.scheduleName,
                 destinationName = _scheduleEditScreenUIState.value.destinationName,
                 destinationAddress = _scheduleEditScreenUIState.value.destinationAddress,
@@ -228,10 +236,15 @@ class ScheduleEditViewModel @Inject constructor(
     private suspend fun modifyScheduleDetails() {
         val accessToken = getAccessTokenUseCase().first()
         val memberId = getMemberIdUseCase().first()
-        val request = ModifyScheduleDetailsRequest(
+        val request = com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest(
             creatorId = memberId,
             scheduleId = scheduleId,
-            scheduleTime = "${String.format("%04d", _scheduleEditScreenUIState.value.scheduleYear)}" +
+            scheduleTime = "${
+                String.format(
+                    "%04d",
+                    _scheduleEditScreenUIState.value.scheduleYear
+                )
+            }" +
                     "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleMonth)}" +
                     "-${String.format("%02d", _scheduleEditScreenUIState.value.scheduleDate)}" +
                     "T${String.format("%02d", _scheduleEditScreenUIState.value.scheduleHour)}" +
@@ -263,7 +276,7 @@ class ScheduleEditViewModel @Inject constructor(
     private suspend fun modifyScheduleMember(moveToBackScreen: () -> Unit) {
         val accessToken = getAccessTokenUseCase().first()
         val memberId = getMemberIdUseCase().first()
-        val request = ModifyScheduleMemberRequest(
+        val request = com.whereareyounow.domain.request.schedule.ModifyScheduleMemberRequest(
             creatorId = memberId,
             scheduleId = scheduleId,
             friendIds = _scheduleEditScreenUIState.value.selectedFriendsList.map { it.memberId }

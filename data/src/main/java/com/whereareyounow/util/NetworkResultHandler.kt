@@ -3,21 +3,22 @@ package com.whereareyounow.util
 import com.google.gson.GsonBuilder
 import com.whereareyounow.domain.entity.ErrorBody
 import com.whereareyounow.domain.util.NetworkResult
+import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.HttpException
 import retrofit2.Response
 import java.text.SimpleDateFormat
 
 interface NetworkResultHandler {
-    suspend fun <T:Any> handleResult(
-        responseFunction: suspend () -> Response<T>
+    suspend fun <T : Any?> handleResult(
+        responseFunction: suspend () -> Response<ResponseWrapper<T>>
     ): NetworkResult<T> {
         return try {
             val response = responseFunction()
             if (response.isSuccessful) {
                 if (response.body() == null) {
-                    NetworkResult.Success(response.code(), null)
+                    NetworkResult.Success(response.code(), response.body()?.message, null)
                 } else {
-                    NetworkResult.Success(response.code(), response.body())
+                    NetworkResult.Success(response.code(), response.body()!!.message, response.body()!!.data)
                 }
             } else {
                 val message = ""

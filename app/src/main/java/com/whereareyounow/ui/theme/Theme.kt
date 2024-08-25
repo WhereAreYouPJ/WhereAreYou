@@ -59,7 +59,6 @@ fun WhereAreYouTheme(
             // 타입 캐스팅이 가능한지 확인. 다이얼로그는 이걸 확인 안해주면 에러가 발생.
             if (view.context is Activity) {
                 val window = (view.context as Activity).window
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
                 WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
                 WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = true
             }

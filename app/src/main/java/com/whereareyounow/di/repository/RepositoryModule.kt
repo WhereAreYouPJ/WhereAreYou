@@ -4,24 +4,26 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.whereareyounow.datasource.RemoteDataSource
+import com.whereareyounow.api.FCMApi
+import com.whereareyounow.api.FriendApi
+import com.whereareyounow.api.LocationApi
+import com.whereareyounow.api.MemberApi
+import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.datasource.SearchLocationDataSource
 import com.whereareyounow.datasource.SharedPreferencesDataSource
 import com.whereareyounow.domain.repository.FCMRepository
 import com.whereareyounow.domain.repository.FriendRepository
 import com.whereareyounow.domain.repository.LocationRepository
+import com.whereareyounow.domain.repository.MemberRepository
 import com.whereareyounow.domain.repository.ScheduleRepository
 import com.whereareyounow.domain.repository.SearchLocationRepository
-import com.whereareyounow.domain.repository.SignInRepository
-import com.whereareyounow.domain.repository.SignUpRepository
 import com.whereareyounow.repository.FCMRepositoryImpl
 import com.whereareyounow.repository.FriendRepositoryImpl
 import com.whereareyounow.repository.LocationRepositoryImpl
+import com.whereareyounow.repository.MemberRepositoryImpl
 import com.whereareyounow.repository.ScheduleRepositoryImpl
 import com.whereareyounow.repository.SearchLocationRepositoryImpl
 import com.whereareyounow.repository.SharedPreferencesRepository
-import com.whereareyounow.repository.SignInRepositoryImpl
-import com.whereareyounow.repository.SignUpRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,43 +36,30 @@ object RepositoryModule {
 
     @Provides
     fun provideScheduleRepository(
-        dataSource: RemoteDataSource
+        scheduleApi: ScheduleApi
     ): ScheduleRepository {
-        return ScheduleRepositoryImpl(dataSource)
+        return ScheduleRepositoryImpl(scheduleApi)
     }
 
     @Provides
-    fun provideSignUpRepository(
-        dataSource: RemoteDataSource
-    ): SignUpRepository {
-        return SignUpRepositoryImpl(dataSource)
-    }
-
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
-
-    @Provides
-    fun provideSignInRepository(
-        dataSource: RemoteDataSource,
-        @ApplicationContext context: Context
-    ): SignInRepository {
-        return SignInRepositoryImpl(
-            dataSource,
-            context.dataStore
-        )
+    fun provideMemberRepository(
+        memberApi: MemberApi
+    ): MemberRepository {
+        return MemberRepositoryImpl(memberApi)
     }
 
     @Provides
     fun provideFriendRepository(
-        dataSource: RemoteDataSource
+        friendApi: FriendApi
     ): FriendRepository {
-        return FriendRepositoryImpl(dataSource)
+        return FriendRepositoryImpl(friendApi)
     }
 
     @Provides
     fun provideLocationRepository(
-        dataSource: RemoteDataSource
+        locationApi: LocationApi
     ): LocationRepository {
-        return LocationRepositoryImpl(dataSource)
+        return LocationRepositoryImpl(locationApi)
     }
 
     @Provides
@@ -89,8 +78,8 @@ object RepositoryModule {
 
     @Provides
     fun provideFcmRepository(
-        dataSource: RemoteDataSource
+        fcmApi: FCMApi
     ): FCMRepository {
-        return FCMRepositoryImpl(dataSource)
+        return FCMRepositoryImpl(fcmApi)
     }
 }

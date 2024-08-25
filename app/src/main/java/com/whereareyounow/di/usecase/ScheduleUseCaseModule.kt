@@ -1,19 +1,14 @@
 package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.ScheduleRepository
-import com.whereareyounow.domain.usecase.schedule.AcceptScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.AddNewScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.CheckArrivalUseCase
-import com.whereareyounow.domain.usecase.schedule.DeleteScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.GetDailyBriefScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.AcceptScheduleRequestUseCase
+import com.whereareyounow.domain.usecase.schedule.CreateNewScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.DeleteScheduleByCreatorUseCase
+import com.whereareyounow.domain.usecase.schedule.DeleteScheduleByInvitorUseCase
+import com.whereareyounow.domain.usecase.schedule.GetDailyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.GetScheduleInvitationUseCase
-import com.whereareyounow.domain.usecase.schedule.GetTodayScheduleCountUseCase
-import com.whereareyounow.domain.usecase.schedule.ModifyScheduleDetailsUseCase
-import com.whereareyounow.domain.usecase.schedule.ModifyScheduleMemberUseCase
-import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.ResetCalendarUseCase
+import com.whereareyounow.domain.usecase.schedule.ModifyScheduleInfoUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +19,34 @@ import dagger.hilt.components.SingletonComponent
 object ScheduleUseCaseModule {
 
     @Provides
+    fun provideGetDetailScheduleUseCase(
+        repository: ScheduleRepository
+    ): GetDetailScheduleUseCase {
+        return GetDetailScheduleUseCase(repository)
+    }
+
+    @Provides
+    fun provideModifyScheduleInfoUseCase(
+        repository: ScheduleRepository
+    ): ModifyScheduleInfoUseCase {
+        return ModifyScheduleInfoUseCase(repository)
+    }
+
+    @Provides
+    fun provideCreateNewScheduleUseCase(
+        repository: ScheduleRepository
+    ): CreateNewScheduleUseCase {
+        return CreateNewScheduleUseCase(repository)
+    }
+
+    @Provides
+    fun provideAcceptScheduleRequest(
+        repository: ScheduleRepository
+    ): AcceptScheduleRequestUseCase {
+        return AcceptScheduleRequestUseCase(repository)
+    }
+
+    @Provides
     fun provideGetMonthlyScheduleUseCase(
         repository: ScheduleRepository
     ): GetMonthlyScheduleUseCase {
@@ -31,86 +54,23 @@ object ScheduleUseCaseModule {
     }
 
     @Provides
-    fun provideGetDailyBriefScheduleUseCase(
+    fun provideGetDailyScheduleUseCase(
         repository: ScheduleRepository
-    ): GetDailyBriefScheduleUseCase {
-        return GetDailyBriefScheduleUseCase(repository)
+    ): GetDailyScheduleUseCase {
+        return GetDailyScheduleUseCase(repository)
     }
 
     @Provides
-    fun provideDetailScheduleUseCase(
+    fun provideDeleteScheduleByInvitor(
         repository: ScheduleRepository
-    ): GetDetailScheduleUseCase {
-        return GetDetailScheduleUseCase(repository)
+    ): DeleteScheduleByInvitorUseCase {
+        return DeleteScheduleByInvitorUseCase(repository)
     }
 
     @Provides
-    fun provideAddNewScheduleUseCase(
+    fun provideDeleteScheduleByCreator(
         repository: ScheduleRepository
-    ): AddNewScheduleUseCase {
-        return AddNewScheduleUseCase(repository)
-    }
-
-    @Provides
-    fun provideAcceptScheduleUseCase(
-        repository: ScheduleRepository
-    ): AcceptScheduleUseCase {
-        return AcceptScheduleUseCase(repository)
-    }
-
-    @Provides
-    fun provideCheckArrivalUseCase(
-        repository: ScheduleRepository
-    ): CheckArrivalUseCase {
-        return CheckArrivalUseCase(repository)
-    }
-
-    @Provides
-    fun provideDeleteScheduleUseCase(
-        repository: ScheduleRepository
-    ): DeleteScheduleUseCase {
-        return DeleteScheduleUseCase(repository)
-    }
-
-    @Provides
-    fun provideRefuseOrQuitScheduleUseCase(
-        repository: ScheduleRepository
-    ): RefuseOrQuitScheduleUseCase {
-        return RefuseOrQuitScheduleUseCase(repository)
-    }
-
-    @Provides
-    fun provideGetTodayScheduleCountUseCase(
-        repository: ScheduleRepository
-    ): GetTodayScheduleCountUseCase {
-        return GetTodayScheduleCountUseCase(repository)
-    }
-
-    @Provides
-    fun provideModifyScheduleUseCase(
-        repository: ScheduleRepository
-    ): ModifyScheduleDetailsUseCase {
-        return ModifyScheduleDetailsUseCase(repository)
-    }
-
-    @Provides
-    fun provideModifyScheduleMemberUseCase(
-        repository: ScheduleRepository
-    ): ModifyScheduleMemberUseCase {
-        return ModifyScheduleMemberUseCase(repository)
-    }
-
-    @Provides
-    fun provideGetScheduleInvitationUseCase(
-        repository: ScheduleRepository
-    ): GetScheduleInvitationUseCase {
-        return GetScheduleInvitationUseCase(repository)
-    }
-
-    @Provides
-    fun resetCalendarUseCase(
-        repository: ScheduleRepository
-    ): ResetCalendarUseCase {
-        return ResetCalendarUseCase(repository)
+    ): DeleteScheduleByCreatorUseCase {
+        return DeleteScheduleByCreatorUseCase(repository)
     }
 }

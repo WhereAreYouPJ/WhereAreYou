@@ -1,35 +1,33 @@
 package com.whereareyounow.repository
 
-import com.whereareyounow.datasource.RemoteDataSource
-import com.whereareyounow.domain.entity.apimessage.fcm.DeleteFCMTokenRequest
-import com.whereareyounow.domain.entity.apimessage.fcm.UpdateFCMTokenRequest
+import com.whereareyounow.api.FCMApi
 import com.whereareyounow.domain.repository.FCMRepository
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
 class FCMRepositoryImpl(
-    private val dataSource: RemoteDataSource
+    private val api: FCMApi
 ) : FCMRepository, NetworkResultHandler {
 
-    /**
-     * FCM 토큰 저장 및 갱신
-     * [FCMRepository.updateFCMToken]
-     */
-    override suspend fun updateFCMToken(
-        token: String,
-        body: UpdateFCMTokenRequest
-    ): NetworkResult<Unit> {
-        return handleResult { dataSource.updateFCMToken(token, body) }
-    }
-
-    /**
-     * FCM 토큰 삭제(로그아웃)
-     * [FCMRepository.deleteFCMToken]
-     */
-    override suspend fun deleteFCMToken(
-        token: String,
-        body: DeleteFCMTokenRequest
-    ): NetworkResult<Unit> {
-        return handleResult { dataSource.deleteFCMToken(token, body) }
-    }
+//    /**
+//     * FCM 토큰 저장 및 갱신
+//     * [FCMRepository.updateFCMToken]
+//     */
+//    override suspend fun updateFCMToken(
+//        token: String,
+//        body: com.whereareyounow.domain.request.fcm.UpdateFCMTokenRequest
+//    ): NetworkResult<Unit> {
+//        return handleResult { api.updateFCMToken(token, body) }
+//    }
+//
+//    /**
+//     * FCM 토큰 삭제(로그아웃)
+//     * [FCMRepository.deleteFCMToken]
+//     */
+//    override suspend fun deleteFCMToken(
+//        token: String,
+//        body: com.whereareyounow.domain.request.fcm.DeleteFCMTokenRequest
+//    ): NetworkResult<Unit> {
+//        return handleResult { api.deleteFCMToken(token, body) }
+//    }
 }

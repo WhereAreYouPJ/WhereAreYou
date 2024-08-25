@@ -4,9 +4,6 @@ import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyounow.domain.entity.apimessage.schedule.ResetCalendarRequest
-import com.whereareyounow.domain.entity.apimessage.signin.DeleteMemberRequest
-import com.whereareyounow.domain.usecase.schedule.ResetCalendarUseCase
 import com.whereareyounow.domain.usecase.signin.DeleteMemberUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
@@ -89,7 +86,7 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = DeleteMemberRequest(memberId)
+            val request = com.whereareyounow.domain.request.signin.DeleteMemberRequest(memberId)
             val response = deleteMemberUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "회원 탈퇴하기")
             when (response) {
@@ -113,7 +110,8 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = ResetCalendarRequest(memberId)
+            val request =
+                com.whereareyounow.domain.request.schedule.ResetCalendarRequest(memberId)
             val response = resetCalendarUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "캘린더 삭제")
             when (response) {

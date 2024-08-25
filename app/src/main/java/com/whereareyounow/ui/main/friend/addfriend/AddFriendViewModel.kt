@@ -4,9 +4,7 @@ import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyounow.domain.entity.apimessage.friend.SendFriendRequestRequest
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.domain.usecase.friend.SendFriendRequestUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdByUserIdUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
@@ -142,7 +140,10 @@ class AddFriendViewModel @Inject constructor(
             if (friendMemberId == "") return@launch
             val accessToken = tokenManager.getAccessToken()
             val memberId = getMemberIdUseCase().first()
-            val request = SendFriendRequestRequest(friendMemberId, memberId)
+            val request = com.whereareyounow.domain.request.friend.SendFriendRequestRequest(
+                friendMemberId,
+                memberId
+            )
             val response = sendFriendRequestUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "sendFriendRequestUseCase")
             when (response) {

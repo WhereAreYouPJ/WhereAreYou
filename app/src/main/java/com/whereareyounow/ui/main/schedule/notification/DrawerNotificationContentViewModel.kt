@@ -8,23 +8,8 @@ import com.whereareyounow.data.FriendProvider
 import com.whereareyounow.data.notification.DrawerNotificationContentSideEffect
 import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
-import com.whereareyounow.domain.entity.apimessage.friend.AcceptFriendRequestRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendIdsListRequest
-import com.whereareyounow.domain.entity.apimessage.friend.GetFriendListRequest
-import com.whereareyounow.domain.entity.apimessage.friend.RefuseFriendRequestRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.AcceptScheduleRequest
-import com.whereareyounow.domain.entity.apimessage.schedule.RefuseOrQuitScheduleRequest
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.domain.usecase.friend.AcceptFriendRequestUseCase
-import com.whereareyounow.domain.usecase.friend.GetFriendIdsListUseCase
-import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
-import com.whereareyounow.domain.usecase.friend.GetFriendRequestListUseCase
-import com.whereareyounow.domain.usecase.friend.RefuseFriendRequestUseCase
-import com.whereareyounow.domain.usecase.schedule.AcceptScheduleUseCase
-import com.whereareyounow.domain.usecase.schedule.GetScheduleInvitationUseCase
-import com.whereareyounow.domain.usecase.schedule.GetTodayScheduleCountUseCase
-import com.whereareyounow.domain.usecase.schedule.RefuseOrQuitScheduleUseCase
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
@@ -141,7 +126,11 @@ class DrawerNotificationContentViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = AcceptFriendRequestRequest(friendRequest.friendRequestId, memberId, friendRequest.senderId)
+            val request = com.whereareyounow.domain.request.friend.AcceptFriendRequestRequest(
+                friendRequest.friendRequestId,
+                memberId,
+                friendRequest.senderId
+            )
             val response = acceptFriendRequestUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "친구 요청 수락")
             when (response) {
@@ -157,7 +146,8 @@ class DrawerNotificationContentViewModel @Inject constructor(
     fun refuseFriendRequest(friendRequest: FriendRequest) {
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
-            val request = RefuseFriendRequestRequest(friendRequest.friendRequestId)
+            val request =
+                com.whereareyounow.domain.request.friend.DeleteFriendRequest(friendRequest.friendRequestId)
             val response = refuseFriendRequestUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "친구 요청 거절")
             when (response) {
@@ -178,7 +168,10 @@ class DrawerNotificationContentViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = AcceptScheduleRequest(memberId, scheduleId)
+            val request = com.whereareyounow.domain.request.schedule.AcceptScheduleRequest(
+                memberId,
+                scheduleId
+            )
             val response = acceptScheduleUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "일정 수락")
             when (response) {
@@ -200,7 +193,10 @@ class DrawerNotificationContentViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val accessToken = getAccessTokenUseCase().first()
             val memberId = getMemberIdUseCase().first()
-            val request = RefuseOrQuitScheduleRequest(memberId, scheduleId)
+            val request = com.whereareyounow.domain.request.schedule.RefuseOrQuitScheduleRequest(
+                memberId,
+                scheduleId
+            )
             val response = refuseOrQuitScheduleUseCase(accessToken, request)
             LogUtil.printNetworkLog(request, response, "일정 거절")
             when (response) {
@@ -217,13 +213,14 @@ class DrawerNotificationContentViewModel @Inject constructor(
     private suspend fun getFriendList() {
         val accessToken = getAccessTokenUseCase().first()
         val memberId = getMemberIdUseCase().first()
-        val request = GetFriendIdsListRequest(memberId)
+        val request = com.whereareyounow.domain.request.friend.GetFriendIdsListRequest(memberId)
         val response = getFriendIdsListUseCase(accessToken, request)
         LogUtil.printNetworkLog(request, response, "친구 memberId목록 가져오기")
         when (response) {
             is NetworkResult.Success -> {
                 response.data?.let { data ->
-                    val getFriendListRequest = GetFriendListRequest(data.friendsIdList)
+                    val getFriendListRequest =
+                        com.whereareyounow.domain.request.friend.GetFriendListRequest(data.friendsIdList)
                     val getFriendListResponse = getFriendListUseCase(accessToken, getFriendListRequest)
                     LogUtil.printNetworkLog(getFriendListRequest, getFriendListResponse, "친구 목록 가져오기")
                     when (getFriendListResponse) {

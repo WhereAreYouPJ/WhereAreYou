@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,12 +24,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -69,8 +72,13 @@ import com.whereareyounow.R
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.globalvalue.ScheduleColor
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.ScrollablePicker
+import com.whereareyounow.ui.main.schedule.scheduleedit.component.ScheduleEditScreenScheduleTitle
+import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.getDayOfWeekString
 import com.whereareyounow.util.getLastDayOfMonth
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +100,7 @@ fun ScheduleEditScreen(
     moveToFriendsListScreen: () -> Unit,
     moveToBackScreen: () -> Unit
 ) {
+    val thinnest = getColor().thinnest
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         scheduleEditScreenSideEffectFlow.collect { value ->
@@ -106,7 +115,7 @@ fun ScheduleEditScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = 15.dp, end = 15.dp, top = 40.dp)
             .imePadding(),
         verticalArrangement = remember {
             object : Arrangement.Vertical {
@@ -131,96 +140,363 @@ fun ScheduleEditScreen(
         }
     ) {
         item {
-            // 상단바
-            ScheduleEditorScreenTopBar(moveToBackScreen)
-
-            Spacer(Modifier.height(40.dp))
-
-            // 제목
-            ScheduleTitleTextField(
-                scheduleName = scheduleEditScreenUIState.scheduleName,
-                updateScheduleName = updateScheduleName
-            )
-
-            Spacer(Modifier.height(40.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier.size(30.dp),
-                    contentAlignment = Alignment.Center
+                // 제목
+                ScheduleEditScreenScheduleTitle(
+                    scheduleName = scheduleEditScreenUIState.scheduleName,
+                    updateScheduleName = updateScheduleName
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.height(40.dp)
                 ) {
+
+                    Spacer(Modifier.width(4.dp))
+
+                    Text(
+                        text = "하루 종일",
+                        color = Color(0xFF222222),
+                        style = medium16pt
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Switch(
+                        checked = true,
+                        onCheckedChange = {}
+                    )
+
+                    Spacer(Modifier.width(10.dp))
+                }
+
+                Spacer(Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier
+                        .height(50.dp)
+                        .drawBehind {
+                            drawLine(
+                                color = thinnest,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        }
+                ) {
+                    Spacer(Modifier.width(26.dp))
+
+                    Text(
+                        text = "4월 8일 (월)",
+                        color = Color(0xFF444444),
+                        style = medium16pt
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
                     Image(
-                        modifier = Modifier.size(26.dp),
-                        painter = painterResource(R.drawable.clock),
-                        contentDescription = null
+                        modifier = Modifier.size(28.dp),
+                        painter = painterResource(R.drawable.ic_arrow_right),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color(0xFF727272))
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Text(
+                        text = "4월 10일 (수)",
+                        color = Color(0xFF444444),
+                        style = medium16pt
                     )
                 }
-                Spacer(Modifier.width(10.dp))
-                Column(
+
+                Spacer(Modifier.height(20.dp))
+
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(10.dp))
-                        .clickable { isDateTimePickerDialogShowing.value = true }
-                        .padding(4.dp)
+                        .height(38.dp)
+                        .drawBehind {
+                            drawLine(
+                                color = thinnest,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        }
                 ) {
-                    // 날짜 선택
-                    DateComponent(
-                        scheduleYear = scheduleEditScreenUIState.scheduleYear,
-                        scheduleMonth = scheduleEditScreenUIState.scheduleMonth,
-                        scheduleDate = scheduleEditScreenUIState.scheduleDate
-                    )
-
-                    // 시간 선택
-                    TimeComponent(
-                        scheduleHour = scheduleEditScreenUIState.scheduleHour,
-                        scheduleMinute = scheduleEditScreenUIState.scheduleMinute
+                    Text(
+                        text = "위치추가",
+                        color = Color(0xFF222222),
+                        style = medium16pt
                     )
                 }
-            }
 
+                Spacer(Modifier.height(4.dp))
 
-            Spacer(Modifier.height(22.dp))
+                Row(
+                    modifier = Modifier
+                        .height(44.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(Modifier.width(4.dp))
 
-            // 위치 선택
-            LocationSelector(
-                destinationName = scheduleEditScreenUIState.destinationName,
-                destinationAddress = scheduleEditScreenUIState.destinationAddress,
-                moveToSearchLocationScreen = moveToSearchLocationScreen
-            )
+                    Image(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(R.drawable.ic_location),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(getColor().brandColor)
+                    )
 
-            Spacer(Modifier.height(22.dp))
+                    Spacer(Modifier.width(6.dp))
 
-            // 선택된 멤버 리스트
-            SelectedMembersList(
-                selectedFriendsList = scheduleEditScreenUIState.selectedFriendsList,
-                moveToFriendsListScreen = moveToFriendsListScreen
-            )
+                    Text(
+                        text = "위치 추가",
+                        color = getColor().dark,
+                        style = medium16pt
+                    )
+                }
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(4.dp))
 
-            // 메모
-            ScheduleMemo(
-                memo = scheduleEditScreenUIState.memo,
-                updateMemo = updateMemo
-            )
+                LazyRow {
+                    itemsIndexed(listOf("서울대", "여의도공원")) { idx, item ->
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .height(28.dp)
+                                .clip(RoundedCornerShape(50))
+                                .background(
+                                    color = Color(0xFFF0F0F0)
+                                )
+                                .padding(start = 14.dp, end = 14.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = item,
+                                color = Color(0xFF444444),
+                                style = medium14pt
+                            )
+                        }
+                    }
+                }
 
-            if (isDateTimePickerDialogShowing.value) {
-                // 날짜, 시간 선택 다이얼로그
-                DateTimePickerDialog(
-                    selectedYear = scheduleEditScreenUIState.scheduleYear,
-                    selectedMonth = scheduleEditScreenUIState.scheduleMonth,
-                    selectedDate = scheduleEditScreenUIState.scheduleDate,
-                    selectedHour = scheduleEditScreenUIState.scheduleHour,
-                    selectedMinute = scheduleEditScreenUIState.scheduleMinute,
-                    updateScheduleDate = updateScheduleDate,
-                    updateScheduleTime = updateScheduleTime,
-                    closeDialog = { isDateTimePickerDialogShowing.value = false },
+                Spacer(Modifier.height(20.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(38.dp)
+                        .drawBehind {
+                            drawLine(
+                                color = thinnest,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        }
+                        .padding(start = 6.dp, top = 4.dp)
+                ) {
+                    Text(
+                        text = "친구추가",
+                        color = Color(0xFF222222),
+                        style = medium16pt
+                    )
+                }
+
+                Spacer(Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier
+                        .height(44.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(Modifier.width(4.dp))
+
+                    Image(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(R.drawable.ic_location),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(getColor().brandColor)
+                    )
+
+                    Spacer(Modifier.width(6.dp))
+
+                    Text(
+                        text = "친구 추가",
+                        color = getColor().dark,
+                        style = medium16pt
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(38.dp)
+                        .drawBehind {
+                            drawLine(
+                                color = thinnest,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        }
+                        .padding(start = 6.dp, top = 4.dp)
+                ) {
+                    Text(
+                        text = "일정컬러",
+                        color = Color(0xFF222222),
+                        style = medium16pt
+                    )
+                }
+
+                Spacer(Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier.height(24.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    listOf(ScheduleColor.Red, ScheduleColor.Yellow, ScheduleColor.Green, ScheduleColor.Blue, ScheduleColor.Purple, ScheduleColor.Pink).forEachIndexed { idx, item ->
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    border = BorderStroke(
+                                        width = 1.dp,
+                                        color = Color(0xFF8E8E8E)
+                                    ),
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(14.dp)
+                                    .clip(CircleShape)
+                                    .background(item.color)
+                            )
+                        }
+
+                        Spacer(Modifier.width(12.dp))
+                    }
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(38.dp)
+                        .drawBehind {
+                            drawLine(
+                                color = thinnest,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 1.dp.toPx()
+                            )
+                        }
+                        .padding(start = 6.dp, top = 4.dp)
+                ) {
+                    Text(
+                        text = "메모",
+                        color = Color(0xFF222222),
+                        style = medium16pt
+                    )
+                }
+                
+                Spacer(Modifier.height(6.dp))
+
+                // 메모
+                ScheduleMemo(
+                    memo = scheduleEditScreenUIState.memo,
+                    updateMemo = updateMemo
                 )
             }
 
-            Spacer(Modifier.height(20.dp))
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Box(
+//                    modifier = Modifier.size(30.dp),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Image(
+//                        modifier = Modifier.size(26.dp),
+//                        painter = painterResource(R.drawable.clock),
+//                        contentDescription = null
+//                    )
+//                }
+//                Spacer(Modifier.width(10.dp))
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .clip(RoundedCornerShape(10.dp))
+//                        .clickable { isDateTimePickerDialogShowing.value = true }
+//                        .padding(4.dp)
+//                ) {
+//                    // 날짜 선택
+//                    DateComponent(
+//                        scheduleYear = scheduleEditScreenUIState.scheduleYear,
+//                        scheduleMonth = scheduleEditScreenUIState.scheduleMonth,
+//                        scheduleDate = scheduleEditScreenUIState.scheduleDate
+//                    )
+//
+//                    // 시간 선택
+//                    TimeComponent(
+//                        scheduleHour = scheduleEditScreenUIState.scheduleHour,
+//                        scheduleMinute = scheduleEditScreenUIState.scheduleMinute
+//                    )
+//                }
+//            }
+//
+//
+//            Spacer(Modifier.height(22.dp))
+//
+//            // 위치 선택
+//            LocationSelector(
+//                destinationName = scheduleEditScreenUIState.destinationName,
+//                destinationAddress = scheduleEditScreenUIState.destinationAddress,
+//                moveToSearchLocationScreen = moveToSearchLocationScreen
+//            )
+//
+//            Spacer(Modifier.height(22.dp))
+//
+//            // 선택된 멤버 리스트
+//            SelectedMembersList(
+//                selectedFriendsList = scheduleEditScreenUIState.selectedFriendsList,
+//                moveToFriendsListScreen = moveToFriendsListScreen
+//            )
+//
+//            Spacer(Modifier.height(24.dp))
+//
+//            // 메모
+//            ScheduleMemo(
+//                memo = scheduleEditScreenUIState.memo,
+//                updateMemo = updateMemo
+//            )
+//
+//            if (isDateTimePickerDialogShowing.value) {
+//                // 날짜, 시간 선택 다이얼로그
+//                DateTimePickerDialog(
+//                    selectedYear = scheduleEditScreenUIState.scheduleYear,
+//                    selectedMonth = scheduleEditScreenUIState.scheduleMonth,
+//                    selectedDate = scheduleEditScreenUIState.scheduleDate,
+//                    selectedHour = scheduleEditScreenUIState.scheduleHour,
+//                    selectedMinute = scheduleEditScreenUIState.scheduleMinute,
+//                    updateScheduleDate = updateScheduleDate,
+//                    updateScheduleTime = updateScheduleTime,
+//                    closeDialog = { isDateTimePickerDialogShowing.value = false },
+//                )
+//            }
+//
+//            Spacer(Modifier.height(20.dp))
         }
 
         item {
@@ -318,43 +594,7 @@ private fun SelectedMembersList(
     }
 }
 
-@Composable
-fun ScheduleTitleTextField(
-    scheduleName: String,
-    updateScheduleName: (String) -> Unit
-) {
-    BasicTextField(
-        value = scheduleName,
-        onValueChange = { updateScheduleName(it) },
-        textStyle = TextStyle(fontSize = 30.sp, color = Color(0xFF505050), fontWeight = FontWeight.Bold),
-        singleLine = true
-    ) {
-        Box(
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .drawBehind {
-                    val borderSize = 1.dp.toPx()
-                    drawLine(
-                        color = Color(0xFF858585),
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = borderSize
-                    )
-                },
-            contentAlignment = Alignment.CenterStart
-        ) {
-            it()
-            if (scheduleName == "") {
-                Text(
-                    text = "제목",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF7C7C7C)
-                )
-            }
-        }
-    }
-}
+
 
 @Composable
 private fun DateComponent(
@@ -404,7 +644,7 @@ private fun LocationSelector(
         ) {
             Image(
                 modifier = Modifier.size(30.dp),
-                painter = painterResource(id = R.drawable.location),
+                painter = painterResource(id = R.drawable.ic_location),
                 contentDescription = null
             )
         }
@@ -451,50 +691,32 @@ private fun ScheduleMemo(
     memo: String,
     updateMemo: (String) -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier.size(30.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                modifier = Modifier.size(26.dp),
-                painter = painterResource(id = R.drawable.memo),
-                contentDescription = null
-            )
-        }
-        Spacer(Modifier.width(14.dp))
-        Text(
-            text = "메모",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color(0xFF7C7C7C),
-        )
-    }
-
-    Spacer(Modifier.height(10.dp))
-
     BasicTextField(
         value = memo,
         onValueChange = { updateMemo(it) },
-        textStyle = TextStyle(fontSize = 20.sp),
+        textStyle = medium14pt,
         decorationBox = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(150.dp)
                     .border(
                         border = BorderStroke(
                             width = 1.dp,
-                            color = Color(0xFF7C7C7C)
+                            color = Color(0xFFD4D4D4)
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(6.dp)
                     )
                     .padding(12.dp)
             ) {
                 it()
+                if (memo.isEmpty()) {
+                    Text(
+                        text = "메모를 작성해주세요.",
+                        color = getColor().dark,
+                        style = medium14pt
+                    )
+                }
             }
         }
     )
@@ -744,13 +966,16 @@ private fun DateTimePickerDialog(
                                 .clickable {
                                     val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일(E)")
                                     val year =
-                                        yearMap[yearScrollableState.intValue]!!.replace("년", "")
+                                        yearMap[yearScrollableState.intValue]!!
+                                            .replace("년", "")
                                             .toInt()
                                     val month =
-                                        monthMap[monthScrollableState.intValue]!!.replace("월", "")
+                                        monthMap[monthScrollableState.intValue]!!
+                                            .replace("월", "")
                                             .toInt()
                                     val date =
-                                        dateMap[dateScrollableState.intValue]!!.replace("일", "")
+                                        dateMap[dateScrollableState.intValue]!!
+                                            .replace("일", "")
                                             .toInt()
                                     val ampm = ampmScrollableState.intValue
                                     var hour = hourMap[hourScrollableState.intValue]!!.toInt()

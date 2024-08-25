@@ -3,7 +3,6 @@ package com.whereareyounow.util
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.signin.ReissueAccessTokenUseCase
@@ -75,7 +74,7 @@ class TokenManager @Inject constructor(
         moveToSignInScreen: () -> Unit
     ) {
         val refreshToken = getRefreshTokenUseCase().first()
-        val request = ReissueTokenRequest(refreshToken)
+        val request = com.whereareyounow.domain.request.signin.ReissueTokenRequest(refreshToken)
         when (val response = reissueTokenUseCase(request)) {
             is NetworkResult.Success -> {
                 Log.e("Success", "reissueTokenUseCase\n${response.code}\n${response.data}")

@@ -348,7 +348,7 @@ fun DestinationContent(
         ) {
             Image(
                 modifier = Modifier.size(30.dp),
-                painter = painterResource(id = R.drawable.location),
+                painter = painterResource(id = R.drawable.ic_location),
                 contentDescription = null,
 //            colorFilter = ColorFilter.tint(color = Color(0xFFA9AAAC))
             )
