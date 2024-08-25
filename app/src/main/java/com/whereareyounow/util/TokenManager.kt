@@ -6,7 +6,7 @@ import android.widget.Toast
 import com.whereareyounow.domain.entity.apimessage.signin.ReissueTokenRequest
 import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
-import com.whereareyounow.domain.usecase.signin.ReissueTokenUseCase
+import com.whereareyounow.domain.usecase.signin.ReissueAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveRefreshTokenUseCase
 import com.whereareyounow.domain.util.NetworkResult
@@ -20,7 +20,7 @@ class TokenManager @Inject constructor(
     private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
-    private val reissueTokenUseCase: ReissueTokenUseCase,
+    private val reissueTokenUseCase: ReissueAccessTokenUseCase,
     private val context: Context
 ) {
     val goToLoginScreen: () -> Unit = {}
@@ -85,7 +85,6 @@ class TokenManager @Inject constructor(
                 } ?: withContext(Dispatchers.Main) { Toast.makeText(context, "null data", Toast.LENGTH_SHORT).show() }
             }
             is NetworkResult.Error -> {
-                Log.e("Error", "reissueTokenUseCase\n${response.code}\n${response.errorData}")
                 withContext(Dispatchers.Main) {
                     when (response.code) {
                         401 -> {

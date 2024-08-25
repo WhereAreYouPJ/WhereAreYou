@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
@@ -37,8 +39,9 @@ fun CustomTopBar(
                 .align(Alignment.CenterStart)
                 .size(30.dp)
                 .clickableNoEffect { onBackButtonClicked() },
-            painter = painterResource(id = R.drawable.ic_back),
-            contentDescription = null
+            painter = painterResource(id = R.drawable.ic_arrow_left),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(getColor().brandColor)
         )
         Text(
             text = title,

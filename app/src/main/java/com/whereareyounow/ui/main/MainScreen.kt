@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.main
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -41,8 +44,11 @@ import com.whereareyounow.ui.main.mypage.MyPageScreen
 import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.main.schedule.calendar.ScheduleScreen
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium10pt
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
@@ -148,10 +154,14 @@ private fun MainScreen(
             },
             containerColor = Color(0xFFFFFFFF),
         ) {
-            when (viewType) {
-                ViewType.Home -> {
-                    HomeScreen(
-                        paddingValues = it,
+            Column(
+                modifier = Modifier
+                    .padding(bottom = it.calculateBottomPadding())
+            ) {
+                when (viewType) {
+                    ViewType.Home -> {
+                        HomeScreen(
+                            paddingValues = it,
 
                         )
                 }

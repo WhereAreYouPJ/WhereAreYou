@@ -388,7 +388,7 @@ fun First(onIconClick: () -> Unit, onMyIconClick: () -> Unit, alarmBoolean: Bool
         }
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_user),
+            painter = painterResource(id = R.drawable.ic_user_outlined),
             contentDescription = "",
             tint = Color(0xFF6236E9),
             modifier = Modifier.clickable { onMyIconClick() }

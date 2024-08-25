@@ -20,15 +20,13 @@ interface NetworkResultHandler {
                     NetworkResult.Success(response.code(), response.body())
                 }
             } else {
-                val gson = GsonBuilder().create()
-                val errorBody = gson.fromJson(response.errorBody()?.string(), ErrorBody::class.java)
-                NetworkResult.Error(response.code(), errorBody)
+                val message = ""
+                NetworkResult.Error(response.code(), message)
             }
         } catch (e: HttpException) {
             val currentTime = System.currentTimeMillis()
             val format = SimpleDateFormat("yyyy-MM-dd-hh-mm-ss")
-            val date = format.format(currentTime)
-            NetworkResult.Error(e.code(), ErrorBody(date, e.message(), ""))
+            NetworkResult.Error(e.code(), "")
         } catch (e: Throwable) {
             NetworkResult.Exception(e)
         }

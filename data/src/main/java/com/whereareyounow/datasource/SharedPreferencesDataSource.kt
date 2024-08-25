@@ -3,7 +3,7 @@ package com.whereareyounow.datasource
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.whereareyounow.vo.SHARED_PREFERENCES_FILE_NAME
+import com.whereareyounow.globalvalue.SHARED_PREFERENCES_FILE_NAME
 
 class SharedPreferencesDataSource (
     private val context: Context

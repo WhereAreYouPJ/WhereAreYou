@@ -9,7 +9,7 @@ import com.whereareyounow.domain.usecase.signin.GetMemberDetailsUseCase
 import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
 import com.whereareyounow.domain.usecase.signin.GetRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.signin.ModifyMyInfoUseCase
-import com.whereareyounow.domain.usecase.signin.ReissueTokenUseCase
+import com.whereareyounow.domain.usecase.signin.ReissueAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.ResetPasswordUseCase
 import com.whereareyounow.domain.usecase.signin.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.signin.SaveMemberIdUseCase
@@ -112,8 +112,8 @@ object SignInUseCaseModule {
     @Provides
     fun provideReissueTokenUseCase(
         repository: SignInRepository
-    ): ReissueTokenUseCase {
-        return ReissueTokenUseCase(repository)
+    ): ReissueAccessTokenUseCase {
+        return ReissueAccessTokenUseCase(repository)
     }
 
     @Provides
