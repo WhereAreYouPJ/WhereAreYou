@@ -59,7 +59,15 @@ fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
-    moveToMyPageScreen : () -> Unit,
+
+    moveToMyPageScreen: () -> Unit,
+
+
+    moveToMyInfoScreen: () -> Unit,
+    moveToLocationFavorites : () -> Unit,
+    moveToFeedBookmarks : () -> Unit,
+    moveToFeedSaved : () -> Unit,
+    moveToDetailProfileScreen: (String, String) -> Unit,
     viewModel: MainViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel()
 ) {
@@ -77,7 +85,19 @@ fun MainScreen(
         moveToAddGroupScreen = moveToAddGroupScreen,
         moveToSignInScreen = moveToSignInScreen,
         moveToModifyInfoScreen = moveToModifyInfoScreen,
-        moveToMyPageScreen = moveToMyPageScreen
+        moveToMyPageScreen = moveToMyPageScreen,
+
+        // 새로 추가 된 것 일 : { "내 정보 관리" , "위치 즐겨찾기" , "피드 책갈피" , "피드 보관함" }
+        moveToMyInfoScreen = moveToMyInfoScreen,
+        moveToLocationFavorites = moveToLocationFavorites,
+        moveToFeedBookmarks = moveToFeedBookmarks,
+        moveToFeedSaved = moveToFeedSaved,
+
+        // 새로 추가 된 것 이 : { "공지사항" , "1:1 이용문의" }
+
+
+        moveToDetailProfileScreen = moveToDetailProfileScreen,
+
     )
 }
 
@@ -93,7 +113,12 @@ private fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
-    moveToMyPageScreen : () -> Unit
+    moveToMyPageScreen: () -> Unit,
+    moveToDetailProfileScreen : (String, String) -> Unit,
+    moveToMyInfoScreen: () -> Unit,
+    moveToLocationFavorites : () -> Unit,
+    moveToFeedBookmarks : () -> Unit,
+    moveToFeedSaved : () -> Unit,
 ) {
     CustomSurface {
         Scaffold(
@@ -104,6 +129,28 @@ private fun MainScreen(
                     navigationItemContentList,
                     updateViewType = updateViewType
                 )
+            },
+            floatingActionButton = {
+                if (viewType == ViewType.Calendar) {
+                    FloatingActionButton(
+                        shape = CircleShape,
+                        contentColor = Color(0xFFFFFFFF),
+                        containerColor = Color(0xFF5448BC),
+                        onClick = {
+                            moveToAddScheduleScreen(
+                                calendarScreenUIState.selectedYear,
+                                calendarScreenUIState.selectedMonth,
+                                calendarScreenUIState.selectedDate
+                            )
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.plus),
+                            contentDescription = null
+                        )
+                    }
+                }
             },
             containerColor = Color(0xFFFFFFFF),
         ) {
@@ -116,28 +163,34 @@ private fun MainScreen(
                         HomeScreen(
                             paddingValues = it,
 
-                            )
-                    }
-                    ViewType.Calendar -> {
-                        ScheduleScreen(
-                            paddingValues = it,
-                            moveToDetailScreen = moveToDetailScreen
                         )
-                    }
-                    ViewType.Friends -> {
-                        FriendScreen(
-                            paddingValues = it,
-                            moveToAddFriendScreen = moveToAddFriendScreen,
-                            moveToAddGroupScreen = moveToAddGroupScreen
-                        )
-                    }
-                    ViewType.MyPage -> {
-                        MyPageScreen(
-                            paddingValues = it,
-                            moveToSignInScreen = moveToSignInScreen,
-                            moveToModifyInfoScreen = moveToModifyInfoScreen
-                        )
-                    }
+                }
+
+                ViewType.Calendar -> {
+                    ScheduleScreen(
+                        paddingValues = it,
+                        moveToDetailScreen = moveToDetailScreen
+                    )
+                }
+
+                ViewType.Friends -> {
+                    FriendScreen(
+                        paddingValues = it,
+                        moveToAddFriendScreen = moveToAddFriendScreen,
+                        moveToAddGroupScreen = moveToAddGroupScreen,
+                        moveToDetailProfileScreen = moveToDetailProfileScreen
+                    )
+                }
+
+                ViewType.MyPage -> {
+                    MyPageScreen(
+                        paddingValues = it,
+                        moveToSignInScreen = moveToSignInScreen,
+                        moveToMyInfoScreen = moveToMyInfoScreen,
+                        moveToLocationFavorites = moveToLocationFavorites,
+                        moveToFeedBookmarks = moveToFeedBookmarks,
+                        moveToFeedSaved = moveToFeedSaved
+                    )
                 }
             }
         }
@@ -159,63 +212,45 @@ fun HomeNavigationBar(
         windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
         navigationItemContentList.forEachIndexed { _, navItem ->
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .clickableNoEffect { updateViewType(navItem.viewType) },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier.fillMaxHeight(0.5f),
-                    painter = painterResource(id = if (viewType == navItem.viewType) navItem.iconSelected else navItem.iconUnselected),
-                    contentDescription = null
-                )
-                Text(
-                    text = navItem.label,
-                    style = medium10pt,
-                    color = Color(0xFF222222)
-                )
-            }
-//            NavigationBarItem(
-//                modifier = Modifier.fillMaxHeight(),
-//                selected = viewType == navItem.viewType,
-//                onClick = { updateViewType(navItem.viewType) },
-//                icon = {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize(),
-//                        horizontalAlignment = Alignment.CenterHorizontally,
-//                        verticalArrangement = Arrangement.Center
-//                    ) {
-//                        Icon(
-//                            modifier = Modifier.fillMaxHeight(0.5f),
-//                            painter = painterResource(id = when (viewType == navItem.viewType) {
-//                                true -> navItem.iconSelected
-//                                false -> navItem.iconUnselected
-//                            }),
-//                            contentDescription = null,
-////                            tint = Color.Red
-//                        )
-//                        Text(
-//                            text = navItem.label,
-//                            fontSize = 12.sp,
-//                            fontFamily = nanumSquareNeo,
-//                            fontWeight = FontWeight.Bold,
-//                            color = Color.Black
-//                        )
-//                    }
-//                },
-//                colors = NavigationBarItemDefaults.colors(
-////                    selectedIconColor = getColor().brandColor,
-//                    selectedTextColor = Color(0xFF222222),
-//                    indicatorColor = Color(0x00FFFFFF),
-//                    unselectedIconColor = getColor().brandColor,
-//                    unselectedTextColor = Color(0xFF222222)
-//                ),
-//                interactionSource = NoRippleInteractionSource(),
-//                alwaysShowLabel = true
-//            )
+            NavigationBarItem(
+                modifier = Modifier.fillMaxHeight(),
+                selected = viewType == navItem.viewType,
+                onClick = { updateViewType(navItem.viewType) },
+                icon = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier.fillMaxHeight(0.5f),
+                            painter = painterResource(
+                                id = when (viewType == navItem.viewType) {
+                                    true -> navItem.iconSelected
+                                    false -> navItem.iconUnselected
+                                }
+                            ),
+                            contentDescription = null,
+                        )
+                        Text(
+                            text = navItem.label,
+                            fontSize = 12.sp,
+                            fontFamily = nanumSquareNeo,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF2D2573),
+                    selectedTextColor = Color(0xFF2D2573),
+                    indicatorColor = Color(0x00FFFFFF),
+                    unselectedIconColor = Color(0xFF9F9EA7),
+                    unselectedTextColor = Color(0xFF9F9EA7)
+                ),
+                interactionSource = NoRippleInteractionSource(),
+                alwaysShowLabel = true
+            )
         }
     }
 }

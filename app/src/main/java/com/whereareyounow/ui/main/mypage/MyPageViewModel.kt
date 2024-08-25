@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,12 +42,19 @@ class MyPageViewModel @Inject constructor(
 
     private val _imageUri = MutableStateFlow<String?>(null)
     val imageUri: StateFlow<String?> = _imageUri
-    private val _name = MutableStateFlow("")
+    private val _name = MutableStateFlow("민혁쓰")
     val name: StateFlow<String> = _name
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
-    private val _profileImageUri = MutableStateFlow<String?>("")
+    private val _profileImageUri = MutableStateFlow<String?>("https://m.segye.com/content/image/2021/11/16/20211116509557.jpg")
     val profileImageUri: StateFlow<String?> = _profileImageUri
+
+
+    data class Announcement(
+        val string : String
+    )
+    private val _announcementList = MutableStateFlow<List<Announcement>>(emptyList())
+    val announcementList: StateFlow<List<Announcement>> = _announcementList.asStateFlow()
 
     fun signOut(
         moveToStartScreen: () -> Unit,

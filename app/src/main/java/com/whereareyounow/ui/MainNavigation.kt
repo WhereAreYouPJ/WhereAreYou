@@ -16,6 +16,7 @@ import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
+import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
@@ -26,6 +27,7 @@ import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_SUCCESS
 import com.whereareyounow.data.globalvalue.ROUTE_MAIN
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_SCHEDULE
+import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_NEW_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_POLICY_AGREE
 import com.whereareyounow.data.globalvalue.ROUTE_PRIVACY_POLICY
@@ -46,8 +48,12 @@ import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.MainScreen
+import com.whereareyounow.ui.main.friend.DetailProfileScreen
+import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
+import com.whereareyounow.ui.main.mypage.MyInfoScreen
+import com.whereareyounow.ui.main.mypage.MyPageScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
@@ -234,6 +240,8 @@ fun MainNavigation(
 
         // 홈 화면
         composable(route = ROUTE_MAIN) {
+            val friendViewModel : FriendViewModel = hiltViewModel()
+
             MainScreen(
                 moveToAddScheduleScreen = { year, month, date ->
                     val bundle = bundleOf(
@@ -259,7 +267,23 @@ fun MainNavigation(
                 moveToMyPageScreen = {
                     // TODO
                     navController.navigate(ViewType.MyPage.name)
-                }
+                },
+                moveToDetailProfileScreen = { friendImagrUrl, friendName ->
+                    // TODO
+                    val bundle = bundleOf(
+                        "friendImagrUrl" to friendImagrUrl,
+                        "friendName" to friendName
+                    )
+//                    friendViewModel.friendsList[]
+                    navController.navigate(ROUTE_DETAIL_PROFILE , bundle)
+                },
+                moveToMyInfoScreen = {
+                    navController.navigate(ROUTE_MY_INFO)
+                },
+                moveToLocationFavorites = {},
+                moveToFeedBookmarks = {},
+                moveToFeedSaved = {},
+
             )
         }
 
@@ -418,5 +442,24 @@ fun MainNavigation(
                 }
             )
         }
+
+        // 프로필 상세 화면
+        composable(route = ROUTE_DETAIL_PROFILE) {
+            DetailProfileScreen(
+                friendImagrUrl = it.arguments?.getString("friendImagrUrl") ?: "0",
+                friendName = it.arguments?.getString("friendName") ?: "0",
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+        // 내 정보 화면
+        composable(route = ROUTE_MY_INFO) {
+            MyInfoScreen(
+                moveToMyPageScreen = { navController.popBackStack() }
+            )
+        }
+
+
+        
     }
 }
