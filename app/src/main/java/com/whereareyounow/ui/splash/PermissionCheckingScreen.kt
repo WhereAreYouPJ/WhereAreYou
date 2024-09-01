@@ -32,13 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.globalvalue.type.SplashCheckingState
 
 
 @Composable
 fun PermissionCheckingScreen(
     locationPermissions: Array<String>,
     updateScreenState: (SplashViewModel.ScreenState) -> Unit,
-    updateCheckingState: (SplashViewModel.CheckingState) -> Unit
+    updateCheckingState: (SplashCheckingState) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -53,7 +54,7 @@ fun PermissionCheckingScreen(
             && result.entries.contains(mapOf(Manifest.permission.ACCESS_COARSE_LOCATION to true).entries.first())) {
             Toast.makeText(context, "위치 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show()
             updateScreenState(SplashViewModel.ScreenState.Splash)
-            updateCheckingState(SplashViewModel.CheckingState.SignIn)
+            updateCheckingState(SplashCheckingState.SignIn)
         } else {
             Toast.makeText(context, "위치 권한이 허용되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }

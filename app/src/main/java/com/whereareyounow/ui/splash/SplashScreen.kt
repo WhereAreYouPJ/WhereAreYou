@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.whereareyounow.R
 import com.whereareyounow.domain.util.LogUtil
+import com.whereareyounow.globalvalue.type.SplashCheckingState
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
@@ -72,10 +73,10 @@ fun SplashScreen(
 private fun SplashScreen(
     screenState: SplashViewModel.ScreenState,
     updateScreenState: (SplashViewModel.ScreenState) -> Unit,
-    checkingState: SplashViewModel.CheckingState,
+    checkingState: SplashCheckingState,
     isNetworkConnectionErrorDialogShowing: Boolean,
     checkNetworkState: () -> Unit,
-    updateCheckingState: (SplashViewModel.CheckingState) -> Unit,
+    updateCheckingState: (SplashCheckingState) -> Unit,
     checkIsSignedIn: suspend () -> Boolean,
     moveToSignInScreen: () -> Unit,
     moveToMainScreen: () -> Unit
@@ -88,7 +89,7 @@ private fun SplashScreen(
     )
     LaunchedEffect(checkingState) {
         when (checkingState) {
-            SplashViewModel.CheckingState.Network -> {
+            SplashCheckingState.Network -> {
                 coroutineScope.launch {
                     systemUiController.setStatusBarColor(
                         color = Color(0x00000000),
@@ -102,7 +103,7 @@ private fun SplashScreen(
                     checkNetworkState()
                 }
             }
-            SplashViewModel.CheckingState.LocationPermission -> {
+            SplashCheckingState.LocationPermission -> {
                 var flag = true
                 for (permission in locationPermissions) {
                     if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
@@ -111,9 +112,9 @@ private fun SplashScreen(
                         break
                     }
                 }
-                if (flag) updateCheckingState(SplashViewModel.CheckingState.SignIn)
+                if (flag) updateCheckingState(SplashCheckingState.SignIn)
             }
-            SplashViewModel.CheckingState.SignIn -> {
+            SplashCheckingState.SignIn -> {
                 coroutineScope.launch(Dispatchers.Main) {
                     delay(1000)
                     systemUiController.setStatusBarColor(
@@ -287,7 +288,7 @@ private fun SplashScreenPreview() {
         SplashScreen(
             screenState = SplashViewModel.ScreenState.Splash,
             updateScreenState = {},
-            checkingState = SplashViewModel.CheckingState.SignIn,
+            checkingState = SplashCheckingState.SignIn,
             isNetworkConnectionErrorDialogShowing = false,
             checkNetworkState = { true },
             updateCheckingState = {},

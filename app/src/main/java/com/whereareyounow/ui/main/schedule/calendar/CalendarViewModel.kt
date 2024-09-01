@@ -2,33 +2,24 @@ package com.whereareyounow.ui.main.schedule.calendar
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
-import com.whereareyounow.domain.usecase.signin.GetAccessTokenUseCase
-import com.whereareyounow.domain.usecase.signin.GetMemberIdUseCase
-import com.whereareyounow.domain.util.LogUtil
-import com.whereareyounow.domain.util.NetworkResult
-import com.whereareyounow.util.getCalendarInfo
 import com.whereareyounow.util.getDayOfWeek
 import com.whereareyounow.util.getTodayInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val application: Application,
-    private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
-    private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
-    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-    private val getMemberIdUseCase: GetMemberIdUseCase
+//    private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
+//    private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
+//    private val getAccessTokenUseCase: GetAccessTokenUseCase,
+//    private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
 
     private val _calendarScreenUIState = MutableStateFlow(CalendarScreenUIState())
@@ -112,23 +103,23 @@ class CalendarViewModel @Inject constructor(
                 )
             )
         }
-        viewModelScope.launch(Dispatchers.Default) {
-            val accessToken = getAccessTokenUseCase().first()
-            val memberId = getMemberIdUseCase().first()
-            val response = getDailyBriefScheduleUseCase(
-                accessToken,
-                memberId,
-                _calendarScreenUIState.value.selectedYear,
-                _calendarScreenUIState.value.selectedMonth,
-                _calendarScreenUIState.value.selectedDate
-            )
-            LogUtil.printNetworkLog("memberId = $memberId\nselectedYear = ${_calendarScreenUIState.value.selectedYear}\nselectedMonth = ${_calendarScreenUIState.value.selectedMonth}\nselectedDate = ${_calendarScreenUIState.value.selectedDate}", response, "일별 간략정보 가져오기")
-            when (response) {
-                is NetworkResult.Success -> {  }
-                is NetworkResult.Error -> {  }
-                is NetworkResult.Exception -> { calendarScreenSideEffectFlow.emit(CalendarScreenSideEffect.Toast("오류가 발생했습니다.")) }
-            }
-        }
+//        viewModelScope.launch(Dispatchers.Default) {
+//            val accessToken = getAccessTokenUseCase().first()
+//            val memberId = getMemberIdUseCase().first()
+//            val response = getDailyBriefScheduleUseCase(
+//                accessToken,
+//                memberId,
+//                _calendarScreenUIState.value.selectedYear,
+//                _calendarScreenUIState.value.selectedMonth,
+//                _calendarScreenUIState.value.selectedDate
+//            )
+//            LogUtil.printNetworkLog("memberId = $memberId\nselectedYear = ${_calendarScreenUIState.value.selectedYear}\nselectedMonth = ${_calendarScreenUIState.value.selectedMonth}\nselectedDate = ${_calendarScreenUIState.value.selectedDate}", response, "일별 간략정보 가져오기")
+//            when (response) {
+//                is NetworkResult.Success -> {  }
+//                is NetworkResult.Error -> {  }
+//                is NetworkResult.Exception -> { calendarScreenSideEffectFlow.emit(CalendarScreenSideEffect.Toast("오류가 발생했습니다.")) }
+//            }
+//        }
     }
 
     // 처음 화면에 보여지는 날짜에 대한 달력 정보를 모두 설정한다.

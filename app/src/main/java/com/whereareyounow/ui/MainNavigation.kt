@@ -15,6 +15,7 @@ import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
+import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE
@@ -78,10 +79,10 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE_NEW_SCHEDULE
+        startDestination = ROUTE.Splash
     ) {
         // 스플래시 화면
-        composable(route = ROUTE_SPLASH) {
+        composable<ROUTE.Splash> {
             SplashScreen(
                 moveToSignInMethodSelectionScreen = {
                     navController.navigate(ROUTE_SIGN_IN_METHOD_SELECTION) {

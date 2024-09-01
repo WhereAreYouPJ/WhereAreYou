@@ -15,24 +15,24 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object LocationUseCaseModule {
 
-    @Provides
-    fun provideGetUserLocationUseCase(
-        repository: LocationRepository
-    ): GetUserLocationUseCase {
-        return GetUserLocationUseCase(repository)
-    }
-
-    @Provides
-    fun provideSendUserLocationUseCase(
-        repository: LocationRepository
-    ): SendUserLocationUseCase {
-        return SendUserLocationUseCase(repository)
-    }
-
-    @Provides
-    fun provideGetLocationAddressUseCase(
-        repository: SearchLocationRepository
-    ): GetLocationAddressUseCase {
-        return GetLocationAddressUseCase(repository)
-    }
+//    @Provides
+//    fun provideGetUserLocationUseCase(
+//        repository: LocationRepository
+//    ): GetUserLocationUseCase {
+//        return GetUserLocationUseCase(repository)
+//    }
+//
+//    @Provides
+//    fun provideSendUserLocationUseCase(
+//        repository: LocationRepository
+//    ): SendUserLocationUseCase {
+//        return SendUserLocationUseCase(repository)
+//    }
+//
+//    @Provides
+//    fun provideGetLocationAddressUseCase(
+//        repository: SearchLocationRepository
+//    ): GetLocationAddressUseCase {
+//        return GetLocationAddressUseCase(repository)
+//    }
 }

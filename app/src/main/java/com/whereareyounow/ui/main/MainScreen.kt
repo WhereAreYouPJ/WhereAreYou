@@ -59,10 +59,7 @@ fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
-
     moveToMyPageScreen: () -> Unit,
-
-
     moveToMyInfoScreen: () -> Unit,
     moveToLocationFavorites : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
@@ -97,7 +94,6 @@ fun MainScreen(
 
 
         moveToDetailProfileScreen = moveToDetailProfileScreen,
-
     )
 }
 
@@ -163,34 +159,35 @@ private fun MainScreen(
                         HomeScreen(
                             paddingValues = it,
 
+                            )
+                    }
+
+                    ViewType.Calendar -> {
+                        ScheduleScreen(
+                            paddingValues = it,
+                            moveToDetailScreen = moveToDetailScreen
                         )
-                }
+                    }
 
-                ViewType.Calendar -> {
-                    ScheduleScreen(
-                        paddingValues = it,
-                        moveToDetailScreen = moveToDetailScreen
-                    )
-                }
+                    ViewType.Friends -> {
+                        FriendScreen(
+                            paddingValues = it,
+                            moveToAddFriendScreen = moveToAddFriendScreen,
+                            moveToAddGroupScreen = moveToAddGroupScreen,
+                            moveToDetailProfileScreen = moveToDetailProfileScreen
+                        )
+                    }
 
-                ViewType.Friends -> {
-                    FriendScreen(
-                        paddingValues = it,
-                        moveToAddFriendScreen = moveToAddFriendScreen,
-                        moveToAddGroupScreen = moveToAddGroupScreen,
-                        moveToDetailProfileScreen = moveToDetailProfileScreen
-                    )
-                }
-
-                ViewType.MyPage -> {
-                    MyPageScreen(
-                        paddingValues = it,
-                        moveToSignInScreen = moveToSignInScreen,
-                        moveToMyInfoScreen = moveToMyInfoScreen,
-                        moveToLocationFavorites = moveToLocationFavorites,
-                        moveToFeedBookmarks = moveToFeedBookmarks,
-                        moveToFeedSaved = moveToFeedSaved
-                    )
+                    ViewType.MyPage -> {
+                        MyPageScreen(
+                            paddingValues = it,
+                            moveToSignInScreen = moveToSignInScreen,
+                            moveToMyInfoScreen = moveToMyInfoScreen,
+                            moveToLocationFavorites = moveToLocationFavorites,
+                            moveToFeedBookmarks = moveToFeedBookmarks,
+                            moveToFeedSaved = moveToFeedSaved
+                        )
+                    }
                 }
             }
         }

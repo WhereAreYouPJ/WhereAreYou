@@ -7,6 +7,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -187,6 +188,9 @@ dependencies {
 //    implementation("com.kakao.sdk:v2-cert:2.20.1") // 카카오톡 인증 서비스 API 모듈
 
     // constraintlayout compose
+    // Navigation Safe Args
+    implementation("androidx.navigation:navigation-compose:2.8.0-rc01")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
 
 

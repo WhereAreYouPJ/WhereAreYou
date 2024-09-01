@@ -39,68 +39,68 @@ fun FriendRequestBox(
     acceptFriendRequest: () -> Unit,
     refuseFriendRequest: () -> Unit
 ) {
-    val timePassed = getMinuteDiffWithCurrentTime(friendRequest.first.requestedTime.split(".")[0])
-    Row(
-        modifier = Modifier
-            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
-            .fillMaxWidth()
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp))
-            .background(
-                color = Color(0xFFFFFFFF),
-                shape = RoundedCornerShape(20.dp)
-            )
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        GlideImage(
-            modifier = Modifier
-                .size(80.dp)
-                .clip(RoundedCornerShape(50)),
-            imageModel = { friendRequest.second.profileImgUrl ?: R.drawable.idle_profile3 },
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-        )
-        Spacer(Modifier.width(10.dp))
-        Column {
-            Row {
-                Text(
-                    text = friendRequest.second.name,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    style = TextStyle(
-                        lineHeight = 18.sp
-                    )
-                )
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = when {
-                        timePassed < 60 -> "${timePassed}분"
-                        timePassed < 1440 -> "${timePassed / 60}시간"
-                        else -> "${timePassed / 1440}일"
-                    },
-                    fontSize = 14.sp,
-                    style = TextStyle(
-                        lineHeight = 14.sp
-                    ),
-                    color = Color(0xFFB3B3B3)
-                )
-            }
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = friendRequest.second.userId,
-                fontSize = 16.sp,
-                color = Color(0xFF999999),
-                style = TextStyle(
-                    lineHeight = 16.sp
-                )
-            )
-            Spacer(Modifier.height(10.dp))
-            Row {
-                ClickableBox(color = Color(0xFF9286FF), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptFriendRequest() }
-                Spacer(Modifier.width(10.dp))
-                ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseFriendRequest() }
-            }
-        }
-    }
+//    val timePassed = getMinuteDiffWithCurrentTime(friendRequest.first.requestedTime.split(".")[0])
+//    Row(
+//        modifier = Modifier
+//            .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp)
+//            .fillMaxWidth()
+//            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp))
+//            .background(
+//                color = Color(0xFFFFFFFF),
+//                shape = RoundedCornerShape(20.dp)
+//            )
+//            .padding(10.dp),
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        GlideImage(
+//            modifier = Modifier
+//                .size(80.dp)
+//                .clip(RoundedCornerShape(50)),
+//            imageModel = { friendRequest.second.profileImgUrl ?: R.drawable.idle_profile3 },
+//            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+//        )
+//        Spacer(Modifier.width(10.dp))
+//        Column {
+//            Row {
+//                Text(
+//                    text = friendRequest.second.name,
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.Medium,
+//                    style = TextStyle(
+//                        lineHeight = 18.sp
+//                    )
+//                )
+//                Spacer(Modifier.weight(1f))
+//                Text(
+//                    text = when {
+//                        timePassed < 60 -> "${timePassed}분"
+//                        timePassed < 1440 -> "${timePassed / 60}시간"
+//                        else -> "${timePassed / 1440}일"
+//                    },
+//                    fontSize = 14.sp,
+//                    style = TextStyle(
+//                        lineHeight = 14.sp
+//                    ),
+//                    color = Color(0xFFB3B3B3)
+//                )
+//            }
+//            Spacer(Modifier.height(2.dp))
+//            Text(
+//                text = friendRequest.second.userId,
+//                fontSize = 16.sp,
+//                color = Color(0xFF999999),
+//                style = TextStyle(
+//                    lineHeight = 16.sp
+//                )
+//            )
+//            Spacer(Modifier.height(10.dp))
+//            Row {
+//                ClickableBox(color = Color(0xFF9286FF), text = "수락", textColor = Color(0xFFFFFFFF)) { acceptFriendRequest() }
+//                Spacer(Modifier.width(10.dp))
+//                ClickableBox(color = Color(0xFFE4E4E6), text = "거절") { refuseFriendRequest() }
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -134,8 +134,8 @@ fun RowScope.ClickableBox(
 @Preview(showBackground = true)
 @Composable
 private fun FriendRequestBoxPreview() {
-    FriendRequestBox(
-        FriendRequest("", "", "2024-03-20T23:43:13") to Friend(0, "홍길동", "hong", "IdId"),
-        {}, {}
-    )
+//    FriendRequestBox(
+//        FriendRequest("", "", "2024-03-20T23:43:13") to Friend(0, "홍길동", "hong", "IdId"),
+//        {}, {}
+//    )
 }

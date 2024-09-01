@@ -1,5 +1,7 @@
 package com.whereareyounow.data.globalvalue
 
+import kotlinx.serialization.Serializable
+
 const val ROUTE_MODIFY_INFO = "ROUTE_MODIFY_INFO"
 const val ROUTE_SPLASH = "ROUTE_SPLASH"
 const val ROUTE_SIGN_IN_METHOD_SELECTION = "ROUTE_SIGN_IN_METHOD_SELECTION"
@@ -29,3 +31,8 @@ const val ROUTE_DETAIL_PROFILE = "ROUTE_DETAIL_PROFILE"
 
 // 마이페이지
 const val ROUTE_MY_INFO = "ROUTE_MY_INFO"
+
+sealed class ROUTE {
+    @Serializable
+    data object Splash
+}

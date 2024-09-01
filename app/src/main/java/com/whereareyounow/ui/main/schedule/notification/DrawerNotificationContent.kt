@@ -210,10 +210,10 @@ fun DrawerNotificationContent(
 @Preview(showBackground = true, widthDp = 411, heightDp = 836, backgroundColor = 0XFF000000)
 @Composable
 fun DrawerNotificationPreview() {
-    val friendRequestsList = listOf(
-        FriendRequest("", "id1", "2024-03-20T23:43:13") to Friend(0, "memberId1", "name1"),
-        FriendRequest("", "id1", "2024-03-20T23:43:13") to Friend(0, "memberId1", "name2")
-    )
+//    val friendRequestsList = listOf(
+//        FriendRequest("", "id1", "2024-03-20T23:43:13") to Friend(0, "memberId1", "name1"),
+//        FriendRequest("", "id1", "2024-03-20T23:43:13") to Friend(0, "memberId1", "name2")
+//    )
     val scheduleRequestsList = listOf(
         ScheduleInvitationInfo(
             scheduleId = "",

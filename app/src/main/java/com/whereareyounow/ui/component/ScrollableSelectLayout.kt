@@ -1,7 +1,11 @@
 package com.whereareyounow.ui.component
 
 import androidx.annotation.FloatRange
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -149,7 +153,8 @@ fun <E> ScrollableSelectLayout(
             initialValue = midItemIndexStart,
             positionalThreshold = { distance: Float -> distance * 0.5f },
             velocityThreshold = { with(density) { 50.dp.toPx() } },
-            animationSpec = tween()
+            snapAnimationSpec = tween(),
+            decayAnimationSpec = splineBasedDecay(density)
         ) {
             scrollableSelectColumnItems[midItemIndexStart + 1].selected = false
             scrollableSelectColumnItems[it + 1].selected = true
@@ -226,7 +231,9 @@ fun <E> ScrollableSelectLayout(
                 .offset {
                     IntOffset(
                         x = 0,
-                        y = anchorDraggableState.requireOffset().roundToInt(),
+                        y = anchorDraggableState
+                            .requireOffset()
+                            .roundToInt(),
                     )
                 }
         ) {

@@ -4,7 +4,7 @@ import com.whereareyounow.domain.repository.SearchLocationRepository
 import com.whereareyounow.domain.util.NetworkResult
 
 class GetLocationAddressUseCase(
-    private val repository: SearchLocationRepository
+//    private val repository: SearchLocationRepository
 ) {
 //    suspend operator fun invoke(
 //        query: String

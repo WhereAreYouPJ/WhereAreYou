@@ -2,6 +2,7 @@ package com.whereareyounow.ui.main.schedule.calendar
 
 import android.widget.Toast
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
+import com.whereareyounow.WhereAreYouApplication.Companion.applicationContext
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
 import com.whereareyounow.data.calendar.Schedule
@@ -258,7 +260,8 @@ private val anchoredDraggableState = AnchoredDraggableState(
     initialValue = DetailState.Open,
     positionalThreshold = { it: Float -> it * 0.5f },
     velocityThreshold = { 100f },
-    animationSpec = tween(200)
+    snapAnimationSpec = tween(200),
+    decayAnimationSpec = splineBasedDecay(Density(applicationContext()))
 ).apply {
         updateAnchors(
             DraggableAnchors {

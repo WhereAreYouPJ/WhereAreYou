@@ -3,6 +3,7 @@
 package com.whereareyounow.ui.main.schedule.calendar
 
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -250,28 +251,29 @@ private fun BriefScheduleContentPreview() {
     val briefScheduleList = listOf(
         BriefSchedule("", "title", "2023-01-02T10:20")
     )
-    val anchoredDraggableState = AnchoredDraggableState(
-        initialValue = DetailState.Open,
-        positionalThreshold = { it: Float -> it * 0.5f },
-        velocityThreshold = { 100f },
-        animationSpec = tween(400)
-    ).apply {
-        updateAnchors(
-            DraggableAnchors {
-                DetailState.Open at 0f
-                DetailState.Close at DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
-            }
-        )
-    }
+//    val anchoredDraggableState = AnchoredDraggableState(
+//        initialValue = DetailState.Open,
+//        positionalThreshold = { it: Float -> it * 0.5f },
+//        velocityThreshold = { 100f },
+//        snapAnimationSpec = tween(400),
+//        decayAnimationSpec = splineBasedDecay(density)
+//    ).apply {
+//        updateAnchors(
+//            DraggableAnchors {
+//                DetailState.Open at 0f
+//                DetailState.Close at DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
+//            }
+//        )
+//    }
     WhereAreYouTheme {
-        BriefScheduleContent(
-            selectedYear = 2024,
-            selectedMonth = 1,
-            selectedDate = 2,
-            dayOfWeek = 1,
-            currentDateBriefSchedule = briefScheduleList,
-            moveToDetailScreen = {},
-            state = anchoredDraggableState
-        )
+//        BriefScheduleContent(
+//            selectedYear = 2024,
+//            selectedMonth = 1,
+//            selectedDate = 2,
+//            dayOfWeek = 1,
+//            currentDateBriefSchedule = briefScheduleList,
+//            moveToDetailScreen = {},
+//            state = anchoredDraggableState
+//        )
     }
 }

@@ -2,27 +2,14 @@ package com.whereareyounow.ui.findaccount.findid
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import com.whereareyounow.data.findid.EmailState
 import com.whereareyounow.data.findid.FindIdScreenSideEffect
 import com.whereareyounow.data.findid.FindIdScreenUIState
-import com.whereareyounow.data.findid.VerificationCodeState
-import com.whereareyounow.domain.usecase.signin.FindIdUseCase
-import com.whereareyounow.domain.usecase.signup.AuthenticateEmailCodeUseCase
-import com.whereareyounow.domain.usecase.signup.AuthenticateEmailUseCase
-import com.whereareyounow.domain.util.LogUtil
-import com.whereareyounow.domain.util.NetworkResult
-import com.whereareyounow.util.InputTextValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,27 +22,27 @@ class FindIdViewModel @Inject constructor(
 
 ) : AndroidViewModel(application) {
 
-//    private val _findIdScreenUIState = MutableStateFlow(FindIdScreenUIState())
-//    val findIdScreenUIState = _findIdScreenUIState.asStateFlow()
-//    val findIdScreenSideEffectFlow = MutableSharedFlow<FindIdScreenSideEffect>()
-//    private var startTimer: Job? = null
-//
-//    fun updateInputEmail(email: String) {
+    private val _findIdScreenUIState = MutableStateFlow(FindIdScreenUIState())
+    val findIdScreenUIState = _findIdScreenUIState.asStateFlow()
+    val findIdScreenSideEffectFlow = MutableSharedFlow<FindIdScreenSideEffect>()
+    private var startTimer: Job? = null
+
+    fun updateInputEmail(email: String) {
 //        _findIdScreenUIState.update {
 //            it.copy(
 //                inputEmail = email,
 //                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.Satisfied else EmailState.Unsatisfied
 //            )
 //        }
-//    }
-//
-//    fun updateInputVerificationCode(code: String) {
-//        _findIdScreenUIState.update {
-//            it.copy(inputVerificationCode = code)
-//        }
-//    }
-//
-//    fun sendEmailVerificationCode() {
+    }
+
+    fun updateInputVerificationCode(code: String) {
+        _findIdScreenUIState.update {
+            it.copy(inputVerificationCode = code)
+        }
+    }
+
+    fun sendEmailVerificationCode() {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            when (_findIdScreenUIState.value.inputEmailState) {
 //                EmailState.Empty -> { findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("이메일을 입력해주세요.")) }
@@ -97,9 +84,9 @@ class FindIdViewModel @Inject constructor(
 //                }
 //            }
 //        }
-//    }
-//
-//    fun findId() {
+    }
+
+    fun findId() {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            // 유효시간이 지나면 인증을 다시 받아야 한다.
 //            if (_findIdScreenUIState.value.emailVerificationLeftTime <= 0) {
@@ -142,5 +129,5 @@ class FindIdViewModel @Inject constructor(
 //                is NetworkResult.Exception -> { findIdScreenSideEffectFlow.emit(FindIdScreenSideEffect.Toast("오류가 발생했습니다.")) }
 //            }
 //        }
-//    }
+    }
 }

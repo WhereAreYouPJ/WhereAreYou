@@ -62,19 +62,19 @@ object RepositoryModule {
         return LocationRepositoryImpl(locationApi)
     }
 
-    @Provides
-    fun provideSearchLocationRepository(
-        dataSource: SearchLocationDataSource
-    ): SearchLocationRepository {
-        return SearchLocationRepositoryImpl(dataSource)
-    }
-
-    @Provides
-    fun provideSharedPreferencesRepository(
-        dataSource: SharedPreferencesDataSource
-    ): SharedPreferencesRepository {
-        return SharedPreferencesRepository(dataSource)
-    }
+//    @Provides
+//    fun provideSearchLocationRepository(
+//        dataSource: SearchLocationDataSource
+//    ): SearchLocationRepository {
+//        return SearchLocationRepositoryImpl(dataSource)
+//    }
+//
+//    @Provides
+//    fun provideSharedPreferencesRepository(
+//        dataSource: SharedPreferencesDataSource
+//    ): SharedPreferencesRepository {
+//        return SharedPreferencesRepository(dataSource)
+//    }
 
     @Provides
     fun provideFcmRepository(
