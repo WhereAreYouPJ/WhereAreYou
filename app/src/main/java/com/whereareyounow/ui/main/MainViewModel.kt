@@ -27,20 +27,20 @@ class MainViewModel @Inject constructor(
         ),
         NavigationItemContent(
             viewType = ViewType.Calendar,
-            iconSelected = R.drawable.ic_note_filled,
-            iconUnselected = R.drawable.ic_note_outlined,
-            label = "홈"
+            iconSelected = R.drawable.ic_schedule_filled,
+            iconUnselected = R.drawable.ic_schedule_outlined,
+            label = "일정"
         ),
         NavigationItemContent(
             viewType = ViewType.Friends,
             iconSelected = R.drawable.ic_users_filled,
-            iconUnselected = R.drawable.ic_users_outlined,
-            label = "친구목록"
+            iconUnselected = R.drawable.ic_feed_outlined,
+            label = "피드"
         ),
         NavigationItemContent(
             viewType = ViewType.MyPage,
-            iconSelected = R.drawable.ic_user_filled,
-            iconUnselected = R.drawable.ic_user_outlined,
+            iconSelected = R.drawable.ic_mypage_filled,
+            iconUnselected = R.drawable.ic_mypage_outlined,
             label = "마이페이지"
         )
     )

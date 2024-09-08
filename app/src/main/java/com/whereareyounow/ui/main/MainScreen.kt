@@ -1,6 +1,5 @@
 package com.whereareyounow.ui.main
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -40,15 +38,13 @@ import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.main.friend.FriendScreen
 import com.whereareyounow.ui.main.home.HomeScreen
-import com.whereareyounow.ui.main.mypage.MyPageScreen
+import com.whereareyounow.ui.main.mypage.myinfo.MyPageScreen
 import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.main.schedule.calendar.ScheduleScreen
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.getColor
-import com.whereareyounow.ui.theme.medium10pt
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.CustomPreview
-import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
@@ -64,7 +60,12 @@ fun MainScreen(
     moveToLocationFavorites : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
     moveToFeedSaved : () -> Unit,
+    moveToAccoument : () -> Unit,
+    moveToAsk : () -> Unit,
     moveToDetailProfileScreen: (String, String) -> Unit,
+    moveToBye: () -> Unit,
+
+
     viewModel: MainViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel()
 ) {
@@ -91,8 +92,9 @@ fun MainScreen(
         moveToFeedSaved = moveToFeedSaved,
 
         // 새로 추가 된 것 이 : { "공지사항" , "1:1 이용문의" }
-
-
+        moveToAccoument = moveToAccoument,
+        moveToAsk = moveToAsk,
+        moveToBye = moveToBye,
         moveToDetailProfileScreen = moveToDetailProfileScreen,
     )
 }
@@ -115,6 +117,9 @@ private fun MainScreen(
     moveToLocationFavorites : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
     moveToFeedSaved : () -> Unit,
+    moveToAccoument : () -> Unit,
+    moveToAsk : () -> Unit,
+    moveToBye : () -> Unit
 ) {
     CustomSurface {
         Scaffold(
@@ -185,7 +190,10 @@ private fun MainScreen(
                             moveToMyInfoScreen = moveToMyInfoScreen,
                             moveToLocationFavorites = moveToLocationFavorites,
                             moveToFeedBookmarks = moveToFeedBookmarks,
-                            moveToFeedSaved = moveToFeedSaved
+                            moveToFeedSaved = moveToFeedSaved,
+                            moveToAccoument = moveToAccoument,
+                            moveToAsk = moveToAsk,
+                            moveToBye = moveToBye
                         )
                     }
                 }
@@ -221,7 +229,7 @@ fun HomeNavigationBar(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Icon(
-                            modifier = Modifier.fillMaxHeight(0.5f),
+                            modifier = Modifier.size(36.dp),
                             painter = painterResource(
                                 id = when (viewType == navItem.viewType) {
                                     true -> navItem.iconSelected
@@ -229,6 +237,7 @@ fun HomeNavigationBar(
                                 }
                             ),
                             contentDescription = null,
+                            tint = Color.Unspecified
                         )
                         Text(
                             text = navItem.label,
@@ -239,11 +248,11 @@ fun HomeNavigationBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF2D2573),
-                    selectedTextColor = Color(0xFF2D2573),
+                    selectedIconColor = getColor().brandColor,
+                    selectedTextColor = Color(0xFF222222),
                     indicatorColor = Color(0x00FFFFFF),
-                    unselectedIconColor = Color(0xFF9F9EA7),
-                    unselectedTextColor = Color(0xFF9F9EA7)
+                    unselectedIconColor = getColor().brandColor,
+                    unselectedTextColor = Color(0xFF222222)
                 ),
                 interactionSource = NoRippleInteractionSource(),
                 alwaysShowLabel = true
