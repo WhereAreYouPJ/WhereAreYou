@@ -462,7 +462,7 @@ fun AddIconPopUp(
 fun GrayLine() {
     Box(
         modifier = Modifier
-            .background(Color.Gray)
+            .background(Color(0xFFDDDDDD))
             .fillMaxWidth()
             .height(1.dp)
     )

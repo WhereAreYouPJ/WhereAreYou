@@ -49,8 +49,16 @@ import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
 import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
+import com.whereareyounow.ui.main.mypage.AnnouncementScreen
+import com.whereareyounow.ui.main.mypage.AskScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.MyInfoScreen
+import com.whereareyounow.ui.main.mypage.byebye.ByeScreen1
+import com.whereareyounow.ui.main.mypage.byebye.ByeScreen2
+import com.whereareyounow.ui.main.mypage.byebye.ByeScreen3
+import com.whereareyounow.ui.main.mypage.byebye.ByeScreen4
+import com.whereareyounow.ui.main.mypage.byebye.ByeScreen5
+import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
@@ -69,6 +77,7 @@ import com.whereareyounow.ui.signin.SignInWithAccountScreen
 import com.whereareyounow.ui.signup.SignUpScreen
 import com.whereareyounow.ui.signup.SignUpSuccessScreen
 import com.whereareyounow.util.navigate
+import okhttp3.Route
 
 @Composable
 fun MainNavigation(
@@ -242,7 +251,9 @@ fun MainNavigation(
                 moveToLocationFavorites = {},
                 moveToFeedBookmarks = {},
                 moveToFeedSaved = {},
-
+                moveToAccoument = {navController.navigate(ROUTE.Announcement)},
+                moveToAsk = {navController.navigate(ROUTE.Ask)},
+                moveToBye = { navController.navigate(ROUTE.Bye1) }
             )
         }
 
@@ -414,10 +425,70 @@ fun MainNavigation(
         // 내 정보 화면
         composable(route = ROUTE_MY_INFO) {
             MyInfoScreen(
-                moveToMyPageScreen = { navController.popBackStack() }
+                moveToMyPageScreen = { navController.popBackStack() },
+                moveToEditMyInfo = { navController.navigate(ROUTE.EditMyInfo) }
             )
         }
 
+        // 내 정보 수정 화면
+        composable<ROUTE.EditMyInfo> {
+            EditMyInfoScreen(
+                moveToMyInfoScreen = { navController.popBackStack() },
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+        // 공지사항 화면
+        composable<ROUTE.Announcement> {
+            AnnouncementScreen(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+        // 1 : 1 이용문의
+        composable<ROUTE.Ask> {
+            AskScreen(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+        // 회원탈퇴1
+        composable<ROUTE.Bye1> {
+            ByeScreen1(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToByeScreen2 = { navController.navigate(ROUTE.Bye2) }
+            )
+        }
+        // 회원탈퇴2
+        composable<ROUTE.Bye2> {
+            ByeScreen2(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToByeScreen3 = { navController.navigate(ROUTE.Bye3) }
+
+            )
+        }
+        // 회원탈퇴3
+        composable<ROUTE.Bye3> {
+            ByeScreen3(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToByeScreen4 = { navController.navigate(ROUTE.Bye4) }
+
+            )
+        }
+        // 회원탈퇴4
+        composable<ROUTE.Bye4> {
+            ByeScreen4(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToByeScreen5 = { navController.navigate(ROUTE.Bye5) }
+
+            )
+        }
+        // 회원탈퇴5
+        composable<ROUTE.Bye5> {
+            ByeScreen5(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
 
         
     }

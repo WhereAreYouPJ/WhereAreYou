@@ -218,13 +218,18 @@ private fun HomeScreen(
 
                 // 0 -> pass
                 else -> {
-                    SeventhScreen(testSeventhData)
+//                    Column(
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Text("gkgk")
+//                    }
+//                    SeventhScreen(testSeventhData)
                 }
 
             }
         },
         modifier = Modifier,
-        sheetPeekHeight = 115.dp,
+        sheetPeekHeight = 45.dp,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetDragHandle = {
             Column {
@@ -766,9 +771,10 @@ fun SixthText(
 fun SeventhScreen(
     sevenDataModel: List<HomeViewModel.SevenDataModel>,
 ) {
+
     LazyColumn(
         modifier = Modifier
-            .height(442.dp)
+            .wrapContentHeight()
             .padding(start = 20.dp, end = 20.dp)
     ) {
         item {

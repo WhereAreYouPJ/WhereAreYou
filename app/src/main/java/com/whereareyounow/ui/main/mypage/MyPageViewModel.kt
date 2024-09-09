@@ -23,7 +23,7 @@ class MyPageViewModel @Inject constructor(
 
     private val _imageUri = MutableStateFlow<String?>(null)
     val imageUri: StateFlow<String?> = _imageUri
-    private val _name = MutableStateFlow("민혁쓰")
+    private val _name = MutableStateFlow("유민혁")
     val name: StateFlow<String> = _name
     private val _email = MutableStateFlow("")
     val email: StateFlow<String> = _email
