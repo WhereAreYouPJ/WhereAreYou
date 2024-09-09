@@ -35,4 +35,24 @@ const val ROUTE_MY_INFO = "ROUTE_MY_INFO"
 sealed class ROUTE {
     @Serializable
     data object Splash
+    @Serializable
+    data object Announcement
+    @Serializable
+    data object Ask
+
+    // 회원 탈퇴
+    @Serializable
+    data object Bye1
+    @Serializable
+    data object Bye2
+    @Serializable
+    data object Bye3
+    @Serializable
+    data object Bye4
+    @Serializable
+    data object Bye5
+
+    // 내 정보 수정
+    @Serializable
+    data object EditMyInfo
 }

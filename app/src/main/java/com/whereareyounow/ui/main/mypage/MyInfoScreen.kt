@@ -1,11 +1,13 @@
 package com.whereareyounow.ui.main.mypage
 
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -44,28 +47,27 @@ import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
 fun MyInfoScreen(
-    moveToMyPageScreen: () -> Unit
+    moveToMyPageScreen: () -> Unit,
+    moveToEditMyInfo : () -> Unit
 ) {
     val chaneValuePermissionState = remember {
         mutableStateOf(false)
     }
-    val popupState = remember { PopupState(true , PopupPosition.BottomLeft) }
-//    val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
+    val popupState = remember { PopupState(false , PopupPosition.BottomLeft) }
 
     MyInfoScreen(
         chaneValuePermissionState = chaneValuePermissionState,
         popupState = popupState,
-        moveToMyPageScreen = moveToMyPageScreen
+        moveToMyPageScreen = moveToMyPageScreen,
+        moveToEditMyInfo = moveToEditMyInfo
     )
-
-
-
 
 }
 
@@ -79,7 +81,7 @@ private fun MyInfoScreen(
     chaneValuePermissionState: MutableState<Boolean>,
     popupState : PopupState,
     moveToMyPageScreen: () -> Unit,
-
+    moveToEditMyInfo : () -> Unit
 ) {
     val asdfViewModel : asdf = hiltViewModel()
 
@@ -88,7 +90,7 @@ private fun MyInfoScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = TOP_BAR_HEIGHT.dp),
-        verticalArrangement = Arrangement.Top,
+//        verticalArrangement = Arrangement.Top,
 
         ) {
         OneTextTwoIconTobBar(
@@ -96,120 +98,115 @@ private fun MyInfoScreen(
             firstIconClicked = moveToMyPageScreen,
             firstIcon = R.drawable.ic_back,
             secondIconClicked = { popupState.isVisible = true },
-            secondIcon = R.drawable.ic_back
+            secondIcon = R.drawable.ic_plusbrandcolor
         ) {
             ModifierIconPopUp(
                 popupState = popupState,
-                chaneValuePermissionState = chaneValuePermissionState
+                chaneValuePermissionState = chaneValuePermissionState,
+                moveToEditMyInfo = moveToEditMyInfo
             )
         }
+        Spacer(modifier = Modifier.height(34.dp))
         InputData(
             title = "이름",
-            content = "이름",
-            myId = "이름",
-            myEmail = "이름",
-            chaneValuePermissionState = chaneValuePermissionState.value
+            content = "유민혁"
         )
-
-
-
+        Spacer(modifier = Modifier.height(10.dp))
+        InputData(
+            title = "이름",
+            content = "유민혁"
+        )
     }
 
-
-//    CustomTopBar(
-//        title = "내 정보 관리",
-//        onBackButtonClicked = { moveToMyPageScreen() }
-//    )
 }
 
 @Composable
 fun InputData(
     title: String,
-    content: String,
-//    content: MutableState<String>,
-    myId: String,
-    myEmail: String,
-    chaneValuePermissionState : Boolean
+    content : String
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(start = 15.dp , end = 15.dp)
     ) {
         Text(text = title, style = medium12pt)
+        Spacer(modifier = Modifier.height(2.dp))
+        OutlinedTextField(
+            value = content,
+            onValueChange = {},
+            modifier = Modifier
+                .height(52.dp)
+                .fillMaxWidth()
+                .clip(
+                    RoundedCornerShape(4.dp)
+                )
+        )
+
 //        CanChangeOutlinedTextField(
-//            value = content.value,
+//            value = content,
 //            onValueChange = {
-//                content.value = it
+////                content.value = itf
 //            },
 //            modifier = Modifier.width(100.dp),
 //            readOnly = chaneValuePermissionState
-//            )
-
-        CanChangeOutlinedTextField(
-            value = content,
-            onValueChange = {
-//                content.value = it
-            },
-            modifier = Modifier.width(100.dp),
-            readOnly = chaneValuePermissionState
-        )
+//        )
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CanChangeOutlinedTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    prefix: @Composable (() -> Unit)? = null,
-    suffix: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    minLines: Int = 1,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = OutlinedTextFieldDefaults.shape,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
-) {
-
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = textStyle,
-        label = label,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        prefix = prefix,
-        suffix = suffix,
-        supportingText = supportingText,
-        isError = isError,
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
-        interactionSource = interactionSource,
-        shape = shape,
-        colors = colors
-    )
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun CanChangeOutlinedTextField(
+//    value: String,
+//    onValueChange: (String) -> Unit,
+//    modifier: Modifier = Modifier,
+//    enabled: Boolean = true,
+//    readOnly: Boolean,
+//    textStyle: TextStyle = LocalTextStyle.current,
+//    label: @Composable (() -> Unit)? = null,
+//    placeholder: @Composable (() -> Unit)? = null,
+//    leadingIcon: @Composable (() -> Unit)? = null,
+//    trailingIcon: @Composable (() -> Unit)? = null,
+//    prefix: @Composable (() -> Unit)? = null,
+//    suffix: @Composable (() -> Unit)? = null,
+//    supportingText: @Composable (() -> Unit)? = null,
+//    isError: Boolean = false,
+//    visualTransformation: VisualTransformation = VisualTransformation.None,
+//    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+//    keyboardActions: KeyboardActions = KeyboardActions.Default,
+//    singleLine: Boolean = false,
+//    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+//    minLines: Int = 1,
+//    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+//    shape: Shape = OutlinedTextFieldDefaults.shape,
+//    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
+//) {
+//
+//    OutlinedTextField(
+//        value = value,
+//        onValueChange = onValueChange,
+//        modifier = modifier,
+//        enabled = enabled,
+//        readOnly = readOnly,
+//        textStyle = textStyle,
+//        label = label,
+//        placeholder = placeholder,
+//        leadingIcon = leadingIcon,
+//        trailingIcon = trailingIcon,
+//        prefix = prefix,
+//        suffix = suffix,
+//        supportingText = supportingText,
+//        isError = isError,
+//        visualTransformation = visualTransformation,
+//        keyboardOptions = keyboardOptions,
+//        keyboardActions = keyboardActions,
+//        singleLine = singleLine,
+//        maxLines = maxLines,
+//        minLines = minLines,
+//        interactionSource = interactionSource,
+//        shape = shape,
+//        colors = colors
+//    )
+//}
 
 
 
@@ -218,7 +215,7 @@ fun CanChangeOutlinedTextField(
 fun ModifierIconPopUp(
     popupState: PopupState,
     chaneValuePermissionState : MutableState<Boolean>,
-
+    moveToEditMyInfo : () -> Unit
 ) {
     val density = LocalDensity.current.density
     Box(
@@ -240,7 +237,13 @@ fun ModifierIconPopUp(
                         .background(color = Color(0xFF7262A8))
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickableNoEffect {
+                                popupState.isVisible = false
+                                chaneValuePermissionState.value = false
+                                moveToEditMyInfo()
+                            },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
@@ -250,11 +253,7 @@ fun ModifierIconPopUp(
                                     start = 14.dp,
                                     top = 8.dp,
                                     bottom = 6.dp
-                                )
-                                .clickable {
-                                    popupState.isVisible = false
-                                    chaneValuePermissionState.value = false
-                                },
+                                ),
                             text = "수정하기",
                             style = medium14pt,
                             color = Color.White
