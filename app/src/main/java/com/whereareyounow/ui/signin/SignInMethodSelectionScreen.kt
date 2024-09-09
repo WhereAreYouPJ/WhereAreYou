@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,9 +71,22 @@ private fun SignInMethodSelectionScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            LogoContent()
+            Image(
+                modifier = Modifier.width(107.dp),
+                painter = painterResource(R.drawable.img_logo),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(getColor().brandColor)
+            )
 
-            Spacer(Modifier.height(50.dp))
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "위치기반 일정관리 플랫폼",
+                color = Color(0xFF444444),
+                style = medium14pt
+            )
+
+            Spacer(Modifier.height(40.dp))
 
             KakaoLoginButton()
 
@@ -99,26 +113,6 @@ private fun SignInMethodSelectionScreen(
 }
 
 @Composable
-private fun LogoContent() {
-    Text(
-        modifier = Modifier,
-        text = "지금 어디?",
-        fontSize = 36.sp,
-        fontFamily = ttangs,
-        fontWeight = FontWeight.Bold,
-        color = Color(0xFF6236E9),
-    )
-
-    Spacer(Modifier.height(4.dp))
-
-    Text(
-        text = "위치기반 일정관리 플랫폼",
-        color = Color(0xFF444444),
-        style = medium14pt
-    )
-}
-
-@Composable
 private fun KakaoLoginButton() {
     Box(
         modifier = Modifier
@@ -142,38 +136,6 @@ private fun KakaoLoginButton() {
             contentDescription = null
         )
     }
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(44.dp)
-//            .background(
-//                color = Color(0xFFF9E200),
-//                shape = RoundedCornerShape(6.dp)
-//            ),
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.Center
-//    ) {
-//        Image(
-//            modifier = Modifier
-//                .width(19.dp)
-//                .height(18.dp),
-//            painter = painterResource(id = R.drawable.ic_kakao),
-//            contentDescription = null,
-//            contentScale = ContentScale.Fit
-//        )
-//
-//        Spacer(Modifier.width(30.dp))
-//
-//        Text(
-//            text = "카카오로 3초 만에 시작하기",
-//            fontFamily = notoSanskr,
-//            color = Color(0xFF222222),
-//            fontSize = 14.sp,
-//            fontWeight = FontWeight.Bold,
-//        )
-//
-//        Spacer(Modifier.width(49.dp))
-//    }
 }
 
 @Composable
@@ -195,7 +157,7 @@ private fun EmailLoginButton(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "계정 로그인",
+            text = "이메일 로그인",
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             color = getColor().brandText

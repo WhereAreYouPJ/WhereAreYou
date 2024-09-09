@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,15 +31,15 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.whereareyounow.data.signup.EmailState
-import com.whereareyounow.data.signup.EmailVerificationProgressState
-import com.whereareyounow.data.signup.PasswordCheckingState
-import com.whereareyounow.data.signup.PasswordState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.whereareyounow.data.signup.SignUpEmailButtonState
+import com.whereareyounow.data.signup.SignUpEmailState
+import com.whereareyounow.data.signup.SignUpPasswordCheckState
+import com.whereareyounow.data.signup.SignUpPasswordState
 import com.whereareyounow.data.signup.SignUpScreenSideEffect
 import com.whereareyounow.data.signup.SignUpScreenUIState
-import com.whereareyounow.data.signup.UserIdState
-import com.whereareyounow.data.signup.UserNameState
-import com.whereareyounow.data.signup.VerificationCodeState
+import com.whereareyounow.data.signup.SignUpUserNameState
+import com.whereareyounow.data.signup.SignUpVerificationCodeState
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
@@ -53,7 +52,6 @@ import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
 
@@ -63,14 +61,13 @@ fun SignUpScreen(
     moveToSignUpSuccessScreen: () -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val signUpScreenUIState = viewModel.signUpScreenUIState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     val signUpScreenSideEffectFlow = viewModel.signUpScreenSideEffectFlow
     SignUpScreen(
-        signUpScreenUIState = signUpScreenUIState,
+        uiState = uiState,
         signUpScreenSideEffectFlow = signUpScreenSideEffectFlow,
+        sendEmailCode = viewModel::sendEmailCode,
         updateInputUserName = viewModel::updateInputUserName,
-        updateInputUserId = viewModel::updateInputUserId,
-        checkIdDuplicate = viewModel::checkIdDuplicate,
         updateInputPassword = viewModel::updateInputPassword,
         updateInputPasswordForChecking = viewModel::updateInputPasswordForChecking,
         updateInputEmail = viewModel::updateInputEmail,
@@ -86,11 +83,10 @@ fun SignUpScreen(
 
 @Composable
 private fun SignUpScreen(
-    signUpScreenUIState: SignUpScreenUIState,
+    uiState: SignUpScreenUIState,
     signUpScreenSideEffectFlow: SharedFlow<SignUpScreenSideEffect>,
+    sendEmailCode: () -> Unit,
     updateInputUserName: (String) -> Unit,
-    updateInputUserId: (String) -> Unit,
-    checkIdDuplicate: () -> Unit,
     updateInputPassword: (String) -> Unit,
     updateInputPasswordForChecking: (String) -> Unit,
     updateInputEmail: (String) -> Unit,
@@ -154,7 +150,7 @@ private fun SignUpScreen(
 
                     InstructionContent(text = "아래 내용을 작성해주세요")
 
-                    Spacer(Modifier.height(40.dp))
+                    Spacer(Modifier.height(30.dp))
 
                     Column(
                         modifier = Modifier.padding(start = 15.dp, end = 15.dp)
@@ -163,79 +159,16 @@ private fun SignUpScreen(
                         Title(text = "이름")
 
                         UserNameTextField(
-                            inputUserName = signUpScreenUIState.inputUserName,
+                            inputUserName = uiState.inputUserName,
                             updateInputUserName = updateInputUserName,
-                            inputUserNameState = signUpScreenUIState.inputUserNameState,
-                            guideLine = when (signUpScreenUIState.inputUserNameState) {
-                                UserNameState.Unsatisfied -> "이름은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요."
-                                else -> ""
-                            }
-                        )
-
-                        Spacer(Modifier.height(20.dp))
-
-                        Title(text = "아이디")
-
-                        Row(
-                            modifier = Modifier
-                                .animateContentSize { _, _ -> }
-                                .height(IntrinsicSize.Min)
-                                .fillMaxWidth()
-                        ) {
-                            // 아이디 입력창
-                            Box(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                UserIdTextField(
-                                    inputUserId = signUpScreenUIState.inputUserId,
-                                    updateInputUserId = updateInputUserId,
-                                    inputUserIdState = signUpScreenUIState.inputUserIdState,
-                                    guideLine = when (signUpScreenUIState.inputUserIdState) {
-                                        UserIdState.Unsatisfied -> "영문 소문자와 숫자만 사용하여, 영문 소문자로 시작하는 5~12자의 아이디를 입력해주세요."
-                                        UserIdState.Duplicated -> "이미 존재하는 아이디입니다."
-                                        else -> ""
-                                    }
-                                )
-                            }
-
-                            Spacer(Modifier.width(4.dp))
-
-                            // 중복확인 버튼
-                            CheckingButton(
-                                text = "중복확인",
-                                onClick = checkIdDuplicate
-                            )
-                        }
-
-                        Spacer(Modifier.height(20.dp))
-
-                        Title(text = "비밀번호")
-
-                        // 비밀번호 입력창
-                        PasswordTextField(
-                            inputPassword = signUpScreenUIState.inputPassword,
-                            updateInputPassword = updateInputPassword,
-                            inputPasswordState = signUpScreenUIState.inputPasswordState,
-                            guideLine = when (signUpScreenUIState.inputPasswordState) {
-                                PasswordState.Unsatisfied -> "영문 대문자와 소문자, 숫자를 적어도 하나씩 사용하여, 영문으로 시작하는 6~20자의 비밀번호를 입력해주세요."
+                            inputUserNameState = uiState.inputUserNameState,
+                            guideLine = when (uiState.inputUserNameState) {
+                                SignUpUserNameState.Invalid -> "이름은 2~4자의 한글, 영문 대/소문자 조합으로 입력해주세요."
                                 else -> ""
                             }
                         )
 
                         Spacer(Modifier.height(10.dp))
-
-                        // 비밀번호 확인
-                        PasswordForCheckingTextField(
-                            inputPassword = signUpScreenUIState.inputPasswordForChecking,
-                            updateInputPassword = updateInputPasswordForChecking,
-                            inputPasswordState = signUpScreenUIState.inputPasswordForCheckingState,
-                            guideLine = when (signUpScreenUIState.inputPasswordForCheckingState) {
-                                PasswordCheckingState.Unsatisfied -> "비밀번호가 일치하지 않습니다."
-                                else -> ""
-                            }
-                        )
-
-                        Spacer(Modifier.height(20.dp))
 
                         Title(text = "이메일")
 
@@ -248,18 +181,16 @@ private fun SignUpScreen(
                             // 이메일 입력창
                             Box(modifier = Modifier.weight(1f)) {
                                 EmailTextField(
-                                    inputEmail = signUpScreenUIState.inputEmail,
+                                    inputEmail = uiState.inputEmail,
                                     updateInputEmail = updateInputEmail,
-                                    inputEmailState = signUpScreenUIState.inputEmailState,
-                                    guideLine = when (signUpScreenUIState.inputEmailState) {
-                                        EmailState.Unsatisfied -> "이메일 형식에 알맞지 않습니다."
-                                        EmailState.Duplicated -> "이미 존재하는 이메일입니다."
+                                    inputEmailState = uiState.inputEmailState,
+                                    guideLine = when (uiState.inputEmailState) {
+                                        SignUpEmailState.Invalid -> "이메일 형식에 알맞지 않습니다."
                                         else -> ""
                                     },
-                                    onSuccessText = when (signUpScreenUIState.inputEmailState) {
-                                        EmailState.Unique -> {
-                                            if (signUpScreenUIState.emailVerificationProgressState == EmailVerificationProgressState.DuplicateChecked) "이메일 인증을 진행해주세요."
-                                            else "코드가 발송되었습니다.\n인증 코드를 하단에 입력해주세요."
+                                    onSuccessText = when (uiState.inputEmailState) {
+                                        SignUpEmailState.Valid -> {
+                                            "인증코드가 전송되었습니다"
                                         }
                                         else -> ""
                                     }
@@ -270,23 +201,19 @@ private fun SignUpScreen(
 
                             // 중복확인, 인증요청, 재전송 버튼
                             CheckingButton(
-                                text = when (signUpScreenUIState.emailVerificationProgressState) {
-                                    EmailVerificationProgressState.DuplicateUnchecked -> "중복확인"
-                                    EmailVerificationProgressState.DuplicateChecked -> "인증요청"
-                                    EmailVerificationProgressState.VerificationRequested -> "재전송"
+                                text = when (uiState.requestButtonState) {
+                                    SignUpEmailButtonState.Request -> "인증요청"
+                                    SignUpEmailButtonState.RequestDone -> "인증요청 완료"
                                 }
                             ) {
-                                when (signUpScreenUIState.emailVerificationProgressState) {
-                                    EmailVerificationProgressState.DuplicateUnchecked -> checkEmailDuplicate()
-                                    else -> verifyEmail()
-                                }
+                                sendEmailCode()
                             }
                         }
 
                         Spacer(Modifier.height(10.dp))
 
                         // 이메일 인증코드 확인
-                        if (signUpScreenUIState.emailVerificationProgressState == EmailVerificationProgressState.VerificationRequested) {
+                        if (uiState.requestButtonState == SignUpEmailButtonState.RequestDone) {
                             Row(
                                 modifier = Modifier
                                     .height(IntrinsicSize.Min)
@@ -295,10 +222,10 @@ private fun SignUpScreen(
                                 // 이메일 입력창
                                 Box(modifier = Modifier.weight(1f)) {
                                     EmailVerificationCodeTextField(
-                                        inputVerificationCode = signUpScreenUIState.inputVerificationCode,
+                                        inputVerificationCode = uiState.inputVerificationCode,
                                         updateInputVerificationCode = updateInputVerificationCode,
-                                        inputVerificationCodeState = signUpScreenUIState.inputVerificationCodeState,
-                                        leftTime = signUpScreenUIState.emailVerificationCodeLeftTime
+                                        inputVerificationCodeState = uiState.inputVerificationCodeState,
+                                        leftTime = uiState.emailCodeLeftTime
                                     )
                                 }
                                 Spacer(Modifier.width(10.dp))
@@ -308,6 +235,36 @@ private fun SignUpScreen(
                                 }
                             }
                         }
+
+                        Title(text = "비밀번호")
+
+                        // 비밀번호 입력창
+                        PasswordTextField(
+                            inputPassword = uiState.inputPassword,
+                            updateInputPassword = updateInputPassword,
+                            inputPasswordState = uiState.inputPasswordState,
+                            guideLine = when (uiState.inputPasswordState) {
+                                SignUpPasswordState.Invalid -> "영문 대문자와 소문자, 숫자를 적어도 하나씩 사용하여, 영문으로 시작하는 6~20자의 비밀번호를 입력해주세요."
+                                else -> ""
+                            }
+                        )
+
+                        Spacer(Modifier.height(10.dp))
+
+                        // 비밀번호 확인
+                        PasswordForCheckingTextField(
+                            inputPassword = uiState.inputPasswordCheck,
+                            updateInputPassword = updateInputPasswordForChecking,
+                            inputPasswordState = uiState.inputPasswordCheckState,
+                            guideLine = when (uiState.inputPasswordCheckState) {
+                                SignUpPasswordCheckState.Invalid -> "비밀번호가 일치하지 않습니다."
+                                else -> ""
+                            }
+                        )
+
+                        Spacer(Modifier.height(20.dp))
+
+
 
                         Spacer(Modifier.height(40.dp))
                     }
@@ -348,19 +305,18 @@ private fun Title(
     text: String
 ) {
     Text(
-        modifier = Modifier.padding(start = 6.dp),
+        modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
         text = text,
         color = Color(0xFF333333),
         style = medium12pt
     )
-    Spacer(Modifier.height(6.dp))
 }
 
 @Composable
 private fun UserNameTextField(
     inputUserName: String,
     updateInputUserName: (String) -> Unit,
-    inputUserNameState: UserNameState,
+    inputUserNameState: SignUpUserNameState,
     guideLine: String
 ) {
     CustomTextField(
@@ -370,32 +326,9 @@ private fun UserNameTextField(
         warningText = guideLine,
         onSuccessText = "사용가능한 이름입니다.",
         textFieldState = when (inputUserNameState) {
-            UserNameState.Empty -> CustomTextFieldState.Idle
-            UserNameState.Satisfied -> CustomTextFieldState.Satisfied
-            UserNameState.Unsatisfied -> CustomTextFieldState.Unsatisfied
-        }
-    )
-}
-
-@Composable
-private fun UserIdTextField(
-    inputUserId: String,
-    updateInputUserId: (String) -> Unit,
-    inputUserIdState: UserIdState,
-    guideLine: String
-) {
-    CustomTextField(
-        hint = "아이디",
-        inputText = inputUserId,
-        onValueChange = updateInputUserId,
-        warningText = guideLine,
-        onSuccessText = "사용 가능한 아이디입니다.",
-        textFieldState = when (inputUserIdState) {
-            UserIdState.Empty -> CustomTextFieldState.Idle
-            UserIdState.Satisfied -> CustomTextFieldState.Idle
-            UserIdState.Unsatisfied -> CustomTextFieldState.Unsatisfied
-            UserIdState.Duplicated -> CustomTextFieldState.Unsatisfied
-            UserIdState.Unique -> CustomTextFieldState.Satisfied
+            SignUpUserNameState.Idle -> CustomTextFieldState.Idle
+            SignUpUserNameState.Valid -> CustomTextFieldState.Satisfied
+            SignUpUserNameState.Invalid -> CustomTextFieldState.Unsatisfied
         }
     )
 }
@@ -404,7 +337,7 @@ private fun UserIdTextField(
 private fun PasswordTextField(
     inputPassword: String,
     updateInputPassword: (String) -> Unit,
-    inputPasswordState: PasswordState,
+    inputPasswordState: SignUpPasswordState,
     guideLine: String
 ) {
     CustomTextField(
@@ -414,9 +347,9 @@ private fun PasswordTextField(
         warningText = guideLine,
         onSuccessText = "사용 가능한 비밀번호입니다.",
         textFieldState = when (inputPasswordState) {
-            PasswordState.Empty -> CustomTextFieldState.Idle
-            PasswordState.Satisfied -> CustomTextFieldState.Satisfied
-            PasswordState.Unsatisfied -> CustomTextFieldState.Unsatisfied
+            SignUpPasswordState.Idle -> CustomTextFieldState.Idle
+            SignUpPasswordState.Valid -> CustomTextFieldState.Satisfied
+            SignUpPasswordState.Invalid -> CustomTextFieldState.Unsatisfied
         },
         isPassword = true
     )
@@ -426,7 +359,7 @@ private fun PasswordTextField(
 private fun PasswordForCheckingTextField(
     inputPassword: String,
     updateInputPassword: (String) -> Unit,
-    inputPasswordState: PasswordCheckingState,
+    inputPasswordState: SignUpPasswordCheckState,
     guideLine: String
 ) {
     CustomTextField(
@@ -436,9 +369,9 @@ private fun PasswordForCheckingTextField(
         warningText = guideLine,
         onSuccessText = "비밀번호가 일치합니다.",
         textFieldState = when (inputPasswordState) {
-            PasswordCheckingState.Empty -> CustomTextFieldState.Idle
-            PasswordCheckingState.Satisfied -> CustomTextFieldState.Satisfied
-            PasswordCheckingState.Unsatisfied -> CustomTextFieldState.Unsatisfied
+            SignUpPasswordCheckState.Idle -> CustomTextFieldState.Idle
+            SignUpPasswordCheckState.Valid -> CustomTextFieldState.Satisfied
+            SignUpPasswordCheckState.Invalid -> CustomTextFieldState.Unsatisfied
         },
         isPassword = true
     )
@@ -448,7 +381,7 @@ private fun PasswordForCheckingTextField(
 private fun EmailTextField(
     inputEmail: String,
     updateInputEmail: (String) -> Unit,
-    inputEmailState: EmailState,
+    inputEmailState: SignUpEmailState,
     guideLine: String,
     onSuccessText: String,
 ) {
@@ -459,11 +392,9 @@ private fun EmailTextField(
         warningText = guideLine,
         onSuccessText = onSuccessText,
         textFieldState = when (inputEmailState) {
-            EmailState.Empty -> CustomTextFieldState.Idle
-            EmailState.Satisfied -> CustomTextFieldState.Idle
-            EmailState.Unsatisfied -> CustomTextFieldState.Unsatisfied
-            EmailState.Duplicated -> CustomTextFieldState.Unsatisfied
-            EmailState.Unique -> CustomTextFieldState.Satisfied
+            SignUpEmailState.Idle -> CustomTextFieldState.Idle
+            SignUpEmailState.Valid -> CustomTextFieldState.Idle
+            SignUpEmailState.Invalid -> CustomTextFieldState.Unsatisfied
         }
     )
 }
@@ -472,7 +403,7 @@ private fun EmailTextField(
 private fun EmailVerificationCodeTextField(
     inputVerificationCode: String,
     updateInputVerificationCode: (String) -> Unit,
-    inputVerificationCodeState: VerificationCodeState,
+    inputVerificationCodeState: SignUpVerificationCodeState,
     leftTime: Int
 ) {
     CustomTextFieldWithTimer(
@@ -482,9 +413,9 @@ private fun EmailVerificationCodeTextField(
         warningText = "인증코드가 일치하지 않습니다.",
         onSuccessText = "인증코드가 일치합니다.",
         textFieldState = when (inputVerificationCodeState) {
-            VerificationCodeState.Empty -> CustomTextFieldState.Idle
-            VerificationCodeState.Unsatisfied -> CustomTextFieldState.Unsatisfied
-            VerificationCodeState.Satisfied -> CustomTextFieldState.Satisfied
+            SignUpVerificationCodeState.Idle -> CustomTextFieldState.Idle
+            SignUpVerificationCodeState.Invalid -> CustomTextFieldState.Unsatisfied
+            SignUpVerificationCodeState.Valid -> CustomTextFieldState.Satisfied
         },
         leftTime = leftTime
     )
@@ -535,23 +466,23 @@ fun CheckingButton(
 @Composable
 private fun SignUpScreenPreview1() {
     WhereAreYouTheme {
-        SignUpScreen(
-            signUpScreenUIState = SignUpScreenUIState(),
-            signUpScreenSideEffectFlow = MutableSharedFlow(),
-            updateInputUserName = {  },
-            updateInputUserId = {},
-            checkIdDuplicate = {},
-            updateInputPassword = {},
-            updateInputPasswordForChecking = {},
-            updateInputEmail = {},
-            verifyEmail = {},
-            checkEmailDuplicate = {},
-            updateInputVerificationCode = {},
-            verifyEmailCode = {},
-            signUp = {},
-            moveToBackScreen = {},
-            moveToSignUpSuccessScreen = {},
-        )
+//        SignUpScreen(
+//            uiState = uiState(),
+//            signUpScreenSideEffectFlow = MutableSharedFlow(),
+//            updateInputUserName = {  },
+//            updateInputUserId = {},
+//            checkIdDuplicate = {},
+//            updateInputPassword = {},
+//            updateInputPasswordForChecking = {},
+//            updateInputEmail = {},
+//            verifyEmail = {},
+//            checkEmailDuplicate = {},
+//            updateInputVerificationCode = {},
+//            verifyEmailCode = {},
+//            signUp = {},
+//            moveToBackScreen = {},
+//            moveToSignUpSuccessScreen = {},
+//        )
     }
 }
 
@@ -559,23 +490,23 @@ private fun SignUpScreenPreview1() {
 @Composable
 private fun SignUpScreenPreview2() {
     WhereAreYouTheme {
-        SignUpScreen(
-            signUpScreenUIState = SignUpScreenUIState(),
-            signUpScreenSideEffectFlow = MutableSharedFlow(),
-            updateInputUserName = {},
-            updateInputUserId = {},
-            checkIdDuplicate = {},
-            updateInputPassword = {},
-            updateInputPasswordForChecking = {},
-            updateInputEmail = {},
-            verifyEmail = {},
-            checkEmailDuplicate = {},
-            updateInputVerificationCode = {},
-            verifyEmailCode = {},
-            signUp = {},
-            moveToBackScreen = {},
-            moveToSignUpSuccessScreen = {},
-        )
+//        SignUpScreen(
+//            uiState = uiState(),
+//            signUpScreenSideEffectFlow = MutableSharedFlow(),
+//            updateInputUserName = {},
+//            updateInputUserId = {},
+//            checkIdDuplicate = {},
+//            updateInputPassword = {},
+//            updateInputPasswordForChecking = {},
+//            updateInputEmail = {},
+//            verifyEmail = {},
+//            checkEmailDuplicate = {},
+//            updateInputVerificationCode = {},
+//            verifyEmailCode = {},
+//            signUp = {},
+//            moveToBackScreen = {},
+//            moveToSignUpSuccessScreen = {},
+//        )
     }
 }
 

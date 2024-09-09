@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +40,7 @@ import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.bold22pt
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.CustomPreview
 
 @Composable
@@ -49,9 +49,9 @@ fun PolicyAgreeScreen(
     moveToSignUpScreen: () -> Unit,
     moveToTermsOfServiceDetailsScreen: () -> Unit,
     moveToPrivacyPolicyDetailsScreen: () -> Unit,
+    moveToLocationPolicyDetailScreen: () -> Unit
 ) {
-    val isTermsOfServiceAgreed = rememberSaveable { mutableStateOf(false) }
-    val isPrivacyPolicyAgreed = rememberSaveable { mutableStateOf(false) }
+    val isAllPolicyAgreed = remember { mutableStateOf(false) }
     CustomSurface {
         Column {
             TermsOfServiceScreenTopBar(onBackButtonClicked = moveToBackScreen)
@@ -67,15 +67,14 @@ fun PolicyAgreeScreen(
             Spacer(Modifier.weight(1f))
 
             AgreementSelectionContent(
-                isTermsOfServiceAgreed = isTermsOfServiceAgreed,
-                isPrivacyPolicyAgreed = isPrivacyPolicyAgreed,
+                isTermsOfServiceAgreed = isAllPolicyAgreed,
                 moveToTermsOfServiceDetailsScreen = moveToTermsOfServiceDetailsScreen,
-                moveToPrivacyPolicyDetailsScreen = moveToPrivacyPolicyDetailsScreen
+                moveToPrivacyPolicyDetailsScreen = moveToPrivacyPolicyDetailsScreen,
+                moveToLocationPolicyDetailScreen = moveToLocationPolicyDetailScreen
             )
 
             AgreeAndSignUpButton(
-                isTermsOfServiceAgreed = isTermsOfServiceAgreed,
-                isPrivacyPolicyAgreed = isPrivacyPolicyAgreed,
+                isAllPolicyAgreed = isAllPolicyAgreed,
                 moveToSignUpScreen = moveToSignUpScreen
             )
 
@@ -140,9 +139,9 @@ fun InstructionContent(
 @Composable
 private fun AgreementSelectionContent(
     isTermsOfServiceAgreed: MutableState<Boolean>,
-    isPrivacyPolicyAgreed: MutableState<Boolean>,
     moveToTermsOfServiceDetailsScreen: () -> Unit,
-    moveToPrivacyPolicyDetailsScreen: () -> Unit
+    moveToPrivacyPolicyDetailsScreen: () -> Unit,
+    moveToLocationPolicyDetailScreen: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -151,8 +150,8 @@ private fun AgreementSelectionContent(
             .clip(GenericShape { size, _ ->
                 moveTo(0f, -100f)
                 lineTo(size.width, -100f)
-                lineTo(size.width, 300f)
-                lineTo(0f, 300f)
+                lineTo(size.width, 700f)
+                lineTo(0f, 700f)
             })
             .shadow(
                 elevation = 30.dp,
@@ -162,38 +161,41 @@ private fun AgreementSelectionContent(
                 color = Color(0xFFFFFFFF),
                 shape = RoundedCornerShape(24.dp)
             )
-            .padding(start = 15.dp, end = 15.dp)
+            .padding(start = 22.dp, end = 22.dp)
     ) {
         Spacer(Modifier.height(26.dp))
 
         // 모두 동의하기
         AllAgreementSelectionContent(
-            isTermsOfServiceAgreed = isTermsOfServiceAgreed,
-            isPrivacyPolicyAgreed = isPrivacyPolicyAgreed
+            isAllPolicyAgreed = isTermsOfServiceAgreed,
         )
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(16.dp))
 
         // 서비스 이용약관
         TermsOfServiceAgreementSelectionContent(
-            isTermsOfServiceAgreed = isTermsOfServiceAgreed,
             moveToTermsOfServiceDetailsScreen = moveToTermsOfServiceDetailsScreen
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(2.dp))
 
         // 개인정보 처리방침
         PrivacyPolicyAgreementSelectionContent(
-            isPrivacyPolicyAgreed = isPrivacyPolicyAgreed,
             moveToPrivacyPolicyDetailsScreen = moveToPrivacyPolicyDetailsScreen
+        )
+
+        Spacer(Modifier.height(2.dp))
+
+        // 위치기반 서비스 이용약관
+        LocationPolicyAgreementSelectionContent(
+            moveToLocationPolicyDetailsScreen = moveToLocationPolicyDetailScreen
         )
     }
 }
 
 @Composable
 private fun AllAgreementSelectionContent(
-    isTermsOfServiceAgreed: MutableState<Boolean>,
-    isPrivacyPolicyAgreed: MutableState<Boolean>
+    isAllPolicyAgreed: MutableState<Boolean>,
 ) {
     Row(
         modifier = Modifier
@@ -201,17 +203,11 @@ private fun AllAgreementSelectionContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) {
-                if (!(isTermsOfServiceAgreed.value && isPrivacyPolicyAgreed.value)) {
-                    isTermsOfServiceAgreed.value = true
-                    isPrivacyPolicyAgreed.value = true
-                } else {
-                    isTermsOfServiceAgreed.value = false
-                    isPrivacyPolicyAgreed.value = false
-                }
+                isAllPolicyAgreed.value = !isAllPolicyAgreed.value
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val contentColor = when (isTermsOfServiceAgreed.value && isPrivacyPolicyAgreed.value) {
+        val contentColor = when (isAllPolicyAgreed.value) {
             true -> getColor().brandColor
             false -> Color(0xFFC1C3CA)
         }
@@ -235,74 +231,97 @@ private fun AllAgreementSelectionContent(
 
 @Composable
 private fun TermsOfServiceAgreementSelectionContent(
-    isTermsOfServiceAgreed: MutableState<Boolean>,
     moveToTermsOfServiceDetailsScreen: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { isTermsOfServiceAgreed.value = !isTermsOfServiceAgreed.value },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
             text = "서비스 이용약관 (필수)",
             color = Color(0xFF222222),
-            style = medium14pt
+            style = medium16pt
         )
 
         Spacer(Modifier.weight(1f))
 
         Text(
-            modifier = Modifier.clickable(
+            modifier = Modifier
+                .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) { moveToTermsOfServiceDetailsScreen() },
             text = "보기",
             color = Color(0xFF666666),
-            style = medium14pt
+            style = medium16pt
         )
     }
 }
 
 @Composable
 private fun PrivacyPolicyAgreementSelectionContent(
-    isPrivacyPolicyAgreed: MutableState<Boolean>,
     moveToPrivacyPolicyDetailsScreen: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { isPrivacyPolicyAgreed.value = !isPrivacyPolicyAgreed.value },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
             text = "개인정보 처리방침 (필수)",
             color = Color(0xFF222222),
-            style = medium14pt
+            style = medium16pt
         )
 
         Spacer(Modifier.weight(1f))
 
         Text(
-            modifier = Modifier.clickable(
+            modifier = Modifier
+                .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ) { moveToPrivacyPolicyDetailsScreen() },
             text = "보기",
             color = Color(0xFF666666),
-            style = medium14pt
+            style = medium16pt
+        )
+    }
+}
+
+@Composable
+private fun LocationPolicyAgreementSelectionContent(
+    moveToLocationPolicyDetailsScreen: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
+            text = "위치기반 서비스 이용약관 (필수)",
+            color = Color(0xFF222222),
+            style = medium16pt
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        Text(
+            modifier = Modifier
+                .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) { moveToLocationPolicyDetailsScreen() },
+            text = "보기",
+            color = Color(0xFF666666),
+            style = medium16pt
         )
     }
 }
 
 @Composable
 fun AgreeAndSignUpButton(
-    isTermsOfServiceAgreed: MutableState<Boolean>,
-    isPrivacyPolicyAgreed: MutableState<Boolean>,
+    isAllPolicyAgreed: MutableState<Boolean>,
     moveToSignUpScreen: () -> Unit
 ) {
     val context = LocalContext.current
@@ -311,7 +330,7 @@ fun AgreeAndSignUpButton(
     ) {
         RoundedCornerButton(
             onClick = {
-                if (isTermsOfServiceAgreed.value && isPrivacyPolicyAgreed.value) {
+                if (isAllPolicyAgreed.value) {
                     moveToSignUpScreen()
                 } else {
                     Toast.makeText(context, "약관에 모두 동의해주세요.", Toast.LENGTH_SHORT).show()
@@ -330,12 +349,12 @@ fun AgreeAndSignUpButton(
 @CustomPreview
 @Composable
 private fun PolicyAgreeScreenPreview() {
-    PolicyAgreeScreen(
-        moveToBackScreen = {},
-        moveToSignUpScreen = {},
-        moveToTermsOfServiceDetailsScreen = {},
-        moveToPrivacyPolicyDetailsScreen = {}
-    )
+//    PolicyAgreeScreen(
+//        moveToBackScreen = {},
+//        moveToSignUpScreen = {},
+//        moveToTermsOfServiceDetailsScreen = {},
+//        moveToPrivacyPolicyDetailsScreen = {}
+//    )
 }
 
 //private const val TOP_PROGRESS_BAR = "TOP_PROGRESS_BAR"

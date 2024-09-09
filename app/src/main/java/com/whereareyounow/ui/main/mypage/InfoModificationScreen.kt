@@ -43,9 +43,9 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.data.infomodification.UserIdState
+import com.whereareyounow.data.infomodification.UserNameState
 import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
-import com.whereareyounow.data.signup.UserIdState
-import com.whereareyounow.data.signup.UserNameState
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.signup.CheckingButton

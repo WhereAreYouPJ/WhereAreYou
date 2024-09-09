@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import com.whereareyounow.data.infomodification.UserIdState
+import com.whereareyounow.data.infomodification.UserNameState
 import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
-import com.whereareyounow.data.signup.UserIdState
-import com.whereareyounow.data.signup.UserNameState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

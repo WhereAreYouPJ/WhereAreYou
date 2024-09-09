@@ -35,4 +35,25 @@ const val ROUTE_MY_INFO = "ROUTE_MY_INFO"
 sealed class ROUTE {
     @Serializable
     data object Splash
+
+    @Serializable
+    data object SignInMethodSelection
+
+    @Serializable
+    data object PolicyAgree {
+        @Serializable
+        data object Main
+
+        @Serializable
+        data object TermsOfService
+
+        @Serializable
+        data object Privacy
+
+        @Serializable
+        data object Location
+    }
+
+    @Serializable
+    data object SignUp
 }

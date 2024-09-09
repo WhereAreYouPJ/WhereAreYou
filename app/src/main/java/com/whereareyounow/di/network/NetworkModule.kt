@@ -1,5 +1,6 @@
 package com.whereareyounow.di.network
 
+import com.google.gson.GsonBuilder
 import com.whereareyounow.BuildConfig
 import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FriendApi
@@ -7,6 +8,7 @@ import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.MemberApi
 import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.api.SearchLocationApi
+import com.whereareyounow.util.network.LogInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,10 +43,16 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideHttpClient(): OkHttpClient {
+    fun provideHttpClient(
+//        tokenInterceptor: TokenInterceptor,
+//        authenticator: AuthAuthenticator,
+        logInterceptor: LogInterceptor
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .readTimeout(20, TimeUnit.SECONDS)
             .connectTimeout(20, TimeUnit.SECONDS)
+            .addInterceptor(logInterceptor)
+//            .addInterceptor(tokenInterceptor)
             .build()
     }
 
@@ -63,7 +71,7 @@ object NetworkModule {
     // 네이버 검색 Api
     @Singleton
     @Provides
-    fun provideSearchLocationApi(@SearchLocationApiClass retrofit: Retrofit): com.whereareyounow.api.SearchLocationApi {
+    fun provideSearchLocationApi(@SearchLocationApiClass retrofit: Retrofit): SearchLocationApi {
         return retrofit.create(SearchLocationApi::class.java)
     }
 
@@ -72,10 +80,14 @@ object NetworkModule {
     @Provides
     @RemoteAccessTokenAutoAdded
     fun provideRemoteRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
+        val gson = GsonBuilder()
+            .setLenient()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            .create()
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 

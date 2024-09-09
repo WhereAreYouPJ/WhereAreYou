@@ -31,7 +31,6 @@ import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_NEW_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_POLICY_AGREE
-import com.whereareyounow.data.globalvalue.ROUTE_PRIVACY_POLICY
 import com.whereareyounow.data.globalvalue.ROUTE_RESET_PASSWORD
 import com.whereareyounow.data.globalvalue.ROUTE_SEARCH_LOCATION
 import com.whereareyounow.data.globalvalue.ROUTE_SEARCH_LOCATION_MAP
@@ -40,8 +39,6 @@ import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_METHOD_SELECTION
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_UP
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_UP_SUCCESS
-import com.whereareyounow.data.globalvalue.ROUTE_SPLASH
-import com.whereareyounow.data.globalvalue.ROUTE_TERMS_OF_SERVICE
 import com.whereareyounow.ui.findaccount.FindAccountScreen
 import com.whereareyounow.ui.findaccount.findid.FindIdResultScreen
 import com.whereareyounow.ui.findaccount.findid.FindIdScreen
@@ -54,7 +51,6 @@ import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.MyInfoScreen
-import com.whereareyounow.ui.main.mypage.MyPageScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
@@ -62,14 +58,16 @@ import com.whereareyounow.ui.main.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.FriendsListScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
-import com.whereareyounow.ui.signin.SignInMethodSelectionScreen
+import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
+import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
+import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
+import com.whereareyounow.ui.navigation.signInMethodSelectionScreen
+import com.whereareyounow.ui.navigation.signUpScreenRoute
+import com.whereareyounow.ui.navigation.splashScreen
+import com.whereareyounow.ui.navigation.termsOfServiceDetailsScreenRoute
 import com.whereareyounow.ui.signin.SignInWithAccountScreen
-import com.whereareyounow.ui.signup.PolicyAgreeScreen
-import com.whereareyounow.ui.signup.PrivacyPolicyDetailsScreen
 import com.whereareyounow.ui.signup.SignUpScreen
 import com.whereareyounow.ui.signup.SignUpSuccessScreen
-import com.whereareyounow.ui.signup.TermsOfServiceDetailsScreen
-import com.whereareyounow.ui.splash.SplashScreen
 import com.whereareyounow.util.navigate
 
 @Composable
@@ -79,68 +77,28 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE.Splash
+        startDestination = ROUTE.SignUp
     ) {
-        // 스플래시 화면
-        composable<ROUTE.Splash> {
-            SplashScreen(
-                moveToSignInMethodSelectionScreen = {
-                    navController.navigate(ROUTE_SIGN_IN_METHOD_SELECTION) {
-                        popUpTo(ROUTE_SPLASH) { inclusive = true }
-                    }
-                },
-                moveToMainScreen = {
-                    navController.navigate(ROUTE_MAIN) {
-                        popUpTo(ROUTE_SPLASH) { inclusive = true }
-                    }
-                },
-            )
-        }
+        // 스플래시
+        splashScreen(navController)
 
-        // 로그인 방법 선택 화면
-        composable(route = ROUTE_SIGN_IN_METHOD_SELECTION) {
-            SignInMethodSelectionScreen(
-                moveToSignInWithAccountScreen = { navController.navigate(ROUTE_SIGN_IN_WITH_ACCOUNT) },
-                moveToSignUpScreen = { navController.navigate(ROUTE_POLICY_AGREE) },
-                moveToFindAccountScreen = { navController.navigate(ROUTE_FIND_ACCOUNT) }
-            )
-        }
+        // 로그인 방법 선택
+        signInMethodSelectionScreen(navController)
 
-        // 약관 동의 화면
-        composable(route = ROUTE_POLICY_AGREE) {
-            PolicyAgreeScreen(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToSignUpScreen = { navController.navigate(ROUTE_SIGN_UP) },
-                moveToTermsOfServiceDetailsScreen = { navController.navigate(ROUTE_TERMS_OF_SERVICE) },
-                moveToPrivacyPolicyDetailsScreen = { navController.navigate(ROUTE_TERMS_OF_SERVICE) }
-            )
-        }
+        // 약관 동의
+        policyAgreeScreenRoute(navController)
 
-        // 서비스 이용약관 화면
-        composable(route = ROUTE_TERMS_OF_SERVICE) {
-            TermsOfServiceDetailsScreen(
-                moveToPolicyAgreeScreen = { navController.popBackStack() }
-            )
-        }
+        // 서비스 이용약관
+        termsOfServiceDetailsScreenRoute(navController)
 
-        // 개인정보 처리방침 화면
-        composable(route = ROUTE_PRIVACY_POLICY) {
-            PrivacyPolicyDetailsScreen(
-                moveToPolicyAgreeScreen = { navController.popBackStack() }
-            )
-        }
+        // 개인정보 처리방침
+        privacyPolicyDetailsScreenRoute(navController)
+
+        // 위치기반 서비스 이용약관
+        locationPolicyDetailsScreenRoute(navController)
 
         // 회원가입 화면
-        composable(route = ROUTE_SIGN_UP) {
-            SignUpScreen(
-                moveToBackScreen = { navController.popBackStack(ROUTE_POLICY_AGREE, true) },
-                moveToSignUpSuccessScreen = {
-                    navController.navigate(ROUTE_SIGN_UP_SUCCESS) {
-                        popUpTo(ROUTE_POLICY_AGREE) { inclusive = true }
-                    }
-                }
-            )
-        }
+        signUpScreenRoute(navController)
 
         // 회원가입 성공 화면
         composable(route = ROUTE_SIGN_UP_SUCCESS) {

@@ -2,8 +2,10 @@ package com.whereareyounow.ui.splash
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,9 +41,8 @@ import com.whereareyounow.R
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.globalvalue.type.SplashCheckingState
 import com.whereareyounow.ui.theme.WhereAreYouTheme
-import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium16pt
-import com.whereareyounow.ui.theme.ttangs
 import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -160,7 +161,7 @@ private fun SplashContent() {
         content = {
             Image(
                 modifier = Modifier.width(158.dp),
-                painter = painterResource(R.drawable.img_splash_logo),
+                painter = painterResource(R.drawable.img_logo),
                 contentDescription = null
             )
 //            Text(
@@ -238,10 +239,12 @@ private fun NetworkConnectionErrorDialog(
                         modifier = Modifier
                             .weight(1f)
                             .height(42.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(
-                                color = Color(0xFFD9DCE7),
-                                shape = RoundedCornerShape(10.dp)
+                            .border(
+                                border = BorderStroke(
+                                    width = 1.dp,
+                                    color = getColor().dark
+                                ),
+                                shape = RoundedCornerShape(6.dp)
                             )
                             .clickable {
 
@@ -259,7 +262,7 @@ private fun NetworkConnectionErrorDialog(
                         modifier = Modifier
                             .weight(1f)
                             .height(42.dp)
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(6.dp))
                             .background(
                                 color = Color(0xFF6236E9),
                                 shape = RoundedCornerShape(10.dp)

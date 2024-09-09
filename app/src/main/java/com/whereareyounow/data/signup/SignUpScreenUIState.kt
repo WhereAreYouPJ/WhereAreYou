@@ -2,45 +2,44 @@ package com.whereareyounow.data.signup
 
 data class SignUpScreenUIState(
     val inputUserName: String = "",
-    val inputUserNameState: UserNameState = UserNameState.Empty,
-    val inputUserId: String = "",
-    val inputUserIdState: UserIdState = UserIdState.Empty,
-    val inputPassword: String = "",
-    val inputPasswordState: PasswordState = PasswordState.Empty,
-    val inputPasswordForChecking: String = "",
-    val inputPasswordForCheckingState: PasswordCheckingState = PasswordCheckingState.Empty,
+    val inputUserNameState: SignUpUserNameState = SignUpUserNameState.Idle,
     val inputEmail: String = "",
-    val inputEmailState: EmailState = EmailState.Empty,
-    val emailVerificationProgressState: EmailVerificationProgressState = EmailVerificationProgressState.DuplicateUnchecked,
+    val inputEmailState: SignUpEmailState = SignUpEmailState.Idle,
+    val requestButtonState: SignUpEmailButtonState = SignUpEmailButtonState.Request,
     val inputVerificationCode: String = "",
-    val inputVerificationCodeState: VerificationCodeState = VerificationCodeState.Empty,
-    val emailVerificationCodeLeftTime: Int = 0
+    val inputVerificationCodeState: SignUpVerificationCodeState = SignUpVerificationCodeState.Idle,
+    val verificationCodeButtonState: SignUpCodeOKButtonState = SignUpCodeOKButtonState.Inactive,
+    val emailCodeLeftTime: Int = 0,
+    val inputPassword: String = "",
+    val inputPasswordState: SignUpPasswordState = SignUpPasswordState.Idle,
+    val inputPasswordCheck: String = "",
+    val inputPasswordCheckState: SignUpPasswordCheckState = SignUpPasswordCheckState.Idle
 )
 
-enum class UserNameState {
-    Empty, Satisfied, Unsatisfied
+enum class SignUpUserNameState {
+    Idle, Valid, Invalid
 }
 
-enum class UserIdState {
-    Empty, Satisfied, Unsatisfied, Duplicated, Unique
+enum class SignUpEmailState {
+    Idle, Valid, Invalid
 }
 
-enum class PasswordState {
-    Empty, Satisfied, Unsatisfied
+enum class SignUpEmailButtonState {
+    Request, RequestDone
 }
 
-enum class PasswordCheckingState {
-    Empty, Satisfied, Unsatisfied
+enum class SignUpVerificationCodeState {
+    Idle, Valid, Invalid
 }
 
-enum class EmailState {
-    Empty, Satisfied, Unsatisfied, Duplicated, Unique
+enum class SignUpCodeOKButtonState {
+    Active, Inactive
 }
 
-enum class EmailVerificationProgressState {
-    DuplicateUnchecked, DuplicateChecked, VerificationRequested
+enum class SignUpPasswordState {
+    Idle, Valid, Invalid
 }
 
-enum class VerificationCodeState {
-    Empty, Satisfied, Unsatisfied
+enum class SignUpPasswordCheckState {
+    Idle, Valid, Invalid
 }
