@@ -52,7 +52,7 @@ import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
 import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
-import com.whereareyounow.ui.main.mypage.AnnouncementScreen
+import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
 import com.whereareyounow.ui.main.mypage.AskScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.MyInfoScreen
@@ -78,7 +78,6 @@ import com.whereareyounow.ui.signup.SignUpSuccessScreen
 import com.whereareyounow.ui.signup.TermsOfServiceDetailsScreen
 import com.whereareyounow.ui.splash.SplashScreen
 import com.whereareyounow.util.navigate
-import okhttp3.Route
 
 @Composable
 fun MainNavigation(

@@ -72,7 +72,7 @@ fun CustomSurface(
         Spacer(
             Modifier
                 .fillMaxWidth()
-                .height((SYSTEM_STATUS_BAR_HEIGHT).dp)
+//                .height((SYSTEM_STATUS_BAR_HEIGHT).dp)
         )
         Column(
             modifier = Modifier

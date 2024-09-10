@@ -1,17 +1,24 @@
 package com.whereareyounow.ui.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -72,6 +79,8 @@ fun MainScreen(
     val viewType = viewModel.viewType.collectAsState().value
     val navigationItemContentList = viewModel.getNavigationItemContent()
     val calendarScreenUIState = calendarViewModel.calendarScreenUIState.collectAsState().value
+
+
     MainScreen(
         viewType = viewType,
         calendarScreenUIState = calendarScreenUIState,
@@ -125,6 +134,7 @@ private fun MainScreen(
         Scaffold(
             topBar = {},
             bottomBar = {
+
                 HomeNavigationBar(
                     viewType,
                     navigationItemContentList,
@@ -155,10 +165,12 @@ private fun MainScreen(
             },
             containerColor = Color(0xFFFFFFFF),
         ) {
+
             Column(
                 modifier = Modifier
                     .padding(bottom = it.calculateBottomPadding())
             ) {
+
                 when (viewType) {
                     ViewType.Home -> {
                         HomeScreen(
@@ -208,6 +220,8 @@ fun HomeNavigationBar(
     navigationItemContentList: List<MainViewModel.NavigationItemContent>,
     updateViewType: (ViewType) -> Unit,
 ) {
+
+
     NavigationBar(
         modifier = Modifier
             .height(BOTTOM_NAVIGATION_BAR_HEIGHT.dp)
@@ -216,48 +230,92 @@ fun HomeNavigationBar(
         // 이걸 안해주면 navigationbar 아래가 system navigation bar만큼 가려진다.
         windowInsets = WindowInsets(0, 0, 0, 0)
     ) {
-        navigationItemContentList.forEachIndexed { _, navItem ->
-            NavigationBarItem(
-                modifier = Modifier.fillMaxHeight(),
-                selected = viewType == navItem.viewType,
-                onClick = { updateViewType(navItem.viewType) },
-                icon = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(36.dp),
-                            painter = painterResource(
-                                id = when (viewType == navItem.viewType) {
-                                    true -> navItem.iconSelected
-                                    false -> navItem.iconUnselected
-                                }
-                            ),
-                            contentDescription = null,
-                            tint = Color.Unspecified
-                        )
-                        Text(
-                            text = navItem.label,
-                            fontSize = 12.sp,
-                            fontFamily = nanumSquareNeo,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = getColor().brandColor,
-                    selectedTextColor = Color(0xFF222222),
-                    indicatorColor = Color(0x00FFFFFF),
-                    unselectedIconColor = getColor().brandColor,
-                    unselectedTextColor = Color(0xFF222222)
-                ),
-                interactionSource = NoRippleInteractionSource(),
-                alwaysShowLabel = true
+        Column {
+            // Add a horizontal divider at the top of the bottom navigation bar
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 2.dp,
+                color = getColor().brandColor
             )
+
+            Row {
+                navigationItemContentList.forEachIndexed { _, navItem ->
+                    this@NavigationBar.NavigationBarItem(
+                        modifier = Modifier.fillMaxHeight(),
+                        selected = viewType == navItem.viewType,
+                        onClick = { updateViewType(navItem.viewType) },
+                        icon = {
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+
+                                when(navItem.label) {
+                                    "일정" -> Icon(
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .offset(x = 3.5.dp),
+                                        painter = painterResource(
+                                            id = when (viewType == navItem.viewType) {
+                                                true -> navItem.iconSelected
+                                                false -> navItem.iconUnselected
+                                            }
+                                        ),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified
+                                    )
+
+                                    "마이페이지" -> Icon(
+                                        modifier = Modifier.size(35.dp),
+                                        painter = painterResource(
+                                            id = when (viewType == navItem.viewType) {
+                                                true -> navItem.iconSelected
+                                                false -> navItem.iconUnselected
+                                            }
+                                        ),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified
+                                    )
+
+                                    else -> Icon(
+                                        modifier = Modifier.size(33.dp),
+                                        painter = painterResource(
+                                            id = when (viewType == navItem.viewType) {
+                                                true -> navItem.iconSelected
+                                                false -> navItem.iconUnselected
+                                            }
+                                        ),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                                Text(
+                                    text = navItem.label,
+                                    fontSize = 12.sp,
+                                    fontFamily = nanumSquareNeo,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = getColor().brandColor,
+                            selectedTextColor = Color(0xFF222222),
+                            indicatorColor = Color(0x00FFFFFF),
+                            unselectedIconColor = getColor().brandColor,
+                            unselectedTextColor = Color(0xFF222222)
+                        ),
+                        interactionSource = NoRippleInteractionSource(),
+                        alwaysShowLabel = true
+                    )
+                }
+
+            }
+
         }
+
     }
 }
 

@@ -163,14 +163,6 @@ private fun SplashContent() {
                 painter = painterResource(R.drawable.img_splash_logo),
                 contentDescription = null
             )
-//            Text(
-//                modifier = Modifier,
-//                text = "지금 어디?",
-//                fontSize = 52.sp,
-//                fontFamily = ttangs,
-//                fontWeight = FontWeight.Bold,
-//                color = Color(0xFFFFFFFF),
-//            )
             Spacer(Modifier.height(16.dp))
             Text(
                 text = "위치기반 일정관리 플랫폼",
