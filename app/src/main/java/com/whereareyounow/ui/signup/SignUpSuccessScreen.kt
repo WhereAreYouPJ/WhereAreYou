@@ -36,20 +36,24 @@ fun SignUpSuccessScreen(
 
             TopProgressContent(step = 3)
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(30.dp))
 
             InstructionContent(text = "회원가입이\n완료되었습니다")
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(30.dp))
 
             Column(
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp)
             ) {
-                Text(
-                    text = "시작화면에서 로그인해주세요.\n최초 로그인 이후 접속 시, 자동 로그인이 활성화됩니다.",
-                    color = Color(0xFF666666),
-                    style = medium14pt
-                )
+                Box(
+                    modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                ) {
+                    Text(
+                        text = "시작화면에서 로그인해주세요.\n최초 로그인 이후 접속 시, 자동 로그인이 활성화됩니다.",
+                        color = Color(0xFF666666),
+                        style = medium14pt
+                    )
+                }
 
                 Spacer(Modifier.weight(1f))
 

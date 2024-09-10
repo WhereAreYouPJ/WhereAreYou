@@ -59,18 +59,15 @@ fun CustomTextField(
             onValueChange(it)
             coroutineScope.launch { viewRequester.bringIntoView() }
         },
-        textStyle = TextStyle(
-            color = Color(0xFF222222),
-            fontSize = 16.sp
-        ),
+        textStyle = medium14pt,
         singleLine = true,
-        visualTransformation = if (isPassword) PasswordVisualTransformation(mask = '●') else VisualTransformation.None,
+        visualTransformation = if (isPassword) PasswordVisualTransformation(mask = '•') else VisualTransformation.None,
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(44.dp)
+                    .height(42.dp)
                     .border(
                         border = when (textFieldState) {
                             CustomTextFieldState.Unsatisfied -> {
@@ -99,20 +96,26 @@ fun CustomTextField(
                 it()
             }
             if (textFieldState == CustomTextFieldState.Unsatisfied) {
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = warningText,
-                    color = getColor().warning,
-                    style = medium12pt
-                )
+                Box(
+                    modifier = Modifier.padding(start = 2.dp, top = 4.dp, end = 2.dp, bottom = 4.dp)
+                ) {
+                    Text(
+                        text = warningText,
+                        color = getColor().warning,
+                        style = medium12pt
+                    )
+                }
             }
             if (textFieldState == CustomTextFieldState.Satisfied) {
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = onSuccessText,
-                    color = getColor().brandColor,
-                    style = medium12pt
-                )
+                Box(
+                    modifier = Modifier.padding(start = 2.dp, top = 4.dp, end = 2.dp, bottom = 4.dp)
+                ) {
+                    Text(
+                        text = onSuccessText,
+                        color = getColor().brandColor,
+                        style = medium12pt
+                    )
+                }
             }
         }
     }

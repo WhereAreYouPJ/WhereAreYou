@@ -70,7 +70,9 @@ import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.signInMethodSelectionScreen
+import com.whereareyounow.ui.navigation.signInWithAccountScreenRoute
 import com.whereareyounow.ui.navigation.signUpScreenRoute
+import com.whereareyounow.ui.navigation.signUpSuccessScreenRoute
 import com.whereareyounow.ui.navigation.splashScreen
 import com.whereareyounow.ui.navigation.termsOfServiceDetailsScreenRoute
 import com.whereareyounow.ui.signin.SignInWithAccountScreen
@@ -86,7 +88,7 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE.SignUp
+        startDestination = ROUTE.SignInMethodSelection
     ) {
         // 스플래시
         splashScreen(navController)
@@ -110,28 +112,10 @@ fun MainNavigation(
         signUpScreenRoute(navController)
 
         // 회원가입 성공 화면
-        composable(route = ROUTE_SIGN_UP_SUCCESS) {
-            SignUpSuccessScreen(
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
+        signUpSuccessScreenRoute(navController)
 
         // 계정으로 로그인 화면
-        composable(route = ROUTE_SIGN_IN_WITH_ACCOUNT){
-            SignInWithAccountScreen(
-                moveToSignInMethodSelectionScreen = {
-                    navController.popBackStack(ROUTE_SIGN_IN_METHOD_SELECTION, false)
-                },
-                moveToMainHomeScreen = {
-                    navController.navigate(ROUTE_MAIN) {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                    }
-                },
-                moveToFindAccountScreen = { navController.navigate(ROUTE_FIND_ID) },
-                moveToResetPasswordScreen = { navController.navigate(ROUTE_RESET_PASSWORD) },
-                moveToSignUpScreen = { navController.navigate(ROUTE_POLICY_AGREE) }
-            )
-        }
+        signInWithAccountScreenRoute(navController)
 
         // 계정 찾기 방법 선택 화면
         composable(route = ROUTE_FIND_ACCOUNT) {

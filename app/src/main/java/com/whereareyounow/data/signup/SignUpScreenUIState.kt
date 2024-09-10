@@ -8,7 +8,7 @@ data class SignUpScreenUIState(
     val requestButtonState: SignUpEmailButtonState = SignUpEmailButtonState.Request,
     val inputVerificationCode: String = "",
     val inputVerificationCodeState: SignUpVerificationCodeState = SignUpVerificationCodeState.Idle,
-    val verificationCodeButtonState: SignUpCodeOKButtonState = SignUpCodeOKButtonState.Inactive,
+    val verificationCodeButtonState: SignUpCodeOKButtonState = SignUpCodeOKButtonState.Active,
     val emailCodeLeftTime: Int = 0,
     val inputPassword: String = "",
     val inputPasswordState: SignUpPasswordState = SignUpPasswordState.Idle,

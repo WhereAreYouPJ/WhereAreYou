@@ -58,6 +58,12 @@ sealed class ROUTE {
     data object SignUp
 
     @Serializable
+    data object SignUpSuccess
+
+    @Serializable
+    data object SignInWithAccount
+
+    @Serializable
     data object Announcement
     @Serializable
     data object Ask

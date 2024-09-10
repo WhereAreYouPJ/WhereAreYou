@@ -48,8 +48,8 @@ import com.whereareyounow.data.infomodification.UserNameState
 import com.whereareyounow.data.mypage.InfoModificationScreenSideEffect
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
-import com.whereareyounow.ui.signup.CheckingButton
 import com.whereareyounow.ui.signup.Guideline
+import com.whereareyounow.ui.signup.component.CheckingButton
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -215,7 +215,7 @@ private fun InfoModificationScreen(
                 }
                 Spacer(Modifier.width(10.dp))
                 // 중복확인 버튼
-                CheckingButton(text = "중복확인") { checkIdDuplicate() }
+                CheckingButton(text = "중복확인", isActive = true) { checkIdDuplicate() }
             }
             if (inputUserIdState == UserIdState.Unsatisfied) {
                 Guideline(text = "아이디는 영문 소문자로 시작하는 4~10자의 영문 소문자, 숫자 조합으로 입력해주세요.")

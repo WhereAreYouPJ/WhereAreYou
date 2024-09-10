@@ -11,7 +11,7 @@ import com.whereareyounow.ui.signin.SignInMethodSelectionScreen
 
 fun NavGraphBuilder.signInMethodSelectionScreen(navController: NavController) = composable<ROUTE.SignInMethodSelection> {
     SignInMethodSelectionScreen(
-        moveToSignInWithAccountScreen = { navController.navigate(ROUTE_SIGN_IN_WITH_ACCOUNT) },
+        moveToSignInWithAccountScreen = { navController.navigate(ROUTE.SignInWithAccount) },
         moveToSignUpScreen = { navController.navigate(ROUTE.PolicyAgree.Main) },
         moveToFindAccountScreen = { navController.navigate(ROUTE_FIND_ACCOUNT) }
     )

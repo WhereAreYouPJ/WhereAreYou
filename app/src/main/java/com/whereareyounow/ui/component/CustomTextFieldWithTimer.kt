@@ -57,10 +57,7 @@ fun CustomTextFieldWithTimer(
             onValueChange(it)
             coroutineScope.launch { viewRequester.bringIntoView() }
         },
-        textStyle = TextStyle(
-            color = Color(0xFF222222),
-            fontSize = 16.sp
-        ),
+        textStyle = medium14pt,
         singleLine = true,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
     ) {
@@ -68,7 +65,7 @@ fun CustomTextFieldWithTimer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(44.dp)
+                    .height(42.dp)
                     .border(
                         border = when (textFieldState) {
                             CustomTextFieldState.Unsatisfied -> {
@@ -86,7 +83,7 @@ fun CustomTextFieldWithTimer(
                         },
                         shape = RoundedCornerShape(6.dp)
                     )
-                    .padding(start = 8.dp, end = 8.dp),
+                    .padding(start = 8.dp, end = 11.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -106,26 +103,33 @@ fun CustomTextFieldWithTimer(
                     else -> {
                         Text(
                             text = "${leftTime / 60}:${String.format("%02d", leftTime % 60)}",
-                            color = Color(0xFFE59090)
+                            color = Color(0xFFDF4343),
+                            style = medium14pt
                         )
                     }
                 }
             }
             if (textFieldState == CustomTextFieldState.Unsatisfied) {
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = warningText,
-                    color = getColor().warning,
-                    style = medium12pt
-                )
+                Box(
+                    modifier = Modifier.padding(start = 2.dp, top = 4.dp, end = 2.dp, bottom = 4.dp)
+                ) {
+                    Text(
+                        text = warningText,
+                        color = getColor().warning,
+                        style = medium12pt
+                    )
+                }
             }
             if (textFieldState == CustomTextFieldState.Satisfied) {
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = onSuccessText,
-                    color = getColor().brandColor,
-                    style = medium12pt
-                )
+                Box(
+                    modifier = Modifier.padding(start = 2.dp, top = 4.dp, end = 2.dp, bottom = 4.dp)
+                ) {
+                    Text(
+                        text = onSuccessText,
+                        color = getColor().brandColor,
+                        style = medium12pt
+                    )
+                }
             }
         }
     }

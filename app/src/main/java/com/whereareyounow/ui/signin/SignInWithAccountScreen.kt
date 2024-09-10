@@ -101,11 +101,11 @@ private fun SignInWithAccountScreen(
 
             HorizontalDivider()
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(34.dp))
 
             InstructionContent(text = "로그인하기")
 
-            Spacer(Modifier.height(38.dp))
+            Spacer(Modifier.height(30.dp))
 
             Column(
                 modifier = Modifier
@@ -116,7 +116,7 @@ private fun SignInWithAccountScreen(
             ) {
                 // 아이디 입력 창
                 UserIdInputBox(
-                    contentDescription = "Id TextField",
+                    contentDescription = "Email TextField",
                     inputText = signInScreenUIState.inputUserId,
                     onValueChange = updateInputUserId
                 )
@@ -141,7 +141,7 @@ private fun SignInWithAccountScreen(
                     )
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(28.dp))
 
 
                 RoundedCornerButton(
@@ -159,7 +159,6 @@ private fun SignInWithAccountScreen(
                 Spacer(Modifier.height(30.dp))
 
                 OtherButtons(
-                    moveToFindAccountScreen = moveToFindAccountScreen,
                     moveToResetPasswordScreen = moveToResetPasswordScreen,
                     moveToSignUpScreen = moveToSignUpScreen
                 )
@@ -185,20 +184,20 @@ private fun UserIdInputBox(
     onValueChange: (String) -> Unit
 ) {
     Text(
-        modifier = Modifier.padding(start = 6.dp),
-        text = "아이디",
+        modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
+        text = "이메일 주소",
         color = Color(0xFF333333),
         style = medium12pt
     )
 
-    Spacer(Modifier.height(6.dp))
+    Spacer(Modifier.height(2.dp))
 
     CustomTextField(
         contentDescription = contentDescription,
-        hint = "아이디",
+        hint = "이메일을 입력해주세요.",
         inputText = inputText,
         onValueChange = onValueChange,
-        warningText = "",
+        warningText = "입력한 회원정보를 다시 확인해 주세요.",
         textFieldState = CustomTextFieldState.Idle
     )
 }
@@ -220,7 +219,7 @@ private fun PasswordInputBox(
 
     CustomTextField(
         contentDescription = contentDescription,
-        hint = "비밀번호",
+        hint = "비밀번호를 입력해주세요.",
         inputText = inputText,
         onValueChange = onValueChange,
         warningText = "",
@@ -231,7 +230,6 @@ private fun PasswordInputBox(
 
 @Composable
 private fun OtherButtons(
-    moveToFindAccountScreen: () -> Unit,
     moveToResetPasswordScreen: () -> Unit,
     moveToSignUpScreen: () -> Unit
 ) {
@@ -242,14 +240,6 @@ private fun OtherButtons(
         Row(
             modifier = Modifier.height(IntrinsicSize.Min)
         ) {
-            FindAccountButton(moveToFindAccountScreen = moveToFindAccountScreen)
-
-            Spacer(Modifier.width(10.dp))
-
-            VerticalDivider()
-
-            Spacer(Modifier.width(10.dp))
-
             ResetPasswordButton(moveToResetPasswordScreen = moveToResetPasswordScreen)
         }
 

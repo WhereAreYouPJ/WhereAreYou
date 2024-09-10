@@ -3,8 +3,6 @@ package com.whereareyounow.ui.signup
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +16,10 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.whereareyounow.data.globalvalue.ROUTE
+import com.whereareyounow.data.signup.SignUpCodeOKButtonState
 import com.whereareyounow.data.signup.SignUpEmailButtonState
 import com.whereareyounow.data.signup.SignUpEmailState
 import com.whereareyounow.data.signup.SignUpPasswordCheckState
@@ -46,10 +44,10 @@ import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.ui.signup.component.CheckingButton
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium12pt
-import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
@@ -71,8 +69,6 @@ fun SignUpScreen(
         updateInputPassword = viewModel::updateInputPassword,
         updateInputPasswordForChecking = viewModel::updateInputPasswordForChecking,
         updateInputEmail = viewModel::updateInputEmail,
-        verifyEmail = viewModel::verifyEmail,
-        checkEmailDuplicate = viewModel::checkEmailDuplicate,
         updateInputVerificationCode = viewModel::updateInputVerificationCode,
         verifyEmailCode = viewModel::verifyEmailCode,
         signUp = viewModel::signUp,
@@ -90,8 +86,6 @@ private fun SignUpScreen(
     updateInputPassword: (String) -> Unit,
     updateInputPasswordForChecking: (String) -> Unit,
     updateInputEmail: (String) -> Unit,
-    verifyEmail: () -> Unit,
-    checkEmailDuplicate: () -> Unit,
     updateInputVerificationCode: (String) -> Unit,
     verifyEmailCode: () -> Unit,
     signUp: (() -> Unit) -> Unit,
@@ -170,11 +164,11 @@ private fun SignUpScreen(
 
                         Spacer(Modifier.height(10.dp))
 
-                        Title(text = "이메일")
+                        Title(text = "이메일 주소")
 
                         Row(
                             modifier = Modifier
-                                .animateContentSize { _, _ -> }
+                                .animateContentSize()
                                 .height(IntrinsicSize.Min)
                                 .fillMaxWidth()
                         ) {
@@ -190,7 +184,7 @@ private fun SignUpScreen(
                                     },
                                     onSuccessText = when (uiState.inputEmailState) {
                                         SignUpEmailState.Valid -> {
-                                            "인증코드가 전송되었습니다"
+                                            "인증코드가 전송되었습니다."
                                         }
                                         else -> ""
                                     }
@@ -204,7 +198,8 @@ private fun SignUpScreen(
                                 text = when (uiState.requestButtonState) {
                                     SignUpEmailButtonState.Request -> "인증요청"
                                     SignUpEmailButtonState.RequestDone -> "인증요청 완료"
-                                }
+                                },
+                                isActive = uiState.requestButtonState == SignUpEmailButtonState.Request
                             ) {
                                 sendEmailCode()
                             }
@@ -228,12 +223,22 @@ private fun SignUpScreen(
                                         leftTime = uiState.emailCodeLeftTime
                                     )
                                 }
-                                Spacer(Modifier.width(10.dp))
+
+                                Spacer(Modifier.width(4.dp))
+
                                 // 확인 버튼
-                                CheckingButton(text = "확인") {
+                                CheckingButton(
+                                    text = when (uiState.verificationCodeButtonState) {
+                                        SignUpCodeOKButtonState.Inactive -> "인증 완료"
+                                        SignUpCodeOKButtonState.Active -> "확인"
+                                    },
+                                    isActive = uiState.verificationCodeButtonState == SignUpCodeOKButtonState.Active
+                                ) {
                                     verifyEmailCode()
                                 }
                             }
+
+                            Spacer(Modifier.height(10.dp))
                         }
 
                         Title(text = "비밀번호")
@@ -261,18 +266,14 @@ private fun SignUpScreen(
                                 else -> ""
                             }
                         )
-
-                        Spacer(Modifier.height(20.dp))
-
-
-
-                        Spacer(Modifier.height(40.dp))
                     }
+
+                    Spacer(Modifier.height(20.dp))
                 }
             }
 
             item {
-                Box(modifier = Modifier.padding(start = 20.dp, end = 20.dp)) {
+                Box(modifier = Modifier.padding(start = 15.dp, end = 15.dp)) {
                     // 회원가입 버튼
                     RoundedCornerButton(
                         onClick = { signUp(moveToSignUpSuccessScreen) }
@@ -393,7 +394,7 @@ private fun EmailTextField(
         onSuccessText = onSuccessText,
         textFieldState = when (inputEmailState) {
             SignUpEmailState.Idle -> CustomTextFieldState.Idle
-            SignUpEmailState.Valid -> CustomTextFieldState.Idle
+            SignUpEmailState.Valid -> CustomTextFieldState.Satisfied
             SignUpEmailState.Invalid -> CustomTextFieldState.Unsatisfied
         }
     )
@@ -411,7 +412,7 @@ private fun EmailVerificationCodeTextField(
         inputText = inputVerificationCode,
         onValueChange = updateInputVerificationCode,
         warningText = "인증코드가 일치하지 않습니다.",
-        onSuccessText = "인증코드가 일치합니다.",
+        onSuccessText = "인증코드가 확인되었습니다.",
         textFieldState = when (inputVerificationCodeState) {
             SignUpVerificationCodeState.Idle -> CustomTextFieldState.Idle
             SignUpVerificationCodeState.Invalid -> CustomTextFieldState.Unsatisfied
@@ -433,30 +434,6 @@ fun Guideline(
             color = Color(0xFFFF0000)
         )
         Spacer(Modifier.height(10.dp))
-    }
-}
-
-@Composable
-fun CheckingButton(
-    text: String,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .width(100.dp)
-            .height(44.dp)
-            .background(
-                color = Color(0xFF7B50FF),
-                shape = RoundedCornerShape(6.dp)
-            )
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            color = Color(0xFFFFFFFF),
-            style = medium14pt
-        )
     }
 }
 

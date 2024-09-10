@@ -12,7 +12,7 @@ fun NavGraphBuilder.signUpScreenRoute(navController: NavController) = composable
     SignUpScreen(
         moveToBackScreen = { navController.popBackStack(ROUTE.PolicyAgree.Main, false) },
         moveToSignUpSuccessScreen = {
-            navController.navigate(ROUTE_SIGN_UP_SUCCESS) {
+            navController.navigate(ROUTE.SignUpSuccess) {
                 popUpTo(ROUTE_POLICY_AGREE) { inclusive = true }
             }
         }
