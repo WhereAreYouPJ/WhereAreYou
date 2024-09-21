@@ -64,7 +64,19 @@ private fun ByeScreen4(
     val isSamed = remember {
         mutableStateOf(false)
     }
-
+    val canMove = remember {
+        mutableStateOf(false)
+    }
+    if (checkPassword(
+            input = password.value,
+            answer = answer.value,
+            isSamed = isSamed.value
+        )
+    ) {
+        canMove.value = true
+    } else {
+        canMove.value = false
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,10 +95,10 @@ private fun ByeScreen4(
 
             Spacer(Modifier.height(30.dp))
 
-            val sflshf = remember {
+            val isPasswordSamed = remember {
                 mutableStateOf(false)
             }
-            val lllllllllll = if (!sflshf.value) Color(0xFFD4D4D4) else Color(0xFFE13131)
+            val passwordOutlinedTextFieldContainerColor = if (!isPasswordSamed.value) Color(0xFFD4D4D4) else Color(0xFFE13131)
 
             Text(
                 text = "계정 삭제를 위해",
@@ -99,19 +111,9 @@ private fun ByeScreen4(
                 color = Color.Black,
                 style = medium20pt
             )
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_pleaseinputpassword),
-//                contentDescription = "",
-//                modifier = Modifier
-//                    .clickableNoEffect {
-//                        moveToByeScreen5()
-//                    }
-//                    .scale(1.2f)
-//                    .padding(start = 28.dp)
-//
-//            )
 
-            if (sflshf.value == true) {
+
+            if (isPasswordSamed.value) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "아래 내용을 다시 한 번 확인해 주세요.",
@@ -120,14 +122,14 @@ private fun ByeScreen4(
                 )
             }
 
-            Spacer(Modifier.height(30.dp))
+            Gap(30)
 
             Image(
                 painter = painterResource(id = R.drawable.ic_password),
                 contentDescription = ""
             )
 
-            Spacer(Modifier.height(6.dp))
+            Gap(6)
 
             OutlinedTextField(
                 value = password.value,
@@ -142,12 +144,12 @@ private fun ByeScreen4(
                     ),
                 visualTransformation = PasswordVisualTransformation(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = lllllllllll,
-                    focusedBorderColor = lllllllllll
+                    unfocusedBorderColor = passwordOutlinedTextFieldContainerColor,
+                    focusedBorderColor = passwordOutlinedTextFieldContainerColor
                 )
             )
 
-            if (sflshf.value) {
+            if (isPasswordSamed.value) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "비밀번호가 맞지 않습니다.",
@@ -161,27 +163,52 @@ private fun ByeScreen4(
             Spacer(Modifier.weight(1f))
 
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_byebutton),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(bottom = 68.dp)
-                    .clickableNoEffect {
+            WithdrawlButton(
+                text = "회원 탈퇴하기",
+                canMove = canMove,
+                onClicked = {
+                    if (canMove.value) {
 
-                        checkPassword(
-                            input = password.value,
-                            answer = answer.value,
-                            isSamed = isSamed.value
-                        ).apply {
-                            if (this) {
-                                moveToByeScreen5()
-                            } else {
-                                sflshf.value = true
-                            }
-                        }
+                        moveToByeScreen5()
+
+//                        checkPassword(
+//                            input = password.value,
+//                            answer = answer.value,
+//                            isSamed = isSamed.value
+//                        ).apply {
+//                            if (this) {
+//                            } else {
+//                            }
+//                        }
+                    } else {
+                        isPasswordSamed.value = true
 
                     }
+
+                }
             )
+
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_byebutton),
+//                contentDescription = "",
+//                modifier = Modifier
+//                    .padding(bottom = 68.dp)
+//                    .clickableNoEffect {
+//
+//                        checkPassword(
+//                            input = password.value,
+//                            answer = answer.value,
+//                            isSamed = isSamed.value
+//                        ).apply {
+//                            if (this) {
+//                                moveToByeScreen5()
+//                            } else {
+//                                sflshf.value = true
+//                            }
+//                        }
+//
+//                    }
+//            )
 
         }
     }

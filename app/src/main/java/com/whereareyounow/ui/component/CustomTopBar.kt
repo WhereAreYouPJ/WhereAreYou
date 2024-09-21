@@ -40,7 +40,8 @@ fun CustomTopBar(
                 .size(30.dp)
                 .clickableNoEffect { onBackButtonClicked() },
             painter = painterResource(id = R.drawable.ic_arrow_left),
-            contentDescription = null
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(Color(0xFFACACAC))
         )
         Text(
             text = title,

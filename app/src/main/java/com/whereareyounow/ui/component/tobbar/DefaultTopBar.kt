@@ -34,7 +34,7 @@ fun DefaultTopBar(
             .fillMaxWidth()
             .height(TOP_BAR_HEIGHT.dp)
             .drawBehind {
-                val strokeWidth = 2.dp.toPx()
+                val strokeWidth = 1.5.dp.toPx()
                 val y = size.height - strokeWidth / 2
                 drawLine(
                     color = Color(0xFFC9C9C9),
@@ -43,7 +43,6 @@ fun DefaultTopBar(
                     strokeWidth = strokeWidth
                 )
             },
-//        contentAlignment = Alignment.Center
     ) {
         Image(
             modifier = Modifier
@@ -61,21 +60,8 @@ fun DefaultTopBar(
             painter = painterResource(id = R.drawable.ic_titlebye),
             contentDescription = null,
         )
-//        Text(
-//            text = title,
-//            color = Color(0xFF000000),
-//            style = medium18pt,
-//            modifier = Modifier.padding(top = 8.dp , bottom = 16.dp , start = 152.dp)
-//        )
+
     }
-
-
-//    HorizontalDivider(
-//        modifier = Modifier.fillMaxWidth(),
-//        thickness = 2.dp,
-//        color = Color(0xFFC9C9C9)
-//    )
-
 }
 
 @CustomPreview

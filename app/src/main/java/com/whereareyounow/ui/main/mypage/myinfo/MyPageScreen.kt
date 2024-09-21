@@ -13,11 +13,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,16 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,7 +47,8 @@ import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.medium18pt
@@ -76,8 +72,8 @@ fun MyPageScreen(
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
     MyPageScreen(
-        name = name,
-        email = email,
+        name = name!!,
+        email = email!!,
         profileImageUri = profileImageUri,
         getMyInfo = viewModel::getMyInfo,
         signOut = viewModel::signOut,
@@ -111,14 +107,13 @@ fun MyPageScreen(
     moveToAccoument: () -> Unit,
     moveToAsk: () -> Unit,
     moveToBye: () -> Unit
-
-
 ) {
     LaunchedEffect(Unit) {
         getMyInfo()
     }
     val density = LocalDensity.current.density
     var isWarningDialogShowing by remember { mutableStateOf(false) }
+    val isProfileClicked = remember { mutableStateOf(false) }
     var warningState by remember { mutableStateOf(WarningState.SignOut) }
     val clickedIndication = remember { MutableInteractionSource() }
 
@@ -151,20 +146,11 @@ fun MyPageScreen(
         )
     }
 
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0XFFF0F0F0))
-    )
-
-
-    {
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_mypage_canvas),
-//            contentDescription = "",
-//            modifier = Modifier.height(280.dp)
-//        )
+    ) {
 
         Box(
             modifier = Modifier
@@ -177,10 +163,10 @@ fun MyPageScreen(
         Box(
             modifier = Modifier
                 .padding(start = 17.dp, end = 18.dp, top = 253.dp)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(14.dp))
                 .background(Color.White)
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(57.dp),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -188,23 +174,25 @@ fun MyPageScreen(
             ) {
                 Text(
                     text = "내코드",
-                    style = medium14pt
+                    style = medium14pt,
+                    color = Color(0xFF222222)
                 )
-                Spacer(Modifier.size(6.dp))
+                Gap(6)
                 Text(
                     text = "123456",
                     style = medium16pt,
-                    color = Color(0XFF6236E9)
+                    color = getColor().brandColor
                 )
             }
         }
 
-        // 민혁쓰까지
+        // 273 , 239
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            Gap(13)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,11 +201,15 @@ fun MyPageScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Box(
+                    contentAlignment = Alignment.Center
                 ) {
                     GlideImage(
                         modifier = Modifier
-                            .size(100.dp)
-                            .clip(RoundedCornerShape(34.4.dp)),
+                            .size(110.dp)
+                            .clip(RoundedCornerShape(34.4.dp))
+                            .clickableNoEffect {
+                                isProfileClicked.value = !isProfileClicked.value
+                            },
                         imageModel = { profileImageUri ?: R.drawable.idle_profile },
                         imageOptions = ImageOptions(contentScale = ContentScale.Crop)
                     )
@@ -233,34 +225,61 @@ fun MyPageScreen(
                                 .align(Alignment.Center)
                         )
                     }
-
                 }
-
+//239
                 Spacer(Modifier.height(6.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = name,
-                        style = medium20pt,
-                        color = Color(0xFFFFFFFF),
-                        letterSpacing = 0.05.em
-                    )
-//                    Image(
-//                        painter = painterResource(id = R.drawable.ic_mypage_modify),
-//                        contentDescription = "",
-//                        modifier = Modifier.clickable {
-//
-//                        }
-//                    )
+
+                if (isProfileClicked.value) {
+                    Column(
+                        modifier = Modifier.height(37.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .padding(start = 92.dp, end = 92.dp)
+                                .height(38.dp)
+                                .clip(
+                                    RoundedCornerShape(10.dp)
+                                )
+                                .fillMaxWidth()
+                                .background(Color(0xFF514675))
+                                .clickableNoEffect {
+
+                                },
+                        ) {
+                            Text(
+                                text = "사진 보관함",
+                                style = medium14pt,
+                                color = Color.White,
+                                modifier = Modifier.padding(start = 14.dp , top = 8.dp , bottom = 10.dp)
+                            )
+                            Gap(72)
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_picturesved),
+                                contentDescription = "",
+                                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, end = 13.dp)
+                            )
+                        }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(38.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = name,
+                            style = medium20pt,
+                            color = Color(0xFFFFFFFF),
+                            letterSpacing = 0.05.em
+                        )
+                    }
                 }
+                Gap(3)
             }
         }
-        Spacer(Modifier.size(14.dp))
+        Gap(14)
 
         // 내정보관리부터
         Column(
@@ -278,10 +297,10 @@ fun MyPageScreen(
                     .padding(start = 17.dp, end = 18.dp)
                     .clip(
                         shape = RoundedCornerShape(
-                            topStart = 20.dp,
-                            topEnd = 12.dp,
-                            bottomStart = 12.dp,
-                            bottomEnd = 12.dp
+                            topStart = 14.dp,
+                            topEnd = 14.dp,
+                            bottomStart = 14.dp,
+                            bottomEnd = 14.dp
                         )
                     )
                     .background(Color.White)
@@ -290,14 +309,6 @@ fun MyPageScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 12.dp,
-                                topEnd = 12.dp,
-                                bottomStart = 12.dp,
-                                bottomEnd = 12.dp
-                            )
-                        )
                 ) {
                     val firstMypageList = listOf("내 정보 관리", "위치 즐겨찾기", "피드 책갈피", "피드 보관함")
 
@@ -340,10 +351,10 @@ fun MyPageScreen(
                     .padding(start = 17.dp, end = 18.dp)
                     .clip(
                         shape = RoundedCornerShape(
-                            topStart = 20.dp,
-                            topEnd = 12.dp,
-                            bottomStart = 12.dp,
-                            bottomEnd = 12.dp
+                            topStart = 14.dp,
+                            topEnd = 14.dp,
+                            bottomStart = 14.dp,
+                            bottomEnd = 14.dp
                         )
                     )
                     .background(Color.White)
@@ -390,13 +401,6 @@ fun MyPageScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.ic_logout),
-//                    contentDescription = "",
-//                    modifier = Modifier.clickableNoEffect{
-//
-//                    }
-//                )
                 Box(
                     modifier = Modifier
                         .width(64.dp)
@@ -413,14 +417,12 @@ fun MyPageScreen(
                         color = Color(0xFFBEBEBE)
                     )
                 }
-
                 Spacer(Modifier.size(4.dp))
                 Image(
                     painter = painterResource(id = R.drawable.ic_vertical_small_grayline),
                     contentDescription = ""
                 )
                 Spacer(Modifier.size(4.dp))
-
                 Box(
                     modifier = Modifier
                         .width(64.dp)
@@ -436,96 +438,10 @@ fun MyPageScreen(
                         color = Color(0xFFBEBEBE)
                     )
                 }
-//                Spacer(Modifier.size(10.dp))
-//                Image(
-//                    painter = painterResource(id = R.drawable.ic_authout),
-//                    contentDescription = "",
-//                    modifier = Modifier.clickableNoEffect {
-//                        moveToBye()
-//                    }
-//                )
             }
-
-            Spacer(Modifier.height(20.dp))
-
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(40.dp)
-//                    .padding(start = 20.dp),
-//                contentAlignment = Alignment.CenterStart
-//            ) {
-//                Text(
-//                    text = "정보",
-//                    fontSize = 18.sp
-//                )
-//            }
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height((0.6).dp)
-//                    .background(color = Color(0xFFBEBEBE))
-//            )
-//
-//            SettingsMenuItem(
-//                menuName = "캘린더 삭제",
-//                color = Color(0xFFEC5C5C),
-//                onClick = {
-////                    warningState = WarningState.DeleteCalendar
-//                    isWarningDialogShowing = true
-//                }
-//            )
-//
-//            SettingsMenuItem(
-//                menuName = "회원탈퇴",
-//                color = Color(0xFFEC5C5C),
-//                onClick = {
-//
-//
-//                    warningState = WarningState.Withdrawal
-//                    isWarningDialogShowing = true
-//                }
-//            )
         }
     }
 }
-
-//@Composable
-//fun SettingsMenuItem(
-//    menuName: String,
-//    color: Color = Color(0xFF000000),
-//    onClick: () -> Unit
-//) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(40.dp)
-//            .clickable {
-//                onClick()
-//            }
-//            .padding(start = 20.dp, end = 20.dp),
-//        contentAlignment = Alignment.CenterStart
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Text(
-//                text = menuName,
-//                fontSize = 16.sp,
-//                color = color,
-//                letterSpacing = 0.em
-//            )
-//            Spacer(Modifier.weight(1f))
-//            Image(
-//                modifier = Modifier
-//                    .size(20.dp),
-//                painter = painterResource(id = R.drawable.arrow_forward_ios_fill0_wght100_grad0_opsz24),
-//                contentDescription = null,
-//                colorFilter = ColorFilter.tint(Color(0xFF909295))
-//            )
-//        }
-//    }
-//}
 
 @Composable
 fun MyPageWarningDialog(
@@ -542,7 +458,6 @@ fun MyPageWarningDialog(
 
         ) {
         CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -610,7 +525,6 @@ fun MyPageWarningDialog(
                     }
                 }
             }
-
         }
     }
 }
@@ -619,35 +533,3 @@ enum class WarningState {
     SignOut,
     Withdrawal
 }
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//private fun MyPageScreenPreview() {
-//    WhereAreYouTheme {
-//        MyPageScreen(
-//            name = "Name",
-//            email = "Email",
-//            profileImageUri = null,
-//            getMyInfo = { },
-//            signOut = { },
-//            deleteCalendar = { },
-//            withdrawAccount = { },
-//            moveToSignInScreen = { },
-//            moveToModifyInfoScreen = { }
-//        )
-//    }
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//private fun MyPageWarningDialogPreview() {
-//    WhereAreYouTheme {
-//        MyPageWarningDialog(
-//            warningTitle = "로그아웃",
-//            warningText = "로그아웃을 진행하기겠습니까?",
-//            okText = "확인",
-//            onDismissRequest = {},
-//            onConfirm = {}
-//        )
-//    }
-//}

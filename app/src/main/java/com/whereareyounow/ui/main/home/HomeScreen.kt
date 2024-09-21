@@ -23,10 +23,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
@@ -61,8 +63,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -88,8 +92,17 @@ import androidx.lifecycle.ViewModel
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.ViewType
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.MainViewModel
+import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium10pt
+import com.whereareyounow.ui.theme.medium12pt
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium16pt
+import com.whereareyounow.ui.theme.medium20pt
+import com.whereareyounow.util.clickableNoEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -173,15 +186,6 @@ private fun HomeScreen(
         initialPage = 0
     )
 
-
-
-//    LaunchedEffect(sheetState.bottomSheetState.currentValue) {
-//        snapshotFlow { sheetState.bottomSheetState.currentValue }
-//            .collect { value ->
-//                Log.d("sfjlsiefj", value.toString())
-//            }
-//    }
-
     BottomSheetScaffold(
         scaffoldState = sheetState,
         sheetContainerColor = Color.White,
@@ -247,169 +251,105 @@ private fun HomeScreen(
             }
         }
     ) {
-        Column(
 
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 15.dp, end = 15.dp, top = TOP_BAR_HEIGHT.dp)
         ) {
-            Column(
+            // ON MY WAY ROW
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 15.dp, end = 15.dp)
-
             ) {
-                // ON MY WAY ROW
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-//                    .padding(start = 15.dp, end = 15.dp)
-                ) {
-                    First(onAlarmIconClick, onMyIconClick, alarmBoolean)
-                }
-                Spacer(Modifier.size(18.dp))
-                //
-//            LazyColumn(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .padding(paddingValues)
-//            ) {
-
-//                item {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(start = 15.dp, end = 15.dp)
-//                    ) {
-//            Spacer(Modifier.size(16.dp))
-
-                // HorizontalPager 카리나 사진 5개
-                Second(horizontalPagerState, testSecondImage)
-
-                Spacer(Modifier.size(16.dp))
-
-                // 일정알림 Card
-                ThirdScreen(testThirdData)
-//                    }
-//                }
-
-//                item {
-//                    Spacer(Modifier.size(14.dp))
-//                    FourthScreen()
-//                }
-//                item {
-//                    Spacer(Modifier.size(16.dp))
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(start = 15.dp, end = 25.dp)
-//                    ) {
-//                        FifthScreen()
-//                    }
-//                    Spacer(Modifier.size(12.dp))
-//                }
-
-//                item {
-                Spacer(modifier = Modifier.size(20.dp))
-
-
-//                }
-//            }
+                First(onAlarmIconClick, onMyIconClick, alarmBoolean)
             }
 
-            Column(
+            Gap(10)
 
+            Second(horizontalPagerState, testSecondImage)
+
+            Gap(16)
+
+            ThirdScreen(testThirdData)
+
+            Gap(30)
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 10.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_check_memory),
-                    contentDescription = "",
-                    modifier = Modifier.padding(start = 12.dp)
+                Text(
+                    text = "함께한 추억을 확인해보세요!",
+                    style = medium20pt,
+                    color = Color(0xFF222222)
                 )
-                // 일정 HorizontalPager
-                SixthScreen(testFourthData)
             }
+
+            Gap(16)
+
+            SixthScreen(testFourthData)
+
         }
-
-//        SixthScreen(testFourthData)
-
     }
 }
-
-//@Composable
-//fun sepeateTest() {
-//    Column(
-//        modifier = Modifier.padding(top = 200.dp)
-//    ) {
-//        val viewModel : HomeViewModel = hiltViewModel()
-//        val testFourthData = viewModel.fourthData.collectAsState().value
-//        SixthScreen(testFourthData)
-//
-//    }
-//
-//}
-
 
 @Composable
 fun First(onIconClick: () -> Unit, onMyIconClick: () -> Unit, alarmBoolean: Boolean) {
 
     Row(
         modifier = Modifier
-            .height(46.dp)
-            .padding(start = 7.dp),
+            .height(46.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.awhere_are_you),
-//            contentDescription = ""
-//        )
+        Gap(7)
 
         Image(
             painter = painterResource(id = R.drawable.ic_onmyway),
             contentDescription = ""
         )
+
         Spacer(Modifier.weight(1f))
-
-//        Text(
-//            "지금어디?", modifier = Modifier
-//                .weight(1f),
-//            fontSize = 20.sp,
-//            color = Color(0xFF6236E9),
-//            fontFamily = FontFamily(Font(R.font.ttangsbudaejjigae))
-//        )
-
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_onmyway),
-//            contentDescription = ""
-//        )
 
         //TODO 준성님 -> 아이콘빨간색다운
         if (alarmBoolean) {
-            FirstIconBadge(
-                onIconClick = { onIconClick() },
+            Image(
+                painter = painterResource(id = R.drawable.ic_bellred),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(34.dp)
+                    .clickableNoEffect {
+                        onIconClick()
+                    }
             )
         } else {
-            Icon(
+            Image(
                 painter = painterResource(id = R.drawable.icon_bell),
                 contentDescription = "",
-                modifier = Modifier.clickable { onIconClick() },
+                modifier = Modifier
+                    .size(34.dp)
+                    .clickableNoEffect {
+                        onIconClick()
+                    }
             )
         }
 
-        Icon(
-            painter = painterResource(id = R.drawable.ic_user_outlined),
+        Image(
+            painter = painterResource(id = R.drawable.ic_userd),
             contentDescription = "",
-            tint = Color(0xFF6236E9),
-            modifier = Modifier.clickable { onMyIconClick() }
+            modifier = Modifier
+                .size(34.dp)
+                .clickableNoEffect {
+                    onMyIconClick()
+                }
         )
 
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Second(pagerState: PagerState, testSecondImages: List<HomeViewModel.SecondDataModel>) {
-
-//    LaunchedEffect(horizontalPagerViewModel.page) {
-
-    val horizontalPagerViewModel : HorizontalPagerViewModel = hiltViewModel()
-
     val isVisible = remember { mutableStateOf(false) }
     if (testSecondImages.isEmpty()) {
         Box(
@@ -440,15 +380,14 @@ fun Second(pagerState: PagerState, testSecondImages: List<HomeViewModel.SecondDa
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-//                    .padding(start = 15.dp , end = 15.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                contentAlignment = Alignment.BottomEnd
             ) {
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
                         .height(190.dp)
                         .onSizeChanged {
-
                             if (it.width > 0 && it.height > 0) isVisible.value = true
                         }
                 ) { page ->
@@ -462,29 +401,50 @@ fun Second(pagerState: PagerState, testSecondImages: List<HomeViewModel.SecondDa
                                 .background(Color.White),
                             contentAlignment = Alignment.BottomEnd
                         ) {
-                            GlideImage(
-                                imageModel = { testSecondImages[page].image },
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_default_banner),
+                                contentDescription = "",
+                                modifier = Modifier.fillMaxSize()
                             )
+                            // 삭제 하면 안됨.
+//                            GlideImage(
+//                                imageModel = { testSecondImages[page].image },
+//                            )
                         }
                     }
                 }
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 12.dp, bottom = 11.dp),
+                    contentAlignment = Alignment.CenterEnd
                 ) {
-                    Text(
-                        text = AnnotatedString.Builder().apply {
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("${pagerState.currentPage + 1}")
-                            }
-                            append(" / 5")
-                        }.toAnnotatedString(),
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.End,
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 170.dp, end = 10.dp)
-                    )
+                            .clip(RoundedCornerShape(40.dp))
+                            .background(Color(0xFF444444))
+                            .width(42.dp)
+                            .height(18.dp)
+                            .alpha(0.6f),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${pagerState.currentPage + 1}",
+                            style = medium12pt,
+                            color = Color(0xFFFFFFFF)
+                        )
+                        Text(
+                            text = " / ",
+                            style = medium10pt,
+                            color = Color(0xFFF0F0F0)
+                        )
+                        Text(
+                            text = "${pagerState.pageCount}",
+                            style = medium12pt,
+                            color = Color(0xFFF0F0F0)
+                        )
+                    }
                 }
             }
         }
@@ -518,7 +478,7 @@ fun ThirdScreen(testThirdDatas: List<HomeViewModel.ThirdDataModel>) {
             modifier = Modifier
                 .height(52.dp)
                 .fillMaxWidth()
-                .border(1.dp, Color.Black, RoundedCornerShape(6.dp)),
+                .border(1.5.dp, getColor().brandColor, RoundedCornerShape(6.dp)),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = RoundedCornerShape(6.dp)
         ) {
@@ -527,7 +487,6 @@ fun ThirdScreen(testThirdDatas: List<HomeViewModel.ThirdDataModel>) {
                     .padding(start = 12.dp, end = 94.dp)
                     .fillMaxHeight(),
                 verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center
             ) {
                 Text(day, color = Color.Red)
                 Spacer(Modifier.size(18.dp))
@@ -537,7 +496,6 @@ fun ThirdScreen(testThirdDatas: List<HomeViewModel.ThirdDataModel>) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
     if (testFourthData.isNotEmpty()) {
@@ -548,127 +506,99 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
             },
             initialPage = 0
         )
-//        Column(
-//            horizontalAlignment = A,
-//            modifier = Modifier
-//                .padding(end = 15.dp),
-//            verticalArrangement = Arrangement.Center
-//        ) {
 
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_check_memory),
-//                contentDescription = "",
-//                modifier = Modifier.padding(start = 12.dp)
-//            )
-
-            Spacer(Modifier.size(16.dp))
-
-            HorizontalPager(
+        HorizontalPager(
+            state = horizontalState,
+            // pageSpacing : 다음 칸과 간격
+            pageSpacing = 12.dp,
+            contentPadding = PaddingValues(start = 8.dp, end = 23.dp),
+            modifier = Modifier
+                .fillMaxWidth(),
+            flingBehavior = PagerDefaults.flingBehavior(
                 state = horizontalState,
-                pageSpacing = 12.dp,
-                contentPadding = PaddingValues(start = 15.dp, end = 15.dp),
-//                    contentPadding = PaddingValues(end = 18.dp),
-                modifier = Modifier
-//                        .clip(RoundedCornerShape(50.dp))
-                    .fillMaxWidth()
-                    //.border(width = 2.dp, color = Color.Gray)
-                    .padding(start = 8.dp, end = 12.dp),
-                flingBehavior = PagerDefaults.flingBehavior(
-                    state = horizontalState,
-                    snapAnimationSpec = spring(stiffness = Spring.StiffnessMedium)
-                )
-
+                snapAnimationSpec = spring(stiffness = Spring.StiffnessMedium)
             )
-            { index ->
-                val detailFeedData = testFourthData[index]
-                Box(
+        ) { index ->
+            val detailFeedData = testFourthData[index]
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = Color(0xFFD4D4D4)
+                        ),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+            ) {
+                Column(
                     modifier = Modifier
-//                        .fillMaxSize()
-//                        .fillMaxHeight()
                         .fillMaxWidth()
-                        .border(
-                            border = BorderStroke(
-                                width = 2.dp,
-                                color = Color.Gray
-                            ),
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .padding(start = 14.dp, end = 8.dp)
-                    //.clip(RoundedCornerShape(50.dp))
-                )
-                {
-                    Column(
+                        .padding(start = 12.dp, top = 12.dp),
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                        //.clip(RoundedCornerShape(10.dp))
                     ) {
-                        Row(
+
+                        GlideImage(
+                            imageModel = { detailFeedData.image1 },
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp, end = 12.dp)
+                                .size(50.dp)
+                                .offset(y = 4.dp)
+                                .clip(RoundedCornerShape(14.dp)),
+                        )
+
+                        Gap(4)
+
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
                         ) {
-                            GlideImage(
-                                imageModel = { detailFeedData.image1 },
+
+                            Row(
                                 modifier = Modifier
-                                    .size(50.dp)
-                                    //.padding(start = 12.dp)
-                                    .clip(RoundedCornerShape(10.dp)),
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 4.dp)
+                                    .fillMaxWidth()
+                                    .height(28.dp)
+                                    .padding(start = 6.dp, end = 6.dp, top = 6.dp, bottom = 2.dp)
                             ) {
                                 Text(
                                     text = detailFeedData.title,
-                                    fontFamily = FontFamily(Font(R.font.notosanskr_medium)),
-                                    fontSize = 14.sp,
+                                    style = medium14pt,
                                     color = Color(0xFF666666)
                                 )
-                                Spacer(modifier = Modifier.height(2.dp))
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(26.dp)
+                                    .padding(start = 6.dp, end = 6.dp, bottom = 4.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
                                 Text(
                                     text = detailFeedData.subTitle,
-                                    fontSize = 16.sp,
-                                    fontFamily = FontFamily(Font(R.font.notosanskr_medium))
-
+                                    style = medium16pt,
+                                    color = Color(0xFF222222)
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
                             }
+
                         }
-                        Spacer(Modifier.size(4.dp))
-                        SixthText(text = detailFeedData.content, test = horizontalState)
-//                        Text(text = detailFeedData.content)
-                        Spacer(Modifier.size(10.dp))
                     }
+                    Gap(4)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 12.dp)
+                    ) {
+                        SixthText(text = detailFeedData.content, test = horizontalState)
+                    }
+                    Gap(10)
                 }
-//                LaunchedEffect(key1 = horizontalState.currentPage) {
-//                    withContext(Dispatchers.IO) {
-//                        horizontalPagerViewModel.save(horizontalState.currentPage)
-//
-//                    }
-//                }
-            }
-//        }
-        Spacer(Modifier.size(10.dp))
-        Row(
-            Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(horizontalState.pageCount) { iteration ->
-                val color =
-                    if (horizontalState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                Box(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(16.dp)
-                )
             }
         }
+        Spacer(Modifier.size(10.dp))
     } else {
         Box(
             modifier = Modifier.height(200.dp)
@@ -686,12 +616,12 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
         }
     }
 }
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 fun SixthText(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = Color.Unspecified,
+    color: Color = Color(0xFF767676),
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
@@ -701,22 +631,17 @@ fun SixthText(
     textAlign: TextAlign? = TextAlign.Unspecified,
     lineHeight: TextUnit = TextUnit.Unspecified,
     softWrap: Boolean = true,
-    style: TextStyle = LocalTextStyle.current,
+    style: TextStyle = medium14pt,
     test: PagerState
 ) {
-    val customEllipsis = "... 더보기"
+    val customEllipsis = "더보기"
     val textLayoutState = remember { mutableStateOf<TextLayoutResult?>(null) }
     val finalTextState = remember { mutableStateOf(text) }
     val currentPage = remember { test.currentPage }
 
-    val horizontalPagerViewModel : HorizontalPagerViewModel = hiltViewModel()
+    val horizontalPagerViewModel: HorizontalPagerViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-//        snapshotFlow { test.currentPage }.distinctUntilChanged()
-//            .collect { page ->
-        Log.d("sfsefsgsagasef1`234354w3124", horizontalPagerViewModel.page.value.toString())
-
-        // viewModel.sendPageSelectedEvent(page)
         withContext(Dispatchers.Main) {
             val textLayoutResult = textLayoutState.value
             if (textLayoutResult != null && textLayoutResult.lineCount == 4) {
@@ -724,26 +649,26 @@ fun SixthText(
                 val lastTextIndexNumber = textLayoutResult.getLineEnd(3, true) - 3
                 // 끝에짤라
                 val truncatedText = text.substring(0, lastTextIndexNumber).trimEnd()
-                finalTextState.value = truncatedText + customEllipsis
+                finalTextState.value = truncatedText + "... " + customEllipsis
             } else {
                 finalTextState.value = text
             }
         }
-//            }
     }
 
 
     val annotatedText = buildAnnotatedString {
+
         append(finalTextState.value)
+
         // 더보기로끝나면 더해
         if (finalTextState.value.endsWith(customEllipsis)) {
             val ellipsisStartIndex = finalTextState.value.indexOf(customEllipsis)
             addStyle(
-                style = SpanStyle(color = Color(0xFF7B50FF), fontWeight = FontWeight.Bold),
+                style = SpanStyle(color = getColor().brandColor , fontWeight = FontWeight.Bold),
                 start = ellipsisStartIndex,
                 end = ellipsisStartIndex + customEllipsis.length
             )
-
         }
     }
 
@@ -897,28 +822,19 @@ fun SeventhScreen(
     }
 }
 
-
-
-
-
-//@Preview(showBackground = true)
-//@Composable
-//private fun PreviewExpandableText() {
-//    SixthText(" 정말 간만에 다녀온 96즈끼리 다녀온 여의도한강공원! 너무 간만이라 치킨 피자 어디에서 가져오는지도 헷갈리고 돗자리 깔 타이밍에 뭔 바람이 그렇게 부는지도 몰랐는데 티원은 젠지를 언제쯤이길수있을까 하하슬프네")
-//}
-
 @HiltViewModel
 class HorizontalPagerViewModel @Inject constructor(
-    private val counter : ImageCounter,
+    private val counter: ImageCounter,
 
-): ViewModel() {
+    ) : ViewModel() {
 
     val firstPage = counter.firstCount
-    fun firstSave(pageNum : Int) {
+    fun firstSave(pageNum: Int) {
         counter.firstSave(pageNum)
     }
+
     val page = counter.count
-    fun save(pageNum : Int) {
+    fun save(pageNum: Int) {
         counter.save(pageNum)
     }
 }
@@ -928,14 +844,14 @@ class ImageCounter @Inject constructor() {
     private val _firstCount = MutableStateFlow(0)
     val firstCount = _firstCount.asStateFlow()
 
-    fun firstSave(pageNum : Int) {
+    fun firstSave(pageNum: Int) {
         _firstCount.value = pageNum
     }
 
     private val _count = MutableStateFlow(0)
     val count = _count.asStateFlow()
 
-    fun save(pageNum : Int) {
+    fun save(pageNum: Int) {
         _count.value = pageNum
     }
 
@@ -953,8 +869,8 @@ fun FirstIconBadge(
             painter = painterResource(id = R.drawable.icon_bell),
             contentDescription = "",
             modifier = Modifier
-                .size(24.dp),
-            tint = Color(0xFF6236E9)
+                .size(34.dp),
+            tint = getColor().brandColor
         )
         Box(
             modifier = Modifier
@@ -971,78 +887,5 @@ fun FirstIconBadge(
                     .align(Alignment.Center)
             )
         }
-
     }
 }
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Preview(showBackground = true)
-@Composable
-private fun HomeScreenPreview() {
-    val horizontalState = rememberPagerState {
-        10
-    }
-    WhereAreYouTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                //.clip(RoundedCornerShape(30.dp))
-                .padding(start = 23.dp, top = 16.dp),
-            //.border(width = 1.dp , color = Color.Black)
-        ) {
-            HorizontalPager(
-                state = horizontalState,
-                pageSpacing = 16.dp,
-                contentPadding = PaddingValues(end = 12.dp),
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .border(width = 3.dp, color = Color.Black)
-            ) { index ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(50.dp))
-                        .background(Color.White)
-
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 12.dp, top = 12.dp, end = 12.dp)
-                            .clip(RoundedCornerShape(20.dp))
-
-                    ) {
-                        GlideImage(
-                            imageModel = { R.drawable.alarm },
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(RoundedCornerShape(4.dp)),
-                        )
-                        Column(
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(
-                                text = "ddddddddddetailFeedData.title",
-                                fontFamily = FontFamily(Font(R.font.notosanskr_medium)),
-                                fontSize = 14.sp,
-                                color = Color(0xFF666666)
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "detailFeedData.subTitleddddd",
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily(Font(R.font.notosanskr_medium))
-
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                        }
-                        Text("123456789")
-                    }
-                }
-            }
-        }
-    }
-}
-

@@ -1,5 +1,6 @@
 package com.whereareyounow.domain.repository
 
+import com.whereareyounow.domain.entity.member.DetailUserInfo
 import com.whereareyounow.domain.entity.member.Email
 import com.whereareyounow.domain.entity.member.SignInData
 import com.whereareyounow.domain.entity.member.UserInfo
@@ -66,7 +67,7 @@ interface MemberRepository {
     // memberSeq로 유저 정보 획득
     suspend fun getUserInfoByMemberSeq(
         data: GetUserInfoByMemberSeqRequest
-    ): NetworkResult<UserInfo>
+    ): NetworkResult<DetailUserInfo>
 
     // 이메일 중복 체크
     suspend fun checkEmailDuplicate(

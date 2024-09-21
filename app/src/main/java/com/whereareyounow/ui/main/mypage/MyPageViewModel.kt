@@ -2,10 +2,21 @@ package com.whereareyounow.ui.main.mypage
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
+import com.whereareyounow.domain.request.member.SendEmailCodeRequest
+import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
+import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
+import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
+import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
+import com.whereareyounow.domain.util.NetworkResult
+import com.whereareyounow.ui.main.mypage.mapper.toModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,21 +30,30 @@ class MyPageViewModel @Inject constructor(
 //    private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
 //    private val deleteMemberUseCase: DeleteMemberUseCase,
 //    private val resetCalendarUseCase: ResetCalendarUseCase,
+    private val getUserInfoByMemberSeqUseCase: GetUserInfoByMemberSeqUseCase,
+    private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
+    private val sendEmailCodeUseCase: SendEmailCodeUseCase,
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
     val imageUri: StateFlow<String?> = _imageUri
-    private val _name = MutableStateFlow("유민혁")
-    val name: StateFlow<String> = _name
-    private val _email = MutableStateFlow("")
-    val email: StateFlow<String> = _email
-    private val _profileImageUri = MutableStateFlow<String?>("https://m.segye.com/content/image/2021/11/16/20211116509557.jpg")
+    private val _name = MutableStateFlow<String?>("")
+    val name: StateFlow<String?> = _name
+    private val _email = MutableStateFlow<String?>("")
+    val email: StateFlow<String?> = _email
+    private val _profileImageUri =
+        MutableStateFlow<String?>("https://m.segye.com/content/image/2021/11/16/20211116509557.jpg")
     val profileImageUri: StateFlow<String?> = _profileImageUri
-
+    private val _isVerifyed = MutableStateFlow<String?>("FALSE")
+    val isVerifyed : StateFlow<String?> = _isVerifyed
+    init {
+        getMyInfo()
+    }
 
     data class Announcement(
-        val string : String
+        val string: String
     )
+
     private val _announcementList = MutableStateFlow<List<Announcement>>(emptyList())
     val announcementList: StateFlow<List<Announcement>> = _announcementList.asStateFlow()
 
@@ -49,11 +69,102 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun getMyInfo() {
-//        viewModelScope.launch(Dispatchers.Default) {
+
+        viewModelScope.launch(Dispatchers.IO) {
 //            val accessToken = getAccessTokenUseCase().first()
 //            val memberId = getMemberIdUseCase().first()
 //            val response = getMemberDetailsUseCase(accessToken, memberId)
 //            LogUtil.printNetworkLog("memberId = $memberId", response, "내 정보 가져오기")
+
+            getUserInfoByMemberSeqUseCase(GetUserInfoByMemberSeqRequest(memberSeq = 1)).collect {
+//
+//
+                when (it) {
+
+                    is NetworkResult.Success -> {
+                        val userInfo = it.data?.toModel()
+                        userInfo?.let {
+                            _name.value = it.userName
+                            _email.value = it.email
+                            _profileImageUri.value = it.profileImage
+                        }
+                    }
+
+                    is NetworkResult.Error -> {
+
+
+                    }
+
+                    is NetworkResult.Exception -> {
+
+
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    fun emailRequest(email: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sendEmailCodeUseCase(
+                SendEmailCodeRequest(
+                    email = email
+                )
+            ).collect { response ->
+                when (response) {
+
+                    is NetworkResult.Success -> {
+
+
+                    }
+
+                    is NetworkResult.Error -> {
+
+
+                    }
+
+                    is NetworkResult.Exception -> {
+
+
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    fun emailVerify(email: String, code: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            verifyEmailCodeUseCase(
+                VerifyEmailCodeRequest(
+                    email = email,
+                    code = code
+                )
+            ).collect { response ->
+                when (response) {
+
+                    is NetworkResult.Success -> {
+                        _isVerifyed.value = response.data
+
+                    }
+
+                    is NetworkResult.Error -> {
+
+
+                    }
+
+                    is NetworkResult.Exception -> {
+
+
+                    }
+                }
+            }
+        }
+    }
 //            when (response) {
 //                is NetworkResult.Success -> {
 //                    response.data?.let { data ->
@@ -70,11 +181,11 @@ class MyPageViewModel @Inject constructor(
 //                }
 //            }
 //        }
-    }
 
-    fun withdrawAccount(
-        moveToStartScreen: () -> Unit,
-    ) {
+
+        fun withdrawAccount(
+            moveToStartScreen: () -> Unit,
+        ) {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            val accessToken = getAccessTokenUseCase().first()
 //            val memberId = getMemberIdUseCase().first()
@@ -96,9 +207,9 @@ class MyPageViewModel @Inject constructor(
 //                }
 //            }
 //        }
-    }
+        }
 
-    fun deleteCalendar() {
+        fun deleteCalendar() {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            val accessToken = getAccessTokenUseCase().first()
 //            val memberId = getMemberIdUseCase().first()
@@ -120,5 +231,7 @@ class MyPageViewModel @Inject constructor(
 //                }
 //            }
 //        }
+        }
     }
-}
+
+

@@ -256,7 +256,8 @@ fun FriendScreenTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 6.dp),
+            .padding(start = 20.dp, end = 6.dp , top = TOP_BAR_HEIGHT.dp),
+
 //            .height((TOP_BAR_HEIGHT / density).dp), TODO -> 준성님카톡
         verticalAlignment = Alignment.CenterVertically,
     ) {

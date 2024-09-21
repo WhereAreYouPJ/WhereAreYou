@@ -44,10 +44,10 @@ import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
 import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
-import com.whereareyounow.ui.main.mypage.AnnouncementScreen
+import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
 import com.whereareyounow.ui.main.mypage.AskScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
-import com.whereareyounow.ui.main.mypage.MyInfoScreen
+import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen1
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen2
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen3
@@ -338,7 +338,7 @@ fun MainNavigation(
         composable(route = ROUTE_MY_INFO) {
             MyInfoScreen(
                 moveToMyPageScreen = { navController.popBackStack() },
-                moveToEditMyInfo = { navController.navigate(ROUTE.EditMyInfo) }
+                moveToEditMyInfoScreen = { navController.navigate(ROUTE.EditMyInfo) }
             )
         }
 
@@ -376,7 +376,6 @@ fun MainNavigation(
             ByeScreen2(
                 moveToBackScreen = { navController.popBackStack() },
                 moveToByeScreen3 = { navController.navigate(ROUTE.Bye3) }
-
             )
         }
         // 회원탈퇴3
@@ -384,7 +383,6 @@ fun MainNavigation(
             ByeScreen3(
                 moveToBackScreen = { navController.popBackStack() },
                 moveToByeScreen4 = { navController.navigate(ROUTE.Bye4) }
-
             )
         }
         // 회원탈퇴4
@@ -392,13 +390,13 @@ fun MainNavigation(
             ByeScreen4(
                 moveToBackScreen = { navController.popBackStack() },
                 moveToByeScreen5 = { navController.navigate(ROUTE.Bye5) }
-
             )
         }
         // 회원탈퇴5
         composable<ROUTE.Bye5> {
             ByeScreen5(
-                moveToBackScreen = { navController.popBackStack() }
+                moveToBackScreen = { navController.popBackStack() },
+                moveToLoginScreen = {  }
             )
         }
 

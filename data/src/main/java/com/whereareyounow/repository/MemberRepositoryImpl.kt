@@ -1,6 +1,7 @@
 package com.whereareyounow.repository
 
 import com.whereareyounow.api.MemberApi
+import com.whereareyounow.domain.entity.member.DetailUserInfo
 import com.whereareyounow.domain.entity.member.Email
 import com.whereareyounow.domain.entity.member.SignInData
 import com.whereareyounow.domain.entity.member.UserInfo
@@ -83,7 +84,7 @@ class MemberRepositoryImpl(
 
     override suspend fun getUserInfoByMemberSeq(
         data: GetUserInfoByMemberSeqRequest
-    ): NetworkResult<UserInfo> {
+    ): NetworkResult<DetailUserInfo> {
         return handleResult { memberApi.getUserInfoByMemberSeq(
             memberSeq = data.memberSeq
         ) }
