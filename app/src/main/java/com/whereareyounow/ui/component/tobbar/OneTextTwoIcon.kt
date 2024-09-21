@@ -1,83 +1,94 @@
 package com.whereareyounow.ui.component.tobbar
 
-import android.graphics.drawable.Icon
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.main.mypage.ModifierIconPopUp
+import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun OneTextTwoIconTobBar(
-    modifier: Modifier = Modifier,
     title: String,
     firstIconClicked: () -> Unit,
-    firstIcon : Int,
+    firstIcon: Int,
     secondIconClicked: () -> Unit,
-    secondIcon : Int,
-    content: @Composable ColumnScope.() -> Unit
-
-    ) {
-    Column(
-        modifier = modifier
+    secondIcon: Int,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
             .height(TOP_BAR_HEIGHT.dp)
-            .padding(start = 15.dp, end = 15.dp),
-        horizontalAlignment = AbsoluteAlignment.Right
+            .drawBehind {
+                val strokeWidth = 1.5.dp.toPx()
+                val y = size.height - strokeWidth / 2
+                drawLine(
+                    color = Color(0xFFC9C9C9),
+                    start = Offset(0f, y),
+                    end = Offset(size.width, y),
+                    strokeWidth = strokeWidth
+                )
+            },
+        contentAlignment = Alignment.Center
 
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(
-                modifier = Modifier
-//                .align(Alignment.CenterStart)
-                    .size(30.dp)
-                    .clickableNoEffect { firstIconClicked() },
-                painter = painterResource(id = firstIcon),
-                contentDescription = null
-            )
-            Text(
-                text = title,
-                color = Color(0xFF000000),
-                style = medium18pt
-            )
-            Image(
-                modifier = Modifier
-//                .align(Alignment.CenterStart)
-                    .size(30.dp)
-                    .clickableNoEffect { secondIconClicked() },
-                painter = painterResource(id = secondIcon),
-                contentDescription = null
-            )
-        }
 
+        Image(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 15.dp, bottom = 10.dp)
+                .clickableNoEffect {
+                    firstIconClicked()
+                    Log.d("hslhflshfl", "first")
+                }
+                .offset(y = 4.dp)
+                ,
+            painter = painterResource(id = firstIcon),
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(Color(0xFFACACAC))
+        )
+
+        Text(
+            text = title,
+            style = medium18pt,
+//                modifier = Modifier.offset(y = 4f.dp)
+        )
+
+        Image(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 11.dp)
+                .clickableNoEffect {
+                    secondIconClicked()
+                    Log.d("hslhflshfl", "second")
+                },
+            painter = painterResource(id = secondIcon),
+            contentDescription = ""
+        )
         content()
-
-
-
 
     }
 }
@@ -88,9 +99,9 @@ private fun OneTextTwoIconTobBarPreview() {
     OneTextTwoIconTobBar(
         title = "아이디 찾기",
         firstIconClicked = {},
-    firstIcon = R.drawable.ic_back,
-    secondIconClicked = {},
-    secondIcon = R.drawable.ic_back
+        firstIcon = R.drawable.ic_back,
+        secondIconClicked = {},
+        secondIcon = R.drawable.ic_back
     ) {
 
     }

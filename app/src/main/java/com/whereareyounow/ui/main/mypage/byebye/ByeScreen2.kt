@@ -71,6 +71,7 @@ private fun ByeScreen2(
             .padding(top = TOP_BAR_HEIGHT.dp)
             .imePadding()
     ) {
+        // 회원탈퇴
         DefaultTopBar(
             title = "회원탈퇴"
         ) {
@@ -84,7 +85,27 @@ private fun ByeScreen2(
         ) {
             val selectedStates =
                 remember { mutableStateListOf(false, false, false, false, false) }
-            val isChecked = remember { mutableStateOf(false) }
+            val inputReason = remember {
+                mutableStateOf("")
+            }
+            val isGuitarChecked = remember { mutableStateOf(false) }
+            val canMove = remember {
+                mutableStateOf(false)
+            }
+//            canMove.value = ( selectedStates.contains(true) || isChecked.value && inputReason.value.length > 10 )
+            if (isGuitarChecked.value) {
+                if (inputReason.value.length > 10) {
+                    canMove.value = true
+                } else {
+                    if (selectedStates.contains(true)) {
+                        canMove.value = false
+                    } else {
+                        canMove.value = false
+                    }
+                }
+            } else {
+                canMove.value = selectedStates.contains(true)
+            }
             val circles = listOf(
                 R.drawable.ic_circlechecked,
                 R.drawable.ic_emptycircle,
@@ -96,24 +117,28 @@ private fun ByeScreen2(
                 "개인정보 보호 문제",
                 "서비스에 불만이 생겨서",
             )
-            val inputReason = remember {
-                mutableStateOf("")
-            }
+
+
             Gap(30)
+
             ByeScreenTopTitleAndImage(
                 title = "좋은 추억은 많이 남기셨나요?",
                 titleStyle = medium20pt,
                 titleColor = Color.Black,
                 titleImage = R.drawable.ic_iwantsleep
             )
+
             Gap(7)
+
             ByeScreenTopContent(
                 content = "회원님께서 계정을 삭제하시게 된 이유를 알려주시면,\n" +
                         "귀중한 의견을 반영하여 더욱 노력하겠습니다",
                 contentStyle = medium14pt,
                 contentColor = Color(0xFF767676)
             )
+
             Gap(20)
+
             reasons.forEachIndexed { index, reason ->
                 Spacer(Modifier.height(10.dp))
                 DetailByeReaseons(
@@ -124,35 +149,39 @@ private fun ByeScreen2(
                     isClicked = { selectedStates[index] = !selectedStates[index] }
                 )
             }
+
             Spacer(Modifier.height(10.dp))
-            if (!isChecked.value) {
+
+            if (!isGuitarChecked.value) {
                 DetailByeReaseons(
                     reason = "기타(직접입력)",
                     reasonStyle = medium14pt,
                     reasonColor = Color(0xFF222222),
-                    circle = if (isChecked.value) circles[0] else circles[1],
-                    isClicked = { isChecked.value = !isChecked.value }
+                    circle = if (isGuitarChecked.value) circles[0] else circles[1],
+                    isClicked = { isGuitarChecked.value = !isGuitarChecked.value }
                 )
             } else {
                 InputDetailByeReaseons(
                     inputReason = inputReason,
                     inputReasonStyle = medium14pt,
                     inputReasonColor = Color(0xFF222222),
-                    circle = if (isChecked.value) circles[0] else circles[1],
-                    isClicked = { isChecked.value = !isChecked.value }
+                    circle = if (isGuitarChecked.value) circles[0] else circles[1],
+                    isClicked = { isGuitarChecked.value = !isGuitarChecked.value }
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_nextbutton),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(bottom = 68.dp)
-                    .clickableNoEffect {
+            WithdrawlButton(
+                text = "다음",
+                canMove = canMove,
+                onClicked = {
+                    if (canMove.value) {
                         moveToByeScreen3()
+                    } else {
+
                     }
+                }
             )
 
         }
@@ -221,8 +250,8 @@ fun InputDetailByeReaseons(
             .clickableNoEffect {
                 isClicked()
             }
-            .imePadding()                .focusable()
-        ,
+            .imePadding()
+            .focusable(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 

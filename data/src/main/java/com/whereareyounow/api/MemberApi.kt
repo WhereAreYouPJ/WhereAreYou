@@ -1,5 +1,6 @@
 package com.whereareyounow.api
 
+import com.whereareyounow.domain.entity.member.DetailUserInfo
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.SignOutRequest
 import com.whereareyounow.domain.request.member.UpdateProfileImageRequest
@@ -79,7 +80,7 @@ interface MemberApi {
     @GET("member/details")
     suspend fun getUserInfoByMemberSeq(
         @Query("memberSeq") memberSeq: Int
-    ): Response<ResponseWrapper<UserInfo>>
+    ): Response<ResponseWrapper<DetailUserInfo>>
 
     // 이메일 중복 체크
     @GET("member/checkEmail")

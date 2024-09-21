@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomTopBar
-import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
+import com.whereareyounow.ui.main.mypage.byebye.Gap
 
 @Composable
 fun AskScreen(
@@ -61,6 +61,8 @@ private fun AnnouncementScreen(
             modifier = Modifier.padding(top = 34.dp , start = 37.dp , end = 36.dp).size(width = 302.dp , height = 269.dp)
         )
 
+        Gap(34)
+
         Image(
             painter = painterResource(id = R.drawable.ic_caution),
             contentDescription = "",
@@ -72,7 +74,7 @@ private fun AnnouncementScreen(
         Image(
             painter = painterResource(id = R.drawable.ic_gotokakao),
             contentDescription = "",
-            modifier = Modifier.padding(top = 22.dp , start = 15.dp , end = 15.dp , bottom = 24.dp)
+            modifier = Modifier.padding(top = 22.dp , start = 15.dp , end = 15.dp , bottom = 68.dp)
         )
 
 

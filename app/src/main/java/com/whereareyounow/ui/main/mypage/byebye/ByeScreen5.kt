@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -30,16 +31,20 @@ import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.tobbar.DefaultTopBar
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun ByeScreen5(
-    moveToBackScreen : () -> Unit
+    moveToBackScreen : () -> Unit,
+    moveToLoginScreen : () -> Unit
 
 ) {
     ByeScreen5(
         isContent = true,
-        moveToBackScreen = moveToBackScreen
+        moveToBackScreen = moveToBackScreen,
+        moveToLoginScreen = moveToLoginScreen
     )
 }
 
@@ -48,11 +53,15 @@ fun ByeScreen5(
 private fun ByeScreen5(
     isContent : Boolean,
     moveToBackScreen : () -> Unit,
+    moveToLoginScreen : () -> Unit
 
 ) {
     val contexxt = LocalContext.current
     val density = LocalDensity.current
     val ha = with(density) { 174f.toDp() + BOTTOM_NAVIGATION_BAR_HEIGHT.toDp() }
+    val canMove = remember {
+        mutableStateOf(true)
+    }
     Box(
         modifier = Modifier.fillMaxSize().padding(top = TOP_BAR_HEIGHT.dp)
     ) {
@@ -70,6 +79,22 @@ private fun ByeScreen5(
 
             Spacer(Modifier.height(30.dp))
 
+            ByeScreenTopTitle(
+                title = "회원탈퇴가 완료되었어요.",
+                titleStyle = medium20pt,
+                titleColor = Color.Black
+            )
+
+            Gap(5)
+
+            ByeScreenTopContent(
+                content = "온마이웨이를 이용해주셔서 감사했습니다. \n" +
+                        "더 좋은 서비스를 제공하는 온마이웨이가 되겠습니다.\n" +
+                        "나중에 다시 만나요!",
+                contentStyle = medium14pt,
+                contentColor = Color(0xFF767676)
+            )
+
             Image(
                 painter = painterResource(id = R.drawable.ic_byebyecompleted),
                 contentDescription = "",
@@ -85,18 +110,13 @@ private fun ByeScreen5(
                     .fillMaxWidth()
                     .scale(1.1f)
             )
-//            Spacer(Modifier.weight(1f))
 
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_confirm),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(bottom = 68.dp)
-                    .clickableNoEffect {
-                        (contexxt as? Activity)?.finish()
-
-                    }
+            WithdrawlButton(
+                text = "확인",
+                canMove = canMove,
+                onClicked = {
+                    (contexxt as? Activity)?.finish()
+                }
             )
 
         }

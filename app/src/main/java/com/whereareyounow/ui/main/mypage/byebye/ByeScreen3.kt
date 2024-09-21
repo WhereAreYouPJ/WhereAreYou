@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -43,45 +45,44 @@ private fun ByeScreen3(
     moveToBackScreen: () -> Unit,
     moveToByeScreen4: () -> Unit,
 ) {
+    val canMove = remember { mutableStateOf(true) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = TOP_BAR_HEIGHT.dp)
     ) {
+        // 회원 탈퇴 탑바
         DefaultTopBar(
             title = "회원탈퇴"
         ) {
             moveToBackScreen()
         }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = TOP_BAR_HEIGHT.dp, start = 16.dp, end = 16.dp)
         ) {
 
-
-            Spacer(Modifier.height(30.dp))
-
+            Gap(30)
 
             Text(
                 text = "정말 계정을 삭제하시겠어요?",
                 style = medium20pt,
                 color = Color.Black
             )
-            Spacer(modifier = Modifier.height(7.dp))
+
+            Gap(7)
+
             Text(
                 text = "아래 내용을 다시 한 번 확인해 주세요.",
                 style = medium14pt,
                 color = Color(0xFF767676)
             )
 
+            Gap(30)
 
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_areyourealbyebye),
-//                contentDescription = "",
-//
-//                )
-            Spacer(Modifier.height(30.dp))
             Image(
                 painter = painterResource(id = R.drawable.ic_areyourealbyebyedetail),
                 contentDescription = "",
@@ -95,16 +96,24 @@ private fun ByeScreen3(
 
 
 
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_byebutton),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(bottom = 68.dp)
-                    .clickableNoEffect {
-                        moveToByeScreen4()
-                    }
+            WithdrawlButton(
+                text = "회원 탈퇴하기",
+                canMove = canMove,
+                onClicked = {
+                    moveToByeScreen4()
+                }
             )
+
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_byebutton),
+//                contentDescription = "",
+//                modifier = Modifier
+//                    .padding(bottom = 68.dp)
+//                    .clickableNoEffect {
+//                        moveToByeScreen4()
+//                    }
+//            )
+
         }
     }
 
