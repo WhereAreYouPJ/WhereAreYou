@@ -40,7 +40,7 @@ import com.whereareyounow.ui.main.friend.FriendScreen
 import com.whereareyounow.ui.main.home.HomeScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyPageScreen
 import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
-import com.whereareyounow.ui.main.schedule.calendar.ScheduleScreen
+import com.whereareyounow.ui.main.schedule.calendar.CalendarScreen
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.nanumSquareNeo
@@ -71,7 +71,7 @@ fun MainScreen(
 ) {
     val viewType = viewModel.viewType.collectAsState().value
     val navigationItemContentList = viewModel.getNavigationItemContent()
-    val calendarScreenUIState = calendarViewModel.calendarScreenUIState.collectAsState().value
+    val calendarScreenUIState = calendarViewModel.uiState.collectAsState().value
     MainScreen(
         viewType = viewType,
         calendarScreenUIState = calendarScreenUIState,
@@ -132,26 +132,26 @@ private fun MainScreen(
                 )
             },
             floatingActionButton = {
-                if (viewType == ViewType.Calendar) {
-                    FloatingActionButton(
-                        shape = CircleShape,
-                        contentColor = Color(0xFFFFFFFF),
-                        containerColor = Color(0xFF5448BC),
-                        onClick = {
-                            moveToAddScheduleScreen(
-                                calendarScreenUIState.selectedYear,
-                                calendarScreenUIState.selectedMonth,
-                                calendarScreenUIState.selectedDate
-                            )
-                        }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.plus),
-                            contentDescription = null
-                        )
-                    }
-                }
+//                if (viewType == ViewType.Calendar) {
+//                    FloatingActionButton(
+//                        shape = CircleShape,
+//                        contentColor = Color(0xFFFFFFFF),
+//                        containerColor = Color(0xFF5448BC),
+//                        onClick = {
+//                            moveToAddScheduleScreen(
+//                                calendarScreenUIState.selectedYear,
+//                                calendarScreenUIState.selectedMonth,
+//                                calendarScreenUIState.selectedDate
+//                            )
+//                        }
+//                    ) {
+//                        Icon(
+//                            modifier = Modifier.size(20.dp),
+//                            imageVector = ImageVector.vectorResource(R.drawable.plus),
+//                            contentDescription = null
+//                        )
+//                    }
+//                }
             },
             containerColor = Color(0xFFFFFFFF),
         ) {
@@ -168,7 +168,7 @@ private fun MainScreen(
                     }
 
                     ViewType.Calendar -> {
-                        ScheduleScreen(
+                        CalendarScreen(
                             paddingValues = it,
                             moveToDetailScreen = moveToDetailScreen
                         )

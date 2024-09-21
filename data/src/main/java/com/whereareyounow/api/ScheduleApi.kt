@@ -6,7 +6,9 @@ import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
 import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
-import com.whereareyounow.domain.entity.schedule.MonthlyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.MonthlySchedule
+import com.whereareyounow.domain.entity.schedule.ScheduleDDay
+import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.Response
@@ -39,17 +41,31 @@ interface ScheduleApi {
     ): Response<ResponseWrapper<ScheduleSeq>>
 
     // 일정 초대 수락
-    @POST("schedule/accept-schedule")
+    @POST("schedule/accept")
     suspend fun acceptScheduleRequest(
         @Body body: AcceptScheduleRequestRequest
     ): Response<ResponseWrapper<Unit>>
 
     // 월별 일정 조회
-    @GET("schedule/month-schedule")
+    @GET("schedule/month")
     suspend fun getMonthlySchedule(
         @Query("yearMonth") yearMonth: String,
         @Query("memberSeq") memberSeq: Int
-    ): Response<ResponseWrapper<MonthlyScheduleInfo>>
+    ): Response<ResponseWrapper<List<MonthlySchedule>>>
+
+    // 일정 List 조회 API
+    @GET("schedule/list")
+    suspend fun getScheduleList(
+        @Query("memberSeq") memberSeq: Int,
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+    ): Response<ResponseWrapper<List<ScheduleListItem>>>
+
+    // 일정 D-Day 조회 API
+    @GET("schedule/dday")
+    suspend fun getScheduleDDay(
+        @Query("memberSeq") memberSeq: Int
+    ): Response<ResponseWrapper<List<ScheduleDDay>>>
 
     // 해당 날짜 일정 조회
     @GET("schedule/date")
@@ -57,6 +73,11 @@ interface ScheduleApi {
         @Query("date") date: String,
         @Query("memberSeq") memberSeq: Int
     ): Response<ResponseWrapper<DailyScheduleInfo>>
+
+    @HTTP(method = "DELETE", path = "schedule/refuse", hasBody = true)
+    suspend fun refuseScheduleInvitation(
+
+    )
 
     // 일정 삭제(일정 초대자인 경우)
     @HTTP(method = "DELETE", path = "schedule/invited", hasBody = true)

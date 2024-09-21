@@ -7,9 +7,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.anchoredDraggable
-import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -50,22 +46,16 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.test.core.app.ActivityScenario.launch
 import com.whereareyounow.data.calendar.Schedule
-import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
-import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
-import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.notoSanskr
-import com.whereareyounow.util.getYearCalendars
-import kotlinx.coroutines.Dispatchers
+import com.whereareyounow.util.calendar.getYearCalendars
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CalendarContent(
+fun CalendarContent2(
     currentMonthCalendarInfo: List<Schedule>,
     updateCurrentMonthCalendarInfo: () -> Unit,
     selectedYear: Int,

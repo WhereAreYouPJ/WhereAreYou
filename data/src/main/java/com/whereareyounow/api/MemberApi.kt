@@ -22,7 +22,7 @@ import retrofit2.http.Query
 interface MemberApi {
 
     // 프로필 사진 변경
-    @PUT("member/modify/profileImage")
+    @PUT("member/modify/profile-image")
     suspend fun updateProfileImage(
         @Body body: UpdateProfileImageRequest
     ): Response<ResponseWrapper<String>>

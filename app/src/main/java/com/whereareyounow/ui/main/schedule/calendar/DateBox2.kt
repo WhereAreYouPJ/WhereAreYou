@@ -31,7 +31,7 @@ import com.whereareyounow.ui.theme.lato
 import java.util.Calendar
 
 @Composable
-fun DateBox(
+fun DateBox2(
     anchorOffset: Float,
     year: Int,
     month: Int,
@@ -125,66 +125,66 @@ fun DateBox(
 @Preview(showBackground = true)
 @Composable
 fun DateBoxPreview() {
-    Column() {
-        Row() {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-            ) {
-                DateBox(
-                    anchorOffset = 0f,
-                    year = 2024,
-                    month = 3,
-                    date = 2,
-                    scheduleCount = 0,
-                    isSelected = false,
-                    textColor = Color(0xFF000000)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-            ) {
-                DateBox(
-                    anchorOffset = 0f,
-                    year = 2024,
-                    month = 3,
-                    date = 20,
-                    scheduleCount = 3,
-                    isSelected = false,
-                    textColor = Color(0xFF000000)
-                )
-            }
-        }
-        Row() {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-            ) {
-                DateBox(
-                    anchorOffset = 0f,
-                    year = 2024,
-                    month = 3,
-                    date = 20,
-                    scheduleCount = 4,
-                    isSelected = false,
-                    textColor = Color(0xFF000000)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-            ) {
-                DateBox(
-                    anchorOffset = 0f,
-                    year = 2024,
-                    month = 3,
-                    date = 20,
-                    scheduleCount = 6,
-                    isSelected = true,
-                    textColor = Color(0xFFFFFFFF)
-                )
-            }
-        }
-    }
+//    Column() {
+//        Row() {
+//            Box(
+//                modifier = Modifier
+//                    .size(50.dp)
+//            ) {
+//                DateBox(
+//                    anchorOffset = 0f,
+//                    year = 2024,
+//                    month = 3,
+//                    date = 2,
+//                    scheduleCount = 0,
+//                    isSelected = false,
+//                    textColor = Color(0xFF000000)
+//                )
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .size(50.dp)
+//            ) {
+//                DateBox(
+//                    anchorOffset = 0f,
+//                    year = 2024,
+//                    month = 3,
+//                    date = 20,
+//                    scheduleCount = 3,
+//                    isSelected = false,
+//                    textColor = Color(0xFF000000)
+//                )
+//            }
+//        }
+//        Row() {
+//            Box(
+//                modifier = Modifier
+//                    .size(50.dp)
+//            ) {
+//                DateBox(
+//                    anchorOffset = 0f,
+//                    year = 2024,
+//                    month = 3,
+//                    date = 20,
+//                    scheduleCount = 4,
+//                    isSelected = false,
+//                    textColor = Color(0xFF000000)
+//                )
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .size(50.dp)
+//            ) {
+//                DateBox(
+//                    anchorOffset = 0f,
+//                    year = 2024,
+//                    month = 3,
+//                    date = 20,
+//                    scheduleCount = 6,
+//                    isSelected = true,
+//                    textColor = Color(0xFFFFFFFF)
+//                )
+//            }
+//        }
+//    }
 }

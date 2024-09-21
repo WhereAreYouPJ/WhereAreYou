@@ -3,7 +3,9 @@ package com.whereareyounow.repository
 import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
-import com.whereareyounow.domain.entity.schedule.MonthlyScheduleInfo
+import com.whereareyounow.domain.entity.schedule.MonthlySchedule
+import com.whereareyounow.domain.entity.schedule.ScheduleDDay
+import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.repository.ScheduleRepository
 import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
@@ -12,6 +14,8 @@ import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetDailyScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetScheduleDDayRequest
+import com.whereareyounow.domain.request.schedule.GetScheduleListRequest
 import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
@@ -49,9 +53,27 @@ class ScheduleRepositoryImpl(
 
     override suspend fun getMonthlySchedule(
         data: GetMonthlyScheduleRequest
-    ): NetworkResult<MonthlyScheduleInfo> {
+    ): NetworkResult<List<MonthlySchedule>> {
         return handleResult { scheduleApi.getMonthlySchedule(
             yearMonth = data.yearMonth,
+            memberSeq = data.memberSeq
+        ) }
+    }
+
+    override suspend fun getScheduleList(
+        data: GetScheduleListRequest
+    ): NetworkResult<List<ScheduleListItem>> {
+        return handleResult { scheduleApi.getScheduleList(
+            memberSeq = data.memberSeq,
+            page = data.page,
+            size = data.size
+        ) }
+    }
+
+    override suspend fun getScheduleDDay(
+        data: GetScheduleDDayRequest
+    ): NetworkResult<List<ScheduleDDay>> {
+        return handleResult { scheduleApi.getScheduleDDay(
             memberSeq = data.memberSeq
         ) }
     }

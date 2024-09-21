@@ -32,7 +32,6 @@ import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
-import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium12pt
@@ -53,8 +52,8 @@ fun SignInWithAccountScreen(
     moveToSignUpScreen: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val signInScreenUIState = viewModel.signInScreenUIState.collectAsState().value
-    val signUpScreenSideEffectFlow = viewModel.signInScreenSideEffectFlow
+    val signInScreenUIState = viewModel.uiState.collectAsState().value
+    val signUpScreenSideEffectFlow = viewModel.sideEffectFlow
     SignInWithAccountScreen(
         signInScreenUIState = signInScreenUIState,
         signInScreenSideEffectFlow = signUpScreenSideEffectFlow,
@@ -117,7 +116,7 @@ private fun SignInWithAccountScreen(
                 // 아이디 입력 창
                 UserIdInputBox(
                     contentDescription = "Email TextField",
-                    inputText = signInScreenUIState.inputUserId,
+                    inputText = signInScreenUIState.inputEmail,
                     onValueChange = updateInputUserId
                 )
 
@@ -156,7 +155,7 @@ private fun SignInWithAccountScreen(
                     )
                 }
 
-                Spacer(Modifier.height(30.dp))
+                Spacer(Modifier.height(26.dp))
 
                 OtherButtons(
                     moveToResetPasswordScreen = moveToResetPasswordScreen,
@@ -243,18 +242,19 @@ private fun OtherButtons(
             ResetPasswordButton(moveToResetPasswordScreen = moveToResetPasswordScreen)
         }
 
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(10.dp))
 
         Row(
             modifier = Modifier.height(IntrinsicSize.Min)
         ) {
             Text(
+                modifier = Modifier.padding(4.dp),
                 text = "계정이 없으신가요?",
-                color = getColor().thinnest,
+                color = Color(0xFF999999),
                 style = medium14pt
             )
 
-            Spacer(Modifier.width(10.dp))
+            Spacer(Modifier.width(4.dp))
 
             SignUpButton(
                 moveToSignUpScreen = moveToSignUpScreen,
@@ -269,8 +269,10 @@ private fun ResetPasswordButton(
     moveToResetPasswordScreen: () -> Unit
 ) {
     Text(
-        modifier = Modifier.clickableNoEffect { moveToResetPasswordScreen() },
-        text = "비밀번호 재설정",
+        modifier = Modifier
+            .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+            .clickableNoEffect { moveToResetPasswordScreen() },
+        text = "계정찾기",
         color = Color(0xFF666666),
         style = medium14pt
     )

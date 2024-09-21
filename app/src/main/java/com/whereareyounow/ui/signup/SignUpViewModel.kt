@@ -3,15 +3,11 @@ package com.whereareyounow.ui.signup
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyounow.data.signup.SignUpEmailButtonState
-import com.whereareyounow.data.signup.SignUpEmailState
+import com.whereareyounow.data.signup.SignUpPasswordCheckState
+import com.whereareyounow.data.signup.SignUpPasswordState
 import com.whereareyounow.data.signup.SignUpScreenSideEffect
 import com.whereareyounow.data.signup.SignUpScreenUIState
 import com.whereareyounow.data.signup.SignUpUserNameState
-import com.whereareyounow.data.signup.SignUpCodeOKButtonState
-import com.whereareyounow.data.signup.SignUpPasswordState
-import com.whereareyounow.data.signup.SignUpPasswordCheckState
-import com.whereareyounow.data.signup.SignUpVerificationCodeState
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.SignUpRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
@@ -22,6 +18,10 @@ import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
+import com.whereareyounow.globalvalue.type.EmailButtonState
+import com.whereareyounow.globalvalue.type.EmailCodeButtonState
+import com.whereareyounow.globalvalue.type.EmailCodeState
+import com.whereareyounow.globalvalue.type.EmailState
 import com.whereareyounow.util.InputTextValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -52,7 +52,7 @@ class SignUpViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SignUpScreenUIState())
     val uiState = _uiState.asStateFlow()
-    val signUpScreenSideEffectFlow = MutableSharedFlow<SignUpScreenSideEffect>()
+    val sideEffectFlow = MutableSharedFlow<SignUpScreenSideEffect>()
     private var startTimer: Job? = null
 
     fun updateInputUserName(userName: String) {
@@ -69,8 +69,8 @@ class SignUpViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 inputEmail = email,
-                requestButtonState = SignUpEmailButtonState.Request,
-                inputEmailState = SignUpEmailState.Idle
+                requestButtonState = EmailButtonState.Request,
+                inputEmailState = EmailState.Idle
             )
         }
     }
@@ -79,13 +79,13 @@ class SignUpViewModel @Inject constructor(
         if (inputTextValidator.validateEmail(_uiState.value.inputEmail).result) {
             _uiState.update {
                 it.copy(
-                    inputEmailState = SignUpEmailState.Valid
+                    inputEmailState = EmailState.Valid
                 )
             }
         } else {
             _uiState.update {
                 it.copy(
-                    inputEmailState = SignUpEmailState.Invalid
+                    inputEmailState = EmailState.Invalid
                 )
             }
             return
@@ -96,14 +96,14 @@ class SignUpViewModel @Inject constructor(
                 networkResult.onSuccess { code, message, data ->
                     _uiState.update {
                         it.copy(
-                            requestButtonState = SignUpEmailButtonState.RequestDone,
-                            inputEmailState = SignUpEmailState.Valid
+                            requestButtonState = EmailButtonState.RequestDone,
+                            inputEmailState = EmailState.Valid
                         )
                     }
                     // 인증 코드를 발송하고 5분이 지나지 않았으면 다시 발송할 수 없다.
                     if (_uiState.value.emailCodeLeftTime > 300) {
                         viewModelScope.launch {
-                            signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("${_uiState.value.emailCodeLeftTime - 120}초 후에 다시 발송할 수 있습니다."))
+                            sideEffectFlow.emit(SignUpScreenSideEffect.Toast("${_uiState.value.emailCodeLeftTime - 120}초 후에 다시 발송할 수 있습니다."))
                         }
                         return@onEach
                     }
@@ -125,15 +125,14 @@ class SignUpViewModel @Inject constructor(
             }
             .catch { LogUtil.e("flow error", "sendEmailCodeUseCase") }
             .launchIn(viewModelScope)
-
     }
 
     fun updateInputVerificationCode(code: String) {
         _uiState.update {
             it.copy(
-                inputVerificationCode = code,
-                inputVerificationCodeState = SignUpVerificationCodeState.Idle,
-                verificationCodeButtonState = if (code == "") SignUpCodeOKButtonState.Inactive else SignUpCodeOKButtonState.Active
+                inputEmailCode = code,
+                inputEmailCodeState = EmailCodeState.Idle,
+                emailCodeButtonState = if (code == "") EmailCodeButtonState.Inactive else EmailCodeButtonState.Active
             )
         }
     }
@@ -159,27 +158,27 @@ class SignUpViewModel @Inject constructor(
     fun verifyEmailCode() {
         if (_uiState.value.emailCodeLeftTime <= 0) {
             viewModelScope.launch {
-                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("유효시간이 만료되었습니다. 인증코드를 재전송해주세요."))
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("유효시간이 만료되었습니다. 인증코드를 재전송해주세요."))
             }
             return
         }
         val requestData = VerifyEmailCodeRequest(
             email = _uiState.value.inputEmail,
-            code = _uiState.value.inputVerificationCode
+            code = _uiState.value.inputEmailCode
         )
         verifyEmailCodeUseCase(requestData)
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
                     _uiState.update {
                         it.copy(
-                            inputVerificationCodeState = SignUpVerificationCodeState.Valid,
-                            verificationCodeButtonState = SignUpCodeOKButtonState.Inactive
+                            inputEmailCodeState = EmailCodeState.Valid,
+                            emailCodeButtonState = EmailCodeButtonState.Inactive
                         )
                     }
                 }.onError { code, message ->
                     _uiState.update {
                         it.copy(
-                            inputVerificationCodeState = SignUpVerificationCodeState.Invalid,
+                            inputEmailCodeState = EmailCodeState.Invalid,
                         )
                     }
                 }.onException {
@@ -195,23 +194,23 @@ class SignUpViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (_uiState.value.inputUserNameState != SignUpUserNameState.Valid) {
-                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이름을 확인해주세요."))
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("이름을 확인해주세요."))
                 return@launch
             }
             if (_uiState.value.inputPasswordState != SignUpPasswordState.Valid) {
-                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호를 확인해주세요."))
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호를 확인해주세요."))
                 return@launch
             }
             if (_uiState.value.inputPasswordCheckState != SignUpPasswordCheckState.Valid) {
-                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호 확인을 다시해주세요."))
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("비밀번호 확인을 다시해주세요."))
                 return@launch
             }
-            if (_uiState.value.inputEmailState != SignUpEmailState.Valid) {
-                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("이메일을 확인해주세요."))
+            if (_uiState.value.inputEmailState != EmailState.Valid) {
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("이메일을 확인해주세요."))
                 return@launch
             }
-            if (_uiState.value.inputVerificationCodeState != SignUpVerificationCodeState.Valid) {
-                signUpScreenSideEffectFlow.emit(SignUpScreenSideEffect.Toast("인증코드를 확인해주세요."))
+            if (_uiState.value.inputEmailCodeState != EmailCodeState.Valid) {
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("인증코드를 확인해주세요."))
                 return@launch
             }
             val requestData = SignUpRequest(

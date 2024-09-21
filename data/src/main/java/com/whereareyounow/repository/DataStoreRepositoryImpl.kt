@@ -4,15 +4,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.whereareyounow.domain.repository.AuthDataStoreRepository
+import com.whereareyounow.domain.repository.DataStoreRepository
 import com.whereareyounow.globalvalue.KEY_ACCESS_TOKEN
 import com.whereareyounow.globalvalue.KEY_REFRESH_TOKEN
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class AuthDataStoreRepositoryImpl(
+class DataStoreRepositoryImpl(
     private val dataStore: DataStore<Preferences>
-) : AuthDataStoreRepository {
+) : DataStoreRepository {
 
     // DataStore에서 Access Token 가져오기
     override suspend fun getAccessToken(): Flow<String?> {

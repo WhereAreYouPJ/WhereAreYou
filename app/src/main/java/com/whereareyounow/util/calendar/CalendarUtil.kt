@@ -1,9 +1,10 @@
-package com.whereareyounow.util
+package com.whereareyounow.util.calendar
 
-import com.whereareyounow.data.calendar.Schedule
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -132,4 +133,27 @@ fun getMinuteDiffWithCurrentTime(time: String): Int {
     val diffInMillis = t.time - currentDate.time
     val minutes = diffInMillis / (1000 * 60)
     return minutes.toInt().absoluteValue
+}
+
+fun compareDate(dateTime1: LocalDateTime, dateTime2: LocalDateTime): Boolean {
+    return dateTime1.year == dateTime2.year &&
+            dateTime1.month == dateTime2.month &&
+            dateTime1.dayOfMonth == dateTime2.dayOfMonth
+}
+
+fun compareDate(dateTime1: LocalDate, dateTime2: LocalDate): Boolean {
+    return dateTime1.year == dateTime2.year &&
+            dateTime1.month == dateTime2.month &&
+            dateTime1.dayOfMonth == dateTime2.dayOfMonth
+}
+
+fun parseLocalDateTime(str: String): LocalDateTime {
+    val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+    return LocalDateTime.parse(str, dateFormat)
+}
+
+fun parseLocalDate(str: String): LocalDate {
+    val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+    val ldt =  LocalDateTime.parse(str, dateFormat)
+    return LocalDate.of(ldt.year, ldt.monthValue, ldt.dayOfMonth)
 }

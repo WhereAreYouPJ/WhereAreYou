@@ -11,12 +11,15 @@ import com.whereareyounow.api.MemberApi
 import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.datasource.SearchLocationDataSource
 import com.whereareyounow.datasource.SharedPreferencesDataSource
+import com.whereareyounow.di.datastore.DataStoreModule
+import com.whereareyounow.domain.repository.DataStoreRepository
 import com.whereareyounow.domain.repository.FCMRepository
 import com.whereareyounow.domain.repository.FriendRepository
 import com.whereareyounow.domain.repository.LocationRepository
 import com.whereareyounow.domain.repository.MemberRepository
 import com.whereareyounow.domain.repository.ScheduleRepository
 import com.whereareyounow.domain.repository.SearchLocationRepository
+import com.whereareyounow.repository.DataStoreRepositoryImpl
 import com.whereareyounow.repository.FCMRepositoryImpl
 import com.whereareyounow.repository.FriendRepositoryImpl
 import com.whereareyounow.repository.LocationRepositoryImpl
@@ -29,6 +32,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -81,5 +85,13 @@ object RepositoryModule {
         fcmApi: FCMApi
     ): FCMRepository {
         return FCMRepositoryImpl(fcmApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRecentSearchDataStoreRepository(
+        @DataStoreModule.DataStore dataStore: DataStore<Preferences>
+    ): DataStoreRepository {
+        return DataStoreRepositoryImpl(dataStore)
     }
 }

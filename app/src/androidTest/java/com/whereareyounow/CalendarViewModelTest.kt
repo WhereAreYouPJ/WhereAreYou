@@ -66,6 +66,6 @@ class CalendarViewModelTest {
         calendarViewModel.updateDate(14)
         calendarViewModel.updateCurrentMonthCalendarInfo()
         delay(5000)
-        assertEquals(1, calendarViewModel.calendarScreenUIState.value.selectedMonthCalendarInfoList[14].scheduleCount)
+        assertEquals(1, calendarViewModel.uiState.value.selectedMonthCalendarInfoMap[14].scheduleCount)
     }
 }

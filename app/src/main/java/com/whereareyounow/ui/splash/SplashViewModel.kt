@@ -65,7 +65,7 @@ class SplashViewModel @Inject constructor(
 //            init.join()
 //        }
 //        return isSignedIn
-        return true
+        return false
     }
 
     private suspend fun initialize() {

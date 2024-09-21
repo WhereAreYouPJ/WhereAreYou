@@ -11,6 +11,6 @@ class GetMonthlyScheduleUseCase(
         data: GetMonthlyScheduleRequest
     ) = flow {
         val response = repository.getMonthlySchedule(data)
-        emit(data)
+        emit(response)
     }
 }

@@ -82,7 +82,7 @@ object NetworkModule {
     fun provideRemoteRetrofitInstance(okHttpClient: OkHttpClient): Retrofit {
         val gson = GsonBuilder()
             .setLenient()
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+//            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             .create()
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)

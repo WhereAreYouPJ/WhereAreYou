@@ -56,7 +56,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,8 +78,8 @@ import com.whereareyounow.ui.main.schedule.scheduleedit.component.ScheduleEditSc
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
-import com.whereareyounow.util.getDayOfWeekString
-import com.whereareyounow.util.getLastDayOfMonth
+import com.whereareyounow.util.calendar.getDayOfWeekString
+import com.whereareyounow.util.calendar.getLastDayOfMonth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

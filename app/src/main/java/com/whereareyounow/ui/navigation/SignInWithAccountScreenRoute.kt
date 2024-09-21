@@ -14,15 +14,15 @@ import com.whereareyounow.ui.signin.SignInWithAccountScreen
 fun NavGraphBuilder.signInWithAccountScreenRoute(navController: NavController) = composable<ROUTE.SignInWithAccount> {
     SignInWithAccountScreen(
         moveToSignInMethodSelectionScreen = {
-            navController.popBackStack(ROUTE_SIGN_IN_METHOD_SELECTION, false)
+            navController.popBackStack(ROUTE.SignInMethodSelection, false)
         },
         moveToMainHomeScreen = {
-            navController.navigate(ROUTE_MAIN) {
+            navController.navigate(ROUTE.Main) {
                 popUpTo(navController.graph.startDestinationId) { inclusive = true }
             }
         },
-        moveToFindAccountScreen = { navController.navigate(ROUTE_FIND_ID) },
-        moveToResetPasswordScreen = { navController.navigate(ROUTE_RESET_PASSWORD) },
-        moveToSignUpScreen = { navController.navigate(ROUTE_POLICY_AGREE) }
+        moveToFindAccountScreen = { navController.navigate(ROUTE.FindAccountEmailVerification) },
+        moveToResetPasswordScreen = { navController.navigate(ROUTE.FindAccountEmailVerification) },
+        moveToSignUpScreen = { navController.navigate(ROUTE.PolicyAgree.Main) }
     )
 }

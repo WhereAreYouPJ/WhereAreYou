@@ -64,6 +64,12 @@ sealed class ROUTE {
     data object SignInWithAccount
 
     @Serializable
+    data object FindAccountEmailVerification
+
+    @Serializable
+    data object Main
+
+    @Serializable
     data object Announcement
     @Serializable
     data object Ask

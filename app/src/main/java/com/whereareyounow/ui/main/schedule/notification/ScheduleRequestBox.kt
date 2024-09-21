@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
-import com.whereareyounow.util.getMinuteDiffWithCurrentTime
+import com.whereareyounow.util.calendar.getMinuteDiffWithCurrentTime
 
 @Composable
 fun ScheduleRequestBox(

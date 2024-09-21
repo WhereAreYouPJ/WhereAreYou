@@ -29,25 +29,25 @@ interface FriendApi {
     ): Response<ResponseWrapper<String>>
 
     // 친구 요청 리스트 조회
-    @GET("friendRequest")
+    @GET("friend-request")
     suspend fun getFriendRequestList(
         @Query("memberSeq") memberSeq: Int
     ): Response<ResponseWrapper<List<FriendRequest>>>
 
     // 친구 요청
-    @POST("friendRequest")
+    @POST("friend-request")
     suspend fun sendFriendRequest(
         @Body body: SendFriendRequestRequest
     ): Response<ResponseWrapper<String>>
 
     // 친구 요청 수락
-    @POST("friendRequest/accept")
+    @POST("friend-request/accept")
     suspend fun acceptFriendRequest(
         @Body body: AcceptFriendRequestRequest
     ): Response<ResponseWrapper<Unit>>
 
     // 친구 삭제
-    @HTTP(method = "DELETE", path = "friendRequest/refuse", hasBody = true)
+    @HTTP(method = "DELETE", path = "friend-request/refuse", hasBody = true)
     suspend fun refuseFriendRequest(
         @Body body: RefuseFriendRequestRequest
     ): Response<ResponseWrapper<Unit>>

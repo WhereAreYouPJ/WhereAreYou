@@ -1,11 +1,10 @@
 package com.whereareyounow.di.datastore
 
 import android.content.Context
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.whereareyounow.globalvalue.DATA_STORE_AUTH
+import com.whereareyounow.globalvalue.DATA_STORE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,16 +19,16 @@ object DataStoreModule {
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class AuthDataStore
+    annotation class DataStore
 
     @Singleton
     @Provides
-    @AuthDataStore
-    fun provideAuthDataStore(
+    @DataStore
+    fun provideDataStore(
         @ApplicationContext context: Context
-    ): DataStore<Preferences> {
+    ): androidx.datastore.core.DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
-            produceFile = { context.preferencesDataStoreFile(DATA_STORE_AUTH) }
+            produceFile = { context.preferencesDataStoreFile(DATA_STORE) }
         )
     }
 }

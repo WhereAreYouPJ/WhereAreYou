@@ -8,6 +8,8 @@ import com.whereareyounow.domain.usecase.schedule.DeleteScheduleByInvitorUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDailyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.GetScheduleDDayUseCase
+import com.whereareyounow.domain.usecase.schedule.GetScheduleListUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleInfoUseCase
 import dagger.Module
 import dagger.Provides
@@ -51,6 +53,20 @@ object ScheduleUseCaseModule {
         repository: ScheduleRepository
     ): GetMonthlyScheduleUseCase {
         return GetMonthlyScheduleUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetScheduleListUseCase(
+        repository: ScheduleRepository
+    ): GetScheduleListUseCase {
+        return GetScheduleListUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetScheduleDDay(
+        repository: ScheduleRepository
+    ): GetScheduleDDayUseCase {
+        return GetScheduleDDayUseCase(repository)
     }
 
     @Provides

@@ -1,6 +1,8 @@
 package com.whereareyounow.ui
 
 import android.util.Log
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -21,7 +23,6 @@ import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
-import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_SUCCESS
@@ -30,18 +31,12 @@ import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_NEW_SCHEDULE
-import com.whereareyounow.data.globalvalue.ROUTE_POLICY_AGREE
 import com.whereareyounow.data.globalvalue.ROUTE_RESET_PASSWORD
 import com.whereareyounow.data.globalvalue.ROUTE_SEARCH_LOCATION
 import com.whereareyounow.data.globalvalue.ROUTE_SEARCH_LOCATION_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_SELECT_FRIENDS
-import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_METHOD_SELECTION
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
-import com.whereareyounow.data.globalvalue.ROUTE_SIGN_UP
-import com.whereareyounow.data.globalvalue.ROUTE_SIGN_UP_SUCCESS
-import com.whereareyounow.ui.findaccount.FindAccountScreen
 import com.whereareyounow.ui.findaccount.findid.FindIdResultScreen
-import com.whereareyounow.ui.findaccount.findid.FindIdScreen
 import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
@@ -66,7 +61,9 @@ import com.whereareyounow.ui.main.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.FriendsListScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
+import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
+import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.signInMethodSelectionScreen
@@ -75,11 +72,7 @@ import com.whereareyounow.ui.navigation.signUpScreenRoute
 import com.whereareyounow.ui.navigation.signUpSuccessScreenRoute
 import com.whereareyounow.ui.navigation.splashScreen
 import com.whereareyounow.ui.navigation.termsOfServiceDetailsScreenRoute
-import com.whereareyounow.ui.signin.SignInWithAccountScreen
-import com.whereareyounow.ui.signup.SignUpScreen
-import com.whereareyounow.ui.signup.SignUpSuccessScreen
 import com.whereareyounow.util.navigate
-import okhttp3.Route
 
 @Composable
 fun MainNavigation(
@@ -88,7 +81,9 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE.SignInMethodSelection
+        startDestination = ROUTE.Main,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
     ) {
         // 스플래시
         splashScreen(navController)
@@ -117,27 +112,8 @@ fun MainNavigation(
         // 계정으로 로그인 화면
         signInWithAccountScreenRoute(navController)
 
-        // 계정 찾기 방법 선택 화면
-        composable(route = ROUTE_FIND_ACCOUNT) {
-            FindAccountScreen(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToFindIdScreen = { navController.navigate(ROUTE_FIND_ID) },
-                moveToResetPasswordScreen = { navController.navigate(ROUTE_RESET_PASSWORD) }
-            )
-        }
-
-
-        // 아이디 찾기 화면
-        composable(route = ROUTE_FIND_ID) {
-            FindIdScreen(
-                moveToFindAccountScreen = { navController.popBackStack(ROUTE_FIND_ACCOUNT, false) },
-                moveToFindIdResultScreen = { searchedUserId ->
-                    val bundle = bundleOf("searchedUserId" to searchedUserId)
-                    navController.popBackStack(ROUTE_FIND_ACCOUNT, true)
-                    navController.navigate(ROUTE_FIND_ID_RESULT, bundle)
-                }
-            )
-        }
+        // 계정 찾기 이메일 인증 화면
+        findAccountEmailVerificationScreenRoute(navController)
 
         // 아이디 찾기 결과 화면
         composable(route = ROUTE_FIND_ID_RESULT) {
@@ -190,56 +166,8 @@ fun MainNavigation(
             )
         }
 
-        // 홈 화면
-        composable(route = ROUTE_MAIN) {
-            val friendViewModel : FriendViewModel = hiltViewModel()
-
-            MainScreen(
-                moveToAddScheduleScreen = { year, month, date ->
-                    val bundle = bundleOf(
-                        "year" to year,
-                        "month" to month,
-                        "date" to date
-                    )
-                    navController.navigate(ROUTE_NEW_SCHEDULE, bundle)
-                },
-                moveToDetailScreen = { scheduleId ->
-                    val bundle = bundleOf(
-                        "scheduleId" to scheduleId
-                    )
-                    navController.navigate(ROUTE_DETAIL_SCHEDULE, bundle)
-                },
-                moveToAddFriendScreen = { navController.navigate(ROUTE_ADD_FRIEND) },
-                moveToAddGroupScreen = {},
-                moveToSignInScreen = {
-                    navController.popBackStack()
-                    navController.navigate(ROUTE_SIGN_IN_WITH_ACCOUNT)
-                },
-                moveToModifyInfoScreen = { navController.navigate(ROUTE_MODIFY_INFO) },
-                moveToMyPageScreen = {
-                    // TODO
-                    navController.navigate(ViewType.MyPage.name)
-                },
-                moveToDetailProfileScreen = { friendImagrUrl, friendName ->
-                    // TODO
-                    val bundle = bundleOf(
-                        "friendImagrUrl" to friendImagrUrl,
-                        "friendName" to friendName
-                    )
-//                    friendViewModel.friendsList[]
-                    navController.navigate(ROUTE_DETAIL_PROFILE , bundle)
-                },
-                moveToMyInfoScreen = {
-                    navController.navigate(ROUTE_MY_INFO)
-                },
-                moveToLocationFavorites = {},
-                moveToFeedBookmarks = {},
-                moveToFeedSaved = {},
-                moveToAccoument = {navController.navigate(ROUTE.Announcement)},
-                moveToAsk = {navController.navigate(ROUTE.Ask)},
-                moveToBye = { navController.navigate(ROUTE.Bye1) }
-            )
-        }
+        // 메인 화면
+        mainScreenRoute(navController)
 
         // 일정 추가 화면
         composable(

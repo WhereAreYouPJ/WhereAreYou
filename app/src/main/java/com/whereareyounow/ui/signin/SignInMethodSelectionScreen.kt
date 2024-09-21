@@ -268,6 +268,7 @@ fun SignUpButton(
 ) {
     Text(
         modifier = Modifier
+            .padding(top = 4.dp, bottom = 4.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -284,6 +285,7 @@ fun FindAccountButton(
 ) {
     Text(
         modifier = Modifier
+            .padding(top = 4.dp, bottom = 4.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
@@ -298,6 +300,7 @@ fun FindAccountButton(
 private fun AskButton() {
     Text(
         modifier = Modifier
+            .padding(top = 4.dp, bottom = 4.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }

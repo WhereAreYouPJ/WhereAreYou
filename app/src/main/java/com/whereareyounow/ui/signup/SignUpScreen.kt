@@ -28,21 +28,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.data.signup.SignUpCodeOKButtonState
-import com.whereareyounow.data.signup.SignUpEmailButtonState
-import com.whereareyounow.data.signup.SignUpEmailState
 import com.whereareyounow.data.signup.SignUpPasswordCheckState
 import com.whereareyounow.data.signup.SignUpPasswordState
 import com.whereareyounow.data.signup.SignUpScreenSideEffect
 import com.whereareyounow.data.signup.SignUpScreenUIState
 import com.whereareyounow.data.signup.SignUpUserNameState
-import com.whereareyounow.data.signup.SignUpVerificationCodeState
+import com.whereareyounow.globalvalue.type.EmailButtonState
+import com.whereareyounow.globalvalue.type.EmailCodeButtonState
+import com.whereareyounow.globalvalue.type.EmailState
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
-import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.EmailCodeTextField
+import com.whereareyounow.ui.component.EmailTextField
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.component.CheckingButton
 import com.whereareyounow.ui.theme.WhereAreYouTheme
@@ -60,10 +59,10 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
-    val signUpScreenSideEffectFlow = viewModel.signUpScreenSideEffectFlow
+    val sideEffectFlow = viewModel.sideEffectFlow
     SignUpScreen(
         uiState = uiState,
-        signUpScreenSideEffectFlow = signUpScreenSideEffectFlow,
+        sideEffectFlow = sideEffectFlow,
         sendEmailCode = viewModel::sendEmailCode,
         updateInputUserName = viewModel::updateInputUserName,
         updateInputPassword = viewModel::updateInputPassword,
@@ -80,7 +79,7 @@ fun SignUpScreen(
 @Composable
 private fun SignUpScreen(
     uiState: SignUpScreenUIState,
-    signUpScreenSideEffectFlow: SharedFlow<SignUpScreenSideEffect>,
+    sideEffectFlow: SharedFlow<SignUpScreenSideEffect>,
     sendEmailCode: () -> Unit,
     updateInputUserName: (String) -> Unit,
     updateInputPassword: (String) -> Unit,
@@ -97,7 +96,7 @@ private fun SignUpScreen(
     }
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        signUpScreenSideEffectFlow.collect { sideEffect ->
+        sideEffectFlow.collect { sideEffect ->
             when (sideEffect) {
                 is SignUpScreenSideEffect.Toast -> {
                     withContext(Dispatchers.Main) { Toast.makeText(context, sideEffect.text, Toast.LENGTH_SHORT).show() }
@@ -179,11 +178,11 @@ private fun SignUpScreen(
                                     updateInputEmail = updateInputEmail,
                                     inputEmailState = uiState.inputEmailState,
                                     guideLine = when (uiState.inputEmailState) {
-                                        SignUpEmailState.Invalid -> "이메일 형식에 알맞지 않습니다."
+                                        EmailState.Invalid -> "이메일 형식에 알맞지 않습니다."
                                         else -> ""
                                     },
                                     onSuccessText = when (uiState.inputEmailState) {
-                                        SignUpEmailState.Valid -> {
+                                        EmailState.Valid -> {
                                             "인증코드가 전송되었습니다."
                                         }
                                         else -> ""
@@ -196,10 +195,10 @@ private fun SignUpScreen(
                             // 중복확인, 인증요청, 재전송 버튼
                             CheckingButton(
                                 text = when (uiState.requestButtonState) {
-                                    SignUpEmailButtonState.Request -> "인증요청"
-                                    SignUpEmailButtonState.RequestDone -> "인증요청 완료"
+                                    EmailButtonState.Request -> "인증요청"
+                                    EmailButtonState.RequestDone -> "인증요청 완료"
                                 },
-                                isActive = uiState.requestButtonState == SignUpEmailButtonState.Request
+                                isActive = uiState.requestButtonState == EmailButtonState.Request
                             ) {
                                 sendEmailCode()
                             }
@@ -208,7 +207,7 @@ private fun SignUpScreen(
                         Spacer(Modifier.height(10.dp))
 
                         // 이메일 인증코드 확인
-                        if (uiState.requestButtonState == SignUpEmailButtonState.RequestDone) {
+                        if (uiState.requestButtonState == EmailButtonState.RequestDone) {
                             Row(
                                 modifier = Modifier
                                     .height(IntrinsicSize.Min)
@@ -216,10 +215,10 @@ private fun SignUpScreen(
                             ) {
                                 // 이메일 입력창
                                 Box(modifier = Modifier.weight(1f)) {
-                                    EmailVerificationCodeTextField(
-                                        inputVerificationCode = uiState.inputVerificationCode,
-                                        updateInputVerificationCode = updateInputVerificationCode,
-                                        inputVerificationCodeState = uiState.inputVerificationCodeState,
+                                    EmailCodeTextField(
+                                        inputEmailCode = uiState.inputEmailCode,
+                                        updateInputEmailCode = updateInputVerificationCode,
+                                        inputEmailCodeState = uiState.inputEmailCodeState,
                                         leftTime = uiState.emailCodeLeftTime
                                     )
                                 }
@@ -228,11 +227,11 @@ private fun SignUpScreen(
 
                                 // 확인 버튼
                                 CheckingButton(
-                                    text = when (uiState.verificationCodeButtonState) {
-                                        SignUpCodeOKButtonState.Inactive -> "인증 완료"
-                                        SignUpCodeOKButtonState.Active -> "확인"
+                                    text = when (uiState.emailCodeButtonState) {
+                                        EmailCodeButtonState.Inactive -> "인증 완료"
+                                        EmailCodeButtonState.Active -> "확인"
                                     },
-                                    isActive = uiState.verificationCodeButtonState == SignUpCodeOKButtonState.Active
+                                    isActive = uiState.emailCodeButtonState == EmailCodeButtonState.Active
                                 ) {
                                     verifyEmailCode()
                                 }
@@ -378,49 +377,9 @@ private fun PasswordForCheckingTextField(
     )
 }
 
-@Composable
-private fun EmailTextField(
-    inputEmail: String,
-    updateInputEmail: (String) -> Unit,
-    inputEmailState: SignUpEmailState,
-    guideLine: String,
-    onSuccessText: String,
-) {
-    CustomTextField(
-        hint = "이메일",
-        inputText = inputEmail,
-        onValueChange = updateInputEmail,
-        warningText = guideLine,
-        onSuccessText = onSuccessText,
-        textFieldState = when (inputEmailState) {
-            SignUpEmailState.Idle -> CustomTextFieldState.Idle
-            SignUpEmailState.Valid -> CustomTextFieldState.Satisfied
-            SignUpEmailState.Invalid -> CustomTextFieldState.Unsatisfied
-        }
-    )
-}
 
-@Composable
-private fun EmailVerificationCodeTextField(
-    inputVerificationCode: String,
-    updateInputVerificationCode: (String) -> Unit,
-    inputVerificationCodeState: SignUpVerificationCodeState,
-    leftTime: Int
-) {
-    CustomTextFieldWithTimer(
-        hint = "이메일 인증코드",
-        inputText = inputVerificationCode,
-        onValueChange = updateInputVerificationCode,
-        warningText = "인증코드가 일치하지 않습니다.",
-        onSuccessText = "인증코드가 확인되었습니다.",
-        textFieldState = when (inputVerificationCodeState) {
-            SignUpVerificationCodeState.Idle -> CustomTextFieldState.Idle
-            SignUpVerificationCodeState.Invalid -> CustomTextFieldState.Unsatisfied
-            SignUpVerificationCodeState.Valid -> CustomTextFieldState.Satisfied
-        },
-        leftTime = leftTime
-    )
-}
+
+
 
 @Composable
 fun Guideline(

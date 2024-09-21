@@ -2,25 +2,25 @@ package com.whereareyounow.domain.entity.schedule
 
 import com.google.gson.annotations.SerializedName
 
-data class MonthlyScheduleInfo(
+data class MonthlySchedule(
     @SerializedName("scheduleSeq")
-    val scheduleSeq: Int,
+    val scheduleSeq: Int = 0,
     @SerializedName("title")
-    val title: String,
+    val title: String = "",
     @SerializedName("startTime")
-    val startTime: String,
+    val startTime: String = "",
     @SerializedName("endTime")
-    val endTime: String,
+    val endTime: String = "",
     @SerializedName("location")
-    val location: String,
+    val location: String = "",
     @SerializedName("streetName")
-    val streetName: String,
+    val streetName: String = "",
     @SerializedName("x")
-    val x: Double,
+    val x: Double = 0.0,
     @SerializedName("y")
-    val y: Double,
+    val y: Double = 0.0,
     @SerializedName("color")
-    val color: String,
+    val color: String = "",
     @SerializedName("memo")
-    val memo: String,
+    val memo: String = ""
 )

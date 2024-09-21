@@ -1,131 +1,187 @@
 package com.whereareyounow.ui.main.schedule.calendar
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
-import com.whereareyounow.util.getDayOfWeek
-import com.whereareyounow.util.getTodayInfo
+import com.whereareyounow.data.mockdata.CalendarMockData
+import com.whereareyounow.domain.entity.schedule.MonthlySchedule
+import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
+import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
+import com.whereareyounow.domain.util.LogUtil
+import com.whereareyounow.domain.util.onError
+import com.whereareyounow.domain.util.onException
+import com.whereareyounow.domain.util.onSuccess
+import com.whereareyounow.globalvalue.type.VisualType
+import com.whereareyounow.util.calendar.compareDate
+import com.whereareyounow.util.calendar.getCalendarInfo
+import com.whereareyounow.util.calendar.getDayOfWeek
+import com.whereareyounow.util.calendar.getTodayInfo
+import com.whereareyounow.util.calendar.parseLocalDate
+import com.whereareyounow.util.calendar.parseLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
     private val application: Application,
-//    private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
+    private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
 //    private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
 //    private val getAccessTokenUseCase: GetAccessTokenUseCase,
 //    private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
 
-    private val _calendarScreenUIState = MutableStateFlow(CalendarScreenUIState())
-    val calendarScreenUIState = _calendarScreenUIState.asStateFlow()
+    private val _uiState = MutableStateFlow(CalendarScreenUIState())
+    val uiState = _uiState.asStateFlow()
     val calendarScreenSideEffectFlow = MutableSharedFlow<CalendarScreenSideEffect>()
 
     fun updateYear(year: Int) {
-        _calendarScreenUIState.update {
+        _uiState.update {
             it.copy(selectedYear = year)
         }
     }
 
     fun updateMonth(month: Int) {
-        _calendarScreenUIState.update {
+        _uiState.update {
             it.copy(selectedMonth = month)
         }
     }
 
     fun updateDate(date: Int) {
-        _calendarScreenUIState.update {
+        _uiState.update {
             it.copy(selectedDate = date)
         }
-        updateCurrentDateBriefScheduleInfo()
+        updateCurrentMonthCalendarInfo()
     }
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
+    @SuppressLint("DefaultLocale")
     fun updateCurrentMonthCalendarInfo() {
-//        // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
-//        val calendarList = getCalendarInfo(_calendarScreenUIState.value.selectedYear, _calendarScreenUIState.value.selectedMonth).toMutableList()
-//
-//        // 빈 달력을 먼저 보여주기 위해 먼저 리스트를 초기화한다.
-//        _calendarScreenUIState.update {
-//            it.copy(selectedMonthCalendarInfoList = calendarList.toList())
-//        }
-//
-//        viewModelScope.launch(Dispatchers.Default) {
-//            val accessToken = getAccessTokenUseCase().first()
-//            val memberId = getMemberIdUseCase().first()
-//            var currYear: Int
-//            var currMonth = -1
-//            for (i in calendarList.indices) {
-//                if (currMonth != calendarList[i].month) {
-//                    // 월이 바뀔 경우 다음 월의 일정 정보를 가져온다.
-//                    currYear = calendarList[i].year
-//                    currMonth = calendarList[i].month
-//                    val response = getMonthlyScheduleUseCase(accessToken, memberId, currYear, currMonth)
-//                    LogUtil.printNetworkLog("memberId = $memberId\ncurrYear = $currYear\ncurrMonth = $currMonth", response, "월별 일정 정보")
-//                    when (response) {
-//                        is NetworkResult.Success -> {
-//                            response.data?.let { data ->
-//                                // 가져온 스케줄과 달력을 비교해 연/월/일이 같으면 일정 개수 정보를 추가한다.
-//                                for (idx in calendarList.indices) {
-//                                    if (calendarList[idx].year == _calendarScreenUIState.value.selectedYear && calendarList[idx].month == currMonth) {
-//                                        if (calendarList[idx].scheduleCount != data.schedules[calendarList[idx].date - 1].scheduleCount) {
-//                                            calendarList[idx] = calendarList[idx].copy(scheduleCount = data.schedules[calendarList[idx].date - 1].scheduleCount)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        is NetworkResult.Error -> {
-//
-//                        }
-//                        is NetworkResult.Exception -> { calendarScreenSideEffectFlow.emit(CalendarScreenSideEffect.Toast("오류가 발생했습니다.")) }
-//                    }
-//                }
-//            }
-//            _calendarScreenUIState.update {
-//                it.copy(selectedMonthCalendarInfoList = calendarList.toList())
-//            }
-//        }
+        // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
+        val dateList = getCalendarInfo(_uiState.value.selectedYear, _uiState.value.selectedMonth)
+
+        // 빈 달력을 먼저 보여주기 위해 먼저 리스트를 초기화한다.
+        _uiState.update { it ->
+            it.copy(
+                selectedMonthCalendarInfoMap = dateList.associateBy(keySelector = { it.toString() }, valueTransform = { mutableListOf() }),
+                dateList = dateList
+            )
+        }
+        LogUtil.e("", "${_uiState.value.selectedMonthCalendarInfoMap}")
+        LogUtil.e("", "${_uiState.value.dateList}")
+        var allScheduleList = mutableListOf<MonthlySchedule>()
+        val monthList = listOf(dateList[15].minusMonths(1), dateList[15], dateList[15].plusMonths(1))
+        viewModelScope.launch {
+            monthList.forEach {
+                val requestData = GetMonthlyScheduleRequest(
+                    yearMonth = "${it.year}-${String.format("%02d", it.monthValue)}",
+                    memberSeq = AuthData.memberSeq
+                )
+                getMonthlyScheduleUseCase(requestData)
+                    .onEach { networkResult ->
+                        networkResult.onSuccess { code, message, data ->
+                            data?.let {
+                                allScheduleList.addAll(data)
+                            }
+                        }.onError { code, message ->
+
+                        }.onException {  }
+                    }
+                    .catch { LogUtil.e("flow error", "getMonthlyScheduleUseCase\n${it.message}") }
+                    .launchIn(viewModelScope)
+                    .join()
+            }
+            allScheduleList = allScheduleList.sortedWith(
+                compareBy(
+                    { compareDate(parseLocalDateTime(it.startTime), parseLocalDateTime(it.endTime)) },
+                    { parseLocalDateTime(it.startTime) }
+                )
+            ).distinctBy { it.scheduleSeq }.toMutableList()
+            LogUtil.e("allScheduleList", "${allScheduleList}")
+
+
+            // 1번 기준: 이틀 이상 지속되는 일정 우선 2번 기준: 시작 일자가 빠른 일정 우선
+//        val allScheduleList = CalendarMockData.monthlyScheduleList.sortedWith(
+//            compareBy(
+//                { compareDate(parseLocalDateTime(it.startTime), parseLocalDateTime(it.endTime)) },
+//                { parseLocalDateTime(it.startTime) }
+//            )
+//        )
+            LogUtil.e("allScheduleList", "${allScheduleList}")
+
+            val scheduleMap: MutableMap<String, MutableList<Pair<MonthlySchedule?, VisualType>>> = mutableMapOf()
+            for (localDate in dateList) {
+                scheduleMap[localDate.toString()] = MutableList(10) { null to VisualType.One }
+            }
+            for (schedule in allScheduleList) {
+                val originStartDate = parseLocalDate(schedule.startTime)
+                var startDate = parseLocalDate(schedule.startTime)
+                val endDate = parseLocalDate(schedule.endTime)
+
+                while (!scheduleMap.containsKey(startDate.toString())) {
+                    startDate = startDate.plusDays(1)
+                }
+
+                var startIdx = 0
+                if (!scheduleMap.containsKey(startDate.toString())) continue
+                for (idx in scheduleMap[startDate.toString()]!!.indices) {
+                    if (scheduleMap[startDate.toString()]!![idx].first == null) {
+                        startIdx = idx
+                        break
+                    }
+                }
+                while (!startDate.isAfter(endDate)) {
+                    if (!scheduleMap.containsKey(startDate.toString())) break
+                    scheduleMap[startDate.toString()]!![startIdx] = scheduleMap[startDate.toString()]!![startIdx].copy(first = schedule)
+                    if (!compareDate(originStartDate, endDate)) {
+                        scheduleMap[startDate.toString()]!![startIdx] = scheduleMap[startDate.toString()]!![startIdx].copy(
+                            second = if (compareDate(originStartDate, startDate)) VisualType.Start
+                            else if (compareDate(endDate, startDate)) VisualType.End
+                            else VisualType.Mid
+                        )
+                    }
+                    startDate = startDate.plusDays(1)
+                }
+            }
+            LogUtil.e("scheduleMap", "${scheduleMap.toString().replace(", 2024", ",\n2024")}")
+            _uiState.update {
+                it.copy(
+                    selectedMonthCalendarInfoMap = scheduleMap.toMap(),
+                    dateList = dateList
+                )
+            }
+        }
     }
 
     fun updateCurrentDateBriefScheduleInfo() {
-        _calendarScreenUIState.update {
+        _uiState.update {
             it.copy(
                 selectedDayOfWeek = getDayOfWeek(
-                    _calendarScreenUIState.value.selectedYear,
-                    _calendarScreenUIState.value.selectedMonth,
-                    _calendarScreenUIState.value.selectedDate
+                    _uiState.value.selectedYear,
+                    _uiState.value.selectedMonth,
+                    _uiState.value.selectedDate
                 )
             )
         }
-//        viewModelScope.launch(Dispatchers.Default) {
-//            val accessToken = getAccessTokenUseCase().first()
-//            val memberId = getMemberIdUseCase().first()
-//            val response = getDailyBriefScheduleUseCase(
-//                accessToken,
-//                memberId,
-//                _calendarScreenUIState.value.selectedYear,
-//                _calendarScreenUIState.value.selectedMonth,
-//                _calendarScreenUIState.value.selectedDate
-//            )
-//            LogUtil.printNetworkLog("memberId = $memberId\nselectedYear = ${_calendarScreenUIState.value.selectedYear}\nselectedMonth = ${_calendarScreenUIState.value.selectedMonth}\nselectedDate = ${_calendarScreenUIState.value.selectedDate}", response, "일별 간략정보 가져오기")
-//            when (response) {
-//                is NetworkResult.Success -> {  }
-//                is NetworkResult.Error -> {  }
-//                is NetworkResult.Exception -> { calendarScreenSideEffectFlow.emit(CalendarScreenSideEffect.Toast("오류가 발생했습니다.")) }
-//            }
-//        }
     }
 
     // 처음 화면에 보여지는 날짜에 대한 달력 정보를 모두 설정한다.
     private fun initCalendarInfo() {
         val todayInfo = getTodayInfo()
-        _calendarScreenUIState.update {
+        _uiState.update {
             it.copy(
                 selectedYear = todayInfo[0],
                 selectedMonth = todayInfo[1],
@@ -139,3 +195,4 @@ class CalendarViewModel @Inject constructor(
         initCalendarInfo()
     }
 }
+

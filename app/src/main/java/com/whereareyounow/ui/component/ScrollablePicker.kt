@@ -24,12 +24,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.whereareyounow.ui.theme.notoSanskr
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -43,7 +46,7 @@ fun ScrollablePicker(
     onStateChanged: (Int) -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val numbersColumnHeight = 70.dp
+    val numbersColumnHeight = 120.dp
     val halvedNumbersColumnHeight = numbersColumnHeight / 2
     val halvedNumbersColumnHeightPx = with(LocalDensity.current) { halvedNumbersColumnHeight.toPx() }
     fun animatedStateValue(offset: Float): Int = state.value - (offset / halvedNumbersColumnHeightPx).toInt()
@@ -139,16 +142,23 @@ fun ScrollablePicker(
 
 @Composable
 private fun Label(text: String, modifier: Modifier) {
-    Text(
-        text = text,
-        textAlign = TextAlign.Center,
-        modifier = modifier
-            .fillMaxWidth()
-            .pointerInput(Unit) {
-                detectTapGestures(onLongPress = {})
-            },
-        fontSize = 20.sp,
-    )
+    Box(
+        modifier = Modifier.height(60.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            fontFamily = notoSanskr,
+            modifier = modifier
+                .pointerInput(Unit) {
+                    detectTapGestures(onLongPress = {})
+                },
+            color = Color(0xFF222222),
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
 }
 
 private suspend fun Animatable<Float, AnimationVector1D>.fling(

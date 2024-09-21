@@ -1,9 +1,20 @@
 package com.whereareyounow.util.network
 
+import com.whereareyounow.domain.usecase.datastore.GetAccessTokenUseCase
+import com.whereareyounow.domain.usecase.datastore.GetRefreshTokenUseCase
+import com.whereareyounow.domain.usecase.datastore.SaveAccessTokenUseCase
+import com.whereareyounow.domain.usecase.datastore.SaveRefreshTokenUseCase
+import com.whereareyounow.domain.util.LogUtil
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
+import javax.inject.Inject
 
 //class TokenInterceptor @Inject constructor(
 //    private val getAccessTokenUseCase: GetAccessTokenUseCase,

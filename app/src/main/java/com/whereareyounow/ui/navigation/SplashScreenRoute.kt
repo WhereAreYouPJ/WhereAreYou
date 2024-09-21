@@ -12,12 +12,12 @@ import com.whereareyounow.ui.splash.SplashScreen
 fun NavGraphBuilder.splashScreen(navController: NavController) = composable<ROUTE.Splash> {
     SplashScreen(
         moveToSignInMethodSelectionScreen = {
-            navController.navigate(ROUTE_SIGN_IN_METHOD_SELECTION) {
+            navController.navigate(ROUTE.SignInMethodSelection) {
                 popUpTo(ROUTE_SPLASH) { inclusive = true }
             }
         },
         moveToMainScreen = {
-            navController.navigate(ROUTE_MAIN) {
+            navController.navigate(ROUTE.Main) {
                 popUpTo(ROUTE_SPLASH) { inclusive = true }
             }
         },

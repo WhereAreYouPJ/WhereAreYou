@@ -2,7 +2,7 @@ package com.whereareyounow.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 
-interface AuthDataStoreRepository {
+interface DataStoreRepository {
 
     // Access Token 가져오기
     suspend fun getAccessToken(): Flow<String?>
