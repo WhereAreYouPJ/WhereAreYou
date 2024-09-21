@@ -13,11 +13,17 @@ import com.whereareyounow.domain.request.member.SignInRequest
 import com.whereareyounow.domain.request.member.SignOutRequest
 import com.whereareyounow.domain.request.member.SignUpRequest
 import com.whereareyounow.domain.request.member.UpdateProfileImageRequest
+import com.whereareyounow.domain.request.member.UpdateUserNameRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyPasswordResetCodeRequest
 import com.whereareyounow.domain.util.NetworkResult
 
 interface MemberRepository {
+
+    // 유저명 변경
+    suspend fun updateUserName(
+        data: UpdateUserNameRequest
+    ): NetworkResult<String>
 
     // 프로필 사진 변경
     suspend fun updateProfileImage(

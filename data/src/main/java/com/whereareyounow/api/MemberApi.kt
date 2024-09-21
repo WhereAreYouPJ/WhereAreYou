@@ -12,6 +12,7 @@ import com.whereareyounow.domain.request.member.SignUpRequest
 import com.whereareyounow.domain.entity.member.Email
 import com.whereareyounow.domain.entity.member.SignInData
 import com.whereareyounow.domain.entity.member.UserInfo
+import com.whereareyounow.domain.request.member.UpdateUserNameRequest
 import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.Response
 import retrofit2.http.Body
@@ -21,6 +22,11 @@ import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface MemberApi {
+
+    @PUT("member/user-name")
+    suspend fun updateUserName(
+        @Body body: UpdateUserNameRequest
+    ): Response<ResponseWrapper<String>>
 
     // 프로필 사진 변경
     @PUT("member/modify/profile-image")

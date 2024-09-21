@@ -71,8 +71,6 @@ fun MainScreen(
     moveToAsk : () -> Unit,
     moveToDetailProfileScreen: (String, String) -> Unit,
     moveToBye: () -> Unit,
-
-
     viewModel: MainViewModel = hiltViewModel(),
     calendarViewModel: CalendarViewModel = hiltViewModel()
 ) {
@@ -132,7 +130,6 @@ private fun MainScreen(
         Scaffold(
             topBar = {},
             bottomBar = {
-
                 HomeNavigationBar(
                     viewType,
                     navigationItemContentList,
@@ -218,8 +215,6 @@ fun HomeNavigationBar(
     navigationItemContentList: List<MainViewModel.NavigationItemContent>,
     updateViewType: (ViewType) -> Unit,
 ) {
-
-
     NavigationBar(
         modifier = Modifier
             .height(BOTTOM_NAVIGATION_BAR_HEIGHT.dp)

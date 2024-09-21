@@ -10,6 +10,7 @@ import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.entity.schedule.ScheduleDDay
 import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
+import com.whereareyounow.domain.request.schedule.RefuseScheduleInvitationRequest
 import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.Response
 import retrofit2.http.Body
@@ -76,8 +77,8 @@ interface ScheduleApi {
 
     @HTTP(method = "DELETE", path = "schedule/refuse", hasBody = true)
     suspend fun refuseScheduleInvitation(
-
-    )
+        @Body body: RefuseScheduleInvitationRequest
+    ): Response<ResponseWrapper<Unit>>
 
     // 일정 삭제(일정 초대자인 경우)
     @HTTP(method = "DELETE", path = "schedule/invited", hasBody = true)

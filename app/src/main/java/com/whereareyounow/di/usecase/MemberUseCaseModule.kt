@@ -1,6 +1,7 @@
 package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.MemberRepository
+import com.whereareyounow.domain.request.member.UpdateUserNameRequest
 import com.whereareyounow.domain.usecase.member.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberCodeUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
@@ -12,6 +13,7 @@ import com.whereareyounow.domain.usecase.member.SignUpUseCase
 import com.whereareyounow.domain.usecase.member.UpdateProfileImageUseCase
 import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.VerifyPasswordResetCodeUseCase
+import com.whereareyounow.domain.usecase.schedule.UpdateUserNameUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +23,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object MemberUseCaseModule {
+
+    @Provides
+    fun provideUpdateUserNameUseCase(
+        repository: MemberRepository
+    ): UpdateUserNameUseCase {
+        return UpdateUserNameUseCase(repository)
+    }
 
     @Singleton
     @Provides

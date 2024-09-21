@@ -17,6 +17,7 @@ import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleDDayRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleListRequest
 import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
+import com.whereareyounow.domain.request.schedule.RefuseScheduleInvitationRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
@@ -85,6 +86,12 @@ class ScheduleRepositoryImpl(
             date = data.date,
             memberSeq = data.memberSeq
         ) }
+    }
+
+    override suspend fun refuseScheduleInvitation(
+        data: RefuseScheduleInvitationRequest
+    ): NetworkResult<Unit> {
+        return handleResult { scheduleApi.refuseScheduleInvitation(body = data) }
     }
 
     override suspend fun deleteScheduleByInvitor(

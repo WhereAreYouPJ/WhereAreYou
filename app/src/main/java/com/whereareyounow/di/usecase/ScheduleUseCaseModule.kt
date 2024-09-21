@@ -11,6 +11,7 @@ import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleDDayUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleListUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleInfoUseCase
+import com.whereareyounow.domain.usecase.schedule.RefuseScheduleInvitation
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,6 +75,13 @@ object ScheduleUseCaseModule {
         repository: ScheduleRepository
     ): GetDailyScheduleUseCase {
         return GetDailyScheduleUseCase(repository)
+    }
+
+    @Provides
+    fun provideRefuseScheduleInvitation(
+        repository: ScheduleRepository
+    ): RefuseScheduleInvitation {
+        return RefuseScheduleInvitation(repository)
     }
 
     @Provides

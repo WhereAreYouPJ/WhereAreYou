@@ -15,6 +15,7 @@ import com.whereareyounow.domain.request.member.SignInRequest
 import com.whereareyounow.domain.request.member.SignOutRequest
 import com.whereareyounow.domain.request.member.SignUpRequest
 import com.whereareyounow.domain.request.member.UpdateProfileImageRequest
+import com.whereareyounow.domain.request.member.UpdateUserNameRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyPasswordResetCodeRequest
 import com.whereareyounow.domain.util.NetworkResult
@@ -23,13 +24,16 @@ import com.whereareyounow.util.NetworkResultHandler
 class MemberRepositoryImpl(
     private val memberApi: MemberApi
 ) : MemberRepository, NetworkResultHandler {
+    override suspend fun updateUserName(
+        data: UpdateUserNameRequest
+    ): NetworkResult<String> {
+        return handleResult { memberApi.updateUserName(body = data) }
+    }
 
     override suspend fun updateProfileImage(
         data: UpdateProfileImageRequest
     ): NetworkResult<String> {
-        return handleResult {
-            memberApi.updateProfileImage(body = data)
-        }
+        return handleResult { memberApi.updateProfileImage(body = data) }
     }
 
     override suspend fun signUp(

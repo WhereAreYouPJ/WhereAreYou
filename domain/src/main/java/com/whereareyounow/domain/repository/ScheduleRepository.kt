@@ -15,6 +15,7 @@ import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleDDayRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleListRequest
 import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
+import com.whereareyounow.domain.request.schedule.RefuseScheduleInvitationRequest
 import com.whereareyounow.domain.util.NetworkResult
 
 interface ScheduleRepository {
@@ -50,6 +51,10 @@ interface ScheduleRepository {
     suspend fun getDailySchedule(
         data: GetDailyScheduleRequest
     ): NetworkResult<DailyScheduleInfo>
+
+    suspend fun refuseScheduleInvitation(
+        data: RefuseScheduleInvitationRequest
+    ): NetworkResult<Unit>
 
     suspend fun deleteScheduleByInvitor(
         data: DeleteScheduleRequest
