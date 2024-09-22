@@ -26,11 +26,8 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
             )
             navController.navigate(ROUTE_NEW_SCHEDULE, bundle)
         },
-        moveToDetailScreen = { scheduleId ->
-            val bundle = bundleOf(
-                "scheduleId" to scheduleId
-            )
-            navController.navigate(ROUTE_DETAIL_SCHEDULE, bundle)
+        moveToDetailScheduleScreen = { scheduleId ->
+            navController.navigate(ROUTE.DetailSchedule(scheduleSeq = scheduleId))
         },
         moveToAddFriendScreen = { navController.navigate(ROUTE_ADD_FRIEND) },
         moveToAddGroupScreen = {},

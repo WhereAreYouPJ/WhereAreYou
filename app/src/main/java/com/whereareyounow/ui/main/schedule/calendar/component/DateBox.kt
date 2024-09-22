@@ -25,6 +25,7 @@ import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.globalvalue.type.VisualType
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.getScheduleColor
 import org.jetbrains.annotations.Async.Schedule
 
@@ -33,10 +34,14 @@ fun RowScope.DateBox(
     date: Int,
     isSelected: Boolean,
     isToday: Boolean,
-    scheduleList: List<Pair<MonthlySchedule?, VisualType>>
+    isCurrentMonth: Boolean,
+    scheduleList: List<Pair<MonthlySchedule?, VisualType>>,
+    onClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.weight(1f),
+        modifier = Modifier
+            .weight(1f)
+            .clickableNoEffect { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.weight(1f))

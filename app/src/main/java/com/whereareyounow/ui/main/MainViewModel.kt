@@ -16,7 +16,7 @@ class MainViewModel @Inject constructor(
     private val application: Application
 ) : AndroidViewModel(application) {
 
-    private val _viewType = MutableStateFlow(ViewType.Calendar)
+    private val _viewType = MutableStateFlow(ViewType.Friends)
     val viewType: StateFlow<ViewType> = _viewType
     private val navigationItemContent = listOf(
         NavigationItemContent(
