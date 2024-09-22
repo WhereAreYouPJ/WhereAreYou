@@ -25,6 +25,7 @@ import com.whereareyounow.data.globalvalue.SCREEN_WIDTH
 import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.SYSTEM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.TOTAL_SCREEN_HEIGHT
 import com.whereareyounow.ui.MainNavigation
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,6 +77,7 @@ class MainActivity : ComponentActivity() {
         val systemNavigationBarHeight = resources.getDimension(systemNavigationBarResourceId)
         // 상단 상태바, 시스템 네비게이션 바 제외한 화면 높이
 //        GlobalValue.screenHeightWithoutStatusBar = screenHeight.toFloat()
+        TOTAL_SCREEN_HEIGHT = size.height / density
         SYSTEM_STATUS_BAR_HEIGHT = statusBarHeight / density
         SYSTEM_NAVIGATION_BAR_HEIGHT = systemNavigationBarHeight / density
         SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR = size.height - statusBarHeight - systemNavigationBarHeight
@@ -84,7 +86,8 @@ class MainActivity : ComponentActivity() {
         TOP_BAR_HEIGHT = 42f
         CALENDAR_VIEW_HEIGHT = SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR * 26 / 75
         DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT = SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR * 39 / 75
-        Log.e("ScreenValue", "statusBarHeight: $statusBarHeight ${statusBarHeight / density}\n" +
+        Log.e("ScreenValue", "totalScreenHeight: $TOTAL_SCREEN_HEIGHT\n" +
+                "statusBarHeight: $statusBarHeight ${statusBarHeight / density}\n" +
                 "systemNavigationBarHeight: $systemNavigationBarHeight ${systemNavigationBarHeight / density}\n" +
                 "screenHeightWithoutStatusBar: $SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR ${SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR / density}\n" +
                 "screenWidth: $SCREEN_WIDTH ${SCREEN_WIDTH / density}\n" +

@@ -1,6 +1,5 @@
 package com.whereareyounow.ui.main.friend
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,11 +7,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,11 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,8 +34,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +44,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.ui.main.friend.feed.FeedContent
 import com.whereareyounow.ui.main.home.FirstIconBadge
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.WhereAreYouTheme
@@ -61,6 +52,8 @@ import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.clickableNoEffect
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -111,13 +104,8 @@ private fun FriendScreen(
             upProfile = moveToDetailProfileScreen
         )
     } else {
-        GroupContent()
+        FeedContent()
     }
-
-//    if(upProfileBoolean.value) {
-//        moveToDetailProfileScreen()
-//    }
-
 }
 
 @Composable
@@ -243,12 +231,6 @@ fun FriendContent(
     }
 }
 
-
-@Composable
-fun GroupContent() {
-
-}
-
 @Composable
 fun FriendScreenTopBar(
     isFriendPage: MutableState<Boolean>,
@@ -264,8 +246,9 @@ fun FriendScreenTopBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
-        val friendTextColor = if (isFriendPage.value) Color(0xFF222222) else Color(0xFF666666)
-        val feedTextColor = if (isFriendPage.value) Color(0xFF666666) else Color(0xFF222222)
+        val friendTextColor = if(isFriendPage.value) Color(0xFF222222) else Color(0xFF666666)
+        val feedTextColor = if(isFriendPage.value) Color(0xFF666666) else Color(0xFF222222)
+
         Text(
             modifier = Modifier.clickable {
                 isFriendPage.value = false
@@ -273,6 +256,15 @@ fun FriendScreenTopBar(
             text = "피드",
             style = medium20pt,
             color = feedTextColor
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            modifier = Modifier.clickable {
+                isFriendPage.value = true
+            },
+            text = "친구",
+            style = medium20pt,
+            color = friendTextColor
         )
         Spacer(Modifier.width(12.dp))
         Text(

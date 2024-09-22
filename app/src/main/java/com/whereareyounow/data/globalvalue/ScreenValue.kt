@@ -1,5 +1,7 @@
 package com.whereareyounow.data.globalvalue
 
+// 상태바 + 시스템 네비게이션 바를 합한 모든 화면의 높이
+var TOTAL_SCREEN_HEIGHT = 0f
 // 상단 상태바 높이
 var SYSTEM_STATUS_BAR_HEIGHT = 26f
 // 시스템 네비게이션 바 높이

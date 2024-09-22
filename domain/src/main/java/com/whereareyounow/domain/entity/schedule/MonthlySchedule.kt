@@ -22,5 +22,7 @@ data class MonthlySchedule(
     @SerializedName("color")
     val color: String = "",
     @SerializedName("memo")
-    val memo: String = ""
+    val memo: String = "",
+    @SerializedName("allDay")
+    val allDay: Boolean
 )

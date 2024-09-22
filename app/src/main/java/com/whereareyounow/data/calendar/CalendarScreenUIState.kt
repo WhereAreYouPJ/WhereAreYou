@@ -1,6 +1,7 @@
 package com.whereareyounow.data.calendar
 
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
+import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.globalvalue.type.VisualType
 import java.time.LocalDate
@@ -12,5 +13,5 @@ data class CalendarScreenUIState(
     val selectedDayOfWeek: Int = 0,
     val selectedMonthCalendarInfoMap: Map<String, MutableList<Pair<MonthlySchedule?, VisualType>>> = emptyMap(),
     val dateList: List<LocalDate> = emptyList(),
-    val selectedDateBriefScheduleInfoList: List<BriefSchedule> = emptyList()
+    val selectedDateDailyScheduleInfoList: List<DailyScheduleInfo> = emptyList()
 )

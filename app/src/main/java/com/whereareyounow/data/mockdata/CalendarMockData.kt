@@ -14,7 +14,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Blue",
-            memo = "메모1"
+            memo = "메모1",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -26,7 +27,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Red",
-            memo = "메모2"
+            memo = "메모2",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -38,7 +40,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Yellow",
-            memo = "메모3"
+            memo = "메모3",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -50,7 +53,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Pink",
-            memo = "메모4"
+            memo = "메모4",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -62,7 +66,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Green",
-            memo = "메모5"
+            memo = "메모5",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -74,7 +79,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Purple",
-            memo = "메모6"
+            memo = "메모6",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -86,7 +92,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Blue",
-            memo = "메모7"
+            memo = "메모7",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -98,7 +105,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Yellow",
-            memo = "메모8"
+            memo = "메모8",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -110,7 +118,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Green",
-            memo = "메모9"
+            memo = "메모9",
+            allDay = false
         ),
         MonthlySchedule(
             scheduleSeq = 1,
@@ -122,7 +131,8 @@ object CalendarMockData {
             x = 0.0,
             y = 0.0,
             color = "Purple",
-            memo = "메모10"
+            memo = "메모10",
+            allDay = false
         ),
     )
 }

@@ -7,10 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
-import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,19 +21,16 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,9 +53,12 @@ import com.whereareyounow.data.calendar.CalendarScreenUIState
 import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.util.LogUtil
-import com.whereareyounow.ui.component.CustomSurface
+import com.whereareyounow.globalvalue.type.AnchoredDraggableContentState
+import com.whereareyounow.ui.component.DimBackground
 import com.whereareyounow.ui.component.ScrollablePicker
+import com.whereareyounow.ui.main.schedule.calendar.component.DailyScheduleBottomDialog
 import com.whereareyounow.ui.main.schedule.calendar.component.DateBox
+import com.whereareyounow.ui.main.schedule.calendar.component.getDailyScheduleAnchoredDraggableState
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
@@ -71,25 +68,28 @@ import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.calendar.getLastDayOfMonth
 import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun CalendarScreen(
     paddingValues: PaddingValues,
-    moveToDetailScreen: (String) -> Unit,
+    moveToDetailScheduleScreen: (Int) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val sideEffectFlow = viewModel.calendarScreenSideEffectFlow
     LaunchedEffect(Unit) {
-        viewModel.updateCurrentMonthCalendarInfo()
+
     }
     CalendarScreen(
         uiState = uiState,
         sideEffectFlow = sideEffectFlow,
         updateSelectedYear = viewModel::updateYear,
         updateSelectedMonth = viewModel::updateMonth,
-        updateSelectedDate = viewModel::updateDate
-
+        updateSelectedDate = viewModel::updateDate,
+        moveToDetailScheduleScreen = moveToDetailScheduleScreen
     )
 }
 
@@ -101,6 +101,7 @@ fun CalendarScreen(
     updateSelectedYear: (Int) -> Unit,
     updateSelectedMonth: (Int) -> Unit,
     updateSelectedDate: (Int) -> Unit,
+    moveToDetailScheduleScreen: (Int) -> Unit,
 ) {
     var isMonthPickerShowing by remember { mutableStateOf(false) }
 
@@ -113,292 +114,271 @@ fun CalendarScreen(
     val dialogSelectedYear = remember(uiState.selectedYear) { mutableIntStateOf(uiState.selectedYear) }
     val dialogSelectedMonth = remember(uiState.selectedMonth) { mutableIntStateOf(uiState.selectedMonth) }
     val dialogSelectedDate = remember(uiState.selectedDate) { mutableIntStateOf(uiState.selectedDate) }
+    val dailyScheduleAnchoredDraggableState = remember { getDailyScheduleAnchoredDraggableState() }
+    val isDimBackgroundShowing = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val today = remember { LocalDate.now() }
+
     LaunchedEffect(Unit) {
 
     }
-    Row(
-        modifier = Modifier
-            .padding(start = 20.dp, end = 11.dp)
-            .height(TOP_BAR_HEIGHT.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            modifier = Modifier
-                .clickableNoEffect {
-                    dialogSelectedYear.intValue = uiState.selectedYear
-                    dialogSelectedMonth.intValue = uiState.selectedMonth
-                    dialogSelectedDate.intValue = uiState.selectedDate
-                    isMonthPickerShowing = true
-                }
-                .padding(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp),
-            text = "${uiState.selectedYear}-${String.format("%02d", uiState.selectedMonth)}",
-            color = Color(0xFF111111),
-            fontFamily = notoSanskr,
-            fontWeight = FontWeight.Medium,
-            fontSize = 22.sp
-        )
-
-        Image(
-            modifier = Modifier
-                .size(18.dp)
-                .clickableNoEffect {
-                    dialogSelectedYear.intValue = uiState.selectedYear
-                    dialogSelectedMonth.intValue = uiState.selectedMonth
-                    dialogSelectedDate.intValue = uiState.selectedDate
-                    isMonthPickerShowing = true
-                },
-            painter = painterResource(R.drawable.ic_up_down_button),
-            contentDescription = null
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        Image(
-            modifier = Modifier.size(34.dp),
-            painter = painterResource(R.drawable.ic_bell),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(getColor().brandColor)
-        )
-
-        Image(
-            modifier = Modifier.size(34.dp),
-            painter = painterResource(R.drawable.ic_plus),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(getColor().brandColor)
-        )
-    }
-
-    Spacer(Modifier.height(20.dp))
-
-    Row(
-        modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp)
-            .fillMaxWidth()
-    ) {
-        repeat(7) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = when (it) {
-                    0 -> "일"
-                    1 -> "월"
-                    2 -> "화"
-                    3 -> "수"
-                    4 -> "목"
-                    5 -> "금"
-                    else -> "토"
-                },
-                style = medium14pt,
-                color = when (it) {
-                    0 -> Color(0xFFFF7D96)
-                    6 -> Color(0xFF397DFF)
-                    else -> Color(0xFF666666)
-                },
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-
-    Spacer(Modifier.height(10.dp))
-
-    Spacer(
-        modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp)
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(Color(0xFFC9C9C9))
-    )
-
-    Column(
-        modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp)
-            .fillMaxHeight()
-    ) {
-        repeat(uiState.dateList.size / 7) { week ->
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             Row(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 11.dp)
+                    .height(TOP_BAR_HEIGHT.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(7) { idx ->
-                    DateBox(
-                        date = uiState.dateList[week * 7 + idx].dayOfMonth,
-                        isSelected = uiState.selectedDate == uiState.dateList[week * 7 + idx].dayOfMonth && uiState.selectedMonth == uiState.dateList[week * 7 + idx].monthValue,
-                        isToday = false,
-                        scheduleList = uiState.selectedMonthCalendarInfoMap[uiState.dateList[week * 7 + idx].toString()]!!.toList()
+                Text(
+                    modifier = Modifier
+                        .clickableNoEffect {
+                            dialogSelectedYear.intValue = uiState.selectedYear
+                            dialogSelectedMonth.intValue = uiState.selectedMonth
+                            dialogSelectedDate.intValue = uiState.selectedDate
+                            isMonthPickerShowing = true
+                        }
+                        .padding(start = 10.dp, top = 4.dp, end = 10.dp, bottom = 4.dp),
+                    text = "${uiState.selectedYear}-${String.format("%02d", uiState.selectedMonth)}",
+                    color = Color(0xFF111111),
+                    fontFamily = notoSanskr,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 22.sp
+                )
+
+                Image(
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clickableNoEffect {
+                            dialogSelectedYear.intValue = uiState.selectedYear
+                            dialogSelectedMonth.intValue = uiState.selectedMonth
+                            dialogSelectedDate.intValue = uiState.selectedDate
+                            isMonthPickerShowing = true
+                        },
+                    painter = painterResource(R.drawable.ic_up_down_button),
+                    contentDescription = null
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                Image(
+                    modifier = Modifier.size(34.dp),
+                    painter = painterResource(R.drawable.ic_bell),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(getColor().brandColor)
+                )
+
+                Image(
+                    modifier = Modifier.size(34.dp),
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(getColor().brandColor)
+                )
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxWidth()
+            ) {
+                repeat(7) {
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = when (it) {
+                            0 -> "일"
+                            1 -> "월"
+                            2 -> "화"
+                            3 -> "수"
+                            4 -> "목"
+                            5 -> "금"
+                            else -> "토"
+                        },
+                        style = medium14pt,
+                        color = when (it) {
+                            0 -> Color(0xFFFF7D96)
+                            6 -> Color(0xFF397DFF)
+                            else -> Color(0xFF666666)
+                        },
+                        textAlign = TextAlign.Center
                     )
                 }
             }
 
-            if (week < uiState.selectedMonthCalendarInfoMap.size / 7 - 1) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Color(0xFFEEEEEE))
-                )
-            }
-        }
-    }
+            Spacer(Modifier.height(10.dp))
 
-    Spacer(Modifier.height(12.dp))
-
-    if (isMonthPickerShowing) {
-        Dialog(
-            onDismissRequest = { isMonthPickerShowing = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false
+            Spacer(
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFFC9C9C9))
             )
-        ) {
-            WhereAreYouTheme {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickableNoEffect { isMonthPickerShowing = false },
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                            .fillMaxWidth()
-                            .height(315.dp)
-                            .clickableNoEffect { }
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color.White),
+
+            Column(
+                modifier = Modifier
+                    .padding(start = 20.dp, end = 20.dp)
+                    .fillMaxHeight()
+            ) {
+                repeat(uiState.dateList.size / 7) { week ->
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .offset(x = 0.dp, y = (-30).dp)
-                        ) {
-                            ScrollablePicker(
-                                modifier = Modifier.width(110.dp),
-                                map = yearMap,
-                                state = yearScrollableState,
-                                range = yearMap.keys.min() .. yearMap.keys.max()
-                            ) {
-                                dialogSelectedYear.intValue = it
-                            }
-                            ScrollablePicker(
-                                modifier = Modifier.width(62.dp),
-                                map = monthMap,
-                                state = monthScrollableState,
-                                range = monthMap.keys.min() .. monthMap.keys.max()
-                            ) {
-                                dialogSelectedMonth.intValue = it
-                            }
-                            ScrollablePicker(
-                                modifier = Modifier.width(78.dp),
-                                map = dateMap,
-                                state = dateScrollableState,
-                                range = dateMap.keys.min() .. dateMap.keys.max()
-                            ) {
-                                dialogSelectedDate.intValue = it
-                            }
+                        repeat(7) { idx ->
+                            DateBox(
+                                date = uiState.dateList[week * 7 + idx].dayOfMonth,
+                                isSelected = uiState.selectedDate == uiState.dateList[week * 7 + idx].dayOfMonth && uiState.selectedMonth == uiState.dateList[week * 7 + idx].monthValue,
+                                isToday = uiState.dateList[week * 7 + idx].year == today.year && uiState.dateList[week * 7 + idx].monthValue == today.monthValue && uiState.dateList[week * 7 + idx].dayOfMonth == today.dayOfMonth,
+                                isCurrentMonth = uiState.selectedMonth == uiState.dateList[week * 7 + idx].monthValue,
+                                scheduleList = uiState.selectedMonthCalendarInfoMap[uiState.dateList[week * 7 + idx].toString()]!!.toList(),
+                                onClick = {
+                                    updateSelectedYear(uiState.dateList[week * 7 + idx].year)
+                                    updateSelectedMonth(uiState.dateList[week * 7 + idx].monthValue)
+                                    updateSelectedDate(uiState.dateList[week * 7 + idx].dayOfMonth)
+                                    coroutineScope.launch {
+                                        isDimBackgroundShowing.value = true
+                                        dailyScheduleAnchoredDraggableState.animateTo(AnchoredDraggableContentState.Open)
+                                    }
+                                }
+                            )
                         }
+                    }
 
-                        Row(
+                    if (week < uiState.selectedMonthCalendarInfoMap.size / 7 - 1) {
+                        Spacer(
                             modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = 24.dp)
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color(0xFFEEEEEE))
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            if (isMonthPickerShowing) {
+                Dialog(
+                    onDismissRequest = { isMonthPickerShowing = false },
+                    properties = DialogProperties(
+                        usePlatformDefaultWidth = false
+                    )
+                ) {
+                    WhereAreYouTheme {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickableNoEffect { isMonthPickerShowing = false },
+                            contentAlignment = Alignment.BottomCenter
                         ) {
-                            Text(
+                            Box(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .clickableNoEffect { isMonthPickerShowing = false },
-                                text = "취소",
-                                color = Color(0xFF222222),
-                                style = medium16pt,
-                                textAlign = TextAlign.Center
-                            )
+                                    .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                                    .fillMaxWidth()
+                                    .height(315.dp)
+                                    .clickableNoEffect { }
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .background(Color.White),
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .offset(x = 0.dp, y = (-30).dp)
+                                ) {
+                                    ScrollablePicker(
+                                        modifier = Modifier.width(110.dp),
+                                        map = yearMap,
+                                        state = yearScrollableState,
+                                        range = yearMap.keys.min() .. yearMap.keys.max()
+                                    ) {
+                                        dialogSelectedYear.intValue = it
+                                    }
+                                    ScrollablePicker(
+                                        modifier = Modifier.width(62.dp),
+                                        map = monthMap,
+                                        state = monthScrollableState,
+                                        range = monthMap.keys.min() .. monthMap.keys.max()
+                                    ) {
+                                        dialogSelectedMonth.intValue = it
+                                    }
+                                    ScrollablePicker(
+                                        modifier = Modifier.width(78.dp),
+                                        map = dateMap,
+                                        state = dateScrollableState,
+                                        range = dateMap.keys.min() .. dateMap.keys.max()
+                                    ) {
+                                        dialogSelectedDate.intValue = it
+                                    }
+                                }
 
-                            Spacer(
-                                modifier = Modifier
-                                    .width(2.dp)
-                                    .height(22.dp)
-                                    .background(getColor().thin)
-                            )
+                                Row(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 24.dp)
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickableNoEffect { isMonthPickerShowing = false },
+                                        text = "취소",
+                                        color = Color(0xFF222222),
+                                        style = medium16pt,
+                                        textAlign = TextAlign.Center
+                                    )
 
-                            Text(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickableNoEffect {
-                                        updateSelectedYear(dialogSelectedYear.intValue)
-                                        updateSelectedMonth(dialogSelectedMonth.intValue)
-                                        updateSelectedDate(dialogSelectedDate.intValue)
-                                        isMonthPickerShowing = false
-                                    },
-                                text = "완료",
-                                color = Color(0xFF222222),
-                                style = medium16pt,
-                                textAlign = TextAlign.Center
-                            )
+                                    Spacer(
+                                        modifier = Modifier
+                                            .width(2.dp)
+                                            .height(22.dp)
+                                            .background(getColor().thin)
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickableNoEffect {
+                                                updateSelectedYear(dialogSelectedYear.intValue)
+                                                updateSelectedMonth(dialogSelectedMonth.intValue)
+                                                updateSelectedDate(dialogSelectedDate.intValue)
+                                                isMonthPickerShowing = false
+                                            },
+                                        text = "완료",
+                                        color = Color(0xFF222222),
+                                        style = medium16pt,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-    }
-}
 
-@Composable
-fun ScheduleScreenTopBar(
-    onNotificationIconClicked: () -> Unit,
-    onPlusIconClicked: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(TOP_BAR_HEIGHT.dp)
-            .padding(start = 20.dp, end = 15.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
-            text = "${1}"
-        )
+        if (isDimBackgroundShowing.value) {
+            DimBackground(
+                isDimBackgroundShowing = isDimBackgroundShowing,
+                anchoredDraggableState = dailyScheduleAnchoredDraggableState
+            )
+        }
 
-        Spacer(Modifier.weight(1f))
-
-        Image(
-            modifier = Modifier
-                .size(34.dp)
-                .clickableNoEffect { onNotificationIconClicked() },
-            painter = painterResource(R.drawable.ic_bell),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(getColor().brandColor)
-        )
-
-        Image(
-            modifier = Modifier
-                .size(34.dp)
-                .clickableNoEffect { onPlusIconClicked() },
-            painter = painterResource(id = R.drawable.ic_plus),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(getColor().brandColor)
+        DailyScheduleBottomDialog(
+            anchoredDraggableState = dailyScheduleAnchoredDraggableState,
+            selectedMonth = uiState.selectedMonth,
+            selectedDate = uiState.selectedDate,
+            dailyScheduleList = uiState.selectedDateDailyScheduleInfoList,
+            moveToDetailScheduleScreen = moveToDetailScheduleScreen
         )
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-private val anchoredDraggableState = AnchoredDraggableState(
-    initialValue = DetailState.Open,
-    positionalThreshold = { it: Float -> it * 0.5f },
-    velocityThreshold = { 100f },
-    snapAnimationSpec = tween(200),
-    decayAnimationSpec = splineBasedDecay(Density(applicationContext()))
-).apply {
-        updateAnchors(
-            DraggableAnchors {
-                DetailState.Open at 0f
-                DetailState.Close at DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
-            }
-        )
-    }
-
-enum class DetailState {
-    Open, Close
-}
-
-
+enum class DetailState
 
 @OptIn(ExperimentalFoundationApi::class)
 @CustomPreview
