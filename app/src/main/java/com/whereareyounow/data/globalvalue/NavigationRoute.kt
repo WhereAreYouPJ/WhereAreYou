@@ -94,4 +94,16 @@ sealed class ROUTE {
     // 내 정보 수정
     @Serializable
     data object EditMyInfo
+
+    // 어드민 페이지
+    @Serializable
+    data object AdminImageScreen
+
+    // 위치 즐겨찾기
+    @Serializable
+    data object LocationFaborite
+
+    // 위치 즐겨찾기 편집화면
+    @Serializable
+    data object EditLocationFaborite
 }

@@ -3,19 +3,28 @@ package com.whereareyounow.ui.main.mypage
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
+import com.whereareyounow.domain.usecase.location.GetFaboriteLocationUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
 import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.NetworkResult
+import com.whereareyounow.domain.util.onError
+import com.whereareyounow.domain.util.onException
+import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.ui.main.mypage.mapper.toModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,6 +42,7 @@ class MyPageViewModel @Inject constructor(
     private val getUserInfoByMemberSeqUseCase: GetUserInfoByMemberSeqUseCase,
     private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
+    private val getFaboriteLocationUseCase: GetFaboriteLocationUseCase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -45,7 +55,17 @@ class MyPageViewModel @Inject constructor(
         MutableStateFlow<String?>("https://m.segye.com/content/image/2021/11/16/20211116509557.jpg")
     val profileImageUri: StateFlow<String?> = _profileImageUri
     private val _isVerifyed = MutableStateFlow<String?>("FALSE")
-    val isVerifyed : StateFlow<String?> = _isVerifyed
+    val isVerifyed: StateFlow<String?> = _isVerifyed
+
+
+    private val _locationSeq = MutableStateFlow<Int?>(0)
+    val locationSeq: StateFlow<Int?> = _locationSeq
+    private val _location = MutableStateFlow<String?>("")
+    val location: StateFlow<String?> = _location
+    private val _streetName = MutableStateFlow<String?>("")
+    val streetName: StateFlow<String?> = _streetName
+
+
     init {
         getMyInfo()
     }
@@ -144,48 +164,28 @@ class MyPageViewModel @Inject constructor(
                     email = email,
                     code = code
                 )
-            ).collect { response ->
-                when (response) {
-
-                    is NetworkResult.Success -> {
-                        _isVerifyed.value = response.data
-
+            ).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _isVerifyed.value = data
                     }
+                }.onError { code, message ->
 
-                    is NetworkResult.Error -> {
-
-
-                    }
-
-                    is NetworkResult.Exception -> {
-
-
-                    }
-                }
+                }.onException { }
             }
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "VerifyEmailCodeUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(viewModelScope)
         }
     }
-//            when (response) {
-//                is NetworkResult.Success -> {
-//                    response.data?.let { data ->
-//                        _name.update { data.userName }
-//                        _email.update { data.email }
-//                        _profileImageUri.update { data.profileImage }
-//                    }
-//                }
-//                is NetworkResult.Error -> {  }
-//                is NetworkResult.Exception -> {
-//                    withContext(Dispatchers.Main) {
-//                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-//        }
 
-
-        fun withdrawAccount(
-            moveToStartScreen: () -> Unit,
-        ) {
+    fun withdrawAccount(
+        moveToStartScreen: () -> Unit,
+    ) {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            val accessToken = getAccessTokenUseCase().first()
 //            val memberId = getMemberIdUseCase().first()
@@ -207,9 +207,9 @@ class MyPageViewModel @Inject constructor(
 //                }
 //            }
 //        }
-        }
+    }
 
-        fun deleteCalendar() {
+    fun deleteCalendar() {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            val accessToken = getAccessTokenUseCase().first()
 //            val memberId = getMemberIdUseCase().first()
@@ -231,7 +231,35 @@ class MyPageViewModel @Inject constructor(
 //                }
 //            }
 //        }
-        }
     }
+
+
+
+
+    fun getLocationFaborite(memberSeq : Int) {
+        getFaboriteLocationUseCase(
+            memberSeq = memberSeq
+        ).onEach { networkResult ->
+            networkResult.onSuccess { code, message, data ->
+
+                val faboriteInfo = data?.toModel()
+                faboriteInfo?.let {
+                    _locationSeq.value = it.locationSeq
+                    _location.value = it.location
+                    _streetName.value = it.streetName
+                }
+            }.onError { code, message ->
+
+            }.onException { }
+        }
+            .catch {
+                LogUtil.e(
+                    "flow error",
+                    "VerifyEmailCodeUseCase\n${it.message}\n${it.stackTrace}"
+                )
+            }
+            .launchIn(viewModelScope)
+    }
+}
 
 

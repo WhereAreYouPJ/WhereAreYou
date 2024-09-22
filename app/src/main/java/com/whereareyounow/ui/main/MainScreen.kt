@@ -57,7 +57,7 @@ fun MainScreen(
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorites : () -> Unit,
+    moveToLocationFavorite : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
     moveToFeedSaved : () -> Unit,
     moveToAccoument : () -> Unit,
@@ -85,7 +85,7 @@ fun MainScreen(
 
         // 새로 추가 된 것 일 : { "내 정보 관리" , "위치 즐겨찾기" , "피드 책갈피" , "피드 보관함" }
         moveToMyInfoScreen = moveToMyInfoScreen,
-        moveToLocationFavorites = moveToLocationFavorites,
+        moveToLocationFavorite = moveToLocationFavorite,
         moveToFeedBookmarks = moveToFeedBookmarks,
         moveToFeedSaved = moveToFeedSaved,
 
@@ -94,6 +94,7 @@ fun MainScreen(
         moveToAsk = moveToAsk,
         moveToBye = moveToBye,
         moveToDetailProfileScreen = moveToDetailProfileScreen,
+//        moveToLocationFavorite = moveToLocationFavorite
     )
 }
 
@@ -112,7 +113,7 @@ private fun MainScreen(
     moveToMyPageScreen: () -> Unit,
     moveToDetailProfileScreen : (String, String) -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorites : () -> Unit,
+    moveToLocationFavorite : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
     moveToFeedSaved : () -> Unit,
     moveToAccoument : () -> Unit,
@@ -188,12 +189,13 @@ private fun MainScreen(
                             paddingValues = it,
                             moveToSignInScreen = moveToSignInScreen,
                             moveToMyInfoScreen = moveToMyInfoScreen,
-                            moveToLocationFavorites = moveToLocationFavorites,
+                            moveToLocationFavorite = moveToLocationFavorite,
                             moveToFeedBookmarks = moveToFeedBookmarks,
                             moveToFeedSaved = moveToFeedSaved,
                             moveToAccoument = moveToAccoument,
                             moveToAsk = moveToAsk,
-                            moveToBye = moveToBye
+                            moveToBye = moveToBye,
+
                         )
                     }
                 }

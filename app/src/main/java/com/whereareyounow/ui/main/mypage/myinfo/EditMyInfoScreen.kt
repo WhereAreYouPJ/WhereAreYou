@@ -111,7 +111,7 @@ private fun EditMyInfoScreen(
 
 
     if(myEmailCodeIsVerifyed == "SUCCESS") {
-        defaultTrue.value = false
+        defaultTrue.value = true
     }
 
 
@@ -175,10 +175,12 @@ private fun EditMyInfoScreen(
             "수정하기",
             canMove = defaultTrue,
             onClicked = {
-//                isReadOnly.value = true
+                moveToBackScreen()
             }
         )
     }
+
+
 }
 
 @Composable

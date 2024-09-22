@@ -1,5 +1,7 @@
 package com.whereareyounow.domain.repository
 
+import com.whereareyounow.domain.entity.location.LocationFaboriteInfo
+import com.whereareyounow.domain.request.member.UpdateUserNameRequest
 import com.whereareyounow.domain.util.NetworkResult
 
 interface LocationRepository {
@@ -15,4 +17,11 @@ interface LocationRepository {
 //        token: String,
 //        body: com.whereareyounow.domain.request.location.SendUserLocationRequest
 //    ): NetworkResult<Boolean>
+
+    // 즐겨찾기 조회
+    suspend fun getLocationFaborite(
+        memberSeq : Int
+    ): NetworkResult<LocationFaboriteInfo>
+
+
 }
