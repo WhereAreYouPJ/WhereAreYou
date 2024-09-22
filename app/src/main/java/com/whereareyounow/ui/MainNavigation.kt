@@ -13,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
@@ -26,7 +25,6 @@ import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_SUCCESS
-import com.whereareyounow.data.globalvalue.ROUTE_MAIN
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
@@ -40,19 +38,20 @@ import com.whereareyounow.ui.findaccount.findid.FindIdResultScreen
 import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
-import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
-import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
-import com.whereareyounow.ui.main.mypage.AskScreen
+import com.whereareyounow.ui.main.mypage.ask.AskScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
+import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen1
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen2
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen3
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen4
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen5
+import com.whereareyounow.ui.main.mypage.location.EditLocationFaboriteScreen
+import com.whereareyounow.ui.main.mypage.location.LocationFaboriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
@@ -126,7 +125,12 @@ fun MainNavigation(
                     navController.popBackStack(ROUTE_FIND_ACCOUNT, true)
                     navController.navigate(ROUTE_RESET_PASSWORD, bundle)
                 },
-                moveToSignInScreen = { navController.popBackStack(ROUTE_SIGN_IN_WITH_ACCOUNT, false) }
+                moveToSignInScreen = {
+                    navController.popBackStack(
+                        ROUTE_SIGN_IN_WITH_ACCOUNT,
+                        false
+                    )
+                }
             )
         }
 
@@ -150,7 +154,12 @@ fun MainNavigation(
             PasswordResettingScreen(
                 userId = it.arguments?.getString("userId") ?: "",
                 resultState = ResultState.valueOf(it.arguments?.getString("resultState") ?: "OK"),
-                moveToSignInScreen = { navController.popBackStack(ROUTE_SIGN_IN_WITH_ACCOUNT, false) },
+                moveToSignInScreen = {
+                    navController.popBackStack(
+                        ROUTE_SIGN_IN_WITH_ACCOUNT,
+                        false
+                    )
+                },
                 moveToPasswordResetSuccessScreen = {
                     navController.navigate(ROUTE_FIND_PASSWORD_SUCCESS) {
                         popUpTo(ROUTE_SIGN_IN_WITH_ACCOUNT) { inclusive = false }
@@ -162,7 +171,12 @@ fun MainNavigation(
         // 비밀번호 찾기 성공 화면
         composable(route = ROUTE_FIND_PASSWORD_SUCCESS) {
             PasswordResetSuccessScreen(
-                moveToSignInScreen = { navController.popBackStack(ROUTE_SIGN_IN_WITH_ACCOUNT, false) }
+                moveToSignInScreen = {
+                    navController.popBackStack(
+                        ROUTE_SIGN_IN_WITH_ACCOUNT,
+                        false
+                    )
+                }
             )
         }
 
@@ -222,7 +236,12 @@ fun MainNavigation(
         composable(
             route = ROUTE_SEARCH_LOCATION_MAP
         ) {
-            Log.e("SearchLocationMapScreen", "${it.arguments?.getString("lat")?.toDouble()}, ${it.arguments?.getString("lng")?.toDouble()}")
+            Log.e(
+                "SearchLocationMapScreen",
+                "${it.arguments?.getString("lat")?.toDouble()}, ${
+                    it.arguments?.getString("lng")?.toDouble()
+                }"
+            )
             SearchLocationMapScreen(
                 moveToBackScreen = { navController.popBackStack() },
                 latitude = it.arguments?.getDouble("lat") ?: 0.0,
@@ -280,7 +299,8 @@ fun MainNavigation(
                 scheduleId = it.arguments?.getString("scheduleId") ?: "",
                 destinationLatitude = it.arguments?.getDouble("destinationLatitude") ?: 0.0,
                 destinationLongitude = it.arguments?.getDouble("destinationLongitude") ?: 0.0,
-                passedMemberInfosList = it.arguments?.getParcelableArrayList<MemberInfo>("memberInfosList") ?: emptyList<MemberInfo>()
+                passedMemberInfosList = it.arguments?.getParcelableArrayList<MemberInfo>("memberInfosList")
+                    ?: emptyList<MemberInfo>()
             )
         }
 
@@ -296,8 +316,10 @@ fun MainNavigation(
             ModifyScheduleScreen(
                 scheduleId = it.arguments?.getString("scheduleId") ?: "",
                 initialDestinationLatitude = it.arguments?.getDouble("destinationLatitude") ?: 0.0,
-                initialDestinationLongitude = it.arguments?.getDouble("destinationLongitude") ?: 0.0,
-                initialScheduleDetails = it.arguments?.getParcelable<DetailScheduleScreenUIState>("scheduleDetails") ?: DetailScheduleScreenUIState(),
+                initialDestinationLongitude = it.arguments?.getDouble("destinationLongitude")
+                    ?: 0.0,
+                initialScheduleDetails = it.arguments?.getParcelable<DetailScheduleScreenUIState>("scheduleDetails")
+                    ?: DetailScheduleScreenUIState(),
                 moveToSearchLocationScreen = { navController.navigate(ROUTE_SEARCH_LOCATION) },
                 moveToFriendsListScreen = { selectedFriendIdsList ->
                     val bundle = bundleOf(
@@ -310,14 +332,14 @@ fun MainNavigation(
         }
 
         // 친구 추가 화면
-        composable(route =  ROUTE_ADD_FRIEND) {
+        composable(route = ROUTE_ADD_FRIEND) {
             AddFriendScreen(
                 moveToBackScreen = { navController.popBackStack() }
             )
         }
 
         // 회원 정보 수정 화면
-        composable(route =  ROUTE_MODIFY_INFO) {
+        composable(route = ROUTE_MODIFY_INFO) {
             InfoModificationScreen(
                 moveToBackScreen = {
                     navController.popBackStack()
@@ -353,7 +375,8 @@ fun MainNavigation(
         // 공지사항 화면
         composable<ROUTE.Announcement> {
             AnnouncementScreen(
-                moveToBackScreen = { navController.popBackStack() }
+                moveToBackScreen = { navController.popBackStack() },
+                moveToAdminImageScreen = { navController.navigate(ROUTE.AdminImageScreen) }
             )
         }
 
@@ -396,10 +419,31 @@ fun MainNavigation(
         composable<ROUTE.Bye5> {
             ByeScreen5(
                 moveToBackScreen = { navController.popBackStack() },
-                moveToLoginScreen = {  }
+                moveToLoginScreen = { }
             )
         }
 
-        
+        // 어드민 페이지 이미지 스크린
+        composable<ROUTE.AdminImageScreen> {
+            AdminImageScreen(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+        composable<ROUTE.LocationFaborite> {
+            LocationFaboriteScreen(
+                moveToBackScreen = { navController.popBackStack() },
+                moveToEditLocationFaborite = { navController.navigate(ROUTE.EditLocationFaborite) }
+            )
+        }
+
+        // 위치 즐겨찾기 편집 화면
+        composable<ROUTE.EditLocationFaborite> {
+            EditLocationFaboriteScreen(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
+
+
     }
 }

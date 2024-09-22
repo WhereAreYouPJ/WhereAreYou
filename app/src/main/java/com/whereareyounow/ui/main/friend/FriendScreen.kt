@@ -55,10 +55,12 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.main.home.FirstIconBadge
+import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.ui.theme.nanumSquareNeo
+import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -68,7 +70,7 @@ fun FriendScreen(
     paddingValues: PaddingValues,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
-    moveToDetailProfileScreen : (String, String) -> Unit,
+    moveToDetailProfileScreen: (String, String) -> Unit,
     viewModel: FriendViewModel = hiltViewModel()
 ) {
     val friendsList = viewModel.friendsList
@@ -87,9 +89,9 @@ private fun FriendScreen(
     friendsList: List<Friend>,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
-    moveToDetailProfileScreen : (String, String) -> Unit
+    moveToDetailProfileScreen: (String, String) -> Unit
 ) {
-    val isFriendPage = remember { mutableStateOf(true) }
+    val isFriendPage = remember { mutableStateOf(false) }
 //    val starExpand = remember { mutableStateOf(false) }
 //    val friendExpand = remember { mutableStateOf(false) }
 
@@ -122,8 +124,8 @@ private fun FriendScreen(
 fun FriendContent(
     paddingValues: PaddingValues,
     friendsList: List<Friend>,
-    upProfileBoolean : MutableState<Boolean>,
-    upProfile : (String, String) -> Unit
+    upProfileBoolean: MutableState<Boolean>,
+    upProfile: (String, String) -> Unit
 ) {
 //    val isFriendPage = remember { mutableStateOf(true) }
     val starExpand = remember { mutableStateOf(false) }
@@ -181,11 +183,11 @@ fun FriendContent(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 18.dp)
+            .fillMaxSize(),
+//            .padding(top = 18.dp)
 //            .padding(paddingValues)
     ) {
-        Spacer(Modifier.height(6.dp))
+        Gap(7)
         MyRow()
         GrayLine()
         Spacer(Modifier.height(10.dp))
@@ -256,23 +258,14 @@ fun FriendScreenTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 6.dp , top = TOP_BAR_HEIGHT.dp),
+            .padding(start = 20.dp, end = 6.dp),
 
 //            .height((TOP_BAR_HEIGHT / density).dp), TODO -> 준성님카톡
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
-        val friendTextColor = if(isFriendPage.value) Color(0xFF222222) else Color(0xFF666666)
-        val feedTextColor = if(isFriendPage.value) Color(0xFF666666) else Color(0xFF222222)
-        Text(
-            modifier = Modifier.clickable {
-                isFriendPage.value = true
-            },
-            text = "친구",
-            style = medium20pt,
-            color = friendTextColor
-        )
-        Spacer(Modifier.width(4.dp))
+        val friendTextColor = if (isFriendPage.value) Color(0xFF222222) else Color(0xFF666666)
+        val feedTextColor = if (isFriendPage.value) Color(0xFF666666) else Color(0xFF222222)
         Text(
             modifier = Modifier.clickable {
                 isFriendPage.value = false
@@ -281,38 +274,73 @@ fun FriendScreenTopBar(
             style = medium20pt,
             color = feedTextColor
         )
+        Spacer(Modifier.width(12.dp))
+        Text(
+            modifier = Modifier.clickable {
+                isFriendPage.value = true
+
+            },
+            text = "친구",
+            style = medium20pt,
+            color = friendTextColor
+        )
         Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            painter = painterResource(id = R.drawable.search_24px),
+        Image(
+            painter = painterResource(id = R.drawable.ic_dodbogi),
             contentDescription = "",
-            modifier = Modifier.clickable {
+            modifier = Modifier.clickableNoEffect {
 
-            },
-            tint = Color(0xFF6236E9)
+            }
         )
-        Spacer(Modifier.size(2.dp))
-        Icon(
-            painter = painterResource(id = R.drawable.plus),
-            contentDescription = "",
-            modifier = Modifier.clickable {
-                popupState.isVisible = true
-                                          },
-            tint = Color(0xFF6236E9)
-        )
-        Spacer(Modifier.size(2.dp))
+//        Icon(
+//            painter = painterResource(id = R.drawable.search_24px),
+//            contentDescription = "",
+//            modifier = Modifier
+//                .clickable {
+//
+//                },
+//            tint = Color(0xFF6236E9)
+//        )
+//        Spacer(Modifier.size(2.dp))
+
+
+//        Icon(
+//            painter = painterResource(id = R.drawable.plus),
+//            contentDescription = "",
+//            modifier = Modifier.clickable {
+//                popupState.isVisible = true
+//                                          },
+//            tint = Color(0xFF6236E9)
+//        )
+//        Spacer(Modifier.size(2.dp))
         //TODO -> 알림여부에따라서 아이콘보이는거다르게 -> 준성님카톡
-        Icon(
-            painter = painterResource(id = R.drawable.icon_bell),
-            contentDescription = "",
-            modifier = Modifier.clickable {
-
-            },
-            tint = Color(0xFF6236E9)
+//        Icon(
+//            painter = painterResource(id = R.drawable.icon_bell),
+//            contentDescription = "",
+//            modifier = Modifier.clickable {
+//
+//            },
+//            tint = Color(0xFF6236E9)
+//        )
+//        Spacer(Modifier.size(2.dp))
+        Image(
+            painter = painterResource(id = R.drawable.ic_bellred),
+            contentDescription = ""
         )
-        Spacer(Modifier.size(2.dp))
-        FirstIconBadge({
-            //TODO -> 알림버튼누르면뭐뜨는지부교님
-        })
+//        Spacer(Modifier.size(2.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_plusbrandcolor),
+            contentDescription = "",
+            modifier = Modifier.clickableNoEffect {
+                popupState.isVisible = true
+
+            }
+        )
+
+//        FirstIconBadge({
+//            //TODO -> 알림버튼누르면뭐뜨는지부교님
+//        })
         if (popupState.isVisible) {
             AddIconPopUp(
                 popupState,
@@ -374,8 +402,8 @@ fun MyRow() {
                 imageModel = { myInfo.image ?: R.drawable.idle_profile2 },
             )
         }
-        Spacer(Modifier.size(6.dp))
-        Text(myInfo.name, style = medium14pt)
+        Gap(12)
+        Text(myInfo.name, style = medium14pt , color = Color(0xFF222222))
     }
 }
 
@@ -455,7 +483,6 @@ fun AddIconPopUp(
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // 1dp 짜리 회색선
@@ -474,47 +501,51 @@ fun GrayLine() {
 fun FriendBox(
     imageUrl: String?,
     friendName: String,
-    upProfile : (String, String) -> Unit,
+    upProfile: (String, String) -> Unit,
 //    upProfileBoolean : MutableState<Boolean>
     // 친구사진전달하기
 ) {
-//    Log.d("sfsjflsjf" , upProfileBoolean.toString())
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 10.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        GlideImage(
+        Box(
             modifier = Modifier
-                .size(30.dp)
-                .clip(RoundedCornerShape(50))
-                .clickable {
-                    upProfile(imageUrl ?: "", friendName)
+                .size(50.dp)
+                .clip(RoundedCornerShape(16.dp))
+        ) {
+            GlideImage(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .size(50.dp)
+                    .clickable {
+                        upProfile(imageUrl ?: "", friendName)
 //                    upProfileBoolean.value = !upProfileBoolean.value
-                },
-            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-        )
-        Spacer(Modifier.width(10.dp))
+                    },
+                imageModel = { imageUrl ?: R.drawable.idle_profile2 },
+                imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+            )
+        }
+//        GlideImage(
+//            modifier = Modifier
+//                .clip(RoundedCornerShape(16.dp))
+//                .size(30.dp)
+//                .clickable {
+//                    upProfile(imageUrl ?: "", friendName)
+////                    upProfileBoolean.value = !upProfileBoolean.value
+//                },
+//            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
+//            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+//        )
+        Gap(12)
         Text(
             text = friendName,
-            fontSize = 20.sp
+            color = Color(0xFF222222),
+            style = medium14pt
         )
     }
-
-
-
-//    if(upProfileBoolean.value) {
-//
-//
-//        sfsfdjslefjsoefin(imageUrl , friendName)
-//
-//        }
-
-
-
-
 }
 
 // 누르면 즐겨찾기랑 친구 창 확장
@@ -546,9 +577,10 @@ fun ClickAleText(
         ) {
             Text(
                 text1,
-                style = medium14pt
+                style = medium14pt,
+                color = Color(0xFF222222)
             )
-            Spacer(Modifier.size(6.dp))
+            Gap(8)
             Text(
                 text2,
                 style = medium14pt,
@@ -561,35 +593,19 @@ fun ClickAleText(
     }
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//private fun FriendScreenPreview() {
-//    val friendsList = listOf(
-//        Friend(0, "", "name1"),
-//        Friend(0, "", "name2"),
-//        Friend(0, "", "name3"),
-//        Friend(0, "", "name4"),
-//    )
-//    WhereAreYouTheme {
-//        FriendScreen(
-//            friendsList = friendsList,
-//            moveToAddFriendScreen = { },
-//            moveToAddGroupScreen = { }
-//        )
-//    }
-//}
-
 
 @Composable
 fun sfsfdjslefjsoefin(
     imageUrl: String?,
     friendName: String
-){
+) {
     Dialog(
         onDismissRequest = {}
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.White)
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
         ) {
             Column(
 
@@ -599,13 +615,15 @@ fun sfsfdjslefjsoefin(
                 Image(
                     painter = painterResource(id = R.drawable.ic_x),
                     contentDescription = "",
-                    modifier = Modifier.padding(start = 20.dp , top = 11.dp),
+                    modifier = Modifier.padding(start = 20.dp, top = 11.dp),
                     colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))
                 )
 
 
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(top  = 491.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 491.dp)
                 ) {
                     Box(
 //                modifier = Modifier.padding(491.dp)
@@ -618,7 +636,7 @@ fun sfsfdjslefjsoefin(
 
                         GlideImage(
                             modifier = Modifier
-                                .padding(start = 137.5.dp , end = 137.5.dp)
+                                .padding(start = 137.5.dp, end = 137.5.dp)
                                 .size(100.dp)
                                 .clip(RoundedCornerShape(18.dp)),
                             imageModel = { imageUrl ?: R.drawable.idle_profile2 },

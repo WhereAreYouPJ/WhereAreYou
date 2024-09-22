@@ -1,13 +1,13 @@
-package com.whereareyounow.ui.main.mypage
+package com.whereareyounow.ui.main.mypage.ask
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -17,7 +17,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
 
 @Composable
 fun AskScreen(
@@ -39,7 +41,9 @@ private fun AnnouncementScreen(
     val myPageViewModel : MyPageViewModel = hiltViewModel()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(top = TOP_BAR_HEIGHT.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = TOP_BAR_HEIGHT.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomTopBar(
@@ -49,33 +53,55 @@ private fun AnnouncementScreen(
             }
         )
 
+        Gap(24)
+
         Image(
             painter = painterResource(id = R.drawable.ic_areyouask),
             contentDescription = "",
-            modifier = Modifier.padding(top = 24.dp , start = 68.dp , end = 68.dp).size(width = 239.dp , height = 202.dp)
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_baskkakao),
-            contentDescription = "",
-            modifier = Modifier.padding(top = 34.dp , start = 37.dp , end = 36.dp).size(width = 302.dp , height = 269.dp)
+            modifier = Modifier
+                .padding(start = 68.dp, end = 68.dp)
+                .size(width = 239.dp, height = 202.dp)
         )
 
         Gap(34)
 
         Image(
-            painter = painterResource(id = R.drawable.ic_caution),
+            painter = painterResource(id = R.drawable.ic_baskkakao),
             contentDescription = "",
-            modifier = Modifier.padding(top = 15.dp).fillMaxWidth().size(width = 302.dp , height = 84.dp)
+            modifier = Modifier
+                .padding(start = 37.dp, end = 36.dp)
+                .size(width = 302.dp, height = 269.dp)
         )
 
-        Spacer(Modifier.weight(1f))
+        Gap(15)
 
         Image(
-            painter = painterResource(id = R.drawable.ic_gotokakao),
+            painter = painterResource(id = R.drawable.ic_caution),
             contentDescription = "",
-            modifier = Modifier.padding(top = 22.dp , start = 15.dp , end = 15.dp , bottom = 68.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(width = 302.dp, height = 84.dp)
         )
+
+        Gap(14)
+
+        val defaultTrue = remember {
+            mutableStateOf(true)
+        }
+
+        WithdrawlButton(
+            text = "카카오채널 바로가기",
+            canMove = defaultTrue
+        ) {
+            moveToBackScreen()
+        }
+
+
+//        Image(
+//            painter = painterResource(id = R.drawable.ic_gotokakao),
+//            contentDescription = "",
+//            modifier = Modifier.padding(start = 15.dp , end = 15.dp , bottom = 68.dp)
+//        )
 
 
     }

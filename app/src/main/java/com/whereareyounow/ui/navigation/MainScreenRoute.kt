@@ -55,7 +55,7 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
         moveToMyInfoScreen = {
             navController.navigate(ROUTE_MY_INFO)
         },
-        moveToLocationFavorites = {},
+        moveToLocationFavorite = { navController.navigate(ROUTE.LocationFaborite) },
         moveToFeedBookmarks = {},
         moveToFeedSaved = {},
         moveToAccoument = {navController.navigate(ROUTE.Announcement)},

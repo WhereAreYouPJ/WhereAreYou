@@ -254,8 +254,10 @@ private fun HomeScreen(
 
         Column(
             modifier = Modifier
+                .background(Color.White)
+
                 .fillMaxWidth()
-                .padding(start = 15.dp, end = 15.dp, top = TOP_BAR_HEIGHT.dp)
+                .padding(start = 15.dp)
         ) {
             // ON MY WAY ROW
             Row(
@@ -278,7 +280,7 @@ private fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 10.dp)
+                    .padding(start = 12.dp , end = 10.dp)
             ) {
                 Text(
                     text = "함께한 추억을 확인해보세요!",
@@ -300,7 +302,8 @@ fun First(onIconClick: () -> Unit, onMyIconClick: () -> Unit, alarmBoolean: Bool
 
     Row(
         modifier = Modifier
-            .height(46.dp),
+            .height(46.dp)
+            .padding(end = 15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Gap(7)
@@ -353,7 +356,7 @@ fun Second(pagerState: PagerState, testSecondImages: List<HomeViewModel.SecondDa
     val isVisible = remember { mutableStateOf(false) }
     if (testSecondImages.isEmpty()) {
         Box(
-            modifier = Modifier.height(190.dp),
+            modifier = Modifier.height(190.dp).padding(end = 15.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text("사지 없을 때", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
@@ -375,7 +378,7 @@ fun Second(pagerState: PagerState, testSecondImages: List<HomeViewModel.SecondDa
             }
         }
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(end = 15.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -460,7 +463,7 @@ fun ThirdScreen(testThirdDatas: List<HomeViewModel.ThirdDataModel>) {
                 .height(52.dp)
                 .fillMaxWidth()
                 .border(1.dp, Color.Black, RoundedCornerShape(6.dp))
-                .padding(start = 15.dp, end = 15.dp),
+                .padding(end = 15.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = RoundedCornerShape(6.dp)
         ) {
@@ -477,6 +480,7 @@ fun ThirdScreen(testThirdDatas: List<HomeViewModel.ThirdDataModel>) {
         Card(
             modifier = Modifier
                 .height(52.dp)
+                .padding(end = 15.dp)
                 .fillMaxWidth()
                 .border(1.5.dp, getColor().brandColor, RoundedCornerShape(6.dp)),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -513,15 +517,19 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
             pageSpacing = 12.dp,
             contentPadding = PaddingValues(start = 8.dp, end = 23.dp),
             modifier = Modifier
+                .background(Color.White)
                 .fillMaxWidth(),
-            flingBehavior = PagerDefaults.flingBehavior(
-                state = horizontalState,
-                snapAnimationSpec = spring(stiffness = Spring.StiffnessMedium)
-            )
+//            flingBehavior = PagerDefaults.flingBehavior(
+//                state = horizontalState,
+//                snapAnimationSpec = spring(stiffness = Spring.StiffnessMedium)
+//            )
+//            ,
+
         ) { index ->
             val detailFeedData = testFourthData[index]
             Box(
                 modifier = Modifier
+                    .background(Color.White)
                     .fillMaxWidth()
                     .border(
                         border = BorderStroke(
@@ -530,11 +538,14 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
                         ),
                         shape = RoundedCornerShape(16.dp)
                     )
+
+
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 12.dp, top = 12.dp),
+                        .padding(start = 12.dp, top = 12.dp)
+                        .background(Color.White),
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Row(
@@ -601,7 +612,7 @@ fun SixthScreen(testFourthData: List<HomeViewModel.FourthDataModel>) {
         Spacer(Modifier.size(10.dp))
     } else {
         Box(
-            modifier = Modifier.height(200.dp)
+            modifier = Modifier.height(200.dp).background(Color.White)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,

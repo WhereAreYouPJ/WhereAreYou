@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.main.mypage.myinfo
 
+import android.view.WindowInsets
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,15 +17,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +44,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
@@ -54,13 +59,15 @@ import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyPageScreen(
     paddingValues: PaddingValues,
     moveToSignInScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorites: () -> Unit,
+    moveToLocationFavorite: () -> Unit,
     moveToFeedBookmarks: () -> Unit,
     moveToFeedSaved: () -> Unit,
     moveToAccoument: () -> Unit,
@@ -81,7 +88,7 @@ fun MyPageScreen(
         withdrawAccount = viewModel::withdrawAccount,
         moveToSignInScreen = moveToSignInScreen,
         moveToMyInfoScreen = moveToMyInfoScreen,
-        moveToLocationFavorites = moveToLocationFavorites,
+        moveToLocationFavorite = moveToLocationFavorite,
         moveToFeedBookmarks = moveToFeedBookmarks,
         moveToFeedSaved = moveToFeedSaved,
         moveToAccoument = moveToAccoument,
@@ -101,16 +108,21 @@ fun MyPageScreen(
     withdrawAccount: (() -> Unit) -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorites: () -> Unit,
+    moveToLocationFavorite: () -> Unit,
     moveToFeedBookmarks: () -> Unit,
     moveToFeedSaved: () -> Unit,
     moveToAccoument: () -> Unit,
     moveToAsk: () -> Unit,
     moveToBye: () -> Unit
 ) {
+    // 여기 스테튵바 색상
+    val systemUiController = rememberSystemUiController()
+
+
     LaunchedEffect(Unit) {
         getMyInfo()
     }
+
     val density = LocalDensity.current.density
     var isWarningDialogShowing by remember { mutableStateOf(false) }
     val isProfileClicked = remember { mutableStateOf(false) }
@@ -250,7 +262,11 @@ fun MyPageScreen(
                                 text = "사진 보관함",
                                 style = medium14pt,
                                 color = Color.White,
-                                modifier = Modifier.padding(start = 14.dp , top = 8.dp , bottom = 10.dp)
+                                modifier = Modifier.padding(
+                                    start = 14.dp,
+                                    top = 8.dp,
+                                    bottom = 10.dp
+                                )
                             )
                             Gap(72)
                             Image(
@@ -284,7 +300,7 @@ fun MyPageScreen(
         // 내정보관리부터
         Column(
             modifier = Modifier
-                .padding(top = ((CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT) / density).dp)
+                .padding(top = ((CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT) / density).dp + 14.dp)
                 .fillMaxWidth(),
         ) {
 
@@ -326,7 +342,7 @@ fun MyPageScreen(
 
                                     when (it) {
                                         "내 정보 관리" -> moveToMyInfoScreen()
-                                        "위치 즐겨찾기" -> moveToLocationFavorites()
+                                        "위치 즐겨찾기" -> moveToLocationFavorite()
                                         "피드 책갈피" -> moveToFeedBookmarks()
                                         "피드 보관함" -> moveToFeedSaved()
                                     }
