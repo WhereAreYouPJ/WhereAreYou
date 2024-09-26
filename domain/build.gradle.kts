@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.whereareyounow.domain"
+    namespace = "com.onmyway.domain"
     compileSdk = 34
 
     defaultConfig {

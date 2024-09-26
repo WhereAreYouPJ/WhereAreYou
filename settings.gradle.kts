@@ -19,7 +19,7 @@ dependencyResolutionManagement {
         maven { url = uri("https://repository.map.naver.com/archive/maven") }
     }
 }
-rootProject.name = "WhereAreYou"
+rootProject.name = "OnMyWay"
 include(
     ":app",
     ":data",

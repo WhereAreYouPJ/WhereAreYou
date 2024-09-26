@@ -1,0 +1,8 @@
+package com.onmyway.domain.request.member
+
+import com.google.gson.annotations.SerializedName
+
+data class SendEmailCodeRequest(
+    @SerializedName("email")
+    val email: String,
+)

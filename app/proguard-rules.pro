@@ -70,4 +70,4 @@
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 
 # Keep the generic signature of retrofit's types and the generic signatures of the classes of API messages
--keep class com.whereareyounow.domain.entity.** { *; }
+-keep class com.onmyway.domain.entity.** { *; }
