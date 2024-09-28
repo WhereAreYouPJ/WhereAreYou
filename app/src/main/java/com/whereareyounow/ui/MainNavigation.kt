@@ -60,16 +60,17 @@ import com.whereareyounow.ui.main.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.FriendsListScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
+import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
-import com.whereareyounow.ui.navigation.signInMethodSelectionScreen
+import com.whereareyounow.ui.navigation.signInMethodSelectionScreenRoute
 import com.whereareyounow.ui.navigation.signInWithAccountScreenRoute
 import com.whereareyounow.ui.navigation.signUpScreenRoute
 import com.whereareyounow.ui.navigation.signUpSuccessScreenRoute
-import com.whereareyounow.ui.navigation.splashScreen
+import com.whereareyounow.ui.navigation.splashScreenRoute
 import com.whereareyounow.ui.navigation.termsOfServiceDetailsScreenRoute
 import com.whereareyounow.util.navigate
 
@@ -80,15 +81,15 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE.Main,
+        startDestination = ROUTE.Splash,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
         // 스플래시
-        splashScreen(navController)
+        splashScreenRoute(navController)
 
         // 로그인 방법 선택
-        signInMethodSelectionScreen(navController)
+        signInMethodSelectionScreenRoute(navController)
 
         // 약관 동의
         policyAgreeScreenRoute(navController)
@@ -205,6 +206,9 @@ fun MainNavigation(
             )
         }
 
+        // 일정 상세 화면
+        detailScheduleScreenRoute(navController)
+
         // 장소 검색 화면
         composable(
             route = ROUTE_SEARCH_LOCATION
@@ -260,34 +264,6 @@ fun MainNavigation(
             FriendsListScreen(
                 moveToBackScreen = { navController.popBackStack() },
                 scheduleEditViewModel = hiltViewModel(parentEntry)
-            )
-        }
-
-        // 상세 일정 정보 화면
-        composable(route = ROUTE_DETAIL_SCHEDULE) {
-            DetailScheduleScreen(
-                scheduleId = it.arguments?.getString("scheduleId") ?: "",
-                moveToDetailScheduleMapScreen = { scheduleId, destinationLatitude, destinationLongitude, memberInfosList ->
-                    val bundle = bundleOf(
-                        "scheduleId" to scheduleId,
-                        "destinationLatitude" to destinationLatitude,
-                        "destinationLongitude" to destinationLongitude
-                    ).apply {
-                        putParcelableArrayList("memberInfosList", ArrayList(memberInfosList))
-                    }
-                    navController.navigate(ROUTE_DETAIL_SCHEDULE_MAP, bundle)
-                },
-                moveToModifyScheduleScreen = { scheduleId, destinationLatitude, destinationLongitude, scheduleDetails ->
-                    val bundle = bundleOf(
-                        "scheduleId" to scheduleId,
-                        "destinationLatitude" to destinationLatitude,
-                        "destinationLongitude" to destinationLongitude
-                    ).apply {
-                        putParcelable("scheduleDetails", scheduleDetails)
-                    }
-                    navController.navigate(ROUTE_MODIFY_SCHEDULE, bundle)
-                },
-                moveToBackScreen = { navController.popBackStack() },
             )
         }
 

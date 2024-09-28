@@ -10,28 +10,33 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.whereareyounow.R
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
+import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
+import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
+import com.whereareyounow.domain.util.onError
+import com.whereareyounow.domain.util.onException
+import com.whereareyounow.domain.util.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 
 @HiltViewModel
 class DetailScheduleViewModel @Inject constructor(
     private val application: Application,
-//    private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
-//    private val getDetailScheduleUseCase: GetDetailScheduleUseCase,
-//    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-//    private val getMemberIdUseCase: GetMemberIdUseCase,
-//    private val refuseOrQuitScheduleUseCase: RefuseOrQuitScheduleUseCase,
-//    private val deleteScheduleUseCase: DeleteScheduleUseCase,
+    private val getDetailScheduleUseCase: GetDetailScheduleUseCase
 ) : AndroidViewModel(application) {
 
-    private val _detailScheduleScreenUIState = MutableStateFlow(DetailScheduleScreenUIState())
-    val detailScheduleScreenUIState = _detailScheduleScreenUIState.asStateFlow()
+    private val _uiState = MutableStateFlow(DetailScheduleScreenUIState())
+    val uiState = _uiState.asStateFlow()
 
     private var scheduleId = ""
     private var memberIdsList = emptyList<String>()
@@ -41,55 +46,21 @@ class DetailScheduleViewModel @Inject constructor(
     private val _isScheduleCreator = MutableStateFlow(false)
     val isScheduleCreator: StateFlow<Boolean> = _isScheduleCreator
 
-    fun updateScheduleId(id: String) {
-        scheduleId = id
-        getDetailSchedule(id)
-    }
+    fun getDetailSchedule(seq: Int) {
+        val requestData = GetDetailScheduleRequest(
+            scheduleSeq = seq,
+            memberSeq = AuthData.memberSeq
+        )
+        getDetailScheduleUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
 
-    private fun getDetailSchedule(id: String) {
-//        viewModelScope.launch(Dispatchers.Default) {
-//            val accessToken = getAccessTokenUseCase().first()
-//            val memberId = getMemberIdUseCase().first()
-//            val response = getDetailScheduleUseCase(accessToken, memberId, id)
-//            LogUtil.printNetworkLog("memberId = $memberId\nscheduleId = $scheduleId", response, "일정 상세 정보 가져오기")
-//            when (response) {
-//                is NetworkResult.Success -> {
-//                    response.data?.let { data ->
-//                        _isScheduleCreator.update { data.creatorId == memberId }
-//                        destinationLatitude = data.destinationLatitude
-//                        destinationLongitude = data.destinationLongitude
-//                        _detailScheduleScreenUIState.update {
-//                            // {년, 월, 일}
-//                            val appointmentDateList = data.appointmentTime.split("T")[0].split("-").map { num -> num.toInt() }
-//                            // {시, 분}
-//                            val appointmentTimeList = data.appointmentTime.split("T")[1].split(":").map { num -> num.toInt() }
-//                            it.copy(
-//                                scheduleName = data.title,
-//                                scheduleYear = appointmentDateList[0],
-//                                scheduleMonth = appointmentDateList[1],
-//                                scheduleDate = appointmentDateList[2],
-//                                scheduleDayOfWeek = getDayOfWeekString(appointmentDateList[0], appointmentDateList[1], appointmentDateList[2]),
-//                                scheduleHour = appointmentTimeList[0],
-//                                scheduleMinute = appointmentTimeList[1],
-//                                destinationName = data.place.replace("<b>", "").replace("</b>", ""),
-//                                destinationRoadAddress = data.roadName,
-//                                memo = data.memo,
-//                                isLocationCheckEnabled = getMinuteDiffWithCurrentTime(data.appointmentTime) <= 60
-//                            )
-//                        }
-//                        memberIdsList = data.friendsIdList.toMutableList()
-//                        arrivedMemberIdsList = data.arrivedFriendsIdList
-//                        getUsersInfo()
-//                    }
-//                }
-//                is NetworkResult.Error -> {  }
-//                is NetworkResult.Exception -> {
-//                    withContext(Dispatchers.Main) {
-//                        Toast.makeText(application, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-//        }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
     }
 
     private suspend fun getUsersInfo() {

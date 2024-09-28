@@ -22,7 +22,7 @@ import retrofit2.http.Query
 
 interface ScheduleApi {
 
-    // 일별 일정 상세 정보
+    // 일정 상세 정보
     @GET("schedule")
     suspend fun getDetailSchedule(
         @Query("scheduleSeq") scheduleSeq: Int,
@@ -54,7 +54,7 @@ interface ScheduleApi {
         @Query("memberSeq") memberSeq: Int
     ): Response<ResponseWrapper<List<MonthlySchedule>>>
 
-    // 일정 List 조회 API
+    // 일정 List 조회
     @GET("schedule/list")
     suspend fun getScheduleList(
         @Query("memberSeq") memberSeq: Int,
@@ -73,7 +73,7 @@ interface ScheduleApi {
     suspend fun getDailySchedule(
         @Query("date") date: String,
         @Query("memberSeq") memberSeq: Int
-    ): Response<ResponseWrapper<DailyScheduleInfo>>
+    ): Response<ResponseWrapper<List<DailyScheduleInfo>>>
 
     @HTTP(method = "DELETE", path = "schedule/refuse", hasBody = true)
     suspend fun refuseScheduleInvitation(

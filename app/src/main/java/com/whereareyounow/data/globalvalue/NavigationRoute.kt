@@ -70,6 +70,11 @@ sealed class ROUTE {
     data object Main
 
     @Serializable
+    data class DetailSchedule(
+        val scheduleSeq: Int
+    )
+
+    @Serializable
     data object Announcement
     @Serializable
     data object Ask

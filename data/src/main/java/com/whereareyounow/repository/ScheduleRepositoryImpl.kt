@@ -81,7 +81,7 @@ class ScheduleRepositoryImpl(
 
     override suspend fun getDailySchedule(
         data: GetDailyScheduleRequest
-    ): NetworkResult<DailyScheduleInfo> {
+    ): NetworkResult<List<DailyScheduleInfo>> {
         return handleResult { scheduleApi.getDailySchedule(
             date = data.date,
             memberSeq = data.memberSeq

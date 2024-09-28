@@ -71,7 +71,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.globalvalue.ScheduleColor
+import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.ScrollablePicker
 import com.whereareyounow.ui.main.schedule.scheduleedit.component.ScheduleEditScreenScheduleTitle
@@ -409,7 +409,7 @@ fun ScheduleEditScreen(
                         style = medium16pt
                     )
                 }
-                
+
                 Spacer(Modifier.height(6.dp))
 
                 // 메모

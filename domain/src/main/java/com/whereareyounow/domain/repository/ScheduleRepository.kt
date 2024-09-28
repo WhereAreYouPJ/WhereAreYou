@@ -50,7 +50,7 @@ interface ScheduleRepository {
 
     suspend fun getDailySchedule(
         data: GetDailyScheduleRequest
-    ): NetworkResult<DailyScheduleInfo>
+    ): NetworkResult<List<DailyScheduleInfo>>
 
     suspend fun refuseScheduleInvitation(
         data: RefuseScheduleInvitationRequest
