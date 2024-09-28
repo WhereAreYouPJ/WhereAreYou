@@ -418,7 +418,7 @@ fun AddIconPopUp(
     val density = LocalDensity.current.density
     Box(
         contentAlignment = Alignment.CenterEnd,
-        modifier = Modifier.padding(top = 45.dp)
+        modifier = Modifier.padding(top = 30.dp)
     ) {
         CustomPopup(
             popupState = popupState,

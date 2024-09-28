@@ -1,12 +1,8 @@
 package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.LocationRepository
-import com.whereareyounow.domain.repository.SearchLocationRepository
-import com.whereareyounow.domain.usecase.location.GetFaboriteLocationUseCase
-import com.whereareyounow.domain.usecase.location.GetLocationAddressUseCase
-import com.whereareyounow.domain.usecase.location.GetUserLocationUseCase
-import com.whereareyounow.domain.usecase.location.SendUserLocationUseCase
-import dagger.Binds
+import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
+import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,9 +36,16 @@ object LocationUseCaseModule {
 
     @Singleton
     @Provides
-    fun provideGetFaboriteLocationUseCase(
+    fun provideGetFavoriteLocationUseCase(
         repository: LocationRepository
-    ): GetFaboriteLocationUseCase {
-        return GetFaboriteLocationUseCase(repository)
+    ): GetFavoriteLocationUseCase {
+        return GetFavoriteLocationUseCase(repository)
+    }
+
+    @Provides
+    fun provideDeleteFavoriteLocationUsecase(
+        repository: LocationRepository
+    ): DeleteFavoriteLocationUsecase {
+        return DeleteFavoriteLocationUsecase(repository)
     }
 }
