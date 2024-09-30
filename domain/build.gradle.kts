@@ -4,12 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.onmyway.domain"
+    namespace = "com.whereareyounow.domain"
     compileSdk = 34
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

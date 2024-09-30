@@ -11,18 +11,18 @@ plugins {
 }
 
 android {
-    namespace = "com.onmyway"
+    namespace = "com.whereareyounow"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.onmyway"
+        applicationId = "com.whereareyounow"
         minSdk = 26
         targetSdk = 34
-        versionCode = 48
+        versionCode = 51
         versionName = "1.0.1"
 
 //        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunner = "com.onmyway.HiltTestRunner"
+        testInstrumentationRunner = "com.whereareyounow.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

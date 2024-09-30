@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.onmyway.data"
+    namespace = "com.whereareyounow.data"
     compileSdk = 34
 
     defaultConfig {
