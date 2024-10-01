@@ -119,61 +119,10 @@ fun FriendContent(
     val starExpand = remember { mutableStateOf(false) }
     val friendExpand = remember { mutableStateOf(false) }
 
-//    if(upProfileBoolean.value) {
-//        Box(
-//            modifier = Modifier.fillMaxSize()
-//        ) {
-//            Column(
-//
-//            ) {
-//                Spacer(Modifier.size(TOP_BAR_HEIGHT.dp))
-//
-//                Image(
-//                    painter = painterResource(id = R.drawable.ic_x),
-//                    contentDescription = "",
-//                    modifier = Modifier.padding(start = 20.dp , top = 11.dp),
-//                    colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))
-//                )
-//
-//
-//                Column(
-//                    modifier = Modifier.fillMaxSize().padding(top  = 491.dp)
-//                ) {
-//                    Box(
-////                modifier = Modifier.padding(491.dp)
-//                    ) {
-////            GlideImage(
-////                imageModel = "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: painterResource(id = R.drawable.ic_default_profile_image),
-////                contentDescription = ""
-////
-////            )
-//
-//                        GlideImage(
-//                            modifier = Modifier
-//                                .padding(start = 137.5.dp , end = 137.5.dp)
-//                                .size(100.dp)
-//                                .clip(RoundedCornerShape(18.dp)),
-//                            imageModel = { "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: R.drawable.idle_profile2 },
-//                        )
-//                    }
-//                    Text( ?: "유민혁")
-//
-//
-//                }
-//
-//
-//
-//                Text("sfsss")
-//
-//            }
-//        }
-//    }
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
-//            .padding(top = 18.dp)
-//            .padding(paddingValues)
+            .fillMaxSize()
     ) {
         Gap(7)
         MyRow()
@@ -219,8 +168,6 @@ fun FriendContent(
                             imageUrl = friendsList[index].profileImgUrl,
                             friendName = friendsList[index].userId,
                             upProfile = upProfile,
-//                            upProfileBoolean = upProfileBoolean
-
                         )
                     }
                 }
@@ -241,8 +188,6 @@ fun FriendScreenTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 6.dp),
-
-//            .height((TOP_BAR_HEIGHT / density).dp), TODO -> 준성님카톡
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
@@ -267,15 +212,15 @@ fun FriendScreenTopBar(
             color = friendTextColor
         )
         Spacer(Modifier.width(12.dp))
-        Text(
-            modifier = Modifier.clickable {
-                isFriendPage.value = true
-
-            },
-            text = "친구",
-            style = medium20pt,
-            color = friendTextColor
-        )
+//        Text(
+//            modifier = Modifier.clickable {
+//                isFriendPage.value = true
+//
+//            },
+//            text = "친구",
+//            style = medium20pt,
+//            color = friendTextColor
+//        )
         Spacer(modifier = Modifier.weight(1f))
         Image(
             painter = painterResource(id = R.drawable.ic_dodbogi),
@@ -284,6 +229,7 @@ fun FriendScreenTopBar(
 
             }
         )
+
 //        Icon(
 //            painter = painterResource(id = R.drawable.search_24px),
 //            contentDescription = "",

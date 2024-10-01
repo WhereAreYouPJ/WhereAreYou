@@ -19,7 +19,6 @@ import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
-import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID_RESULT
@@ -40,11 +39,10 @@ import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
 import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
-import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
-import com.whereareyounow.ui.main.mypage.ask.AskScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
-import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
+import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
+import com.whereareyounow.ui.main.mypage.ask.AskScreen
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen1
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen2
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen3
@@ -53,14 +51,16 @@ import com.whereareyounow.ui.main.mypage.byebye.ByeScreen5
 import com.whereareyounow.ui.main.mypage.location.EditLocationFaboriteScreen
 import com.whereareyounow.ui.main.mypage.location.LocationFaboriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
+import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
-import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleScreen
 import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
 import com.whereareyounow.ui.main.schedule.newschedule.NewScheduleScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.FriendsListScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
+import com.whereareyounow.ui.navigation.feedBookMarkRoute
+import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
@@ -398,21 +398,18 @@ fun MainNavigation(
                 moveToLoginScreen = { }
             )
         }
-
         // 어드민 페이지 이미지 스크린
         composable<ROUTE.AdminImageScreen> {
             AdminImageScreen(
                 moveToBackScreen = { navController.popBackStack() }
             )
         }
-
         composable<ROUTE.LocationFaborite> {
             LocationFaboriteScreen(
                 moveToBackScreen = { navController.popBackStack() },
                 moveToEditLocationFaborite = { navController.navigate(ROUTE.EditLocationFaborite) }
             )
         }
-
         // 위치 즐겨찾기 편집 화면
         composable<ROUTE.EditLocationFaborite> {
             EditLocationFaboriteScreen(
@@ -420,6 +417,10 @@ fun MainNavigation(
             )
         }
 
+        // 피드 북마크
+        feedBookMarkRoute(navController)
 
+        // 피드 보관함
+        feedStoreRoute(navController)
     }
 }

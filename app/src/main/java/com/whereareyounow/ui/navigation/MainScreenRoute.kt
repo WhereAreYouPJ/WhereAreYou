@@ -53,8 +53,8 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
             navController.navigate(ROUTE_MY_INFO)
         },
         moveToLocationFavorite = { navController.navigate(ROUTE.LocationFaborite) },
-        moveToFeedBookmarks = {},
-        moveToFeedSaved = {},
+        moveToFeedBookmarks = { navController.navigate(ROUTE.FeedBookMark) },
+        moveToFeedSaved = { navController.navigate(ROUTE.FeedStore) },
         moveToAccoument = {navController.navigate(ROUTE.Announcement)},
         moveToAsk = {navController.navigate(ROUTE.Ask)},
         moveToBye = { navController.navigate(ROUTE.Bye1) }

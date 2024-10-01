@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,13 +70,11 @@ private fun EditLocationFaboriteScreen(
             firstIconClicked = { moveToBackScreen() }
         )
 
-        Gap(20)
+//        Gap(20)
 
         //즐겨찾기 사이즈 일단은 아무거나 데이터 있는게 없음 []이래됨.
-        val sfsf = listOf(
-            "서울대학교", "여의도한강공원", "올림픽체조경기장", "교보문고 광하문점", "오늘도한잔",
-            "서울대학교", "여의도한강공원", "올림픽체조경기장", "교보문고 광하문점", "오늘도한잔"
-        )
+        val sfsf = myPageViewModel.locationFaboriteList.collectAsState().value
+
         val circles = listOf(
             R.drawable.ic_circlechecked,
             R.drawable.ic_emptycircle,
@@ -83,7 +82,7 @@ private fun EditLocationFaboriteScreen(
 //        val circle = if (selectedStates[index]) circles[0] else circles[1]
         sfsf.forEachIndexed { index , love ->
             DetailFaboriteLocation(
-                title = love,
+                title = love!!.location!!,
 //                isClickedState = selectedStates[index],
                 isClicked = { selectedStates[index] = !selectedStates[index] },
                 circle = if (selectedStates[index]) circles[0] else circles[1]
@@ -93,7 +92,7 @@ private fun EditLocationFaboriteScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        WithdrawlButton(text = "삭게하기", canMove = defaultTrue) {
+        WithdrawlButton(text = "삭제하기", canMove = defaultTrue) {
             moveToBackScreen()
             myPageViewModel.DeleteFavoriteLocation(
                 1,

@@ -106,4 +106,13 @@ sealed class ROUTE {
     // 위치 즐겨찾기 편집화면
     @Serializable
     data object EditLocationFaborite
+
+    // 피드 책갈피
+    @Serializable
+    data object FeedBookMark
+
+    // 피드 보관함
+    @Serializable
+    data object FeedStore
+
 }
