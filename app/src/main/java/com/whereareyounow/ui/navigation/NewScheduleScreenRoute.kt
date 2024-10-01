@@ -35,6 +35,11 @@ fun NavGraphBuilder.newScheduleScreenRoute(navController: NavController) = compo
         updateColor = viewModel::updateScheduleColor,
         moveToSearchLocationScreen = { navController.navigate(ROUTE.SearchLocation(location = it)) },
         moveToFriendsListScreen = { navController.navigate(ROUTE.AddFriend(it)) },
-        moveToBackScreen = { navController.popBackStack() }
+        moveToBackScreen = { navController.popBackStack() },
+        onDone = {
+            viewModel.addNewSchedule(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
     )
 }

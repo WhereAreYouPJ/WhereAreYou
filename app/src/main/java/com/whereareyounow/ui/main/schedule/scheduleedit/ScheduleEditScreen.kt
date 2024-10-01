@@ -96,7 +96,8 @@ fun ScheduleEditScreen(
     updateColor: (ScheduleColor) -> Unit,
     moveToSearchLocationScreen: (String) -> Unit,
     moveToFriendsListScreen: (List<Int>) -> Unit,
-    moveToBackScreen: () -> Unit
+    moveToBackScreen: () -> Unit,
+    onDone: () -> Unit,
 ) {
     val thinnest = getColor().thinnest
     val context = LocalContext.current
@@ -591,7 +592,7 @@ fun ScheduleEditScreen(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clickableNoEffect { },
+                        .clickableNoEffect { onDone() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

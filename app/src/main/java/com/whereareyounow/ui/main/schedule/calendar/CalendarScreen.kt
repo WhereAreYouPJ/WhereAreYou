@@ -80,7 +80,7 @@ fun CalendarScreen(
     val uiState = viewModel.uiState.collectAsState().value
     val sideEffectFlow = viewModel.calendarScreenSideEffectFlow
     LaunchedEffect(Unit) {
-
+        viewModel.updateCurrentMonthCalendarInfo()
     }
     CalendarScreen(
         uiState = uiState,

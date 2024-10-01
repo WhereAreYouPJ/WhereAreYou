@@ -75,7 +75,7 @@ class CalendarViewModel @Inject constructor(
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
     @SuppressLint("DefaultLocale")
-    private fun updateCurrentMonthCalendarInfo() {
+    fun updateCurrentMonthCalendarInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
         val dateList = getCalendarInfo(_uiState.value.selectedYear, _uiState.value.selectedMonth)
 
@@ -232,7 +232,6 @@ class CalendarViewModel @Inject constructor(
                 selectedDate = today.dayOfMonth
             )
         }
-        updateCurrentMonthCalendarInfo()
         getDailySchedule()
     }
 }
