@@ -1,6 +1,6 @@
 package com.whereareyounow.domain.repository
 
-import com.whereareyounow.domain.entity.location.LocationFaboriteInfo
+import com.whereareyounow.domain.entity.location.LocationFavoriteInfo
 import com.whereareyounow.domain.util.NetworkResult
 
 interface LocationRepository {
@@ -18,15 +18,15 @@ interface LocationRepository {
 //    ): NetworkResult<Boolean>
 
     // 위치 즐겨찾기 조회
-    suspend fun getLocationFaborite(
+    suspend fun getLocationFavorite(
         memberSeq : Int
-    ): NetworkResult<List<LocationFaboriteInfo>>
+    ): NetworkResult<List<LocationFavoriteInfo>>
 
     // 위치 즐겨찾기 삭제
     suspend fun deleteFavoriteLocation(
         memberSeq : Int,
         locationSeqs : List<Int>
-    ): NetworkResult<List<LocationFaboriteInfo>>
+    ): NetworkResult<List<LocationFavoriteInfo>>
 
 
 }

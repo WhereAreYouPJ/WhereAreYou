@@ -1,6 +1,6 @@
 package com.whereareyounow.api
 
-import com.whereareyounow.domain.entity.location.LocationFaboriteInfo
+import com.whereareyounow.domain.entity.location.LocationFavoriteInfo
 import com.whereareyounow.domain.request.location.DeleteFavoriteLocationRequest
 import com.whereareyounow.domain.request.location.GetUserLocationRequest
 import com.whereareyounow.domain.request.location.SendUserLocationRequest
@@ -34,12 +34,12 @@ interface LocationApi {
     @GET("location")
     suspend fun getLocationFaborite(
         @Query("memberSeq") memberSeq : Int
-    ) : Response<ResponseWrapper<List<LocationFaboriteInfo>>>
+    ) : Response<ResponseWrapper<List<LocationFavoriteInfo>>>
 
     @HTTP(method = "DELETE", path = "location", hasBody = true)
     suspend fun deleteFavoriteLocation(
         @Body deleteFavoriteLocationRequest : DeleteFavoriteLocationRequest
-    ) : Response<ResponseWrapper<List<LocationFaboriteInfo>>>
+    ) : Response<ResponseWrapper<List<LocationFavoriteInfo>>>
 
 
 

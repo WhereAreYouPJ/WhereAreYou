@@ -10,7 +10,7 @@ class GetFavoriteLocationUseCase(
     operator fun invoke(
         memberSeq : Int
     ) = flow {
-        val response = repository.getLocationFaborite(memberSeq)
+        val response = repository.getLocationFavorite(memberSeq)
         emit(response)
     }
 }
