@@ -1,7 +1,6 @@
 package com.whereareyounow.domain.usecase.location
 
 import com.whereareyounow.domain.repository.LocationRepository
-import com.whereareyounow.domain.util.NetworkResult
 
 class SendUserLocationUseCase(
     private val repository: LocationRepository

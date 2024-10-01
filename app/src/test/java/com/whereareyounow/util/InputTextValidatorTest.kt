@@ -1,10 +1,8 @@
 package com.whereareyounow.util
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import java.math.BigInteger
 
 class InputTextValidatorTest {
 

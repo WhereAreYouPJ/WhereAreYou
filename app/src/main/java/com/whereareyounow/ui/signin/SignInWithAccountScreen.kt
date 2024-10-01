@@ -32,7 +32,7 @@ import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
@@ -281,7 +281,7 @@ private fun ResetPasswordButton(
 @CustomPreview
 @Composable
 private fun SignInScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         SignInWithAccountScreen(
             signInScreenUIState = SignInScreenUIState(),
             signInScreenSideEffectFlow = MutableSharedFlow(),
@@ -301,7 +301,7 @@ private fun SignInScreenPreview() {
 @CustomPreview
 @Composable
 private fun LoadingSignInScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         SignInWithAccountScreen(
             signInScreenUIState = SignInScreenUIState(),
             signInScreenSideEffectFlow = MutableSharedFlow(),

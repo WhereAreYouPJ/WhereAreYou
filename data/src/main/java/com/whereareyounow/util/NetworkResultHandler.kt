@@ -1,7 +1,5 @@
 package com.whereareyounow.util
 
-import com.google.gson.GsonBuilder
-import com.whereareyounow.domain.entity.ErrorBody
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.HttpException

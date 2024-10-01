@@ -1,11 +1,9 @@
 package com.whereareyounow.ui.main.home
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.w3c.dom.Text
 import javax.inject.Inject
 
 @HiltViewModel

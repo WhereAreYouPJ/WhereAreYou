@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
-import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditViewModel
 
 @Composable
@@ -29,20 +28,20 @@ fun ModifyScheduleScreen(
             )
         }
     }
-    val scheduleEditScreenUIState = viewModel.scheduleEditScreenUIState.collectAsState().value
-    val scheduleEditScreenSideEffectFlow = viewModel.scheduleEditScreenSideEffectFlow
-    ScheduleEditScreen(
-        scheduleEditScreenUIState = scheduleEditScreenUIState,
-        scheduleEditScreenSideEffectFlow = scheduleEditScreenSideEffectFlow,
-        updateScheduleName = viewModel::updateScheduleName,
-        updateScheduleDate = viewModel::updateScheduleDate,
-        updateScheduleTime = viewModel::updateScheduleTime,
-        updateMemo = viewModel::updateMemo,
-        onComplete = viewModel::modifySchedule,
-        moveToBackScreen = moveToBackScreen,
-        moveToSearchLocationScreen = moveToSearchLocationScreen,
-        moveToFriendsListScreen = {
-            moveToFriendsListScreen(scheduleEditScreenUIState.selectedFriendsList.map { it.memberId })
-        }
-    )
+    val scheduleEditScreenUIState = viewModel.uiState.collectAsState().value
+    val scheduleEditScreenSideEffectFlow = viewModel.sideEffectFlow
+//    ScheduleEditScreen(
+//        uiState = scheduleEditScreenUIState,
+//        sideEffectFlow = scheduleEditScreenSideEffectFlow,
+//        updateScheduleName = viewModel::updateScheduleName,
+//        updateScheduleDate = viewModel::updateScheduleDate,
+//        updateScheduleTime = viewModel::updateScheduleTime,
+//        updateMemo = viewModel::updateMemo,
+//        onComplete = viewModel::modifySchedule,
+//        moveToBackScreen = moveToBackScreen,
+//        moveToSearchLocationScreen = moveToSearchLocationScreen,
+//        moveToFriendsListScreen = {
+//            moveToFriendsListScreen(scheduleEditScreenUIState.selectedFriendsList.map { it.memberId })
+//        }
+//    )
 }

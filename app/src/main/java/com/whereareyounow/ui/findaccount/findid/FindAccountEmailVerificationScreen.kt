@@ -1,7 +1,6 @@
 package com.whereareyounow.ui.findaccount.findid
 
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +37,7 @@ import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
 import com.whereareyounow.ui.signup.component.CheckingButton
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
@@ -209,7 +208,7 @@ fun FindIdScreenTopBar(
 @CustomPreview
 @Composable
 private fun FindIdScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
 //        FindAccountEmailVerificationScreen(
 //            uiState = FindIdScreenUIState(),
 //            sideEffectFlow = MutableSharedFlow(),

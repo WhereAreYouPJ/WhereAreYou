@@ -1,6 +1,5 @@
 package com.whereareyounow.util
 
-import android.content.Context
 import javax.inject.Inject
 
 class TokenManager @Inject constructor(

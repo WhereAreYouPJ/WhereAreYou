@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.data.calendar.Schedule
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.lato
 
 @Composable
@@ -153,7 +153,7 @@ private fun DateCalendarPreview() {
         Schedule(2024, 2, 2),
         Schedule(2024, 2, 3),
     )
-    WhereAreYouTheme {
+    OnMyWayTheme {
         DateCalendar(
             currentMonthCalendarInfo = previewSchedule,
             updateCurrentMonthCalendarInfo = {},

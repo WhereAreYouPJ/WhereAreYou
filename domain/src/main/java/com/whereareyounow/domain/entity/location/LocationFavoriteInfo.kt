@@ -2,7 +2,7 @@ package com.whereareyounow.domain.entity.location
 
 import com.google.gson.annotations.SerializedName
 
-data class LocationFaboriteInfo (
+data class LocationFavoriteInfo (
     @SerializedName("locationSeq")
     val locationSeq: Int,
     @SerializedName("location")

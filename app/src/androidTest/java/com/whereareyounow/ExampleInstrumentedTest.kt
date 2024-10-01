@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.rule.GrantPermissionRule
 import com.whereareyounow.test.RecompositionTestComposable
 import com.whereareyounow.test.TestViewModel
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
@@ -61,7 +61,7 @@ class ExampleInstrumentedTest {
     @Test
     fun test1() {
         composeTestRule.activity.setContent {
-            WhereAreYouTheme {
+            OnMyWayTheme {
                 testViewModel = hiltViewModel()
                 Column() {
                     RecompositionTestComposable(testViewModel)
@@ -123,7 +123,7 @@ class ExampleInstrumentedTest {
     @Test
     fun loginTest() {
         composeTestRule.activity.setContent {
-            WhereAreYouTheme() {
+            OnMyWayTheme() {
                 Column {
 
                 }

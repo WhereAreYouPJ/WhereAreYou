@@ -143,7 +143,9 @@ fun ScrollablePicker(
 @Composable
 private fun Label(text: String, modifier: Modifier) {
     Box(
-        modifier = Modifier.height(60.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(

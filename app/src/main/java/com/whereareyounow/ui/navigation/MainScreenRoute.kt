@@ -8,10 +8,8 @@ import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
-import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
-import com.whereareyounow.data.globalvalue.ROUTE_NEW_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
 import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.util.navigate
@@ -19,12 +17,7 @@ import com.whereareyounow.util.navigate
 fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<ROUTE.Main> {
     MainScreen(
         moveToAddScheduleScreen = { year, month, date ->
-            val bundle = bundleOf(
-                "year" to year,
-                "month" to month,
-                "date" to date
-            )
-            navController.navigate(ROUTE_NEW_SCHEDULE, bundle)
+            navController.navigate(ROUTE.AddSchedule(year, month, date))
         },
         moveToDetailScheduleScreen = { scheduleId ->
             navController.navigate(ROUTE.DetailSchedule(scheduleSeq = scheduleId))

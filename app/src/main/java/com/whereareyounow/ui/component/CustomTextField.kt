@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,13 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
@@ -128,7 +125,7 @@ enum class CustomTextFieldState {
 @Preview(showBackground = true)
 @Composable
 private fun IdleCustomTextFieldPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextField(
             hint = "Hint",
             inputText = "",
@@ -142,7 +139,7 @@ private fun IdleCustomTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun IdlePasswordCustomTextFieldPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextField(
             hint = "Hint",
             inputText = "",
@@ -157,7 +154,7 @@ private fun IdlePasswordCustomTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun SatisfiedCustomTextFieldPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextField(
             hint = "Hint",
             inputText = "Satisfied",
@@ -171,7 +168,7 @@ private fun SatisfiedCustomTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun SatisfiedPasswordCustomTextFieldPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextField(
             hint = "Hint",
             inputText = "Satisfied",
@@ -186,7 +183,7 @@ private fun SatisfiedPasswordCustomTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun UnsatisfiedCustomTextFieldPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextField(
             hint = "Hint",
             inputText = "Unsatisfied",
@@ -200,7 +197,7 @@ private fun UnsatisfiedCustomTextFieldPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun UnsatisfiedPasswordCustomTextFieldPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextField(
             hint = "Hint",
             inputText = "Unsatisfied",

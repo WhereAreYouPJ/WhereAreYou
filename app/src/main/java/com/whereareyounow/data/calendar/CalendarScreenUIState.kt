@@ -1,6 +1,5 @@
 package com.whereareyounow.data.calendar
 
-import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.globalvalue.type.VisualType

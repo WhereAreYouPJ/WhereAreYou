@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTopBar
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.util.CustomPreview
 
 @Composable
@@ -111,7 +111,7 @@ fun PrivacyPolicyDetailsScreen(
 @CustomPreview
 @Composable
 private fun PrivacyPolicyDetailsScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         PrivacyPolicyDetailsScreen(
             moveToPolicyAgreeScreen = {  }
         )

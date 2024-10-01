@@ -41,9 +41,10 @@ import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
 import com.whereareyounow.ui.theme.getColor
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -248,7 +249,7 @@ private fun AuthenticationButton(
                 color = getColor().brandColor,
                 shape = RoundedCornerShape(6.dp)
             )
-            .clickable { onClick() },
+            .clickableNoEffect { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -262,7 +263,7 @@ private fun AuthenticationButton(
 @CustomPreview
 @Composable
 private fun FindPasswordScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         FindPasswordScreen(
             findPasswordScreenUIState = FindPasswordScreenUIState(),
             findPasswordScreenSideEffectFlow = MutableSharedFlow(),

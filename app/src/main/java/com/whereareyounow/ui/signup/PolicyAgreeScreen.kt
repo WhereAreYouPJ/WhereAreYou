@@ -40,7 +40,6 @@ import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.bold22pt
 import com.whereareyounow.ui.theme.getColor
-import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.CustomPreview
 

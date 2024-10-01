@@ -22,13 +22,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
@@ -138,7 +136,7 @@ fun CustomTextFieldWithTimer(
 @Preview(showBackground = true)
 @Composable
 private fun CustomTextFieldWithTimerPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         CustomTextFieldWithTimer(
             hint = "hint",
             inputText = "123456",

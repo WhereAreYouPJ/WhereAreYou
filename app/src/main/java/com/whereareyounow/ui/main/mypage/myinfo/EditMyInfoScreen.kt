@@ -5,10 +5,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextField
@@ -42,9 +39,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.component.CustomTopBar
-import com.whereareyounow.ui.component.tobbar.DefaultTopBar
-import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
@@ -54,7 +48,6 @@ import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
 fun EditMyInfoScreen(

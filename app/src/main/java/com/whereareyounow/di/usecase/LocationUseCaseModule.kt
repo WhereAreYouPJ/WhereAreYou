@@ -1,6 +1,8 @@
 package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.LocationRepository
+import com.whereareyounow.domain.repository.SearchLocationRepository
+import com.whereareyounow.domain.usecase.location.SearchLocationAddressUseCase
 import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
 import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
 import dagger.Module
@@ -27,12 +29,12 @@ object LocationUseCaseModule {
 //        return SendUserLocationUseCase(repository)
 //    }
 //
-//    @Provides
-//    fun provideGetLocationAddressUseCase(
-//        repository: SearchLocationRepository
-//    ): GetLocationAddressUseCase {
-//        return GetLocationAddressUseCase(repository)
-//    }
+    @Provides
+    fun provideSearchLocationAddressUseCase(
+        repository: SearchLocationRepository
+    ): SearchLocationAddressUseCase {
+        return SearchLocationAddressUseCase(repository)
+    }
 
     @Singleton
     @Provides

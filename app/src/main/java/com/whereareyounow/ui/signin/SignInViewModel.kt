@@ -8,6 +8,8 @@ import com.whereareyounow.data.signin.SignInScreenSideEffect
 import com.whereareyounow.data.signin.SignInScreenUIState
 import com.whereareyounow.domain.request.member.SignInRequest
 import com.whereareyounow.domain.usecase.datastore.SaveAccessTokenUseCase
+import com.whereareyounow.domain.usecase.datastore.SaveMemberCodeUseCase
+import com.whereareyounow.domain.usecase.datastore.SaveMemberSeqUseCase
 import com.whereareyounow.domain.usecase.datastore.SaveRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.member.SignInUseCase
 import com.whereareyounow.domain.util.LogUtil
@@ -30,6 +32,8 @@ class SignInViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
+    private val saveMemberSeqUseCase: SaveMemberSeqUseCase,
+    private val saveMemberCodeUseCase: SaveMemberCodeUseCase
 //    private val saveMemberIdUseCase: SaveMemberIdUseCase,
 //    private val updateFCMTokenUseCase: UpdateFCMTokenUseCase,
 //    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
@@ -72,6 +76,8 @@ class SignInViewModel @Inject constructor(
                     data?.let {
                         saveAccessTokenUseCase(data.accessToken)
                         saveRefreshTokenUseCase(data.refreshToken)
+                        saveMemberSeqUseCase(data.memberSeq.toString())
+                        saveMemberCodeUseCase(data.memberCode)
                         AuthData.memberSeq = data.memberSeq
                         AuthData.memberCode = data.memberCode
                     }
@@ -151,7 +157,7 @@ class SignInViewModel @Inject constructor(
 //            }
 //        }
     }
-//
+
     private fun updateFCMToken(
         fcmToken: String,
         accessToken: String,

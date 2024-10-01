@@ -38,7 +38,8 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.CustomTopBar
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun AddFriendScreen(
@@ -161,7 +162,7 @@ fun FriendIdTextField(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Image(
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.clickableNoEffect {
                             clearInputId()
                         },
                         painter = painterResource(id = R.drawable.baseline_cancel_24),
@@ -220,7 +221,7 @@ fun UserInfoContent(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AddFriendScreenPreview1() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         AddFriendScreen(
             inputId = "",
             updateInputId = {  },
@@ -237,7 +238,7 @@ private fun AddFriendScreenPreview1() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AddFriendScreenPreview2() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         AddFriendScreen(
             inputId = "가나다라",
             updateInputId = {  },

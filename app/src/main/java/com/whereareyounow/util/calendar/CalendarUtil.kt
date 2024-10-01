@@ -148,12 +148,23 @@ fun compareDate(dateTime1: LocalDate, dateTime2: LocalDate): Boolean {
 }
 
 fun parseLocalDateTime(str: String): LocalDateTime {
-    val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-    return LocalDateTime.parse(str, dateFormat)
+    try {
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        return LocalDateTime.parse(str, dateFormat)
+    } catch (e: Throwable) {
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        return LocalDateTime.parse(str, dateFormat)
+    }
 }
 
 fun parseLocalDate(str: String): LocalDate {
-    val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-    val ldt =  LocalDateTime.parse(str, dateFormat)
-    return LocalDate.of(ldt.year, ldt.monthValue, ldt.dayOfMonth)
+    try {
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        val ldt =  LocalDateTime.parse(str, dateFormat)
+        return LocalDate.of(ldt.year, ldt.monthValue, ldt.dayOfMonth)
+    } catch (e: Throwable) {
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val ldt =  LocalDateTime.parse(str, dateFormat)
+        return LocalDate.of(ldt.year, ldt.monthValue, ldt.dayOfMonth)
+    }
 }

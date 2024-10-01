@@ -21,6 +21,8 @@ data class CreateNewScheduleRequest(
     val color: String,
     @SerializedName("memo")
     val memo: String,
+    @SerializedName("allDay")
+    val allDay: Boolean,
     @SerializedName("invitedMemberSeqs")
     val invitedMemberSeqs: List<Int>,
     @SerializedName("createMemberSeq")

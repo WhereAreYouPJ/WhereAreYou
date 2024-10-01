@@ -36,9 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.theme.getColor
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.medium14pt
-import com.whereareyounow.ui.theme.ttangs
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
 
@@ -316,7 +315,7 @@ private fun AskButton() {
 @CustomPreview
 @Composable
 private fun SignInMethodSelectionScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         SignInMethodSelectionScreen(
             moveToSignInWithEmailScreen = {},
             moveToSignUpScreen = {},

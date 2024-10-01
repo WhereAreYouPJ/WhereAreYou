@@ -19,7 +19,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.ui.theme.getColor
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.util.clickableNoEffect
 
@@ -60,7 +60,7 @@ fun RoundedCornerButton(
 @Preview(showBackground = true)
 @Composable
 private fun BottomOkButtonPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         RoundedCornerButton(
             onClick = {}
         ) {
@@ -76,7 +76,7 @@ private fun BottomOkButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun LoadingBottomOkButtonPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         RoundedCornerButton(
             onClick = {},
             isLoading = true

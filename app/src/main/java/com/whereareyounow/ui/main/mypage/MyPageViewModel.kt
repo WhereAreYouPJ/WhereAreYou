@@ -18,7 +18,7 @@ import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.ui.main.mypage.mapper.toModel
-import com.whereareyounow.ui.main.mypage.model.LocationFaboriteInfoModel
+import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +67,7 @@ class MyPageViewModel @Inject constructor(
     val location: StateFlow<String?> = _location
     private val _streetName = MutableStateFlow<String?>("")
     val streetName: StateFlow<String?> = _streetName
-    private val _locationFaboriteList = MutableStateFlow<List<LocationFaboriteInfoModel?>>(emptyList())
+    private val _locationFaboriteList = MutableStateFlow<List<LocationFavoriteInfoModel?>>(emptyList())
 //    private val _locationFaboriteList = MutableStateFlow<List<LocationFaboriteInfoModel?>>(
 //        listOf(
 //            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교0" , streetName = "서울대학교닷거리1"),
@@ -78,7 +78,7 @@ class MyPageViewModel @Inject constructor(
 //            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교5" , streetName = "서울대학교닷거리6"),
 //        )
 //    )
-    val locationFaboriteList : StateFlow<List<LocationFaboriteInfoModel?>> = _locationFaboriteList
+    val locationFaboriteList : StateFlow<List<LocationFavoriteInfoModel?>> = _locationFaboriteList
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
     init {

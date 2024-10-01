@@ -7,7 +7,5 @@ class SaveRefreshTokenUseCase(
 ) {
     suspend operator fun invoke(
         refreshToken: String
-    ) {
-        repository.saveRefreshToken(refreshToken)
-    }
+    ) = repository.saveRefreshToken(refreshToken)
 }

@@ -30,7 +30,7 @@ import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.InfinityLoader
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.InstructionContent
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
@@ -196,7 +196,7 @@ private fun RoundedCornerOutlinedButton(
 @CustomPreview
 @Composable
 private fun UserIdCheckingScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         FindIdResultScreen(
             searchedUserId = "test",
             moveToResetPasswordScreen = {},

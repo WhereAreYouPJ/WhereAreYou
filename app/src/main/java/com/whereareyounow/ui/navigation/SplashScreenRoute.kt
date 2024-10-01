@@ -10,7 +10,7 @@ import com.whereareyounow.ui.splash.SplashScreen
 fun NavGraphBuilder.splashScreenRoute(navController: NavController) = composable<ROUTE.Splash> {
     SplashScreen(
         moveToSignInMethodSelectionScreen = {
-            navController.navigate(ROUTE.Main) {
+            navController.navigate(ROUTE.SignInMethodSelection) {
                 popUpTo(ROUTE_SPLASH) { inclusive = true }
             }
         },

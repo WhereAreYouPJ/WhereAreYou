@@ -1,13 +1,10 @@
 package com.whereareyounow.ui.main.schedule.calendar
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.AnchoredDraggableState
-import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,19 +46,16 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.WhereAreYouApplication.Companion.applicationContext
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
-import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.globalvalue.type.AnchoredDraggableContentState
 import com.whereareyounow.ui.component.DimBackground
 import com.whereareyounow.ui.component.ScrollablePicker
 import com.whereareyounow.ui.main.schedule.calendar.component.DailyScheduleBottomDialog
 import com.whereareyounow.ui.main.schedule.calendar.component.DateBox
 import com.whereareyounow.ui.main.schedule.calendar.component.getDailyScheduleAnchoredDraggableState
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
@@ -67,21 +63,24 @@ import com.whereareyounow.ui.theme.notoSanskr
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.calendar.getLastDayOfMonth
 import com.whereareyounow.util.clickableNoEffect
+import com.whereareyounow.util.popupmenu.CustomPopup
+import com.whereareyounow.util.popupmenu.PopupPosition
+import com.whereareyounow.util.popupmenu.PopupState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
 
 @Composable
 fun CalendarScreen(
     paddingValues: PaddingValues,
+    moveToAddScheduleScreen: (Int, Int, Int) -> Unit,
     moveToDetailScheduleScreen: (Int) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val sideEffectFlow = viewModel.calendarScreenSideEffectFlow
     LaunchedEffect(Unit) {
-
+        viewModel.updateCurrentMonthCalendarInfo()
     }
     CalendarScreen(
         uiState = uiState,
@@ -89,6 +88,7 @@ fun CalendarScreen(
         updateSelectedYear = viewModel::updateYear,
         updateSelectedMonth = viewModel::updateMonth,
         updateSelectedDate = viewModel::updateDate,
+        moveToAddScheduleScreen = moveToAddScheduleScreen,
         moveToDetailScheduleScreen = moveToDetailScheduleScreen
     )
 }
@@ -101,16 +101,16 @@ fun CalendarScreen(
     updateSelectedYear: (Int) -> Unit,
     updateSelectedMonth: (Int) -> Unit,
     updateSelectedDate: (Int) -> Unit,
+    moveToAddScheduleScreen: (Int, Int, Int) -> Unit,
     moveToDetailScheduleScreen: (Int) -> Unit,
 ) {
     var isMonthPickerShowing by remember { mutableStateOf(false) }
-
-    val yearMap = (2000..2100).associateWith { "${it}년" }
-    val monthMap = (1 .. 12).associateWith { "${it}월" }
-    val dateMap = (1 .. getLastDayOfMonth(uiState.selectedYear, uiState.selectedMonth)).associateWith { "${it}일" }
     val yearScrollableState = remember { mutableIntStateOf(uiState.selectedYear) }
     val monthScrollableState = remember { mutableIntStateOf(uiState.selectedMonth) }
     val dateScrollableState = remember(uiState.selectedYear, uiState.selectedMonth) { mutableIntStateOf(uiState.selectedDate) }
+    val yearMap = (2000..2100).associateWith { "${it}년" }
+    val monthMap = (1 .. 12).associateWith { "${it}월" }
+    val dateMap = (1 .. getLastDayOfMonth(yearScrollableState.intValue, monthScrollableState.intValue)).associateWith { "${it}일" }
     val dialogSelectedYear = remember(uiState.selectedYear) { mutableIntStateOf(uiState.selectedYear) }
     val dialogSelectedMonth = remember(uiState.selectedMonth) { mutableIntStateOf(uiState.selectedMonth) }
     val dialogSelectedDate = remember(uiState.selectedDate) { mutableIntStateOf(uiState.selectedDate) }
@@ -118,6 +118,8 @@ fun CalendarScreen(
     val isDimBackgroundShowing = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val today = remember { LocalDate.now() }
+    val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
+    val density = LocalDensity.current.density
 
     LaunchedEffect(Unit) {
 
@@ -172,12 +174,57 @@ fun CalendarScreen(
                     colorFilter = ColorFilter.tint(getColor().brandColor)
                 )
 
-                Image(
-                    modifier = Modifier.size(34.dp),
-                    painter = painterResource(R.drawable.ic_plus),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(getColor().brandColor)
-                )
+                Box(
+                    modifier = Modifier.clickableNoEffect {
+                        popupState.isVisible = true
+                    }
+                ) {
+                    Image(
+                        modifier = Modifier.size(34.dp),
+                        painter = painterResource(R.drawable.ic_plus),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(getColor().brandColor)
+                    )
+
+                    if (popupState.isVisible) {
+                        CustomPopup(
+                            popupState = popupState,
+                            onDismissRequest = { popupState.isVisible = false }
+                        ) {
+                            CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(160.dp)
+                                        .height(38.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(color = Color(0xFF7262A8))
+                                        .clickableNoEffect {
+                                            popupState.isVisible = false
+                                            moveToAddScheduleScreen(uiState.selectedYear, uiState.selectedMonth, uiState.selectedDate)
+                                        }
+                                ) {
+                                    Column(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.Start
+                                    ) {
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(
+                                                    start = 14.dp,
+                                                    top = 8.dp,
+                                                    bottom = 6.dp
+                                                ),
+                                            text = "일정 추가",
+                                            style = medium14pt,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             Spacer(Modifier.height(20.dp))
@@ -270,7 +317,7 @@ fun CalendarScreen(
                         usePlatformDefaultWidth = false
                     )
                 ) {
-                    WhereAreYouTheme {
+                    OnMyWayTheme {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()

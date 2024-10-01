@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.globalvalue.type.SplashCheckingState
+import com.whereareyounow.util.clickableNoEffect
 
 
 @Composable
@@ -90,6 +91,7 @@ fun PermissionCheckingScreen(
                     color = Color(0xFFF5F5F5),
                     shape = RoundedCornerShape(10.dp)
                 )
+                .clickableNoEffect { permissionRequestLauncher.launch(locationPermissions) }
                 .padding(20.dp),
             contentAlignment = Alignment.CenterStart
         ) {

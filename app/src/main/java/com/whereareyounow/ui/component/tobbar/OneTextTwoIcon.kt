@@ -2,16 +2,12 @@ package com.whereareyounow.ui.component.tobbar
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect

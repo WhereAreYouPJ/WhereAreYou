@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,12 +28,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.Glide
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.mypage.byebye.Gap
-import com.whereareyounow.ui.main.mypage.myinfo.MyPageWarningDialog
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
@@ -83,7 +79,7 @@ private fun DetailProfileScreen(
                 contentDescription = "",
                 modifier = Modifier
                     .padding(start = 20.dp, top = 11.dp)
-                    .clickable {
+                    .clickableNoEffect {
                         moveToBackScreen()
                     },
                 colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))

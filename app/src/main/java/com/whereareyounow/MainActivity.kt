@@ -8,14 +8,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
@@ -27,7 +25,7 @@ import com.whereareyounow.data.globalvalue.SYSTEM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOTAL_SCREEN_HEIGHT
 import com.whereareyounow.ui.MainNavigation
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -49,7 +47,7 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            WhereAreYouTheme {
+            OnMyWayTheme {
                 val density = LocalDensity.current.density
                 Surface(
                     modifier = Modifier

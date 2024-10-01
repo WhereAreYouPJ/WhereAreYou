@@ -1,7 +1,5 @@
 package com.whereareyounow.domain.repository
 
-import com.whereareyounow.domain.util.NetworkResult
-
 interface FCMRepository {
 
 //    // FCM 토큰 저장 및 갱신

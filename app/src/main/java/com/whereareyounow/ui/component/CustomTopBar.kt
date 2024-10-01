@@ -16,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect

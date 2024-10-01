@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
@@ -34,10 +32,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
-import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap

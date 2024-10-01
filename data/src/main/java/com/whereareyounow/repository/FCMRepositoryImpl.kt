@@ -2,7 +2,6 @@ package com.whereareyounow.repository
 
 import com.whereareyounow.api.FCMApi
 import com.whereareyounow.domain.repository.FCMRepository
-import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
 class FCMRepositoryImpl(

@@ -4,23 +4,25 @@ import com.google.gson.annotations.SerializedName
 
 data class DetailScheduleInfo(
     @SerializedName("title")
-    val title: String,
+    val title: String = "",
     @SerializedName("startTime")
-    val startTime: String,
+    val startTime: String = "",
     @SerializedName("endTime")
-    val endTime: String,
+    val endTime: String = "",
     @SerializedName("location")
-    val location: String,
+    val location: String = "",
     @SerializedName("streetName")
-    val streetName: String,
+    val streetName: String = "",
     @SerializedName("x")
-    val x: Double,
+    val x: Double = 0.0,
     @SerializedName("y")
-    val y: Double,
+    val y: Double = 0.0,
     @SerializedName("color")
-    val color: String,
+    val color: String = "",
     @SerializedName("memo")
-    val memo: String,
-    @SerializedName("userName")
-    val userName: List<String>
+    val memo: String = "",
+    @SerializedName("allDay")
+    val allDay: Boolean = false,
+    @SerializedName("memberInfos")
+    val memberInfos: List<MemberInfo> = emptyList()
 )

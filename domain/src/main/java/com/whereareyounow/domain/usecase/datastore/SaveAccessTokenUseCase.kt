@@ -7,7 +7,5 @@ class SaveAccessTokenUseCase(
 ) {
     suspend operator fun invoke(
         accessToken: String
-    ) {
-        repository.saveAccessToken(accessToken)
-    }
+    ) = repository.saveAccessToken(accessToken)
 }

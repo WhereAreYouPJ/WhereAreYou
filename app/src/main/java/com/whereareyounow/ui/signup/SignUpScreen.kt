@@ -44,7 +44,7 @@ import com.whereareyounow.ui.component.EmailCodeTextField
 import com.whereareyounow.ui.component.EmailTextField
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.component.CheckingButton
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.util.CustomPreview
@@ -401,7 +401,7 @@ fun Guideline(
 @CustomPreview
 @Composable
 private fun SignUpScreenPreview1() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
 //        SignUpScreen(
 //            uiState = uiState(),
 //            signUpScreenSideEffectFlow = MutableSharedFlow(),
@@ -425,7 +425,7 @@ private fun SignUpScreenPreview1() {
 @CustomPreview
 @Composable
 private fun SignUpScreenPreview2() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
 //        SignUpScreen(
 //            uiState = uiState(),
 //            signUpScreenSideEffectFlow = MutableSharedFlow(),

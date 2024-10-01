@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlin.math.absoluteValue
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun Modifier.drawColoredShadow(

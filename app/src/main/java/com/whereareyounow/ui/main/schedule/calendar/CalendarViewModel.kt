@@ -2,13 +2,11 @@ package com.whereareyounow.ui.main.schedule.calendar
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.service.autofill.UserData
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
-import com.whereareyounow.data.mockdata.CalendarMockData
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.request.schedule.GetDailyScheduleRequest
@@ -22,7 +20,6 @@ import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.globalvalue.type.VisualType
 import com.whereareyounow.util.calendar.compareDate
 import com.whereareyounow.util.calendar.getCalendarInfo
-import com.whereareyounow.util.calendar.getDayOfWeek
 import com.whereareyounow.util.calendar.getTodayInfo
 import com.whereareyounow.util.calendar.parseLocalDate
 import com.whereareyounow.util.calendar.parseLocalDateTime
@@ -36,8 +33,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -80,7 +75,7 @@ class CalendarViewModel @Inject constructor(
 
     // 이번달 달력의 정보를 먼저 가져온 후 이번달 달력의 일정 수를 가져온다.
     @SuppressLint("DefaultLocale")
-    private fun updateCurrentMonthCalendarInfo() {
+    fun updateCurrentMonthCalendarInfo() {
         // 현재 달의 달력 정보를 가져온다. [2023/10/1/0, 2023/10/2/0, 2023/10/3/0,...]
         val dateList = getCalendarInfo(_uiState.value.selectedYear, _uiState.value.selectedMonth)
 
@@ -143,9 +138,15 @@ class CalendarViewModel @Inject constructor(
                 var startDate = parseLocalDate(schedule.startTime)
                 val endDate = parseLocalDate(schedule.endTime)
 
+                var flag = false
                 while (!scheduleMap.containsKey(startDate.toString())) {
                     startDate = startDate.plusDays(1)
+                    if (startDate.isAfter(endDate)) {
+                        flag = false
+                        break
+                    }
                 }
+                if (flag) continue
 
                 var startIdx = 0
                 if (!scheduleMap.containsKey(startDate.toString())) continue
@@ -231,7 +232,6 @@ class CalendarViewModel @Inject constructor(
                 selectedDate = today.dayOfMonth
             )
         }
-        updateCurrentMonthCalendarInfo()
         getDailySchedule()
     }
 }

@@ -1,11 +1,11 @@
 package com.whereareyounow.ui.main.friend.feed
 
-import android.graphics.Paint.Align
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -51,8 +51,8 @@ private fun FeedContent(
                     .width(100.dp)
                     .height(34.dp)
                     .drawColoredShadow(
-                        shadowRadius = 4.dp,
-                        alpha = 0.2f,
+                        shadowRadius = 2.dp,
+                        alpha = 0.15f,
                         borderRadius = 16.dp
                     )
                     .clip(RoundedCornerShape(50))
@@ -67,13 +67,17 @@ private fun FeedContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Image(
-                    modifier = Modifier
-                        .size(26.dp)
-                        .clip(RoundedCornerShape(10.dp)),
-                    painter = painterResource(R.drawable.ic_launcher_background),
-                    contentDescription = null
-                )
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(26.dp)
+                            .clip(RoundedCornerShape(10.dp)),
+                        painter = painterResource(R.drawable.ic_launcher_background),
+                        contentDescription = null
+                    )
+                }
 
                 Spacer(Modifier.width(6.dp))
 

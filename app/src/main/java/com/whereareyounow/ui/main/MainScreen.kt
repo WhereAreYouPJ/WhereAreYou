@@ -41,7 +41,7 @@ import com.whereareyounow.ui.main.home.HomeScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyPageScreen
 import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.main.schedule.calendar.CalendarScreen
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.CustomPreview
@@ -130,28 +130,7 @@ private fun MainScreen(
                     updateViewType = updateViewType
                 )
             },
-            floatingActionButton = {
-//                if (viewType == ViewType.Calendar) {
-//                    FloatingActionButton(
-//                        shape = CircleShape,
-//                        contentColor = Color(0xFFFFFFFF),
-//                        containerColor = Color(0xFF5448BC),
-//                        onClick = {
-//                            moveToAddScheduleScreen(
-//                                calendarScreenUIState.selectedYear,
-//                                calendarScreenUIState.selectedMonth,
-//                                calendarScreenUIState.selectedDate
-//                            )
-//                        }
-//                    ) {
-//                        Icon(
-//                            modifier = Modifier.size(20.dp),
-//                            imageVector = ImageVector.vectorResource(R.drawable.plus),
-//                            contentDescription = null
-//                        )
-//                    }
-//                }
-            },
+            floatingActionButton = {},
             containerColor = Color(0xFFFFFFFF),
         ) {
 
@@ -171,6 +150,7 @@ private fun MainScreen(
                     ViewType.Calendar -> {
                         CalendarScreen(
                             paddingValues = it,
+                            moveToAddScheduleScreen = moveToAddScheduleScreen,
                             moveToDetailScheduleScreen = moveToDetailScheduleScreen,
                         )
                     }
@@ -342,7 +322,7 @@ private fun HomeNavigationBarPreview() {
             label = "마이페이지"
         )
     )
-    WhereAreYouTheme {
+    OnMyWayTheme {
         HomeNavigationBar(
             viewType = ViewType.Calendar,
             navigationItemContentList = navigationItemContentList,

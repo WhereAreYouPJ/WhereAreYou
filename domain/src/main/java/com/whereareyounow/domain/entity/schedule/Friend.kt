@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class Friend(
     var number: Int = 0,
-    @SerializedName("memberId")
-    var memberId: String,
+    @SerializedName("memberSeq")
+    var memberSeq: Int,
     @SerializedName("userName")
     var name: String,
     @SerializedName("userId")

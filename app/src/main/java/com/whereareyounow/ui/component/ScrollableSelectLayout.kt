@@ -1,10 +1,7 @@
 package com.whereareyounow.ui.component
 
 import androidx.annotation.FloatRange
-import androidx.compose.animation.core.DecayAnimationSpec
-import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState

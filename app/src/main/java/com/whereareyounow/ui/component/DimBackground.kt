@@ -21,7 +21,6 @@ import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOTAL_SCREEN_HEIGHT
 import com.whereareyounow.globalvalue.type.AnchoredDraggableContentState
 import com.whereareyounow.util.clickableNoEffect
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

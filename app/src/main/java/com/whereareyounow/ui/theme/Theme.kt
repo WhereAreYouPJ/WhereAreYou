@@ -39,7 +39,7 @@ import androidx.core.view.WindowCompat
 //)
 
 @Composable
-fun WhereAreYouTheme(
+fun OnMyWayTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

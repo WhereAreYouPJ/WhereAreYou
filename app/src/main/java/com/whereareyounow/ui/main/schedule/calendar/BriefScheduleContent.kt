@@ -40,9 +40,10 @@ import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.BriefSchedule
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.calendar.getCalendarFromString
+import com.whereareyounow.util.clickableNoEffect
 import java.util.Calendar
 import kotlin.math.roundToInt
 
@@ -208,7 +209,7 @@ fun BriefScheduleList(
                                     false -> Color(0XFFFFD79B)
                                 }
                             )
-                            .clickable {
+                            .clickableNoEffect {
                                 moveToDetailScreen(item.scheduleId)
                             }
                             .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp),
@@ -262,7 +263,7 @@ private fun BriefScheduleContentPreview() {
 //            }
 //        )
 //    }
-    WhereAreYouTheme {
+    OnMyWayTheme {
 //        BriefScheduleContent(
 //            selectedYear = 2024,
 //            selectedMonth = 1,

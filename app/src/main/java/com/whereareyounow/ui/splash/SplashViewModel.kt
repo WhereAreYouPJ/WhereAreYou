@@ -2,20 +2,44 @@ package com.whereareyounow.ui.splash
 
 import android.app.Application
 import androidx.annotation.Keep
+import androidx.compose.ui.util.fastMap
+import androidx.compose.ui.util.fastMapIndexed
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.cached.AuthData
+import com.whereareyounow.data.cached.FriendList
+import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.domain.request.friend.GetFriendListRequest
+import com.whereareyounow.domain.usecase.datastore.GetMemberCodeUseCase
+import com.whereareyounow.domain.usecase.datastore.GetMemberSeqUseCase
+import com.whereareyounow.domain.usecase.datastore.GetRefreshTokenUseCase
+import com.whereareyounow.domain.usecase.datastore.SaveAccessTokenUseCase
+import com.whereareyounow.domain.usecase.datastore.SaveRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
+import com.whereareyounow.domain.util.onError
+import com.whereareyounow.domain.util.onException
+import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.globalvalue.type.SplashCheckingState
 import com.whereareyounow.util.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val application: Application,
     private val networkManager: NetworkManager,
+    private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
+    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
+    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
+    private val getMemberSeqUseCase: GetMemberSeqUseCase,
+    private val getMemberCodeUseCase: GetMemberCodeUseCase,
     private val getFriendListUseCase: GetFriendListUseCase,
 //    private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
 //    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
@@ -24,7 +48,6 @@ class SplashViewModel @Inject constructor(
 //    private val getAccessTokenUseCase: GetAccessTokenUseCase,
 //    private val getMemberIdUseCase: GetMemberIdUseCase,
 //    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
-//    private val getFriendListUseCase: GetFriendListUseCase,
 ) : AndroidViewModel(application) {
 
     private val _checkingState = MutableStateFlow(SplashCheckingState.Network)
@@ -33,14 +56,9 @@ class SplashViewModel @Inject constructor(
     val isNetworkConnectionErrorDialogShowing: StateFlow<Boolean> = _isNetworkConnectionErrorDialogShowing
     private val _screenState = MutableStateFlow(ScreenState.Splash)
     val screenState: StateFlow<ScreenState> = _screenState
-    private var isSignedIn = false
 
     fun updateCheckingState(state: SplashCheckingState) {
         _checkingState.update { state }
-    }
-
-    fun updateIsNetworkConnectionErrorDialogShowing(isShowing: Boolean) {
-        _isNetworkConnectionErrorDialogShowing.update { isShowing }
     }
 
     fun updateScreenState(state: ScreenState) {
@@ -57,26 +75,65 @@ class SplashViewModel @Inject constructor(
     }
 
     suspend fun checkIsSignedIn(): Boolean {
-//        isSignedIn = getRefreshTokenUseCase().first().isNotEmpty()
-//        if (isSignedIn) {
-//            val init = viewModelScope.launch(Dispatchers.Default) {
-//                initialize()
-//            }
-//            init.join()
-//        }
-//        return isSignedIn
-        return false
+        var isSignedIn = false
+        viewModelScope.launch {
+            val refreshToken = getRefreshTokenUseCase()
+            if (!refreshToken.isNullOrEmpty()) {
+                isSignedIn = true
+                initialize()
+            } else {
+//                reissueAccessTokenUseCase(refreshToken)
+//                    .onEach { networkResult ->
+//                        networkResult.onSuccess { code, message, data ->
+//                            data?.let {
+//                                saveAccessTokenUseCase(data.accessToken ?: "")
+//                                saveRefreshTokenUseCase(data.refreshToken ?: "")
+//                                getUserData()
+//                            }
+//                            moveToMainScreen()
+//                        }.onError { code, message ->
+//                            when (code) {
+//                                in 400 .. 499 -> {
+//                                    moveToSignInScreen()
+//                                }
+//                                else -> {
+//
+//                                }
+//                            }
+//                        }.onException {
+//
+//                        }
+//                    }
+//                    .catch { LogUtil.e("flow error", "reissueAccessTokenUseCase") }
+//                    .launchIn(viewModelScope)
+            }
+        }.join()
+        return isSignedIn
     }
 
-    private suspend fun initialize() {
-//        val refreshToken = getRefreshTokenUseCase().first()
-//        reissueToken(refreshToken)
-//        val accessToken = getAccessTokenUseCase().first()
-//        val memberId = getMemberIdUseCase().first()
-//        getFriendIdsList(
-//            accessToken = accessToken,
-//            memberId = memberId
-//        )
+    private fun initialize() {
+        AuthData.memberSeq = (getMemberSeqUseCase() ?: "0").toInt()
+        AuthData.memberCode = getMemberCodeUseCase() ?: ""
+        val requestData = GetFriendListRequest(AuthData.memberSeq)
+        getFriendListUseCase(requestData)
+            .onEach { networkResult ->  
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        FriendList.list.addAll((data).fastMapIndexed { idx, item ->
+                            Friend(
+                                number = idx,
+                                memberSeq = item.memberSeq,
+                                name = item.userName,
+                                profileImgUrl = item.profileImage
+                            )
+                        })
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
     }
 
     private suspend fun reissueToken(

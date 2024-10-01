@@ -21,13 +21,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
-import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.globalvalue.type.VisualType
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.getScheduleColor
-import org.jetbrains.annotations.Async.Schedule
 
 @Composable
 fun RowScope.DateBox(

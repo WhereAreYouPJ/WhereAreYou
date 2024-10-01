@@ -47,7 +47,7 @@ import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.data.notification.DrawerNotificationContentUIState
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
-import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.launch
 
 @Composable
@@ -96,7 +96,7 @@ fun DrawerNotificationContent(
                                     modifier = Modifier
                                         .size((TOP_BAR_HEIGHT / density / 2).dp)
                                         .clip(RoundedCornerShape(50))
-                                        .clickable {
+                                        .clickableNoEffect {
                                             coroutineScope.launch { drawerState.close() }
                                         },
                                     painter = painterResource(id = R.drawable.ic_back),

@@ -40,10 +40,11 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.whereareyounow.R
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.globalvalue.type.SplashCheckingState
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ fun SplashScreen(
         checkNetworkState = viewModel::checkNetworkState,
         updateCheckingState = viewModel::updateCheckingState,
         checkIsSignedIn = viewModel::checkIsSignedIn,
-        moveToSignInScreen = moveToSignInMethodSelectionScreen,
+        moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
         moveToMainScreen = moveToMainScreen
     )
 }
@@ -79,7 +80,7 @@ private fun SplashScreen(
     checkNetworkState: () -> Unit,
     updateCheckingState: (SplashCheckingState) -> Unit,
     checkIsSignedIn: suspend () -> Boolean,
-    moveToSignInScreen: () -> Unit,
+    moveToSignInMethodSelectionScreen: () -> Unit,
     moveToMainScreen: () -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
@@ -129,7 +130,7 @@ private fun SplashScreen(
                     if (checkIsSignedIn()) {
                         moveToMainScreen()
                     } else {
-                        moveToSignInScreen()
+                        moveToSignInMethodSelectionScreen()
                     }
                 }
             }
@@ -195,7 +196,7 @@ private fun NetworkConnectionErrorDialog(
     Dialog(
         onDismissRequest = {}
     ) {
-        WhereAreYouTheme {
+        OnMyWayTheme {
             Column(
                 modifier = Modifier
                     .width(280.dp)
@@ -238,7 +239,7 @@ private fun NetworkConnectionErrorDialog(
                                 ),
                                 shape = RoundedCornerShape(6.dp)
                             )
-                            .clickable {
+                            .clickableNoEffect {
 
                             },
                         contentAlignment = Alignment.Center
@@ -255,11 +256,8 @@ private fun NetworkConnectionErrorDialog(
                             .weight(1f)
                             .height(42.dp)
                             .clip(RoundedCornerShape(6.dp))
-                            .background(
-                                color = Color(0xFF6236E9),
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .clickable { checkNetworkState() },
+                            .background(Color(0xFF6236E9))
+                            .clickableNoEffect { checkNetworkState() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -279,7 +277,7 @@ private fun NetworkConnectionErrorDialog(
 @CustomPreview
 @Composable
 private fun SplashScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         SplashScreen(
             screenState = SplashViewModel.ScreenState.Splash,
             updateScreenState = {},
@@ -288,7 +286,7 @@ private fun SplashScreenPreview() {
             checkNetworkState = { true },
             updateCheckingState = {},
             checkIsSignedIn = { true },
-            moveToSignInScreen = { /*TODO*/ },
+            moveToSignInMethodSelectionScreen = { /*TODO*/ },
             moveToMainScreen = {}
         )
     }
@@ -297,7 +295,7 @@ private fun SplashScreenPreview() {
 @CustomPreview
 @Composable
 private fun NetworkConnectionErrorDialogPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         NetworkConnectionErrorDialog(
             checkNetworkState = { true }
         )

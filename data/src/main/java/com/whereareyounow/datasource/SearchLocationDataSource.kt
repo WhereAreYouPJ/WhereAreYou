@@ -1,7 +1,6 @@
 package com.whereareyounow.datasource
 
 import com.whereareyounow.api.SearchLocationApi
-import retrofit2.Response
 
 class SearchLocationDataSource(
     private val api: SearchLocationApi

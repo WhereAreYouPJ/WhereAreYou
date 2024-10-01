@@ -21,11 +21,11 @@ import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 
@@ -38,23 +38,21 @@ class DetailScheduleViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DetailScheduleScreenUIState())
     val uiState = _uiState.asStateFlow()
 
-    private var scheduleId = ""
-    private var memberIdsList = emptyList<String>()
-    private var arrivedMemberIdsList = emptyList<String>()
-    var destinationLatitude = 0.0
-    var destinationLongitude = 0.0
-    private val _isScheduleCreator = MutableStateFlow(false)
-    val isScheduleCreator: StateFlow<Boolean> = _isScheduleCreator
-
-    fun getDetailSchedule(seq: Int) {
+    fun getDetailSchedule(scheduleSeq: Int) {
         val requestData = GetDetailScheduleRequest(
-            scheduleSeq = seq,
+            scheduleSeq = scheduleSeq,
             memberSeq = AuthData.memberSeq
         )
         getDetailScheduleUseCase(requestData)
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-
+                    data?.let {
+                        _uiState.update {
+                            it.copy(
+                                scheduleInfo = data
+                            )
+                        }
+                    }
                 }.onError { code, message ->
 
                 }.onException {  }

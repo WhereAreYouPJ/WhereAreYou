@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -36,7 +35,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
@@ -45,15 +43,10 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.main.friend.feed.FeedContent
-import com.whereareyounow.ui.main.home.FirstIconBadge
 import com.whereareyounow.ui.main.mypage.byebye.Gap
-import com.whereareyounow.ui.theme.WhereAreYouTheme
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
-import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.clickableNoEffect
-import com.whereareyounow.ui.theme.medium14pt
-import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -195,18 +188,21 @@ fun FriendScreenTopBar(
         val feedTextColor = if(isFriendPage.value) Color(0xFF666666) else Color(0xFF222222)
 
         Text(
-            modifier = Modifier.clickable {
-                isFriendPage.value = false
-            },
+            modifier = Modifier
+                .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                .clickableNoEffect {
+                    isFriendPage.value = false
+                },
             text = "피드",
             style = medium20pt,
             color = feedTextColor
         )
-        Spacer(Modifier.width(4.dp))
         Text(
-            modifier = Modifier.clickable {
-                isFriendPage.value = true
-            },
+            modifier = Modifier
+                .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
+                .clickableNoEffect {
+                    isFriendPage.value = true
+                },
             text = "친구",
             style = medium20pt,
             color = friendTextColor
@@ -289,7 +285,6 @@ fun FriendScreenTopBar(
     }
 }
 
-
 //@Composable
 //fun FriendContent(
 //    friendsList: List<Friend>
@@ -314,7 +309,6 @@ fun FriendScreenTopBar(
 //        }
 //    }
 //}
-
 
 // 내사진 로우
 @Composable
@@ -344,7 +338,6 @@ fun MyRow() {
         Text(myInfo.name, style = medium14pt , color = Color(0xFF222222))
     }
 }
-
 
 // 더하기 누르면 "친구추가" , "친구관리" 양자택일 팝업
 @Composable

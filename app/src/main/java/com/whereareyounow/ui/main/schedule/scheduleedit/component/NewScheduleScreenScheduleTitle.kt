@@ -13,10 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium16pt
 
@@ -30,7 +27,7 @@ fun ScheduleEditScreenScheduleTitle(
         modifier = Modifier.fillMaxWidth(),
         value = scheduleName,
         onValueChange = { updateScheduleName(it) },
-        textStyle = TextStyle(fontSize = 30.sp, color = Color(0xFF505050), fontWeight = FontWeight.Bold),
+        textStyle = medium16pt.copy(color = Color(0xFF222222)),
         singleLine = true
     ) {
         Box(

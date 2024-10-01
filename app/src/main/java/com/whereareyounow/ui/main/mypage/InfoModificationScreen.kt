@@ -50,7 +50,8 @@ import com.whereareyounow.ui.component.CustomTextField
 import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.signup.Guideline
 import com.whereareyounow.ui.signup.component.CheckingButton
-import com.whereareyounow.ui.theme.WhereAreYouTheme
+import com.whereareyounow.ui.theme.OnMyWayTheme
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -161,7 +162,7 @@ private fun InfoModificationScreen(
                 modifier = Modifier
                     .size(200.dp)
                     .clip(RoundedCornerShape(50))
-                    .clickable {
+                    .clickableNoEffect {
                         takePhotoFromAlbumLauncher.launch(
                             PickVisualMediaRequest(
                                 ActivityResultContracts.PickVisualMedia.ImageOnly
@@ -243,7 +244,7 @@ fun TopBar(
             modifier = Modifier
                 .size((TOP_BAR_HEIGHT / density / 2).dp)
                 .clip(RoundedCornerShape(50))
-                .clickable { moveToBackScreen() },
+                .clickableNoEffect { moveToBackScreen() },
             painter = painterResource(id = R.drawable.ic_back),
             contentDescription = null
         )
@@ -262,7 +263,7 @@ fun TopBar(
         Text(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .clickable {
+                .clickableNoEffect {
                     saveModifiedInfo()
                 },
             text = "저장"
@@ -313,7 +314,7 @@ private fun UserIdTextField(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun InfoModificationScreenPreview() {
-    WhereAreYouTheme {
+    OnMyWayTheme {
         InfoModificationScreen(
             infoModificationScreenSideEffectFlow = MutableSharedFlow(),
             inputUserName = "아이디",

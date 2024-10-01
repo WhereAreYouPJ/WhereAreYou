@@ -13,5 +13,9 @@ fun NavGraphBuilder.detailScheduleScreenRoute(navController: NavController) = co
 
     DetailScheduleScreen(
         scheduleSeq = data.scheduleSeq,
-        moveToBackScreen = { navController.popBackStack() })
+        moveToBackScreen = { navController.popBackStack() },
+        moveToScheduleModificationScreen = {
+            navController.navigate(ROUTE.ScheduleModification(data.scheduleSeq))
+        }
+    )
 }

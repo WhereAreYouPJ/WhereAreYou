@@ -1,9 +1,6 @@
 package com.whereareyounow.di.usecase
 
-import com.whereareyounow.domain.repository.LocationRepository
 import com.whereareyounow.domain.repository.MemberRepository
-import com.whereareyounow.domain.request.member.UpdateUserNameRequest
-import com.whereareyounow.domain.usecase.location.GetUserLocationUseCase
 import com.whereareyounow.domain.usecase.member.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberCodeUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
