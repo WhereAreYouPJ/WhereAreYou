@@ -20,4 +20,3 @@ fun LocationFaboriteInfo.toModel() : LocationFaboriteInfoModel {
         streetName = this.streetName
     )
 }
-

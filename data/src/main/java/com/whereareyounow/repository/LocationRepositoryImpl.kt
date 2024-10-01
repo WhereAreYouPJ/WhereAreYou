@@ -3,6 +3,7 @@ package com.whereareyounow.repository
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.domain.entity.location.LocationFaboriteInfo
 import com.whereareyounow.domain.repository.LocationRepository
+import com.whereareyounow.domain.request.location.DeleteFavoriteLocationRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 
@@ -33,9 +34,21 @@ class LocationRepositoryImpl(
 //    }
     override suspend fun getLocationFaborite(
         memberSeq: Int
-    ): NetworkResult<LocationFaboriteInfo> {
+    ): NetworkResult<List<LocationFaboriteInfo>> {
         return handleResult { locationApi.getLocationFaborite(
             memberSeq = memberSeq
+        ) }
+    }
+
+    override suspend fun deleteFavoriteLocation(
+        memberSeq: Int,
+        locationSeqs : List<Int>
+    ): NetworkResult<List<LocationFaboriteInfo>> {
+        return handleResult { locationApi.deleteFavoriteLocation(
+            deleteFavoriteLocationRequest = DeleteFavoriteLocationRequest(
+                memberSeq = memberSeq,
+                locationSeqs = locationSeqs
+            )
         ) }
     }
 }

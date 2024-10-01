@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.friend.GrayLine
+import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
 import com.whereareyounow.ui.main.mypage.myinfo.OneTextOneIconTobBar
@@ -43,6 +45,7 @@ private fun EditLocationFaboriteScreen(
     isContent: Boolean,
     moveToBackScreen: () -> Unit
 ) {
+    val myPageViewModel : MyPageViewModel = hiltViewModel()
     val defaultTrue = remember {
         mutableStateOf(true)
     }
@@ -91,6 +94,10 @@ private fun EditLocationFaboriteScreen(
 
         WithdrawlButton(text = "삭게하기", canMove = defaultTrue) {
             moveToBackScreen()
+            myPageViewModel.DeleteFavoriteLocation(
+                1,
+                listOf(1,2)
+            )
         }
     }
 }
