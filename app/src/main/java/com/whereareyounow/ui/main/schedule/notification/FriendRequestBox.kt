@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun FriendRequestBox(
@@ -104,7 +105,7 @@ fun RowScope.ClickableBox(
                 color = color,
                 shape = RoundedCornerShape(10.dp)
             )
-            .clickable { onClick() }
+            .clickableNoEffect { onClick() }
             .padding(top = 10.dp, bottom = 10.dp),
         contentAlignment = Alignment.Center
     ) {

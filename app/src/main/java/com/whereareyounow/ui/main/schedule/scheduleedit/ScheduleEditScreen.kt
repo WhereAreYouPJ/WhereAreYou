@@ -853,7 +853,7 @@ private fun SelectedMembersList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable { moveToFriendsListScreen() }
+                    .clickableNoEffect { moveToFriendsListScreen() }
                     .padding(4.dp),
             ) {
                 Text(
@@ -868,7 +868,7 @@ private fun SelectedMembersList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable { moveToFriendsListScreen() }
+                    .clickableNoEffect { moveToFriendsListScreen() }
                     .padding(4.dp)
             ) {
                 itemsIndexed(selectedFriendsList) { _, friend ->
@@ -926,7 +926,7 @@ private fun LocationSelector(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable { moveToSearchLocationScreen() }
+                    .clickableNoEffect { moveToSearchLocationScreen() }
                     .padding(4.dp),
                 text = "장소 선택",
                 fontSize = 18.sp,
@@ -938,7 +938,7 @@ private fun LocationSelector(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable { moveToSearchLocationScreen() }
+                    .clickableNoEffect { moveToSearchLocationScreen() }
                     .padding(4.dp),
             ) {
                 Text(

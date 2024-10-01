@@ -245,7 +245,7 @@ fun FriendScreenTopBar(
         Text(
             modifier = Modifier
                 .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
-                .clickable {
+                .clickableNoEffect {
                     isFriendPage.value = false
                 },
             text = "피드",
@@ -256,7 +256,7 @@ fun FriendScreenTopBar(
         Text(
             modifier = Modifier
                 .padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp)
-                .clickable {
+                .clickableNoEffect {
                     isFriendPage.value = true
                 },
             text = "친구",

@@ -50,6 +50,7 @@ import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.notoSanskr
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun FriendsListScreen(
@@ -230,7 +231,7 @@ fun ColumnScope.SearchedFriendsList(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
+                    .clickableNoEffect {
                         selectFriend(friend)
                     }
                     .padding(top = 10.dp, bottom = 10.dp),
@@ -250,7 +251,9 @@ fun ColumnScope.SearchedFriendsList(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
+
                 Spacer(Modifier.weight(1f))
+
                 Image(
                     modifier = Modifier
                         .size(26.dp),
@@ -261,14 +264,6 @@ fun ColumnScope.SearchedFriendsList(
                     contentDescription = null
                 )
             }
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-                    .background(
-                        color = Color(0xFFAAAAAA)
-                    )
-            )
         }
     }
 }

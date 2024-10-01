@@ -44,6 +44,7 @@ import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -248,7 +249,7 @@ private fun AuthenticationButton(
                 color = getColor().brandColor,
                 shape = RoundedCornerShape(6.dp)
             )
-            .clickable { onClick() },
+            .clickableNoEffect { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(

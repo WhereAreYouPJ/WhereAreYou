@@ -15,6 +15,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.whereareyounow.util.clickableNoEffect
 
 
 @Composable
@@ -37,7 +38,7 @@ fun RecompositionTestComposable(
             .semantics { contentDescription = "button1" }
             .size(100.dp)
             .background(Color.Cyan)
-            .clickable {
+            .clickableNoEffect {
                 viewModel.updateTextData1()
             }
     )

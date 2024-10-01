@@ -79,7 +79,7 @@ private fun DetailProfileScreen(
                 contentDescription = "",
                 modifier = Modifier
                     .padding(start = 20.dp, top = 11.dp)
-                    .clickable {
+                    .clickableNoEffect {
                         moveToBackScreen()
                     },
                 colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))

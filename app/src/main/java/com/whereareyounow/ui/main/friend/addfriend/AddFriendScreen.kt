@@ -39,6 +39,7 @@ import com.whereareyounow.R
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.theme.OnMyWayTheme
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun AddFriendScreen(
@@ -161,7 +162,7 @@ fun FriendIdTextField(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Image(
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.clickableNoEffect {
                             clearInputId()
                         },
                         painter = painterResource(id = R.drawable.baseline_cancel_24),

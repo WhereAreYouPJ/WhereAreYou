@@ -43,6 +43,7 @@ import com.whereareyounow.domain.entity.schedule.BriefSchedule
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.lato
 import com.whereareyounow.util.calendar.getCalendarFromString
+import com.whereareyounow.util.clickableNoEffect
 import java.util.Calendar
 import kotlin.math.roundToInt
 
@@ -208,7 +209,7 @@ fun BriefScheduleList(
                                     false -> Color(0XFFFFD79B)
                                 }
                             )
-                            .clickable {
+                            .clickableNoEffect {
                                 moveToDetailScreen(item.scheduleId)
                             }
                             .padding(start = 20.dp, top = 10.dp, end = 20.dp, bottom = 10.dp),

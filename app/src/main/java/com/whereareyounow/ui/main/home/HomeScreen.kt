@@ -850,7 +850,7 @@ fun FirstIconBadge(
     onIconClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier.clickable { onIconClick() }
+        modifier = Modifier.clickableNoEffect { onIconClick() }
     ) {
         Icon(
             painter = painterResource(id = R.drawable.icon_bell),

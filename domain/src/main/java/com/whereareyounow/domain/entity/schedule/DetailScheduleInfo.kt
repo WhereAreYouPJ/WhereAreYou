@@ -24,5 +24,5 @@ data class DetailScheduleInfo(
     @SerializedName("allDay")
     val allDay: Boolean = false,
     @SerializedName("memberInfos")
-    val userName: List<MemberInfo> = emptyList()
+    val memberInfos: List<MemberInfo> = emptyList()
 )

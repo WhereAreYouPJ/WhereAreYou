@@ -295,7 +295,7 @@ private fun DetailScheduleScreen(
                             Spacer(Modifier.width(6.dp))
 
                             Text(
-                                text = "친구 추가",
+                                text = uiState.scheduleInfo.memberInfos.map { it.userName }.joinToString(", "),
                                 color = Color(0xFF222222),
                                 style = medium16pt
                             )

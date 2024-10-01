@@ -62,6 +62,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.ui.theme.nanumSquareNeo
+import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
@@ -263,7 +264,7 @@ fun DetailScheduleMapScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
-                                .clickable {
+                                .clickableNoEffect {
                                     isUserListShowing = false
                                     cameraPositionState.position = CameraPosition(
                                         LatLng(
@@ -298,7 +299,7 @@ fun DetailScheduleMapScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
-                                .clickable {
+                                .clickableNoEffect {
 //                                    isUserListShowing = !isUserListShowing
                                     popupState.isVisible = true
                                 }
@@ -351,7 +352,7 @@ fun UserList(
             itemsIndexed(detailScheduleMapScreenUIState.memberInfosList) { _, memberInfo ->
                 Row(
                     modifier = Modifier
-                        .clickable {
+                        .clickableNoEffect {
                             if (memberInfo.latitude != null && memberInfo.longitude != null) {
                                 cameraPositionState.position = CameraPosition(
                                     LatLng(memberInfo.latitude!!, memberInfo.longitude!!),

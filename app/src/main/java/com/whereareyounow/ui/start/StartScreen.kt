@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.ui.theme.OnMyWayTheme
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun StartScreen(
@@ -65,7 +66,7 @@ fun StartScreen(
                     color = Color(0xFF2D3573),
                     shape = RoundedCornerShape(10.dp)
                 )
-                .clickable { moveToSignUpScreen() },
+                .clickableNoEffect { moveToSignUpScreen() },
             contentAlignment = Alignment.Center
         ) {
             Text(

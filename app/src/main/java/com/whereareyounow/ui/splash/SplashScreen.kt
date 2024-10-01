@@ -44,6 +44,7 @@ import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.CustomPreview
+import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -238,7 +239,7 @@ private fun NetworkConnectionErrorDialog(
                                 ),
                                 shape = RoundedCornerShape(6.dp)
                             )
-                            .clickable {
+                            .clickableNoEffect {
 
                             },
                         contentAlignment = Alignment.Center
@@ -256,7 +257,7 @@ private fun NetworkConnectionErrorDialog(
                             .height(42.dp)
                             .clip(RoundedCornerShape(6.dp))
                             .background(Color(0xFF6236E9))
-                            .clickable { checkNetworkState() },
+                            .clickableNoEffect { checkNetworkState() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
