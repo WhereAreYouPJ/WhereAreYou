@@ -12,7 +12,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,13 +29,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,7 +64,6 @@ import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTopBar
@@ -100,8 +93,9 @@ fun ScheduleEditScreen(
     updateEndDate: (Int, Int, Int) -> Unit,
     updateEndTime: (Int, Int) -> Unit,
     updateMemo: (String) -> Unit,
+    updateColor: (ScheduleColor) -> Unit,
     moveToSearchLocationScreen: (String) -> Unit,
-    moveToFriendsListScreen: () -> Unit,
+    moveToFriendsListScreen: (List<Int>) -> Unit,
     moveToBackScreen: () -> Unit
 ) {
     val thinnest = getColor().thinnest
@@ -390,10 +384,12 @@ fun ScheduleEditScreen(
                             Spacer(Modifier.width(6.dp))
 
                             Text(
-                                modifier = Modifier.clickableNoEffect { moveToSearchLocationScreen(uiState.destinationAddress) },
-                                text = if (uiState.destinationAddress == "") "위치 추가" else uiState.destinationAddress,
+                                modifier = Modifier.clickableNoEffect { moveToSearchLocationScreen(uiState.destinationName) },
+                                text = if (uiState.destinationName == "") "위치 추가" else uiState.destinationName,
                                 color = getColor().dark,
-                                style = medium16pt
+                                style = medium16pt,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 
@@ -455,16 +451,16 @@ fun ScheduleEditScreen(
 
                             Image(
                                 modifier = Modifier.size(30.dp),
-                                painter = painterResource(R.drawable.ic_location),
+                                painter = painterResource(R.drawable.ic_users),
                                 contentDescription = null,
-                                colorFilter = ColorFilter.tint(getColor().brandColor)
                             )
 
                             Spacer(Modifier.width(6.dp))
 
                             Text(
-                                text = "친구 추가",
-                                color = getColor().dark,
+                                modifier = Modifier.clickableNoEffect { moveToFriendsListScreen(uiState.selectedFriendsList.map { it.memberSeq }) },
+                                text = if (uiState.selectedFriendsList.isEmpty()) "친구 추가" else uiState.selectedFriendsList.map { it.name }.joinToString(", "),
+                                color = if (uiState.selectedFriendsList.isEmpty()) getColor().dark else Color(0xFF444444),
                                 style = medium16pt
                             )
                         }
@@ -503,13 +499,20 @@ fun ScheduleEditScreen(
                                     modifier = Modifier
                                         .size(20.dp)
                                         .clip(CircleShape)
-                                        .border(
-                                            border = BorderStroke(
-                                                width = 1.dp,
-                                                color = Color(0xFF8E8E8E)
-                                            ),
-                                            shape = CircleShape
-                                        ),
+                                        .then(
+                                            if (uiState.color == item) {
+                                                Modifier
+                                                    .border(
+                                                        border = BorderStroke(
+                                                            width = 1.dp,
+                                                            color = Color(0xFF8E8E8E)
+                                                        ),
+                                                        shape = CircleShape
+                                                    )
+                                            }
+                                            else Modifier
+                                        )
+                                        .clickableNoEffect { updateColor(item) },
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Box(

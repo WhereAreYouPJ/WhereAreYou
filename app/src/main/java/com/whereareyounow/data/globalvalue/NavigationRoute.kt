@@ -1,5 +1,6 @@
 package com.whereareyounow.data.globalvalue
 
+import com.whereareyounow.domain.entity.schedule.Friend
 import kotlinx.serialization.Serializable
 
 const val ROUTE_MODIFY_INFO = "ROUTE_MODIFY_INFO"
@@ -89,6 +90,19 @@ sealed class ROUTE {
     @Serializable
     data class SearchLocation(
         val location: String
+    )
+
+    @Serializable
+    data class LocationMap(
+        val name: String,
+        val address: String,
+        val lat: String,
+        val lng: String
+    )
+
+    @Serializable
+    data class AddFriend(
+        val friendList: List<Int>
     )
 
     @Serializable

@@ -4,10 +4,11 @@ import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyounow.data.FriendProvider
+import com.whereareyounow.data.cached.FriendList
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
+import com.whereareyounow.globalvalue.type.ScheduleColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,10 +38,10 @@ class ScheduleEditViewModel @Inject constructor(
         scheduleId = id
     }
 
-    fun updateSelectedFriendsList(friendIds: List<String>) {
+    fun updateSelectedFriendsList(friendIds: List<Int>) {
         _uiState.update {
-            it.copy(selectedFriendsList = FriendProvider.friendsList.filter { friend ->
-                friend.memberId in friendIds })
+            it.copy(selectedFriendsList = FriendList.list.filter { friend ->
+                friend.memberSeq in friendIds })
         }
     }
 
@@ -116,6 +117,14 @@ class ScheduleEditViewModel @Inject constructor(
             it.copy(
                 destinationLatitude = lat,
                 destinationLongitude = lng
+            )
+        }
+    }
+
+    fun updateScheduleColor(color: ScheduleColor) {
+        _uiState.update {
+            it.copy(
+                color = color
             )
         }
     }

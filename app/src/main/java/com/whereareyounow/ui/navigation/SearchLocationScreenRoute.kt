@@ -14,7 +14,10 @@ fun NavGraphBuilder.searchLocationScreenRoute(navController: NavController) = co
     val data: ROUTE.SearchLocation = it.toRoute()
     SearchLocationScreen(
         moveToBackScreen = { navController.popBackStack() },
-        moveToMapScreen = { lat, lng -> },
+        moveToMapScreen = { name, address, lat, lng ->
+            navController.navigate(ROUTE.LocationMap(name, address, lat.toString(), lng.toString())
+            )
+        },
         scheduleEditViewModel = hiltViewModel(parentEntry)
     )
 }

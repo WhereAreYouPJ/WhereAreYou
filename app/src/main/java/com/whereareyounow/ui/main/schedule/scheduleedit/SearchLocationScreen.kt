@@ -44,11 +44,12 @@ import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium18pt
+import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun SearchLocationScreen(
     moveToBackScreen: () -> Unit,
-    moveToMapScreen: (Double, Double) -> Unit,
+    moveToMapScreen: (String, String, Double, Double) -> Unit,
     scheduleEditViewModel: ScheduleEditViewModel,
     searchLocationViewModel: SearchLocationViewModel = hiltViewModel()
 ) {
@@ -70,7 +71,7 @@ private fun SearchLocationScreen(
     searchLocation: () -> Unit,
     updateDestinationInformation: (String, String, Double, Double) -> Unit,
     moveToBackScreen: () -> Unit,
-    moveToMapScreen: (Double, Double) -> Unit
+    moveToMapScreen: (String, String, Double, Double) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     CustomSurface {
@@ -159,10 +160,12 @@ fun LocationSearchTextField(
 fun SearchedLocationList(
     locationInfoList: List<LocationInformation> = listOf(),
     updateDestinationInformation: (String, String, Double, Double) -> Unit,
-    moveToMapScreen: (Double, Double) -> Unit,
+    moveToMapScreen: (String, String, Double, Double) -> Unit,
     moveToNewScheduleScreen: () -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+    ) {
         itemsIndexed(locationInfoList) { _, item ->
             val lat =
                 (item.mapy.substring(0 until item.mapy.length - 7) + "." + item.mapy.substring(
@@ -174,27 +177,35 @@ fun SearchedLocationList(
                 )).toDouble()
             Row(
                 modifier = Modifier
-                    .height(80.dp)
-                    .clickable {
-                        updateDestinationInformation(item.title, item.roadAddress, lat, lng)
-                        moveToNewScheduleScreen()
-                    },
-                verticalAlignment = Alignment.CenterVertically
+                    .height(66.dp)
+                    .clickableNoEffect {
+                        moveToMapScreen(item.title.replace("<b>", "").replace("</b>", ""), item.roadAddress, lat, lng)
+                    }
+                    .padding(top = 6.dp)
             ) {
+                Image(
+                    modifier = Modifier
+                        .padding(start = 3.dp, top = 6.dp, end = 3.dp)
+                        .height(20.dp),
+                    painter = painterResource(id = R.drawable.ic_location2),
+                    contentDescription = null
+                )
+
                 Column(
                     modifier = Modifier
                         .weight(1f)
                 ) {
                     Text(
+                        modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
                         text = item.title.replace("<b>", "").replace("</b>", ""),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF585858),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
-
                     )
                     Text(
+                        modifier = Modifier.padding(6.dp, 2.dp, 6.dp, 2.dp),
                         text = item.roadAddress,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
@@ -203,15 +214,6 @@ fun SearchedLocationList(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                Image(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .clickable { moveToMapScreen(lat, lng) }
-                        .padding(10.dp),
-                    painter = painterResource(id = R.drawable.ic_location),
-                    contentDescription = null
-                )
             }
         }
     }
@@ -228,13 +230,13 @@ private fun NewLocationScreenPreview() {
         LocationInformation("지역5", "", "", "", "", "주소5", "도로명주소5", "1234567890", "1234567890"),
     )
     OnMyWayTheme {
-        SearchLocationScreen(
-            uiState = SearchLocationScreenUIState(),
-            updateInputLocationName = {},
-            searchLocation = {},
-            updateDestinationInformation = { _, _, _, _ -> },
-            moveToBackScreen = {},
-            moveToMapScreen = { _, _ -> }
-        )
+//        SearchLocationScreen(
+//            uiState = SearchLocationScreenUIState(),
+//            updateInputLocationName = {},
+//            searchLocation = {},
+//            updateDestinationInformation = { _, _, _, _ -> },
+//            moveToBackScreen = {},
+//            moveToMapScreen = { _, _ -> }
+//        )
     }
 }

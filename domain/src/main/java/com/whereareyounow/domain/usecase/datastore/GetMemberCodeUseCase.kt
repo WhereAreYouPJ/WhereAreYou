@@ -2,10 +2,8 @@ package com.whereareyounow.domain.usecase.datastore
 
 import com.whereareyounow.domain.repository.DataStoreRepository
 
-class SaveRefreshTokenUseCase(
+class GetMemberCodeUseCase(
     private val repository: DataStoreRepository
 ) {
-    suspend operator fun invoke(
-        refreshToken: String
-    ) = repository.saveRefreshToken(refreshToken)
+    operator fun invoke() = repository.getMemberCode()
 }

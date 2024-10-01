@@ -1,11 +1,10 @@
 package com.whereareyounow.domain.usecase.datastore
 
 import com.whereareyounow.domain.repository.DataStoreRepository
+import com.whereareyounow.domain.repository.SearchLocationRepository
 
-class SaveRefreshTokenUseCase(
+class GetMemberSeqUseCase(
     private val repository: DataStoreRepository
 ) {
-    suspend operator fun invoke(
-        refreshToken: String
-    ) = repository.saveRefreshToken(refreshToken)
+    operator fun invoke() = repository.getMemberSeq()
 }

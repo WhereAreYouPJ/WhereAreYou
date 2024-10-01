@@ -58,12 +58,14 @@ import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
+import com.whereareyounow.ui.navigation.friendsListScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.scheduleModificationScreenRoute
+import com.whereareyounow.ui.navigation.searchLocationMapScreenRoute
 import com.whereareyounow.ui.navigation.searchLocationScreenRoute
 import com.whereareyounow.ui.navigation.signInMethodSelectionScreenRoute
 import com.whereareyounow.ui.navigation.signInWithAccountScreenRoute
@@ -194,62 +196,12 @@ fun MainNavigation(
 
         // 장소 검색 화면
         searchLocationScreenRoute(navController)
-        composable(
-            route = ROUTE_SEARCH_LOCATION
-        ) {
-            val parentEntry = remember(it) {
-//                navController.getBackStackEntry(ROUTE_NEW_SCHEDULE)
-                navController.previousBackStackEntry!!
-            }
-            SearchLocationScreen(
-//                updateDestinationInformation = { name, roadAddress, lat, lng ->
-//                    navController.previousBackStackEntry?.savedStateHandle?.set("destinationName", name)
-//                    navController.previousBackStackEntry?.savedStateHandle?.set("destinationRoadAddress", roadAddress)
-//                    navController.previousBackStackEntry?.savedStateHandle?.set("destinationLatitude", lat)
-//                    navController.previousBackStackEntry?.savedStateHandle?.set("destinationLongitude", lng)
-//                },
-                moveToBackScreen = { navController.popBackStack() },
-                moveToMapScreen = { lat, lng ->
-                    val bundle = bundleOf(
-                        "lat" to lat,
-                        "lng" to lng
-                    )
-                    navController.navigate(ROUTE_SEARCH_LOCATION_MAP, bundle)
-                },
-                scheduleEditViewModel = hiltViewModel(parentEntry)
-            )
-        }
 
         // 장소 검색 - 지도 화면
-        composable(
-            route = ROUTE_SEARCH_LOCATION_MAP
-        ) {
-            Log.e(
-                "SearchLocationMapScreen",
-                "${it.arguments?.getString("lat")?.toDouble()}, ${
-                    it.arguments?.getString("lng")?.toDouble()
-                }"
-            )
-            SearchLocationMapScreen(
-                moveToBackScreen = { navController.popBackStack() },
-                latitude = it.arguments?.getDouble("lat") ?: 0.0,
-                longitude = it.arguments?.getDouble("lng") ?: 0.0
-            )
-        }
+        searchLocationMapScreenRoute(navController)
 
         // 친구 선택 화면
-        composable(
-            route = ROUTE_SELECT_FRIENDS
-        ) {
-            val parentEntry = remember(it) {
-//                navController.getBackStackEntry(ROUTE_NEW_SCHEDULE)
-                navController.previousBackStackEntry!!
-            }
-            FriendsListScreen(
-                moveToBackScreen = { navController.popBackStack() },
-                scheduleEditViewModel = hiltViewModel(parentEntry)
-            )
-        }
+        friendsListScreenRoute(navController)
 
         // 상세 일정 정보 지도 화면
         composable(

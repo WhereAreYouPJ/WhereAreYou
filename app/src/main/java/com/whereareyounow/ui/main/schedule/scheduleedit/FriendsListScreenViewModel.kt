@@ -2,7 +2,7 @@ package com.whereareyounow.ui.main.schedule.scheduleedit
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.whereareyounow.data.FriendProvider
+import com.whereareyounow.data.cached.FriendList
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.util.SoundSearcherUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ class FriendsListScreenViewModel @Inject constructor() : ViewModel() {
     // 전체 친구 리스트
     // Pair의 first는 친구 정보, second는 선택 여부를 나타낸다.
     private val originalFriendsList = mutableStateListOf<Pair<Friend, Boolean>>().apply {
-        addAll(FriendProvider.friendsList.map { Pair(it, false) })
+        addAll(FriendList.list.map { Pair(it, false) })
     }
 
     // 검색에 의해 필터링되어 하단에 보여지는 친구 리스트
@@ -40,7 +40,7 @@ class FriendsListScreenViewModel @Inject constructor() : ViewModel() {
     fun selectFriend(friend: Pair<Friend, Boolean>) {
         // 오리지널 친구 목록의 선택 여부를 변경한다.
         for (i in originalFriendsList.indices) {
-            if (originalFriendsList[i].first.memberId == friend.first.memberId) {
+            if (originalFriendsList[i].first.memberSeq == friend.first.memberSeq) {
                 originalFriendsList[i] = friend.first to !friend.second
                 break
             }
@@ -48,7 +48,7 @@ class FriendsListScreenViewModel @Inject constructor() : ViewModel() {
 
         // 검색된 친구 목록을 업데이트한다.
         for (i in _searchedFriendsList.indices) {
-            if (_searchedFriendsList[i].first.memberId == friend.first.memberId) {
+            if (_searchedFriendsList[i].first.memberSeq == friend.first.memberSeq) {
                 _searchedFriendsList[i] = friend.first to !friend.second
                 break
             }
@@ -57,7 +57,7 @@ class FriendsListScreenViewModel @Inject constructor() : ViewModel() {
         // 선택된 친구 목록을 업데이트한다.
         if (friend.second) {
             // false가 되므로 목록에서 제거해야 한다.
-            _selectedFriendsList.removeIf { it.memberId == friend.first.memberId }
+            _selectedFriendsList.removeIf { it.memberSeq == friend.first.memberSeq }
         } else {
             // true가 되므로 목록에 추가해야 한다.
             _selectedFriendsList.add(friend.first)
@@ -66,14 +66,14 @@ class FriendsListScreenViewModel @Inject constructor() : ViewModel() {
     }
 
     // 초기에 선택된 친구 목록을 유지
-    fun initialize(idsList: List<String>) {
+    fun initialize(idsList: List<Int>) {
         originalFriendsList.clear()
-        originalFriendsList.addAll(FriendProvider.friendsList.map { Pair(it, false) })
+        originalFriendsList.addAll(FriendList.list.map { Pair(it, false) })
         _searchedFriendsList.clear()
         _searchedFriendsList.addAll(originalFriendsList)
         _selectedFriendsList.clear()
-        FriendProvider.friendsList.forEach { friend ->
-            if (friend.memberId in idsList) {
+        FriendList.list.forEach { friend ->
+            if (friend.memberSeq in idsList) {
                 selectFriend(friend to false)
             }
         }
