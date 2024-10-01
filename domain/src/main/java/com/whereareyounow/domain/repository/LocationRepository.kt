@@ -18,10 +18,16 @@ interface LocationRepository {
 //        body: com.whereareyounow.domain.request.location.SendUserLocationRequest
 //    ): NetworkResult<Boolean>
 
-    // 즐겨찾기 조회
+    // 위치 즐겨찾기 조회
     suspend fun getLocationFaborite(
         memberSeq : Int
-    ): NetworkResult<LocationFaboriteInfo>
+    ): NetworkResult<List<LocationFaboriteInfo>>
+
+    // 위치 즐겨찾기 삭제
+    suspend fun deleteFavoriteLocation(
+        memberSeq : Int,
+        locationSeqs : List<Int>
+    ): NetworkResult<List<LocationFaboriteInfo>>
 
 
 }

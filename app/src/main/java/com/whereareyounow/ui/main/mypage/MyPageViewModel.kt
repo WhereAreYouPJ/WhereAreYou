@@ -1,13 +1,14 @@
 package com.whereareyounow.ui.main.mypage
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
-import com.whereareyounow.domain.usecase.location.GetFaboriteLocationUseCase
+import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
+import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
 import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
@@ -17,6 +18,7 @@ import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.ui.main.mypage.mapper.toModel
+import com.whereareyounow.ui.main.mypage.model.LocationFaboriteInfoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +44,8 @@ class MyPageViewModel @Inject constructor(
     private val getUserInfoByMemberSeqUseCase: GetUserInfoByMemberSeqUseCase,
     private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
-    private val getFaboriteLocationUseCase: GetFaboriteLocationUseCase
+    private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
+    private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -64,10 +67,26 @@ class MyPageViewModel @Inject constructor(
     val location: StateFlow<String?> = _location
     private val _streetName = MutableStateFlow<String?>("")
     val streetName: StateFlow<String?> = _streetName
-
-
+    private val _locationFaboriteList = MutableStateFlow<List<LocationFaboriteInfoModel?>>(emptyList())
+//    private val _locationFaboriteList = MutableStateFlow<List<LocationFaboriteInfoModel?>>(
+//        listOf(
+//            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교0" , streetName = "서울대학교닷거리1"),
+//            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교1" , streetName = "서울대학교닷거리2"),
+//            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교2" , streetName = "서울대학교닷거리3"),
+//            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교3" , streetName = "서울대학교닷거리4"),
+//            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교4" , streetName = "서울대학교닷거리5"),
+//            LocationFaboriteInfoModel(locationSeq = 0 , location = "서울대학교5" , streetName = "서울대학교닷거리6"),
+//        )
+//    )
+    val locationFaboriteList : StateFlow<List<LocationFaboriteInfoModel?>> = _locationFaboriteList
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
     init {
         getMyInfo()
+        getLocationFaborite(
+            1
+        )
+//        getLocationFaborite()
     }
 
     data class Announcement(
@@ -236,30 +255,69 @@ class MyPageViewModel @Inject constructor(
 
 
 
-    fun getLocationFaborite(memberSeq : Int) {
-        getFaboriteLocationUseCase(
-            memberSeq = memberSeq
-        ).onEach { networkResult ->
-            networkResult.onSuccess { code, message, data ->
+    private fun getLocationFaborite(memberSeq : Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getFaboriteLocationUseCase(
+                memberSeq = memberSeq
+            ).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    Log.d("getLocationFaborite" , code.toString())
+                    Log.d("getLocationFaborite" , message.toString())
+                    Log.d("getLocationFaborite" , data.toString())
 
-                val faboriteInfo = data?.toModel()
-                faboriteInfo?.let {
-                    _locationSeq.value = it.locationSeq
-                    _location.value = it.location
-                    _streetName.value = it.streetName
-                }
-            }.onError { code, message ->
+                    val updatedList = data?.map { it.toModel() } ?: emptyList()
+                    _locationFaboriteList.value = updatedList.toList()
 
-            }.onException { }
-        }
-            .catch {
-                LogUtil.e(
-                    "flow error",
-                    "VerifyEmailCodeUseCase\n${it.message}\n${it.stackTrace}"
-                )
+                    _isLoading.value = false
+
+                }.onError { code, message ->
+                    Log.d("getLocationFaborite" , code.toString())
+                    Log.d("getLocationFaborite" , message.toString())
+
+                }.onException { }
             }
-            .launchIn(viewModelScope)
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "getFaboriteLocationUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(this)
+
+        }
+
     }
+
+    fun DeleteFavoriteLocation(
+        memberSeq : Int,
+        locationSeqs : List<Int>
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteFavoriteLocacionUseCase(
+                memberSeq = memberSeq,
+                locationSeqs = locationSeqs
+            ).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    Log.d("getLocationFaborite" , code.toString())
+                    Log.d("getLocationFaborite" , message.toString())
+                    Log.d("getLocationFaborite" , data.toString())
+
+                }.onError { code, message ->
+                    Log.d("getLocationFaborite" , code.toString())
+                    Log.d("getLocationFaborite" , message.toString())
+
+                }.onException { }
+            }
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "getFaboriteLocationUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(this)
+        }
+    }
+
 }
 
 

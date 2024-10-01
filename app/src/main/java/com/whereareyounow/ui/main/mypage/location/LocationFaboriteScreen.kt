@@ -6,12 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -29,14 +32,12 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
-import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
-import com.whereareyounow.ui.main.mypage.myinfo.ModifierIconPopUp
-import com.whereareyounow.ui.main.mypage.myinfo.OneTextOneIconTobBar
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
@@ -48,6 +49,8 @@ fun LocationFaboriteScreen(
     moveToEditLocationFaborite : () -> Unit
 ) {
     val myPageViewModel : MyPageViewModel = hiltViewModel()
+    val locationFaboriteList = myPageViewModel.locationFaboriteList.collectAsState().value
+    val isLoading = myPageViewModel.isLoading.collectAsState().value
 
     val myName = myPageViewModel.name.collectAsState().value
     val myEmail = myPageViewModel.email.collectAsState().value
@@ -95,12 +98,30 @@ fun LocationFaboriteScreen(
 
         }
 
-        Gap(120)
+        if(isLoading) {
+            CircularProgressIndicator()
+        } else {
+            if(locationFaboriteList.isEmpty()) {
+                Gap(120)
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_nolocation),
-            contentDescription = ""
-        )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_nolocation),
+                    contentDescription = ""
+                )
+            } else {
+                locationFaboriteList.forEach { favoriteLocationList ->
+                    DetailFavoriteLocation(
+                        title = favoriteLocationList!!.location!!,
+                        isClicked = {
+
+                        }
+                    )
+                }
+
+            }
+        }
+        
+
     }
 
 }
@@ -163,5 +184,37 @@ fun DeleteIconPopUp(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DetailFavoriteLocation(
+    title: String,
+//    isClickedState: MutableState<Boolean>,
+    isClicked: () -> Unit,
+) {
+
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 15.dp, end = 15.dp)
+            .height(46.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = medium16pt,
+            color = Color(0xFF222222)
+        )
+        Spacer(Modifier.weight(1f))
+        Image(
+            painter = painterResource(id = R.drawable.ic_hambuger),
+            contentDescription = "",
+            modifier = Modifier.clickableNoEffect {
+                isClicked()
+            }
+        )
+
     }
 }
