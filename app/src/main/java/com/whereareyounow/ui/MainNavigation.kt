@@ -57,6 +57,7 @@ import com.whereareyounow.ui.main.schedule.scheduleedit.FriendsListScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationMapScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.SearchLocationScreen
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
+import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.friendsListScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
@@ -88,6 +89,9 @@ fun MainNavigation(
     ) {
         // 스플래시
         splashScreenRoute(navController)
+
+        // 개발자 화면
+        developerScreenRoute(navController)
 
         // 로그인 방법 선택
         signInMethodSelectionScreenRoute(navController)

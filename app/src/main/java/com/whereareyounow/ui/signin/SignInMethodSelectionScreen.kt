@@ -22,7 +22,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -45,12 +48,14 @@ import com.whereareyounow.util.clickableNoEffect
 fun SignInMethodSelectionScreen(
     moveToSignInWithAccountScreen: () -> Unit,
     moveToSignUpScreen: () -> Unit,
-    moveToFindAccountScreen: () -> Unit
+    moveToFindAccountScreen: () -> Unit,
+    moveToDeveloperScreen: () -> Unit,
 ) {
     SignInMethodSelectionScreen(
         moveToSignInWithEmailScreen = moveToSignInWithAccountScreen,
         moveToSignUpScreen = moveToSignUpScreen,
         moveToFindAccountScreen = moveToFindAccountScreen,
+        moveToDeveloperScreen = moveToDeveloperScreen,
         tmp = true
     )
 }
@@ -60,8 +65,10 @@ private fun SignInMethodSelectionScreen(
     moveToSignInWithEmailScreen: () -> Unit,
     moveToSignUpScreen: () -> Unit,
     moveToFindAccountScreen: () -> Unit,
+    moveToDeveloperScreen: () -> Unit,
     tmp: Boolean
 ) {
+    var hiddenCnt by remember { mutableIntStateOf(0) }
     CustomSurface {
         Column(
             modifier = Modifier
@@ -71,7 +78,14 @@ private fun SignInMethodSelectionScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                modifier = Modifier.width(107.dp),
+                modifier = Modifier
+                    .width(107.dp)
+                    .clickableNoEffect {
+                        hiddenCnt++
+                        if (hiddenCnt == 20) {
+                            moveToDeveloperScreen()
+                        }
+                    },
                 painter = painterResource(R.drawable.img_logo),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(getColor().brandColor)
@@ -316,11 +330,11 @@ private fun AskButton() {
 @Composable
 private fun SignInMethodSelectionScreenPreview() {
     OnMyWayTheme {
-        SignInMethodSelectionScreen(
-            moveToSignInWithEmailScreen = {},
-            moveToSignUpScreen = {},
-            moveToFindAccountScreen = {},
-            tmp = true
-        )
+//        SignInMethodSelectionScreen(
+//            moveToSignInWithEmailScreen = {},
+//            moveToSignUpScreen = {},
+//            moveToFindAccountScreen = {},
+//            tmp = true
+//        )
     }
 }

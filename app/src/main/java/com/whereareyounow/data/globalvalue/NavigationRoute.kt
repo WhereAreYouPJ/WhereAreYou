@@ -35,6 +35,9 @@ const val ROUTE_MY_INFO = "ROUTE_MY_INFO"
 
 sealed class ROUTE {
     @Serializable
+    data object Developer
+
+    @Serializable
     data object Splash
 
     @Serializable
