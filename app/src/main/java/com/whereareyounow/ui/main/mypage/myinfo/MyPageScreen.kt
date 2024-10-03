@@ -1,5 +1,10 @@
 package com.whereareyounow.ui.main.mypage.myinfo
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,11 +46,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.friend.GrayLine
@@ -55,6 +66,8 @@ import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun MyPageScreen(
@@ -69,9 +82,12 @@ fun MyPageScreen(
     moveToBye: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+
     val name = viewModel.name.collectAsState().value
     val email = viewModel.email.collectAsState().value
     val profileImageUri = viewModel.profileImageUri.collectAsState().value
+    val testst = AuthData.memberSeq
+
     MyPageScreen(
         name = name!!,
         email = email!!,
@@ -89,14 +105,15 @@ fun MyPageScreen(
         moveToAsk = moveToAsk,
         moveToBye = moveToBye
     )
+
 }
 
 @Composable
-fun MyPageScreen(
+private fun MyPageScreen(
     name: String,
     email: String,
     profileImageUri: String?,
-    getMyInfo: () -> Unit,
+    getMyInfo: (memberSeq: Int) -> Unit,
     signOut: (() -> Unit) -> Unit,
     deleteCalendar: () -> Unit,
     withdrawAccount: (() -> Unit) -> Unit,
@@ -114,7 +131,7 @@ fun MyPageScreen(
 
 
     LaunchedEffect(Unit) {
-        getMyInfo()
+        getMyInfo(AuthData.memberSeq)
     }
 
     val density = LocalDensity.current.density
@@ -185,7 +202,7 @@ fun MyPageScreen(
                 )
                 Gap(6)
                 Text(
-                    text = "123456",
+                    text = AuthData.memberCode,
                     style = medium16pt,
                     color = getColor().brandColor
                 )
@@ -234,11 +251,14 @@ fun MyPageScreen(
                 }
 //239
                 Spacer(Modifier.height(6.dp))
-
+                fun encodeUrl(url: String): String {
+                    return URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
+                }
                 if (isProfileClicked.value) {
                     Column(
                         modifier = Modifier.height(37.dp)
                     ) {
+                        // 준성이 이미지
                         Row(
                             modifier = Modifier
                                 .padding(start = 92.dp, end = 92.dp)
@@ -452,6 +472,8 @@ fun MyPageScreen(
         }
     }
 }
+
+
 
 @Composable
 fun MyPageWarningDialog(

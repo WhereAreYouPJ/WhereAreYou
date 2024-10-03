@@ -7,5 +7,5 @@ import com.whereareyounow.domain.util.NetworkResult
 interface FeedRepository {
     suspend fun getFeedBookMark(
         getFeedBookMarkRequest : GetFeedBookMarkRequest
-    ) : NetworkResult<List<FeedBookMarkResponse>>
+    ) : NetworkResult<FeedBookMarkResponse>
 }

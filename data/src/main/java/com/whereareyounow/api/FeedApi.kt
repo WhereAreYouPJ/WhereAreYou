@@ -1,5 +1,6 @@
 package com.whereareyounow.api
 
+import com.whereareyounow.domain.entity.feed.FeedBookMarkResponse
 import com.whereareyounow.domain.entity.feed.FeedListData
 import com.whereareyounow.domain.entity.feed.FeedSeq
 import com.whereareyounow.domain.request.feed.ModifyFeedRequest
@@ -19,10 +20,10 @@ interface FeedApi {
     ): Response<ResponseWrapper<FeedSeq>>
 
     // 피드 리스트 조회
-    @GET("feed")
+    @GET("book-mark")
     suspend fun getFeedList(
         @Query("memberSeq") memberSeq: Int,
         @Query("page") page: Int,
         @Query("size") size: Int
-    ): Response<ResponseWrapper<FeedListData>>
+    ): Response<ResponseWrapper<FeedBookMarkResponse>>
 }

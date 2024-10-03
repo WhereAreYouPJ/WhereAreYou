@@ -214,7 +214,8 @@ fun OneTextOneIconTobBar(
         Text(
             text = title,
             style = medium18pt,
-//                modifier = Modifier.offset(y = 4f.dp)
+            color = Color(0xFF000000),
+            modifier = Modifier.offset(y = -2.dp)
         )
     }
 }

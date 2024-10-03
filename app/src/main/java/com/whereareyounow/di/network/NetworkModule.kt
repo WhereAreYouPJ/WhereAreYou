@@ -3,6 +3,7 @@ package com.whereareyounow.di.network
 import com.google.gson.GsonBuilder
 import com.whereareyounow.BuildConfig
 import com.whereareyounow.api.FCMApi
+import com.whereareyounow.api.FeedApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.MemberApi
@@ -124,5 +125,12 @@ object NetworkModule {
     @Provides
     fun provideFCMApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FCMApi {
         return retrofit.create(FCMApi::class.java)
+    }
+
+    // FCM Api
+    @Singleton
+    @Provides
+    fun provideFeedApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FeedApi {
+        return retrofit.create(FeedApi::class.java)
     }
 }

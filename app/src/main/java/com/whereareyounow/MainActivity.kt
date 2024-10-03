@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
@@ -95,5 +96,10 @@ class MainActivity : ComponentActivity() {
                 "dailyScheduleViewHeight: $DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT ${DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT / density}"
         )
     }
+
+
+
+
+
 }
 

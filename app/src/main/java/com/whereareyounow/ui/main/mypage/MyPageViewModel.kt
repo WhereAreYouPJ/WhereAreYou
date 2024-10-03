@@ -4,9 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.cached.AuthData
+import com.whereareyounow.domain.request.feed.GetFeedBookMarkRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
+import com.whereareyounow.domain.usecase.feed.GetFeedBookMarkUseCase
 import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
 import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
@@ -18,6 +21,7 @@ import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.ui.main.mypage.mapper.toModel
+import com.whereareyounow.ui.main.mypage.model.FeedBookMarkResponseModel
 import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +49,8 @@ class MyPageViewModel @Inject constructor(
     private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
-    private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase
+    private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase,
+    private val getFeedBookMarkUseCase : GetFeedBookMarkUseCase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -81,10 +86,21 @@ class MyPageViewModel @Inject constructor(
     val locationFaboriteList : StateFlow<List<LocationFavoriteInfoModel?>> = _locationFaboriteList
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+
+
+
+    private val _feedBookMarkState = MutableStateFlow<FeedBookMarkResponseModel?>(null)
+    val feedBookMarkState: StateFlow<FeedBookMarkResponseModel?> = _feedBookMarkState
+
+
     init {
-        getMyInfo()
+        getMyInfo(AuthData.memberSeq)
         getLocationFaborite(
-            1
+            memberSeq = AuthData.memberSeq
+        )
+        getFeedBookMark(
+            memberSeq = AuthData.memberSeq
         )
 //        getLocationFaborite()
     }
@@ -95,6 +111,44 @@ class MyPageViewModel @Inject constructor(
 
     private val _announcementList = MutableStateFlow<List<Announcement>>(emptyList())
     val announcementList: StateFlow<List<Announcement>> = _announcementList.asStateFlow()
+
+    fun getFeedBookMark(memberSeq: Int) {
+
+
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            getFeedBookMarkUseCase(GetFeedBookMarkRequest(
+//                memberSeq = AuthData.memberSeq,
+                memberSeq = 1,
+                page = 0,
+                size = 10
+            )).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    Log.d("Sflsjfleifnslf" , data.toString())
+
+                    data?.let {
+                        _feedBookMarkState.value = it.toModel()
+                    }
+                }.onError { code, message ->
+                    Log.d("Sflsjfleifnslf" , code.toString())
+
+                }.onException {
+                    Log.d("Sflsjfleifnslf" , it.message ?: "Unknown exception")
+
+                }
+            }
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "getFeedBookMarkUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(this)
+        }
+
+    }
+
 
     fun signOut(
         moveToStartScreen: () -> Unit,
@@ -107,7 +161,7 @@ class MyPageViewModel @Inject constructor(
 //        }
     }
 
-    fun getMyInfo() {
+    fun getMyInfo(memberSeq: Int) {
 
         viewModelScope.launch(Dispatchers.IO) {
 //            val accessToken = getAccessTokenUseCase().first()
@@ -115,7 +169,7 @@ class MyPageViewModel @Inject constructor(
 //            val response = getMemberDetailsUseCase(accessToken, memberId)
 //            LogUtil.printNetworkLog("memberId = $memberId", response, "내 정보 가져오기")
 
-            getUserInfoByMemberSeqUseCase(GetUserInfoByMemberSeqRequest(memberSeq = 1)).collect {
+            getUserInfoByMemberSeqUseCase(GetUserInfoByMemberSeqRequest(memberSeq = memberSeq)).collect {
 //
 //
                 when (it) {

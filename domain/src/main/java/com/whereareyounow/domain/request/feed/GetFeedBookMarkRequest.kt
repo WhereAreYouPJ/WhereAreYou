@@ -1,7 +1,12 @@
 package com.whereareyounow.domain.request.feed
 
-class GetFeedBookMarkRequest(
-    memberSeq : Int,
-    page : Int,
-    size : Int
+import com.google.gson.annotations.SerializedName
+
+data class GetFeedBookMarkRequest(
+    @SerializedName("memberSeq")
+    val memberSeq : Int,
+    @SerializedName("page")
+    val page : Int,
+    @SerializedName("size")
+    val size : Int
 )
