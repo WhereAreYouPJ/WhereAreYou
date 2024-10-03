@@ -44,6 +44,7 @@ import com.whereareyounow.ui.main.mypage.location.LocationFaboriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
+import com.whereareyounow.ui.navigation.addFeedScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
@@ -218,6 +219,9 @@ fun MainNavigation(
                 moveToBackScreen = { navController.popBackStack() }
             )
         }
+
+        // 새 피드 작성 화면
+        addFeedScreenRoute(navController)
 
         // 회원 정보 수정 화면
         composable(route = ROUTE_MODIFY_INFO) {

@@ -9,8 +9,10 @@ import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
+import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetDailyScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
+import com.whereareyounow.domain.usecase.schedule.DeleteScheduleByCreatorUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDailyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.util.LogUtil
@@ -40,7 +42,7 @@ class CalendarViewModel @Inject constructor(
     private val application: Application,
     private val getMonthlyScheduleUseCase: GetMonthlyScheduleUseCase,
     private val getDailyScheduleUseCase: GetDailyScheduleUseCase,
-//    private val getDailyBriefScheduleUseCase: GetDailyBriefScheduleUseCase,
+    private val deleteScheduleByCreatorUseCase: DeleteScheduleByCreatorUseCase,
 //    private val getAccessTokenUseCase: GetAccessTokenUseCase,
 //    private val getMemberIdUseCase: GetMemberIdUseCase
 ) : AndroidViewModel(application) {
@@ -55,17 +57,18 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    fun updateMonth(month: Int) {
-        if (_uiState.value.selectedMonth != month) {
+    fun updateMonth(year: Int, month: Int) {
+        if (_uiState.value.selectedYear != year || _uiState.value.selectedMonth != month) {
             _uiState.update {
                 it.copy(selectedMonth = month)
             }
             updateCurrentMonthCalendarInfo()
+            getDailySchedule()
         }
     }
 
-    fun updateDate(date: Int) {
-        if (_uiState.value.selectedDate != date) {
+    fun updateDate(year: Int, month: Int, date: Int) {
+        if (_uiState.value.selectedYear != year || _uiState.value.selectedMonth != month || _uiState.value.selectedDate != date) {
             _uiState.update {
                 it.copy(selectedDate = date)
             }
@@ -211,17 +214,21 @@ class CalendarViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    // 처음 화면에 보여지는 날짜에 대한 달력 정보를 모두 설정한다.
-    private fun initCalendarInfo() {
-        val todayInfo = getTodayInfo()
-        _uiState.update {
-            it.copy(
-                selectedYear = todayInfo[0],
-                selectedMonth = todayInfo[1],
-                selectedDate = todayInfo[2],
-                selectedDayOfWeek = todayInfo[3]
-            )
-        }
+    fun deleteSchedule(scheduleSeq: Int) {
+        val requestData = DeleteScheduleRequest(
+            scheduleSeq = scheduleSeq,
+            memberSeq = AuthData.memberSeq
+        )
+        deleteScheduleByCreatorUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    getDailySchedule()
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
     }
 
     init {

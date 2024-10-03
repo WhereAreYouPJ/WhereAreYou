@@ -109,6 +109,9 @@ sealed class ROUTE {
     )
 
     @Serializable
+    data object AddFeed
+
+    @Serializable
     data object Announcement
     @Serializable
     data object Ask

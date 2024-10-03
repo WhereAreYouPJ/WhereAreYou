@@ -48,6 +48,7 @@ import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.ui.component.CustomSurface
+import com.whereareyounow.ui.component.ScrollableContent
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
@@ -93,34 +94,12 @@ private fun DetailScheduleScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
+            ScrollableContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 15.dp, end = 15.dp, top = 40.dp)
                     .imePadding(),
-                verticalArrangement = remember {
-                    object : Arrangement.Vertical {
-                        override fun Density.arrange(
-                            totalSize: Int,
-                            sizes: IntArray,
-                            outPositions: IntArray
-                        ) {
-                            var currentOffset = 0
-                            Log.e("Arrangement.Vertical.Start", "${totalSize.toDp()}\n${sizes.map { it.toDp() }}\n${outPositions.map { it.toDp() }}")
-                            sizes.forEachIndexed { index, size ->
-                                if (index == sizes.lastIndex) {
-                                    outPositions[index] = totalSize - size
-                                } else {
-                                    outPositions[index] = currentOffset
-                                    currentOffset += size
-                                }
-                            }
-                            Log.e("Arrangement.Vertical.End", "${totalSize.toDp()}\n${sizes.map { it.toDp() }}\n${outPositions.map { it.toDp() }}")
-                        }
-                    }
-                }
-            ) {
-                item {
+                content = {
                     Column(
                         modifier = Modifier
                             .padding(top = 40.dp)
@@ -512,12 +491,11 @@ private fun DetailScheduleScreen(
                             )
                         }
                     }
-                }
-
-                item {
+                },
+                lastContent = {
                     Spacer(Modifier.height((BOTTOM_NAVIGATION_BAR_HEIGHT + 20).dp))
                 }
-            }
+            )
 
             Row(
                     modifier = Modifier

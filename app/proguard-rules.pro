@@ -71,3 +71,11 @@
 
 # Keep the generic signature of retrofit's types and the generic signatures of the classes of API messages
 -keep class com.whereareyounow.domain.entity.** { *; }
+
+-keep class com.kakao.sdk.**.model.* { <fields>; }
+-keep class * extends com.google.gson.TypeAdapter
+
+# https://github.com/square/okhttp/pull/6792
+-dontwarn org.bouncycastle.jsse.**
+-dontwarn org.conscrypt.*
+-dontwarn org.openjsse.**

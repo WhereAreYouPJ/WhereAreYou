@@ -56,6 +56,7 @@ fun FriendScreen(
     paddingValues: PaddingValues,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToAddFeedScreen: () -> Unit,
     moveToDetailProfileScreen: (String, String) -> Unit,
     viewModel: FriendViewModel = hiltViewModel()
 ) {
@@ -65,6 +66,7 @@ fun FriendScreen(
         friendsList = friendsList,
         moveToAddFriendScreen = moveToAddFriendScreen,
         moveToAddGroupScreen = moveToAddGroupScreen,
+        moveToAddFeedScreen = moveToAddFeedScreen,
         moveToDetailProfileScreen = moveToDetailProfileScreen
     )
 }
@@ -75,6 +77,7 @@ private fun FriendScreen(
     friendsList: List<Friend>,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToAddFeedScreen: () -> Unit,
     moveToDetailProfileScreen: (String, String) -> Unit
 ) {
     val isFriendPage = remember { mutableStateOf(false) }
@@ -85,9 +88,9 @@ private fun FriendScreen(
     val upProfileBoolean = remember { mutableStateOf(false) }
     FriendScreenTopBar(
         isFriendPage = isFriendPage,
-
         moveToAddFriendScreen = moveToAddFriendScreen,
-        moveToAddGroupScreen = moveToAddGroupScreen
+        moveToAddGroupScreen = moveToAddGroupScreen,
+        moveToAddFeedScreen = moveToAddFeedScreen
     )
     if (isFriendPage.value) {
         FriendContent(
@@ -229,6 +232,7 @@ fun FriendScreenTopBar(
     isFriendPage: MutableState<Boolean>,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToAddFeedScreen: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -323,9 +327,11 @@ fun FriendScreenTopBar(
 //        })
         if (popupState.isVisible) {
             AddIconPopUp(
+                isFriendPage = isFriendPage.value,
                 popupState,
                 moveToAddFriendScreen,
-                moveToAddGroupScreen
+                moveToAddGroupScreen,
+                moveToAddFeedScreen = moveToAddFeedScreen
             )
         }
     }
@@ -388,9 +394,11 @@ fun MyRow() {
 // 더하기 누르면 "친구추가" , "친구관리" 양자택일 팝업
 @Composable
 fun AddIconPopUp(
+    isFriendPage: Boolean,
     popupState: PopupState,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToAddFeedScreen: () -> Unit,
 ) {
     val density = LocalDensity.current.density
     Box(
@@ -407,7 +415,7 @@ fun AddIconPopUp(
                 Box(
                     modifier = Modifier
                         .width(160.dp)
-                        .height(68.dp)
+                        .height((if (isFriendPage) 68 else 34).dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(color = Color(0xFF7262A8))
                 ) {
@@ -416,42 +424,60 @@ fun AddIconPopUp(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(
-                                    start = 14.dp,
-                                    top = 8.dp,
-                                    bottom = 6.dp
-                                )
-                                .clickable {
-                                    popupState.isVisible = false
-                                    moveToAddFriendScreen()
-                                },
-                            text = "친구 추가",
-                            style = medium14pt,
-                            color = Color.White
-                        )
-                        Box(
-                            modifier = Modifier
-                                .background(Color.Gray)
-                                .height(1.dp)
-                                .fillMaxWidth()
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(
-                                    start = 14.dp,
-                                    bottom = 10.dp,
-                                    top = 4.dp
-                                )
-                                .clickable {
-                                    popupState.isVisible = false
-                                    moveToAddGroupScreen()
-                                },
-                            text = "친구 관리",
-                            style = medium14pt,
-                            color = Color.White
-                        )
+                        if (isFriendPage) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(
+                                        start = 14.dp,
+                                        top = 8.dp,
+                                        bottom = 6.dp
+                                    )
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        moveToAddFriendScreen()
+                                    },
+                                text = "친구 추가",
+                                style = medium14pt,
+                                color = Color.White
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .background(Color.Gray)
+                                    .height(1.dp)
+                                    .fillMaxWidth()
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(
+                                        start = 14.dp,
+                                        bottom = 10.dp,
+                                        top = 4.dp
+                                    )
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        moveToAddGroupScreen()
+                                    },
+                                text = "친구 관리",
+                                style = medium14pt,
+                                color = Color.White
+                            )
+                        } else {
+                            Text(
+                                modifier = Modifier
+                                    .padding(
+                                        start = 14.dp,
+                                        top = 8.dp,
+                                        bottom = 6.dp
+                                    )
+                                    .clickable {
+                                        popupState.isVisible = false
+                                        moveToAddFeedScreen()
+                                    },
+                                text = "새 피드 작성",
+                                style = medium14pt,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }

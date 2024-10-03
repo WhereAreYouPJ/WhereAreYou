@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.signin
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -32,11 +34,15 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.user.UserApiClient
 import com.whereareyounow.R
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.OnMyWayTheme
@@ -68,6 +74,21 @@ private fun SignInMethodSelectionScreen(
     moveToDeveloperScreen: () -> Unit,
     tmp: Boolean
 ) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        UserApiClient.instance.me { user, error ->
+            if (user != null) {
+                LogUtil.e(
+                    "KakaoGetUserInfoSuccess", "회원번호: ${user.id}" +
+                            "\n이메일: ${user.kakaoAccount?.email}" +
+                            "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                            "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}"
+                )
+            } else {
+                LogUtil.e("", "로그인 안됨")
+            }
+        }
+    }
     var hiddenCnt by remember { mutableIntStateOf(0) }
     CustomSurface {
         Column(
@@ -101,7 +122,96 @@ private fun SignInMethodSelectionScreen(
 
             Spacer(Modifier.height(40.dp))
 
-            KakaoLoginButton()
+            KakaoLoginButton(
+                onClick = {
+                    LogUtil.e("keyHash", "${KakaoSdk.keyHash}")
+                    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+                        // 카카오톡 실행이 가능할 때
+                        UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+                            if (error != null) {
+                                LogUtil.e("KakaoLoginError", "${error}")
+                                // 카톡은 깔려있는데 에러가 날 경우
+                                UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+                                    if (error != null) {
+                                        Toast.makeText(context, "로그인 실패", Toast.LENGTH_SHORT).show()
+                                    } else if (token != null) {
+                                        UserApiClient.instance.me { user, error ->
+                                            if (error != null) {
+                                                LogUtil.e("KakaoGetUserInfoError", "$error")
+                                            }
+                                            else if (user != null) {
+                                                LogUtil.e("KakaoGetUserInfoSuccess", "회원번호: ${user.id}" +
+                                                        "\n이메일: ${user.kakaoAccount?.email}" +
+                                                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                                        "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+
+                                                if (user.id != null) {
+                                                    signIn(
+                                                        "KAKAO",
+                                                        user.id.toString(),
+                                                        moveToMainScreen,
+                                                        { moveToSignUpScreen("KAKAO", user.kakaoAccount?.email!!, user.id.toString()) }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (token != null) {
+                                LogUtil.e("KakaoLoginSuccess", "accessToken: ${token.accessToken}\n" +
+                                        "refreshToken: ${token.refreshToken}")
+                                UserApiClient.instance.me { user, error ->
+                                    if (error != null) {
+                                        LogUtil.e("KakaoGetUserInfoError", "$error")
+                                    }
+                                    else if (user != null) {
+                                        LogUtil.e("KakaoGetUserInfoSuccess", "회원번호: ${user.id}" +
+                                                "\n이메일: ${user.kakaoAccount?.email}" +
+                                                "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                                "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+
+                                        if (user.id != null) {
+                                            signIn(
+                                                "KAKAO",
+                                                user.id.toString(),
+                                                moveToMainScreen,
+                                                { moveToSignUpScreen("KAKAO", user.kakaoAccount?.email!!, user.id.toString()) }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+                            if (error != null) {
+                                Toast.makeText(context, "로그인 실패", Toast.LENGTH_SHORT).show()
+                            } else if (token != null) {
+                                UserApiClient.instance.me { user, error ->
+                                    if (error != null) {
+                                        LogUtil.e("KakaoGetUserInfoError", "$error")
+                                    }
+                                    else if (user != null) {
+                                        LogUtil.e("KakaoGetUserInfoSuccess", "회원번호: ${user.id}" +
+                                                "\n이메일: ${user.kakaoAccount?.email}" +
+                                                "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                                "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+
+                                        if (user.id != null) {
+                                            signIn(
+                                                "KAKAO",
+                                                user.id.toString(),
+                                                moveToMainScreen,
+                                                { moveToSignUpScreen("KAKAO", user.kakaoAccount?.email!!, user.id.toString()) }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            )
 
             Spacer(Modifier.height(10.dp))
 
@@ -126,7 +236,9 @@ private fun SignInMethodSelectionScreen(
 }
 
 @Composable
-private fun KakaoLoginButton() {
+private fun KakaoLoginButton(
+    onClick: () -> Unit,
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,6 +247,7 @@ private fun KakaoLoginButton() {
                 color = Color(0xFFF9E200),
                 shape = RoundedCornerShape(6.dp)
             )
+            .clickableNoEffect { onClick() }
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),

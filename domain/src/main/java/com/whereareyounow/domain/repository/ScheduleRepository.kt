@@ -4,6 +4,7 @@ import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.entity.schedule.ScheduleDDay
+import com.whereareyounow.domain.entity.schedule.ScheduleListData
 import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
@@ -42,7 +43,7 @@ interface ScheduleRepository {
 
     suspend fun getScheduleList(
         data: GetScheduleListRequest
-    ): NetworkResult<List<ScheduleListItem>>
+    ): NetworkResult<ScheduleListData>
 
     suspend fun getScheduleDDay(
         data: GetScheduleDDayRequest
