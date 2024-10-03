@@ -1,10 +1,10 @@
 package com.whereareyounow.ui.main.mypage.mapper
 
-import com.whereareyounow.domain.entity.feed.BookMarkImageInfo
-import com.whereareyounow.domain.entity.feed.Content
-import com.whereareyounow.domain.entity.feed.FeedBookMarkResponse
-import com.whereareyounow.domain.entity.feed.Pageable
-import com.whereareyounow.domain.entity.feed.Sort
+import com.whereareyounow.domain.entity.feedbookmark.BookMarkImageInfo
+import com.whereareyounow.domain.entity.feedbookmark.Content
+import com.whereareyounow.domain.entity.feedbookmark.GetFeedBookMarkResponse
+import com.whereareyounow.domain.entity.feedbookmark.Pageable
+import com.whereareyounow.domain.entity.feedbookmark.Sort
 import com.whereareyounow.domain.entity.location.LocationFavoriteInfo
 import com.whereareyounow.domain.entity.member.DetailUserInfo
 import com.whereareyounow.domain.entity.member.UserInfo
@@ -43,7 +43,7 @@ fun UserInfo.toModel() : OtherUserInfoModel {
 }
 
 // feef book-mark
-fun FeedBookMarkResponse.toModel(): FeedBookMarkResponseModel {
+fun GetFeedBookMarkResponse.toModel(): FeedBookMarkResponseModel {
     return FeedBookMarkResponseModel(
         totalElements = this.totalElements,
         totalPages = this.totalPages,

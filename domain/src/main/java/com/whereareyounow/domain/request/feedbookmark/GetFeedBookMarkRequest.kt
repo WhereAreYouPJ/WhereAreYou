@@ -1,4 +1,4 @@
-package com.whereareyounow.domain.request.feed
+package com.whereareyounow.domain.request.feedbookmark
 
 import com.google.gson.annotations.SerializedName
 
