@@ -5,6 +5,7 @@ import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.usecase.fcm.DeleteFCMTokenUseCase
 import com.whereareyounow.domain.usecase.fcm.UpdateFCMTokenUseCase
 import com.whereareyounow.domain.usecase.feed.GetFeedBookMarkUseCase
+import com.whereareyounow.domain.usecase.feed.CreateFeedUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,4 +22,9 @@ object FeedUseCaseModule {
         return GetFeedBookMarkUseCase(repository)
     }
 
+    fun provideCreateFeedUseCase(
+        repository: FeedRepository
+    ): CreateFeedUseCase {
+        return CreateFeedUseCase(repository)
+    }
 }

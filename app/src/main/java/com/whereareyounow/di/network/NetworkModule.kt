@@ -127,7 +127,7 @@ object NetworkModule {
         return retrofit.create(FCMApi::class.java)
     }
 
-    // FCM Api
+    // Feed Api
     @Singleton
     @Provides
     fun provideFeedApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FeedApi {

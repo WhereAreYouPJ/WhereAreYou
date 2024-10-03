@@ -86,6 +86,13 @@ object RepositoryModule {
         return FCMRepositoryImpl(fcmApi)
     }
 
+    @Provides
+    fun provideFeedRepository(
+        feedApi: FeedApi
+    ): FeedRepository {
+        return FeedRepositoryImpl(feedApi)
+    }
+
     @Singleton
     @Provides
     fun provideRecentSearchDataStoreRepository(

@@ -8,7 +8,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,6 +70,7 @@ import com.whereareyounow.ui.component.ScrollablePicker
 import com.whereareyounow.ui.main.schedule.scheduleedit.component.ScheduleEditScreenScheduleTitle
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.pretendard
@@ -177,7 +177,7 @@ fun ScheduleEditScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                modifier = Modifier.padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp),
+                                modifier = Modifier.padding(start = 6.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
                                 text = "하루 종일",
                                 color = Color(0xFF222222),
                                 style = medium16pt
@@ -193,7 +193,33 @@ fun ScheduleEditScreen(
                             Spacer(Modifier.width(10.dp))
                         }
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(6.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 6.dp)
+                                .animateContentSize(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (uiState.isAllDay) {
+                                Image(
+                                    modifier = Modifier.size(12.dp),
+                                    painter = painterResource(R.drawable.ic_warning_red),
+                                    contentDescription = null
+                                )
+
+                                Spacer(Modifier.width(4.dp))
+
+                                Text(
+                                    text = "위치 확인하기 기능이 제공되지 않습니다.",
+                                    color = getColor().warning,
+                                    style = medium12pt
+                                )
+
+                                Spacer(Modifier.height(12.dp))
+                            }
+                        }
 
                         Row {
                             // 시작 날짜
@@ -245,16 +271,24 @@ fun ScheduleEditScreen(
                                                 shape = RoundedCornerShape(50)
                                             )
                                             .clickableNoEffect {
-                                                ampmScrollableState.intValue = if (uiState.startHour >= 12) 1 else 0
-                                                hourScrollableState.intValue = if (uiState.startHour >= 13) uiState.startHour - 12 else uiState.startHour
-                                                if (hourScrollableState.intValue == 0) hourScrollableState.intValue = 12
+                                                ampmScrollableState.intValue =
+                                                    if (uiState.startHour >= 12) 1 else 0
+                                                hourScrollableState.intValue =
+                                                    if (uiState.startHour >= 13) uiState.startHour - 12 else uiState.startHour
+                                                if (hourScrollableState.intValue == 0) hourScrollableState.intValue =
+                                                    12
                                                 minuteScrollableState.intValue = uiState.startMinute
                                                 isTimePickerShowing = true
                                                 isStartDateSelected = true
                                             }
-                                            .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp),
+                                            .padding(
+                                                start = 8.dp,
+                                                top = 4.dp,
+                                                end = 8.dp,
+                                                bottom = 4.dp
+                                            ),
                                         text = if (uiState.startHour >= 12) "오후 ${if (uiState.startHour == 12) 12 else (uiState.startHour - 12)}:${String.format("%02d", uiState.startMinute)}"
-                                            else "오전 ${if (uiState.startHour == 0) 12 else uiState.startHour}:${String.format("%02d", uiState.startMinute)}",
+                                        else "오전 ${if (uiState.startHour == 0) 12 else uiState.startHour}:${String.format("%02d", uiState.startMinute)}",
                                         color = if (isTimePickerShowing && isStartDateSelected) getColor().brandText else Color(0xFF444444),
                                         style = medium16pt
                                     )
@@ -317,14 +351,22 @@ fun ScheduleEditScreen(
                                                 shape = RoundedCornerShape(50)
                                             )
                                             .clickableNoEffect {
-                                                ampmScrollableState.intValue = if (uiState.endHour >= 12) 1 else 0
-                                                hourScrollableState.intValue = if (uiState.endHour >= 13) uiState.endHour - 12 else uiState.endHour
-                                                if (hourScrollableState.intValue == 0) hourScrollableState.intValue = 12
+                                                ampmScrollableState.intValue =
+                                                    if (uiState.endHour >= 12) 1 else 0
+                                                hourScrollableState.intValue =
+                                                    if (uiState.endHour >= 13) uiState.endHour - 12 else uiState.endHour
+                                                if (hourScrollableState.intValue == 0) hourScrollableState.intValue =
+                                                    12
                                                 minuteScrollableState.intValue = uiState.endMinute
                                                 isTimePickerShowing = true
                                                 isStartDateSelected = false
                                             }
-                                            .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp),
+                                            .padding(
+                                                start = 8.dp,
+                                                top = 4.dp,
+                                                end = 8.dp,
+                                                bottom = 4.dp
+                                            ),
                                         text = if (uiState.endHour >= 12) "오후 ${if (uiState.endHour == 12) 12 else (uiState.endHour - 12)}:${String.format("%02d", uiState.endMinute)}"
                                         else "오전 ${if (uiState.endHour == 0) 12 else uiState.endHour}:${String.format("%02d", uiState.endMinute)}",
                                         color = if (isTimePickerShowing && !isStartDateSelected) getColor().brandText else Color(0xFF444444),
@@ -510,8 +552,7 @@ fun ScheduleEditScreen(
                                                         ),
                                                         shape = CircleShape
                                                     )
-                                            }
-                                            else Modifier
+                                            } else Modifier
                                         )
                                         .clickableNoEffect { updateColor(item) },
                                     contentAlignment = Alignment.Center
@@ -794,8 +835,10 @@ fun ScheduleEditScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clickableNoEffect {
-                                        var hour = if (ampmScrollableState.intValue == 0) hourScrollableState.intValue else (hourScrollableState.intValue + 12)
-                                        if (ampmScrollableState.intValue == 0 && hourScrollableState.intValue == 12) hour = 0
+                                        var hour =
+                                            if (ampmScrollableState.intValue == 0) hourScrollableState.intValue else (hourScrollableState.intValue + 12)
+                                        if (ampmScrollableState.intValue == 0 && hourScrollableState.intValue == 12) hour =
+                                            0
                                         val minute = minuteScrollableState.intValue
                                         if (isStartDateSelected) {
                                             updateStartTime(hour, minute)

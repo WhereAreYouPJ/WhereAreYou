@@ -8,7 +8,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.data.globalvalue.ROUTE_SEARCH_LOCATION
 import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditViewModel
 

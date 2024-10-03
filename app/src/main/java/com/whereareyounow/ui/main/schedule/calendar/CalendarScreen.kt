@@ -88,6 +88,7 @@ fun CalendarScreen(
         updateSelectedYear = viewModel::updateYear,
         updateSelectedMonth = viewModel::updateMonth,
         updateSelectedDate = viewModel::updateDate,
+        deleteSchedule = viewModel::deleteSchedule,
         moveToAddScheduleScreen = moveToAddScheduleScreen,
         moveToDetailScheduleScreen = moveToDetailScheduleScreen
     )
@@ -99,8 +100,9 @@ fun CalendarScreen(
     uiState: CalendarScreenUIState,
     sideEffectFlow: MutableSharedFlow<CalendarScreenSideEffect>,
     updateSelectedYear: (Int) -> Unit,
-    updateSelectedMonth: (Int) -> Unit,
-    updateSelectedDate: (Int) -> Unit,
+    updateSelectedMonth: (Int, Int) -> Unit,
+    updateSelectedDate: (Int, Int, Int) -> Unit,
+    deleteSchedule: (Int) -> Unit,
     moveToAddScheduleScreen: (Int, Int, Int) -> Unit,
     moveToDetailScheduleScreen: (Int) -> Unit,
 ) {
@@ -120,6 +122,9 @@ fun CalendarScreen(
     val today = remember { LocalDate.now() }
     val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
     val density = LocalDensity.current.density
+    val isDeleteWarningDialogShowing = remember { mutableStateOf(false) }
+    val isGroupSelected = remember { mutableStateOf(false) }
+    val deleteTargetScheduleSeq = remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
 
@@ -200,7 +205,11 @@ fun CalendarScreen(
                                         .background(color = Color(0xFF7262A8))
                                         .clickableNoEffect {
                                             popupState.isVisible = false
-                                            moveToAddScheduleScreen(uiState.selectedYear, uiState.selectedMonth, uiState.selectedDate)
+                                            moveToAddScheduleScreen(
+                                                uiState.selectedYear,
+                                                uiState.selectedMonth,
+                                                uiState.selectedDate
+                                            )
                                         }
                                 ) {
                                     Column(
@@ -286,8 +295,8 @@ fun CalendarScreen(
                                 scheduleList = uiState.selectedMonthCalendarInfoMap[uiState.dateList[week * 7 + idx].toString()]!!.toList(),
                                 onClick = {
                                     updateSelectedYear(uiState.dateList[week * 7 + idx].year)
-                                    updateSelectedMonth(uiState.dateList[week * 7 + idx].monthValue)
-                                    updateSelectedDate(uiState.dateList[week * 7 + idx].dayOfMonth)
+                                    updateSelectedMonth(uiState.dateList[week * 7 + idx].year, uiState.dateList[week * 7 + idx].monthValue)
+                                    updateSelectedDate(uiState.dateList[week * 7 + idx].year, uiState.dateList[week * 7 + idx].monthValue, uiState.dateList[week * 7 + idx].dayOfMonth)
                                     coroutineScope.launch {
                                         isDimBackgroundShowing.value = true
                                         dailyScheduleAnchoredDraggableState.animateTo(AnchoredDraggableContentState.Open)
@@ -329,7 +338,7 @@ fun CalendarScreen(
                                     .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                                     .fillMaxWidth()
                                     .height(315.dp)
-                                    .clickableNoEffect { }
+                                    .clickableNoEffect {}
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(Color.White),
                             ) {
@@ -391,8 +400,8 @@ fun CalendarScreen(
                                             .weight(1f)
                                             .clickableNoEffect {
                                                 updateSelectedYear(dialogSelectedYear.intValue)
-                                                updateSelectedMonth(dialogSelectedMonth.intValue)
-                                                updateSelectedDate(dialogSelectedDate.intValue)
+                                                updateSelectedMonth(dialogSelectedYear.intValue, dialogSelectedMonth.intValue)
+                                                updateSelectedDate(dialogSelectedYear.intValue, dialogSelectedMonth.intValue, dialogSelectedDate.intValue)
                                                 isMonthPickerShowing = false
                                             },
                                         text = "완료",
@@ -420,8 +429,108 @@ fun CalendarScreen(
             selectedMonth = uiState.selectedMonth,
             selectedDate = uiState.selectedDate,
             dailyScheduleList = uiState.selectedDateDailyScheduleInfoList,
+            isGroup = isGroupSelected,
+            isDeleteDialogShowing = isDeleteWarningDialogShowing,
+            deleteTargetScheduleSeq = deleteTargetScheduleSeq,
             moveToDetailScheduleScreen = moveToDetailScheduleScreen
         )
+
+        if (isDeleteWarningDialogShowing.value) {
+            Dialog(
+                onDismissRequest = { isDeleteWarningDialogShowing.value = false },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false
+                )
+            ) {
+                OnMyWayTheme {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickableNoEffect { isDeleteWarningDialogShowing.value = false },
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 40.dp, top = 210.dp, end = 40.dp)
+                                .fillMaxWidth()
+                                .clickableNoEffect {}
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFF333333))
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                            ) {
+                                Spacer(Modifier.height(20.dp))
+
+                                Text(
+                                    modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
+                                    text = "일정 삭제",
+                                    color = Color(0xFFFFFFFF),
+                                    fontFamily = notoSanskr,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp
+                                )
+
+                                Spacer(Modifier.height(8.dp))
+
+                                Text(
+                                    modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
+                                    text = if (isGroupSelected.value) "일정을 삭제합니다.\n" +
+                                            "연관된 피드가 있을 경우 같이 삭제됩니다." else "일정을 삭제합니다.\n" +
+                                            "일정을 만들었을 경우 함께한 인원의 일정과 연관된 피드가 같이 삭제되며,\n" +
+                                            "일정에 참여만 했을 경우 자신의 일정과\n" +
+                                            "연관된 피드만 삭제됩니다.",
+                                    color = Color(0xFFA0A0A0),
+                                    fontFamily = notoSanskr,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 14.sp
+                                )
+
+                                Spacer(Modifier.height(24.dp))
+
+                                Row(
+                                    modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                                ) {
+                                    Spacer(Modifier.weight(1f))
+
+                                    Text(
+                                        modifier = Modifier
+                                            .clickableNoEffect { isDeleteWarningDialogShowing.value = false }
+                                            .padding(6.dp, 4.dp, 6.dp, 4.dp),
+                                        text = "취소",
+                                        color = Color(0xFFFFFFFF),
+                                        fontFamily = notoSanskr,
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 14.sp
+                                    )
+
+                                    Spacer(Modifier.width(10.dp))
+
+                                    Text(
+                                        modifier = Modifier
+                                            .clickableNoEffect {
+                                                deleteSchedule(deleteTargetScheduleSeq.value)
+                                                isDeleteWarningDialogShowing.value = false
+                                            }
+                                            .padding(6.dp, 4.dp, 6.dp, 4.dp),
+                                        text = "삭제",
+                                        color = Color(0xFFD49EFF),
+                                        fontFamily = notoSanskr,
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 14.sp
+                                    )
+
+                                    Spacer(Modifier.width(10.dp))
+                                }
+
+                                Spacer(Modifier.height(20.dp))
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

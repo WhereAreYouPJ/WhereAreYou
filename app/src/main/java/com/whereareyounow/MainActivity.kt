@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,15 +17,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.kakao.sdk.common.util.Utility
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.DAILY_BRIEF_SCHEDULE_VIEW_HEIGHT
 import com.whereareyounow.data.globalvalue.SCREEN_HEIGHT_WITHOUT_SYSTEM_BAR
 import com.whereareyounow.data.globalvalue.SCREEN_WIDTH
-import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.SYSTEM_NAVIGATION_BAR_HEIGHT
+import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOTAL_SCREEN_HEIGHT
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.ui.MainNavigation
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -18,7 +18,7 @@ android {
         applicationId = "com.whereareyounow"
         minSdk = 26
         targetSdk = 34
-        versionCode = 52
+        versionCode = 53
         versionName = "1.0.0"
 
 //        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -192,7 +192,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.0-rc01")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-
+    // Kakao
+    implementation("com.kakao.sdk:v2-user:2.20.1") // 카카오 로그인 API 모듈
+    implementation("com.kakao.sdk:v2-share:2.20.1") // 카카오톡 공유 API 모듈
 
 }
 

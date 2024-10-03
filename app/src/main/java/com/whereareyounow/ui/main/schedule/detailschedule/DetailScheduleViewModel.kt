@@ -16,9 +16,11 @@ import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
 import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
+import com.whereareyounow.util.calendar.parseLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,9 +49,12 @@ class DetailScheduleViewModel @Inject constructor(
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
                     data?.let {
+                        LogUtil.e("startDate", parseLocalDateTime(data.startTime).toString())
                         _uiState.update {
                             it.copy(
-                                scheduleInfo = data
+                                scheduleInfo = data.copy(
+                                    memberInfos = data.memberInfos.filter { it.memberSeq != AuthData.memberSeq }
+                                )
                             )
                         }
                     }

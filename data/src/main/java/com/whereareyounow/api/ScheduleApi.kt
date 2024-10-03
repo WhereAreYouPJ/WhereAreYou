@@ -8,6 +8,7 @@ import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.entity.schedule.ScheduleDDay
+import com.whereareyounow.domain.entity.schedule.ScheduleListData
 import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.request.schedule.RefuseScheduleInvitationRequest
@@ -60,7 +61,7 @@ interface ScheduleApi {
         @Query("memberSeq") memberSeq: Int,
         @Query("page") page: Int,
         @Query("size") size: Int,
-    ): Response<ResponseWrapper<List<ScheduleListItem>>>
+    ): Response<ResponseWrapper<ScheduleListData>>
 
     // 일정 D-Day 조회 API
     @GET("schedule/dday")
@@ -91,5 +92,4 @@ interface ScheduleApi {
     suspend fun deleteScheduleByCreator(
         @Body body: DeleteScheduleRequest
     ): Response<ResponseWrapper<Unit>>
-
 }

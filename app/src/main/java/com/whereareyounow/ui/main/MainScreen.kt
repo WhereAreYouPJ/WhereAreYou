@@ -53,6 +53,7 @@ fun MainScreen(
     moveToDetailScheduleScreen: (Int) -> Unit,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToAddFeedScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
@@ -79,6 +80,7 @@ fun MainScreen(
         moveToDetailScheduleScreen = moveToDetailScheduleScreen,
         moveToAddFriendScreen = moveToAddFriendScreen,
         moveToAddGroupScreen = moveToAddGroupScreen,
+        moveToAddFeedScreen = moveToAddFeedScreen,
         moveToSignInScreen = moveToSignInScreen,
         moveToModifyInfoScreen = moveToModifyInfoScreen,
         moveToMyPageScreen = moveToMyPageScreen,
@@ -108,6 +110,7 @@ private fun MainScreen(
     moveToDetailScheduleScreen: (Int) -> Unit,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
+    moveToAddFeedScreen: () -> Unit,
     moveToSignInScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
@@ -160,6 +163,7 @@ private fun MainScreen(
                             paddingValues = it,
                             moveToAddFriendScreen = moveToAddFriendScreen,
                             moveToAddGroupScreen = moveToAddGroupScreen,
+                            moveToAddFeedScreen = moveToAddFeedScreen,
                             moveToDetailProfileScreen = moveToDetailProfileScreen
                         )
                     }

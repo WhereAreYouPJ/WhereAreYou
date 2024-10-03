@@ -52,11 +52,11 @@ fun SignInWithAccountScreen(
     moveToSignUpScreen: () -> Unit,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-    val signInScreenUIState = viewModel.uiState.collectAsState().value
-    val signUpScreenSideEffectFlow = viewModel.sideEffectFlow
+    val uiState = viewModel.uiState.collectAsState().value
+    val sideEffectFlow = viewModel.sideEffectFlow
     SignInWithAccountScreen(
-        signInScreenUIState = signInScreenUIState,
-        signInScreenSideEffectFlow = signUpScreenSideEffectFlow,
+        uiState = uiState,
+        sideEffectFlow = sideEffectFlow,
         updateInputUserId = viewModel::updateInputUserId,
         updateInputPassword = viewModel::updateInputPassword,
         signIn = viewModel::signIn,
@@ -71,8 +71,8 @@ fun SignInWithAccountScreen(
 
 @Composable
 private fun SignInWithAccountScreen(
-    signInScreenUIState: SignInScreenUIState,
-    signInScreenSideEffectFlow: SharedFlow<SignInScreenSideEffect>,
+    uiState: SignInScreenUIState,
+    sideEffectFlow: SharedFlow<SignInScreenSideEffect>,
     updateInputUserId: (String) -> Unit,
     updateInputPassword: (String) -> Unit,
     signIn: (() -> Unit) -> Unit,
@@ -86,7 +86,7 @@ private fun SignInWithAccountScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         updateIsSignInFailed(false)
-        signInScreenSideEffectFlow.collect { value ->
+        sideEffectFlow.collect { value ->
             when (value) {
                 is SignInScreenSideEffect.Toast -> {
                     withContext(Dispatchers.Main) { Toast.makeText(context, value.text, Toast.LENGTH_SHORT).show() }
@@ -116,7 +116,7 @@ private fun SignInWithAccountScreen(
                 // 아이디 입력 창
                 UserIdInputBox(
                     contentDescription = "Email TextField",
-                    inputText = signInScreenUIState.inputEmail,
+                    inputText = uiState.inputEmail,
                     onValueChange = updateInputUserId
                 )
 
@@ -125,12 +125,12 @@ private fun SignInWithAccountScreen(
                 // 비밀번호 입력 창
                 PasswordInputBox(
                     contentDescription = "Password TextField",
-                    inputText = signInScreenUIState.inputPassword,
+                    inputText = uiState.inputPassword,
                     onValueChange = updateInputPassword
                 )
 
 
-                if (signInScreenUIState.isSignInFailed) {
+                if (uiState.isSignInFailed) {
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -146,7 +146,7 @@ private fun SignInWithAccountScreen(
                 RoundedCornerButton(
                     contentDescription = "Login Button",
                     onClick = { signIn(moveToMainHomeScreen) },
-                    isLoading = signInScreenUIState.isSignInLoading
+                    isLoading = uiState.isSignInLoading
                 ) {
                     Text(
                         text = "로그인하기",
@@ -283,8 +283,8 @@ private fun ResetPasswordButton(
 private fun SignInScreenPreview() {
     OnMyWayTheme {
         SignInWithAccountScreen(
-            signInScreenUIState = SignInScreenUIState(),
-            signInScreenSideEffectFlow = MutableSharedFlow(),
+            uiState = SignInScreenUIState(),
+            sideEffectFlow = MutableSharedFlow(),
             updateInputUserId = {},
             updateInputPassword = {},
             signIn = {},
@@ -303,8 +303,8 @@ private fun SignInScreenPreview() {
 private fun LoadingSignInScreenPreview() {
     OnMyWayTheme {
         SignInWithAccountScreen(
-            signInScreenUIState = SignInScreenUIState(),
-            signInScreenSideEffectFlow = MutableSharedFlow(),
+            uiState = SignInScreenUIState(),
+            sideEffectFlow = MutableSharedFlow(),
             updateInputUserId = {},
             updateInputPassword = {},
             signIn = {},

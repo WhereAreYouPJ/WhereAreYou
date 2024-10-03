@@ -35,6 +35,9 @@ const val ROUTE_MY_INFO = "ROUTE_MY_INFO"
 
 sealed class ROUTE {
     @Serializable
+    data object Developer
+
+    @Serializable
     data object Splash
 
     @Serializable
@@ -104,6 +107,9 @@ sealed class ROUTE {
     data class AddFriend(
         val friendList: List<Int>
     )
+
+    @Serializable
+    data object AddFeed
 
     @Serializable
     data object Announcement

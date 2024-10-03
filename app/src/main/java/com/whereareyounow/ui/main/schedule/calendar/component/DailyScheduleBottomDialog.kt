@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +46,9 @@ fun DailyScheduleBottomDialog(
     selectedMonth: Int,
     selectedDate: Int,
     dailyScheduleList: List<DailyScheduleInfo>,
+    isGroup: MutableState<Boolean>,
+    isDeleteDialogShowing: MutableState<Boolean>,
+    deleteTargetScheduleSeq: MutableState<Int>,
     moveToDetailScheduleScreen: (Int) -> Unit,
 ) {
     Column(
@@ -98,7 +102,14 @@ fun DailyScheduleBottomDialog(
                 ) {
                     Spacer(Modifier.height(6.dp))
 
-                    DailyScheduleBox(info = item)
+                    DailyScheduleBox(
+                        info = item,
+                        deleteTargetScheduleSeq = deleteTargetScheduleSeq,
+                        openDialog = {
+                            isGroup.value = item.group
+                            isDeleteDialogShowing.value = true
+                        }
+                    )
 
                     Spacer(Modifier.height(6.dp))
                 }

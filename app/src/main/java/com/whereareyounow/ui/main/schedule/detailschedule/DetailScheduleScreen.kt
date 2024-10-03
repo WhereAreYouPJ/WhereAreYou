@@ -1,6 +1,7 @@
 package com.whereareyounow.ui.main.schedule.detailschedule
 
 import android.util.Log
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,11 +48,17 @@ import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.ui.component.CustomSurface
+import com.whereareyounow.ui.component.ScrollableContent
 import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.pretendard
+import com.whereareyounow.util.calendar.parseLocalDate
+import com.whereareyounow.util.calendar.parseLocalDateTime
 import com.whereareyounow.util.clickableNoEffect
+import java.time.DayOfWeek
+import java.time.LocalDate
 
 @Composable
 fun DetailScheduleScreen(
@@ -80,38 +87,19 @@ private fun DetailScheduleScreen(
 ) {
     val thinnest = getColor().thinnest
     val context = LocalContext.current
+    val startLDT = remember(uiState) { parseLocalDateTime(uiState.scheduleInfo.startTime) }
+    val endLDT = remember(uiState) {parseLocalDateTime(uiState.scheduleInfo.endTime) }
+
     CustomSurface {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
+            ScrollableContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 15.dp, end = 15.dp, top = 40.dp)
                     .imePadding(),
-                verticalArrangement = remember {
-                    object : Arrangement.Vertical {
-                        override fun Density.arrange(
-                            totalSize: Int,
-                            sizes: IntArray,
-                            outPositions: IntArray
-                        ) {
-                            var currentOffset = 0
-                            Log.e("Arrangement.Vertical.Start", "${totalSize.toDp()}\n${sizes.map { it.toDp() }}\n${outPositions.map { it.toDp() }}")
-                            sizes.forEachIndexed { index, size ->
-                                if (index == sizes.lastIndex) {
-                                    outPositions[index] = totalSize - size
-                                } else {
-                                    outPositions[index] = currentOffset
-                                    currentOffset += size
-                                }
-                            }
-                            Log.e("Arrangement.Vertical.End", "${totalSize.toDp()}\n${sizes.map { it.toDp() }}\n${outPositions.map { it.toDp() }}")
-                        }
-                    }
-                }
-            ) {
-                item {
+                content = {
                     Column(
                         modifier = Modifier
                             .padding(top = 40.dp)
@@ -163,29 +151,81 @@ private fun DetailScheduleScreen(
                             Spacer(Modifier.width(10.dp))
                         }
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(6.dp))
 
                         Row(
                             modifier = Modifier
-                                .height(50.dp)
-                                .drawBehind {
-                                    drawLine(
-                                        color = thinnest,
-                                        start = Offset(0f, size.height),
-                                        end = Offset(size.width, size.height),
-                                        strokeWidth = 1.dp.toPx()
+                                .fillMaxWidth()
+                                .padding(start = 6.dp)
+                                .animateContentSize(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (uiState.scheduleInfo.allDay) {
+                                Image(
+                                    modifier = Modifier.size(12.dp),
+                                    painter = painterResource(R.drawable.ic_warning_red),
+                                    contentDescription = null
+                                )
+
+                                Spacer(Modifier.width(4.dp))
+
+                                Text(
+                                    text = "위치 확인하기 기능이 제공되지 않습니다.",
+                                    color = getColor().warning,
+                                    style = medium12pt
+                                )
+
+                                Spacer(Modifier.height(12.dp))
+                            }
+                        }
+
+                        Row {
+                            // 시작 날짜
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .animateContentSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(
+                                            start = 6.dp,
+                                            top = 4.dp,
+                                            end = 6.dp,
+                                            bottom = 4.dp
+                                        ),
+                                    text = "${startLDT.monthValue}월 ${startLDT.dayOfMonth}일 (${when (startLDT.dayOfWeek) {
+                                        DayOfWeek.MONDAY -> "월"
+                                        DayOfWeek.TUESDAY -> "화"
+                                        DayOfWeek.WEDNESDAY -> "수"
+                                        DayOfWeek.THURSDAY -> "목"
+                                        DayOfWeek.FRIDAY -> "금"
+                                        DayOfWeek.SATURDAY -> "토"
+                                        DayOfWeek.SUNDAY -> "일"
+                                    }})",
+                                    color = Color(0xFF444444),
+                                    style = medium16pt
+                                )
+
+                                Spacer(Modifier.height(8.dp))
+
+                                if (!uiState.scheduleInfo.allDay) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(
+                                                start = 8.dp,
+                                                top = 4.dp,
+                                                end = 8.dp,
+                                                bottom = 4.dp
+                                            ),
+                                        text = if (startLDT.hour >= 12) "오후 ${if (startLDT.hour == 12) 12 else (startLDT.hour - 12)}:${String.format("%02d", startLDT.minute)}"
+                                        else "오전 ${if (startLDT.hour == 0) 12 else startLDT.hour}:${String.format("%02d", startLDT.minute)}",
+                                        color = Color(0xFF444444),
+                                        style = medium16pt
                                     )
                                 }
-                        ) {
-                            Spacer(Modifier.width(26.dp))
-
-                            Text(
-                                text = "4월 8일 (월)",
-                                color = Color(0xFF444444),
-                                style = medium16pt
-                            )
-
-                            Spacer(Modifier.weight(1f))
+                            }
 
                             Image(
                                 modifier = Modifier.size(28.dp),
@@ -194,16 +234,62 @@ private fun DetailScheduleScreen(
                                 colorFilter = ColorFilter.tint(Color(0xFF727272))
                             )
 
-                            Spacer(Modifier.weight(1f))
+                            // 끝 날짜
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .animateContentSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(
+                                            start = 6.dp,
+                                            top = 4.dp,
+                                            end = 6.dp,
+                                            bottom = 4.dp
+                                        ),
+                                    text = "${endLDT.monthValue}월 ${endLDT.dayOfMonth}일 (${when (endLDT.dayOfWeek) {
+                                        DayOfWeek.MONDAY -> "월"
+                                        DayOfWeek.TUESDAY -> "화"
+                                        DayOfWeek.WEDNESDAY -> "수"
+                                        DayOfWeek.THURSDAY -> "목"
+                                        DayOfWeek.FRIDAY -> "금"
+                                        DayOfWeek.SATURDAY -> "토"
+                                        DayOfWeek.SUNDAY -> "일"
+                                    }})",
+                                    color = Color(0xFF444444),
+                                    style = medium16pt
+                                )
 
-                            Text(
-                                text = "4월 10일 (수)",
-                                color = Color(0xFF444444),
-                                style = medium16pt
-                            )
+                                Spacer(Modifier.height(8.dp))
 
-                            Spacer(Modifier.weight(1f))
+                                if (!uiState.scheduleInfo.allDay) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(
+                                                start = 8.dp,
+                                                top = 4.dp,
+                                                end = 8.dp,
+                                                bottom = 4.dp
+                                            ),
+                                        text = if (endLDT.hour >= 12) "오후 ${if (endLDT.hour == 12) 12 else (endLDT.hour - 12)}:${String.format("%02d", endLDT.minute)}"
+                                        else "오전 ${if (endLDT.hour == 0) 12 else endLDT.hour}:${String.format("%02d", endLDT.minute)}",
+                                        color = Color(0xFF444444),
+                                        style = medium16pt
+                                    )
+                                }
+                            }
                         }
+
+                        Spacer(Modifier.height(20.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(getColor().thinnest)
+                        )
 
                         Spacer(Modifier.height(20.dp))
 
@@ -247,7 +333,7 @@ private fun DetailScheduleScreen(
                             Spacer(Modifier.width(6.dp))
 
                             Text(
-                                text = uiState.scheduleInfo.location,
+                                text = uiState.scheduleInfo.streetName,
                                 color = Color(0xFF222222),
                                 style = medium16pt
                             )
@@ -287,9 +373,8 @@ private fun DetailScheduleScreen(
 
                             Image(
                                 modifier = Modifier.size(30.dp),
-                                painter = painterResource(R.drawable.ic_location),
+                                painter = painterResource(R.drawable.ic_users),
                                 contentDescription = null,
-                                colorFilter = ColorFilter.tint(getColor().brandColor)
                             )
 
                             Spacer(Modifier.width(6.dp))
@@ -406,12 +491,11 @@ private fun DetailScheduleScreen(
                             )
                         }
                     }
-                }
-
-                item {
+                },
+                lastContent = {
                     Spacer(Modifier.height((BOTTOM_NAVIGATION_BAR_HEIGHT + 20).dp))
                 }
-            }
+            )
 
             Row(
                     modifier = Modifier

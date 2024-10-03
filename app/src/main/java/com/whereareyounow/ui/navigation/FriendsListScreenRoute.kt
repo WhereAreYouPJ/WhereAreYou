@@ -15,8 +15,7 @@ import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditViewModel
 fun NavGraphBuilder.friendsListScreenRoute(navController: NavController) = composable<ROUTE.AddFriend> {
     val data: ROUTE.AddFriend = it.toRoute()
     val editScheduleEntry = remember(it) {
-        navController
-            .currentBackStack.value.first { it.destination.route?.contains("ROUTE.AddSchedule") == true }
+        navController.currentBackStack.value.first { it.destination.route?.contains("ROUTE.AddSchedule") == true || it.destination.route?.contains("ROUTE.ScheduleModification") == true }
     }
     val scheduleEditViewModel: ScheduleEditViewModel = hiltViewModel(editScheduleEntry)
 

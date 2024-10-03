@@ -5,6 +5,7 @@ import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.entity.schedule.ScheduleDDay
+import com.whereareyounow.domain.entity.schedule.ScheduleListData
 import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.repository.ScheduleRepository
@@ -63,7 +64,7 @@ class ScheduleRepositoryImpl(
 
     override suspend fun getScheduleList(
         data: GetScheduleListRequest
-    ): NetworkResult<List<ScheduleListItem>> {
+    ): NetworkResult<ScheduleListData> {
         return handleResult { scheduleApi.getScheduleList(
             memberSeq = data.memberSeq,
             page = data.page,
