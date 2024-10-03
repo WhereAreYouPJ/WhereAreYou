@@ -91,5 +91,4 @@ interface ScheduleApi {
     suspend fun deleteScheduleByCreator(
         @Body body: DeleteScheduleRequest
     ): Response<ResponseWrapper<Unit>>
-
 }

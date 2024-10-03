@@ -6,9 +6,9 @@ data class DetailScheduleInfo(
     @SerializedName("title")
     val title: String = "",
     @SerializedName("startTime")
-    val startTime: String = "",
+    val startTime: String = "2000-01-01T12:00:00.000",
     @SerializedName("endTime")
-    val endTime: String = "",
+    val endTime: String = "2000-01-01T12:00:00.000",
     @SerializedName("location")
     val location: String = "",
     @SerializedName("streetName")
@@ -18,7 +18,7 @@ data class DetailScheduleInfo(
     @SerializedName("y")
     val y: Double = 0.0,
     @SerializedName("color")
-    val color: String = "",
+    val color: String = "Red",
     @SerializedName("memo")
     val memo: String = "",
     @SerializedName("allDay")

@@ -176,6 +176,7 @@ class CalendarViewModel @Inject constructor(
                     dateList = dateList
                 )
             }
+            LogUtil.e("updatedMonthCalendarInfo", _uiState.value.selectedMonthCalendarInfoMap.toString())
         }
     }
 

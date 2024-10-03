@@ -10,12 +10,17 @@ import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenSideEffect
 import com.whereareyounow.data.scheduleedit.ScheduleEditScreenUIState
 import com.whereareyounow.domain.request.schedule.CreateNewScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
+import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
 import com.whereareyounow.domain.usecase.schedule.CreateNewScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.ModifyScheduleInfoUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.globalvalue.type.ScheduleColor
+import com.whereareyounow.util.calendar.parseLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,22 +37,18 @@ import javax.inject.Inject
 @HiltViewModel
 class ScheduleEditViewModel @Inject constructor(
     private val application: Application,
+    private val getDetailScheduleUseCase: GetDetailScheduleUseCase,
 //    private val getAccessTokenUseCase: GetAccessTokenUseCase,
 //    private val getMemberIdUseCase: GetMemberIdUseCase,
     private val createNewScheduleUseCase: CreateNewScheduleUseCase,
-//    private val modifyScheduleDetailsUseCase: ModifyScheduleDetailsUseCase,
+    private val modifyScheduleInfoUseCase: ModifyScheduleInfoUseCase,
 //    private val modifyScheduleMemberUseCase: ModifyScheduleMemberUseCase,
 ) : AndroidViewModel(application) {
 
-    private var scheduleId = ""
     private val _uiState = MutableStateFlow(ScheduleEditScreenUIState())
     var isInitialized = false
     val uiState = _uiState.asStateFlow()
     val sideEffectFlow = MutableSharedFlow<ScheduleEditScreenSideEffect>()
-
-    fun updateScheduleId(id: String) {
-        scheduleId = id
-    }
 
     fun updateSelectedFriendsList(friendIds: List<Int>) {
         _uiState.update {
@@ -190,6 +191,49 @@ class ScheduleEditViewModel @Inject constructor(
         }
     }
 
+    fun initData(scheduleSeq: Int) {
+        val requestData = GetDetailScheduleRequest(
+            scheduleSeq = scheduleSeq,
+            memberSeq = AuthData.memberSeq
+        )
+        getDetailScheduleUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _uiState.update {
+                            val startLDT = parseLocalDateTime(data.startTime)
+                            val endLDT = parseLocalDateTime(data.endTime)
+                            it.copy(
+                                selectedFriendsList = FriendList.list.filter { data.memberInfos.map { it.memberSeq }.contains(it.memberSeq) },
+                                scheduleName = data.title,
+                                startYear = startLDT.year,
+                                startMonth = startLDT.monthValue,
+                                startDate = startLDT.dayOfMonth,
+                                startHour = startLDT.hour,
+                                startMinute = startLDT.minute,
+                                endYear = endLDT.year,
+                                endMonth = endLDT.monthValue,
+                                endDate = endLDT.dayOfMonth,
+                                endHour = endLDT.hour,
+                                endMinute = endLDT.minute,
+                                isAllDay = data.allDay,
+                                color = ScheduleColor.entries.find { it.colorName == data.color } ?: ScheduleColor.Red,
+                                destinationName = data.location,
+                                destinationAddress = data.streetName,
+                                destinationLatitude = data.x,
+                                destinationLongitude = data.y,
+                                memo = data.memo
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
+
     fun updateScheduleDetails(details: DetailScheduleScreenUIState) {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            val myMemberId = getMemberIdUseCase().first()
@@ -218,7 +262,10 @@ class ScheduleEditViewModel @Inject constructor(
 //        }
     }
 
-    fun modifySchedule(moveToBackScreen: () -> Unit) {
+    fun modifySchedule(
+        scheduleSeq: Int,
+        moveToBackScreen: (Int) -> Unit
+    ) {
         viewModelScope.launch(Dispatchers.Default) {
             if (_uiState.value.scheduleName == "") {
                 sideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("일정명을 입력해주세요."))
@@ -233,8 +280,44 @@ class ScheduleEditViewModel @Inject constructor(
                 sideEffectFlow.emit(ScheduleEditScreenSideEffect.Toast("목적지를 선택해주세요."))
                 return@launch
             }
-            modifyScheduleDetails()
-            modifyScheduleMember(moveToBackScreen)
+            val requestData = ModifyScheduleInfoRequest(
+                scheduleSeq = scheduleSeq,
+                scheduleName = _uiState.value.scheduleName,
+                startTime = LocalDateTime.of(
+                    _uiState.value.startYear,
+                    _uiState.value.startMonth,
+                    _uiState.value.startDate,
+                    _uiState.value.startHour,
+                    _uiState.value.startMinute
+                ).toString(),
+                endTime = LocalDateTime.of(
+                    _uiState.value.endYear,
+                    _uiState.value.endMonth,
+                    _uiState.value.endDate,
+                    _uiState.value.endHour,
+                    _uiState.value.endMinute
+                ).toString(),
+                location = _uiState.value.destinationName,
+                streetName = _uiState.value.destinationAddress,
+                x = _uiState.value.destinationLatitude,
+                y = _uiState.value.destinationLongitude,
+                color = _uiState.value.color.colorName,
+                memo = _uiState.value.memo,
+                invitedMemberSeqs = _uiState.value.selectedFriendsList.map { it.memberSeq },
+                createMemberSeq = AuthData.memberSeq
+            )
+            modifyScheduleInfoUseCase(requestData)
+                .onEach { networkResult ->
+                    networkResult.onSuccess { code, message, data ->
+                        data?.let {
+                            moveToBackScreen(data.scheduleSeq)
+                        }
+                    }.onError { code, message ->
+
+                    }.onException {  }
+                }
+                .catch {  }
+                .launchIn(viewModelScope)
         }
     }
 

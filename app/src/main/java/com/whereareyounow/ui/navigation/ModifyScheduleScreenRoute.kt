@@ -11,14 +11,16 @@ import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditScreen
 import com.whereareyounow.ui.main.schedule.scheduleedit.ScheduleEditViewModel
 
-fun NavGraphBuilder.newScheduleScreenRoute(navController: NavController) = composable<ROUTE.AddSchedule> {
+fun NavGraphBuilder.modifyScheduleScreenRoute(navController: NavController) = composable<ROUTE.ScheduleModification> {
 
-    val data: ROUTE.AddSchedule = it.toRoute()
+    val data: ROUTE.ScheduleModification = it.toRoute()
     val viewModel: ScheduleEditViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
-        viewModel.updateStartDate(data.year, data.month, data.date)
-        viewModel.updateEndDate(data.year, data.month, data.date)
+        if (!viewModel.isInitialized) {
+            viewModel.initData(data.scheduleSeq)
+        }
+        viewModel.isInitialized = true
     }
 
     ScheduleEditScreen(
@@ -36,8 +38,12 @@ fun NavGraphBuilder.newScheduleScreenRoute(navController: NavController) = compo
         moveToFriendsListScreen = { navController.navigate(ROUTE.AddFriend(it)) },
         moveToBackScreen = { navController.popBackStack() },
         onDone = {
-            viewModel.addNewSchedule(
-                moveToBackScreen = { navController.popBackStack() }
+            viewModel.modifySchedule(
+                scheduleSeq = data.scheduleSeq,
+                moveToBackScreen = { navController.navigate(ROUTE.DetailSchedule(it)) {
+                    popUpTo<ROUTE.ScheduleModification> { inclusive = true }
+                    launchSingleTop = true
+                } }
             )
         }
     )
