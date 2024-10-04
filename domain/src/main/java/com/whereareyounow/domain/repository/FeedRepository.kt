@@ -36,4 +36,3 @@ interface FeedRepository {
 //    suspend fun getFeedBookMark(
 //        getFeedBookMarkRequest : GetFeedBookMarkRequest
 //    ) : NetworkResult<List<FeedBookMarkResponse>>
-}

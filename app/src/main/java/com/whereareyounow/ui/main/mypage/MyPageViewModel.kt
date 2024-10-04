@@ -5,11 +5,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
-import com.whereareyounow.domain.request.feed.GetFeedBookMarkRequest
+import com.whereareyounow.domain.request.feedbookmark.AddFeedBookMarkRequest
+import com.whereareyounow.domain.request.feedbookmark.GetFeedBookMarkRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
-import com.whereareyounow.domain.usecase.feed.GetFeedBookMarkUseCase
+import com.whereareyounow.domain.usecase.feedbookmark.AddFeedBookMarkUseCase
+import com.whereareyounow.domain.usecase.feedbookmark.GetFeedBookMarkUseCase
 import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
 import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
@@ -50,6 +52,8 @@ class MyPageViewModel @Inject constructor(
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
     private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase,
+    private val getFeedBookMarkUseCase : GetFeedBookMarkUseCase,
+    private val addFeedBookMarkUseCase : AddFeedBookMarkUseCase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -101,6 +105,7 @@ class MyPageViewModel @Inject constructor(
         getFeedBookMark(
             memberSeq = AuthData.memberSeq
         )
+        addBookMarkFeed(0,0)
 //        getLocationFaborite()
     }
 
@@ -117,12 +122,14 @@ class MyPageViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            getFeedBookMarkUseCase(GetFeedBookMarkRequest(
+            getFeedBookMarkUseCase(
+                GetFeedBookMarkRequest(
 //                memberSeq = AuthData.memberSeq,
                 memberSeq = 1,
                 page = 0,
                 size = 10
-            )).onEach { networkResult ->
+            )
+            ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
                     Log.d("Sflsjfleifnslf" , data.toString())
 
@@ -130,7 +137,7 @@ class MyPageViewModel @Inject constructor(
                         _feedBookMarkState.value = it.toModel()
                     }
                 }.onError { code, message ->
-                    Log.d("Sflsjfleifnslf" , code.toString())
+                    Log.d("Sflsjfleifnslf" , message.toString())
 
                 }.onException {
                     Log.d("Sflsjfleifnslf" , it.message ?: "Unknown exception")
@@ -146,6 +153,42 @@ class MyPageViewModel @Inject constructor(
                 .launchIn(this)
         }
 
+    }
+
+    fun addBookMarkFeed(
+        feedSeq : Int,
+        memberSeq : Int
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            addFeedBookMarkUseCase(
+                AddFeedBookMarkRequest(
+                    feedSeq = feedSeq,
+                    memberSeq = memberSeq
+                )
+            ).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    Log.d("Sflsjfleifnslfsfsfsfsu" , code.toString())
+                    Log.d("Sflsjfleifnslfsfsfsfsu" , message.toString())
+                    Log.d("Sflsjfleifnslfsfsfsfsu" , data.toString())
+
+                }.onError { code, message ->
+                    Log.d("Sflsjfleifnslfsfsfsfer" , message!!)
+                    Log.d("Sflsjfleifnslfsfsfsfer" , code.toString())
+
+                }.onException {
+                    Log.d("Sflsjfleifnslfsfsfsfex" , it.message ?: "Unknown exception")
+
+                }
+            }
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "getFeedBookMarkUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(this)
+        }
     }
 
 

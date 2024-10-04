@@ -1,9 +1,7 @@
 package com.whereareyounow.repository
 
 import com.whereareyounow.api.FeedApi
-import com.whereareyounow.domain.entity.feed.FeedBookMarkResponse
 import com.whereareyounow.domain.repository.FeedRepository
-import com.whereareyounow.domain.request.feed.GetFeedBookMarkRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 import com.google.gson.Gson
@@ -100,3 +98,6 @@ data class ImageMultipart(
     @SerializedName("feedImageOrder")
     val feedImageOrder: Int,
 )
+) : FeedRepository , NetworkResultHandler {
+
+}

@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.whereareyounow.BuildConfig
 import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FeedApi
+import com.whereareyounow.api.FeedBookMarkApi
 import com.whereareyounow.api.FriendApi
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.MemberApi
@@ -132,5 +133,12 @@ object NetworkModule {
     @Provides
     fun provideFeedApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FeedApi {
         return retrofit.create(FeedApi::class.java)
+    }
+
+    // FeedBookMark Api
+    @Singleton
+    @Provides
+    fun provideFeedBookMarkApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FeedBookMarkApi {
+        return retrofit.create(FeedBookMarkApi::class.java)
     }
 }

@@ -1,6 +1,6 @@
-package com.whereareyounow.domain.entity.feed
+package com.whereareyounow.domain.entity.feedbookmark
 
-data class FeedBookMarkResponse(
+data class GetFeedBookMarkResponse(
     val totalElements: Int,
     val totalPages: Int,
     val size: Int,
