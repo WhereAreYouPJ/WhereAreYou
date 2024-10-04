@@ -50,7 +50,6 @@ class MyPageViewModel @Inject constructor(
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
     private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase,
-    private val getFeedBookMarkUseCase : GetFeedBookMarkUseCase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)

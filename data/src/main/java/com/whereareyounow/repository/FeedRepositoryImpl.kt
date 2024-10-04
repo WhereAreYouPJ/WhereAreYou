@@ -8,20 +8,13 @@ import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import com.whereareyounow.api.FeedApi
-import com.whereareyounow.domain.entity.feed.FeedBookMarkResponse
 import com.whereareyounow.domain.entity.feed.FeedInfo
 import com.whereareyounow.domain.entity.feed.FeedListData
 import com.whereareyounow.domain.entity.feed.FeedSeq
-import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.request.feed.CreateFeedRequest
 import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
-import com.whereareyounow.domain.request.feed.GetFeedBookMarkRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
 import com.whereareyounow.domain.request.feed.ModifyFeedRequest
-//import okhttp3.RequestBody.Companion.asRequestBody
-import com.whereareyounow.domain.util.NetworkResult
-import com.whereareyounow.util.NetworkResultHandler
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -32,16 +25,16 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class FeedRepositoryImpl(
     private val feedApi: FeedApi
 ) : FeedRepository, NetworkResultHandler {
-    override suspend fun getFeedBookMark(
-        getFeedBookMarkRequest: GetFeedBookMarkRequest
-    ): NetworkResult<FeedBookMarkResponse> {
-
-        return handleResult { feedApi.getFeedList(
-            memberSeq = getFeedBookMarkRequest.memberSeq,
-            page = getFeedBookMarkRequest.page,
-            size = getFeedBookMarkRequest.size
-        ) }
-    }
+//    override suspend fun getFeedBookMark(
+//        getFeedBookMarkRequest: GetFeedBookMarkRequest
+//    ): NetworkResult<FeedBookMarkResponse> {
+//
+//        return handleResult { feedApi.getFeedList(
+//            memberSeq = getFeedBookMarkRequest.memberSeq,
+//            page = getFeedBookMarkRequest.page,
+//            size = getFeedBookMarkRequest.size
+//        ) }
+//    }
 
     override suspend fun modifyFeed(
         data: ModifyFeedRequest

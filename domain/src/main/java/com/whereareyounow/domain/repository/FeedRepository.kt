@@ -13,9 +13,9 @@ import com.whereareyounow.domain.request.feed.ModifyFeedRequest
 import com.whereareyounow.domain.util.NetworkResult
 
 interface FeedRepository {
-    suspend fun getFeedBookMark(
-        getFeedBookMarkRequest : GetFeedBookMarkRequest
-    ) : NetworkResult<FeedBookMarkResponse>
+//    suspend fun getFeedBookMark(
+//        getFeedBookMarkRequest : GetFeedBookMarkRequest
+//    ) : NetworkResult<FeedBookMarkResponse>
 
     suspend fun modifyFeed(
         data: ModifyFeedRequest
