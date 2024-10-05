@@ -67,7 +67,8 @@ class SignInViewModel @Inject constructor(
     ) {
         val requestData = SignInRequest(
             email = _uiState.value.inputEmail,
-            password = _uiState.value.inputPassword
+            password = _uiState.value.inputPassword,
+            loginType = "normal"
         )
         signInUseCase(requestData)
             .onEach { networkResult ->

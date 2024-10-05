@@ -5,34 +5,34 @@ import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
+import com.whereareyounow.domain.entity.feed.BookmarkSeq
+import com.whereareyounow.domain.entity.feed.BookmarkedFeedData
 import com.whereareyounow.domain.entity.feed.FeedInfo
 import com.whereareyounow.domain.entity.feed.FeedListData
 import com.whereareyounow.domain.entity.feed.FeedSeq
+import com.whereareyounow.domain.entity.feed.HideFeedSeq
+import com.whereareyounow.domain.entity.feed.HidedFeedData
+import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.feed.CreateFeedRequest
+import com.whereareyounow.domain.request.feed.DeleteFeedBookmarkRequest
+import com.whereareyounow.domain.request.feed.GetBookmarkedFeedRequest
 import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
+import com.whereareyounow.domain.request.feed.GetHidedFeedRequest
+import com.whereareyounow.domain.request.feed.HideFeedRequest
 import com.whereareyounow.domain.request.feed.ModifyFeedRequest
-import okhttp3.MediaType
+import com.whereareyounow.domain.request.feed.RestoreHidedFeedRequest
+import com.whereareyounow.util.UriRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 class FeedRepositoryImpl(
     private val feedApi: FeedApi
 ) : FeedRepository, NetworkResultHandler {
-//    override suspend fun getFeedBookMark(
-//        getFeedBookMarkRequest: GetFeedBookMarkRequest
-//    ): NetworkResult<FeedBookMarkResponse> {
-//
-//        return handleResult { feedApi.getFeedList(
-//            memberSeq = getFeedBookMarkRequest.memberSeq,
-//            page = getFeedBookMarkRequest.page,
-//            size = getFeedBookMarkRequest.size
-//        ) }
-//    }
 
     override suspend fun modifyFeed(
         data: ModifyFeedRequest
@@ -41,63 +41,90 @@ class FeedRepositoryImpl(
     }
 
     override suspend fun createFeed(
-        data: CreateFeedRequest
+        data: CreateFeedRequest,
+        images: List<File>
     ): NetworkResult<FeedSeq> {
-        val scheduleSeq =
-            data.scheduleSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val scheduleSeq = data.scheduleSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val memberSeq = data.memberSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val title = data.title.toRequestBody("text/plain".toMediaTypeOrNull())
         val content = data.content.toRequestBody("text/plain".toMediaTypeOrNull())
+        val feedImageOrders = data.feedImageOrders.map { it.toString().toRequestBody("text/plain".toMediaTypeOrNull()) }
         val partMap = mutableMapOf(
             "scheduleSeq" to scheduleSeq,
             "memberSeq" to memberSeq,
             "title" to title,
             "content" to content
         ) as HashMap<String, RequestBody>
-        val feedImageInfos = data.feedImageInfos.map { imageInfo ->
-            val multipartImage: MultipartBody.Part = imageInfo.image.let { image ->
-                val imageBody = image.asRequestBody("image/png".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("multipartFile", imageBody.toString(), imageBody)
-            }
-            ImageMultipart(
-                multipartImage,
-                imageInfo.feedImageOrder
-            )
-        }
-        val images = feedImageInfos.map {
-            val body = Gson().toJson(it).toRequestBody("multipart/formed-data".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("feedImageInfos", "feedImageInfos", body)
+//        val reqData = Gson().toJson(data).toRequestBody("application/json".toMediaTypeOrNull())
+        val multipartList = images.map {
+            val reqBody = it.asRequestBody("image/png".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("feedImageInfo", "imageName", reqBody)
         }
         return handleResult {
-            feedApi.createFeed(partMap, images)
+            feedApi.createFeed(partMap, feedImageOrders, multipartList)
         }
     }
 
-//    override suspend fun getFeedList(
-//        data: GetFeedListRequest
-//    ): NetworkResult<FeedListData> {
-//        return handleResult {  }
-//    }
-//
-//    override suspend fun getDetailFeed(
-//        data: GetDetailFeedRequest
-//    ): NetworkResult<FeedInfo> {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override suspend fun getFeedBookMark(
-//        getFeedBookMarkRequest: GetFeedBookMarkRequest
-//    ): NetworkResult<List<FeedBookMarkResponse>> {
-//        TODO("Not yet implemented")
-//    }
-}
+    override suspend fun getFeedList(data: GetFeedListRequest): NetworkResult<FeedListData> {
+        return handleResult {
+            feedApi.getFeedList(
+                memberSeq = data.memberSeq,
+                page = data.page,
+                size = data.size
+            )
+        }
+    }
 
-data class ImageMultipart(
-    @SerializedName("images")
-    val images: MultipartBody.Part,
-    @SerializedName("feedImageOrder")
-    val feedImageOrder: Int,
-)
-) : FeedRepository , NetworkResultHandler {
+    override suspend fun getDetailFeed(data: GetDetailFeedRequest): NetworkResult<FeedInfo> {
+        return handleResult {
+            feedApi.getDetailFeed(
+                memberSeq = data.memberSeq,
+                feedSeq = data.feedSeq
+            )
+        }
+    }
 
+    override suspend fun getHidedFeed(data: GetHidedFeedRequest): NetworkResult<HidedFeedData> {
+        return handleResult {
+            feedApi.getHidedFeed(
+                memberSeq = data.memberSeq,
+                page = data.page,
+                size = data.size
+            )
+        }
+    }
+
+    override suspend fun hideFeed(data: HideFeedRequest): NetworkResult<HideFeedSeq> {
+        return handleResult {
+            feedApi.hideFeed(body = data)
+        }
+    }
+
+    override suspend fun restoreHidedFeed(data: RestoreHidedFeedRequest): NetworkResult<Unit> {
+        return handleResult {
+            feedApi.restoreHidedFeed(body = data)
+        }
+    }
+
+    override suspend fun getBookmarkedFeed(data: GetBookmarkedFeedRequest): NetworkResult<BookmarkedFeedData> {
+        return handleResult {
+            feedApi.getBookmarkedFeed(
+                memberSeq = data.memberSeq,
+                page = data.page,
+                size = data.size
+            )
+        }
+    }
+
+    override suspend fun bookmarkFeed(data: BookmarkFeedRequest): NetworkResult<BookmarkSeq> {
+        return handleResult {
+            feedApi.bookmarkFeed(body = data)
+        }
+    }
+
+    override suspend fun deleteFeedBookmark(data: DeleteFeedBookmarkRequest): NetworkResult<String> {
+        return handleResult {
+            feedApi.deleteFeedBookmark(body = data)
+        }
+    }
 }

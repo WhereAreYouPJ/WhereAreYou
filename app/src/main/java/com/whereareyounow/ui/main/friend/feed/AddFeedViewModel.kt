@@ -1,16 +1,13 @@
 package com.whereareyounow.ui.main.friend.feed
 
 import android.app.Application
-import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.addfeed.AddFeedScreenUIState
 import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.domain.entity.feed.FeedImageInfo
 import com.whereareyounow.domain.entity.schedule.ScheduleListItem
-import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.request.feed.CreateFeedRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleListRequest
 import com.whereareyounow.domain.usecase.feed.CreateFeedUseCase
@@ -76,33 +73,31 @@ class AddFeedViewModel @Inject constructor(
 
     fun createFeed() {
         val requestBody = CreateFeedRequest(
-            scheduleSeq = 5,
+            scheduleSeq = _uiState.value.selectedSchedule!!.scheduleSeq,
             memberSeq = AuthData.memberSeq,
-            title = "tmpTitle",
-            content = "tmpContent",
-            feedImageInfos = _uiState.value.imageUris.mapIndexed { idx, item ->
-                val fileExtension = getFileExtension(application, item.toUri())
-                val fileName = "temporary_file" + if (fileExtension != null) ".$fileExtension" else ""
-                val imageFile = File(application.cacheDir, fileName)
-                imageFile.createNewFile()
-                try {
-                    val oStream = FileOutputStream(imageFile)
-                    val inputStream = application.contentResolver.openInputStream(item.toUri())
-                    inputStream?.let {
-                        copy(inputStream, oStream)
-                    }
-                    oStream.flush()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                FeedImageInfo(
-                    imageFile,
-                    feedImageOrder = idx
-                )
-            }
+            title = _uiState.value.title,
+            content = _uiState.value.content,
+            feedImageOrders = (1 ..  _uiState.value.imageUris.size).toList()
         )
-        createFeedUseCase(requestBody)
+        val imageList = _uiState.value.imageUris.mapIndexed { idx, item ->
+            val fileExtension = getFileExtension(application, item.toUri())
+            val fileName = "temporary_file" + if (fileExtension != null) ".$fileExtension" else ""
+            val imageFile = File(application.cacheDir, fileName)
+            imageFile.createNewFile()
+            try {
+                val oStream = FileOutputStream(imageFile)
+                val inputStream = application.contentResolver.openInputStream(item.toUri())
+                inputStream?.let {
+                    copy(inputStream, oStream)
+                }
+                oStream.flush()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            imageFile
+        }
+        createFeedUseCase(requestBody, imageList)
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
 

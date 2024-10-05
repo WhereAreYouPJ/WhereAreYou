@@ -8,5 +8,7 @@ data class SignInRequest(
     @SerializedName("password")
     val password: String,
     @SerializedName("fcmToken")
-    val fcmToken: String = "a"
+    val fcmToken: String = "a",
+    @SerializedName("loginType")
+    val loginType: String
 )

@@ -2,7 +2,6 @@ package com.whereareyounow.domain.request.feed
 
 import com.google.gson.annotations.SerializedName
 import com.whereareyounow.domain.entity.feed.FeedImageInfo
-import com.whereareyounow.domain.entity.feed.FeedImageInfo2
 
 data class CreateFeedRequest(
     @SerializedName("scheduleSeq")
@@ -13,6 +12,6 @@ data class CreateFeedRequest(
     val title: String,
     @SerializedName("content")
     val content: String,
-    @SerializedName("feedImageInfos")
-    val feedImageInfos: List<FeedImageInfo>
+    @SerializedName("feedImageOrders")
+    val feedImageOrders: List<Int>
 )

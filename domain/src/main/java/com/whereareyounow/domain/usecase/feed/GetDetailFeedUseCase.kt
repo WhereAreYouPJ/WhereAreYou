@@ -1,18 +1,16 @@
 package com.whereareyounow.domain.usecase.feed
 
 import com.whereareyounow.domain.repository.FeedRepository
-import com.whereareyounow.domain.request.feed.CreateFeedRequest
+import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import kotlinx.coroutines.flow.flow
-import java.io.File
 
-class CreateFeedUseCase(
+class GetDetailFeedUseCase(
     private val repository: FeedRepository
 ) {
     operator fun invoke(
-        data: CreateFeedRequest,
-        images: List<File>
+        data: GetDetailFeedRequest
     ) = flow {
-        val response = repository.createFeed(data, images)
+        val response = repository.getDetailFeed(data)
         emit(response)
     }
 }

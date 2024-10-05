@@ -5,13 +5,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
-import com.whereareyounow.domain.request.feedbookmark.AddFeedBookMarkRequest
-import com.whereareyounow.domain.request.feedbookmark.GetFeedBookMarkRequest
+import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
-import com.whereareyounow.domain.usecase.feedbookmark.AddFeedBookMarkUseCase
-import com.whereareyounow.domain.usecase.feedbookmark.GetFeedBookMarkUseCase
+import com.whereareyounow.domain.usecase.feed.BookmarkFeedUseCase
+import com.whereareyounow.domain.usecase.feed.GetBookmarkedFeedUseCase
 import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
 import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
@@ -22,7 +21,6 @@ import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
-import com.whereareyounow.ui.main.mypage.mapper.toModel
 import com.whereareyounow.ui.main.mypage.model.FeedBookMarkResponseModel
 import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,8 +50,8 @@ class MyPageViewModel @Inject constructor(
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
     private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase,
-    private val getFeedBookMarkUseCase : GetFeedBookMarkUseCase,
-    private val addFeedBookMarkUseCase : AddFeedBookMarkUseCase
+    private val getFeedBookMarkUseCase : GetBookmarkedFeedUseCase,
+    private val addFeedBookMarkUseCase : BookmarkFeedUseCase
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -117,41 +115,37 @@ class MyPageViewModel @Inject constructor(
     val announcementList: StateFlow<List<Announcement>> = _announcementList.asStateFlow()
 
     fun getFeedBookMark(memberSeq: Int) {
-
-
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            getFeedBookMarkUseCase(
-                GetFeedBookMarkRequest(
-//                memberSeq = AuthData.memberSeq,
-                memberSeq = 1,
-                page = 0,
-                size = 10
-            )
-            ).onEach { networkResult ->
-                networkResult.onSuccess { code, message, data ->
-                    Log.d("Sflsjfleifnslf" , data.toString())
-
-                    data?.let {
-                        _feedBookMarkState.value = it.toModel()
-                    }
-                }.onError { code, message ->
-                    Log.d("Sflsjfleifnslf" , message.toString())
-
-                }.onException {
-                    Log.d("Sflsjfleifnslf" , it.message ?: "Unknown exception")
-
-                }
-            }
-                .catch {
-                    LogUtil.e(
-                        "flow error",
-                        "getFeedBookMarkUseCase\n${it.message}\n${it.stackTrace}"
-                    )
-                }
-                .launchIn(this)
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            getFeedBookMarkUseCase(
+//                GetBookmarkedFeedRequest(
+////                memberSeq = AuthData.memberSeq,
+//                memberSeq = 1,
+//                page = 0,
+//                size = 10
+//            )
+//            ).onEach { networkResult ->
+//                networkResult.onSuccess { code, message, data ->
+//                    Log.d("Sflsjfleifnslf" , data.toString())
+//
+//                    data?.let {
+//                        _feedBookMarkState.value = it.toModel()
+//                    }
+//                }.onError { code, message ->
+//                    Log.d("Sflsjfleifnslf" , message.toString())
+//
+//                }.onException {
+//                    Log.d("Sflsjfleifnslf" , it.message ?: "Unknown exception")
+//
+//                }
+//            }
+//                .catch {
+//                    LogUtil.e(
+//                        "flow error",
+//                        "getFeedBookMarkUseCase\n${it.message}\n${it.stackTrace}"
+//                    )
+//                }
+//                .launchIn(this)
+//        }
 
     }
 
@@ -162,7 +156,7 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             addFeedBookMarkUseCase(
-                AddFeedBookMarkRequest(
+                BookmarkFeedRequest(
                     feedSeq = feedSeq,
                     memberSeq = memberSeq
                 )
@@ -217,12 +211,12 @@ class MyPageViewModel @Inject constructor(
                 when (it) {
 
                     is NetworkResult.Success -> {
-                        val userInfo = it.data?.toModel()
-                        userInfo?.let {
-                            _name.value = it.userName
-                            _email.value = it.email
-                            _profileImageUri.value = it.profileImage
-                        }
+//                        val userInfo = it.data?.toModel()
+//                        userInfo?.let {
+//                            _name.value = it.userName
+//                            _email.value = it.email
+//                            _profileImageUri.value = it.profileImage
+//                        }
                     }
 
                     is NetworkResult.Error -> {
@@ -352,35 +346,35 @@ class MyPageViewModel @Inject constructor(
 
 
     private fun getLocationFaborite(memberSeq : Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            getFaboriteLocationUseCase(
-                memberSeq = memberSeq
-            ).onEach { networkResult ->
-                networkResult.onSuccess { code, message, data ->
-                    Log.d("getLocationFaborite" , code.toString())
-                    Log.d("getLocationFaborite" , message.toString())
-                    Log.d("getLocationFaborite" , data.toString())
-
-                    val updatedList = data?.map { it.toModel() } ?: emptyList()
-                    _locationFaboriteList.value = updatedList.toList()
-
-                    _isLoading.value = false
-
-                }.onError { code, message ->
-                    Log.d("getLocationFaborite" , code.toString())
-                    Log.d("getLocationFaborite" , message.toString())
-
-                }.onException { }
-            }
-                .catch {
-                    LogUtil.e(
-                        "flow error",
-                        "getFaboriteLocationUseCase\n${it.message}\n${it.stackTrace}"
-                    )
-                }
-                .launchIn(this)
-
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            getFaboriteLocationUseCase(
+//                memberSeq = memberSeq
+//            ).onEach { networkResult ->
+//                networkResult.onSuccess { code, message, data ->
+//                    Log.d("getLocationFaborite" , code.toString())
+//                    Log.d("getLocationFaborite" , message.toString())
+//                    Log.d("getLocationFaborite" , data.toString())
+//
+//                    val updatedList = data?.map { it.toModel() } ?: emptyList()
+//                    _locationFaboriteList.value = updatedList.toList()
+//
+//                    _isLoading.value = false
+//
+//                }.onError { code, message ->
+//                    Log.d("getLocationFaborite" , code.toString())
+//                    Log.d("getLocationFaborite" , message.toString())
+//
+//                }.onException { }
+//            }
+//                .catch {
+//                    LogUtil.e(
+//                        "flow error",
+//                        "getFaboriteLocationUseCase\n${it.message}\n${it.stackTrace}"
+//                    )
+//                }
+//                .launchIn(this)
+//
+//        }
 
     }
 
