@@ -7,11 +7,13 @@ import com.whereareyounow.domain.entity.member.UserInfo
 import com.whereareyounow.domain.request.member.CheckEmailDuplicateRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberCodeRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
+import com.whereareyounow.domain.request.member.LinkAccountRequest
 import com.whereareyounow.domain.request.member.ResetPasswordRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.SignInRequest
 import com.whereareyounow.domain.request.member.SignOutRequest
 import com.whereareyounow.domain.request.member.SignUpRequest
+import com.whereareyounow.domain.request.member.SnsSignUpRequest
 import com.whereareyounow.domain.request.member.UpdateProfileImageRequest
 import com.whereareyounow.domain.request.member.UpdateUserNameRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
@@ -35,6 +37,11 @@ interface MemberRepository {
         data: SignUpRequest
     ): NetworkResult<String>
 
+    // 소셜 로그인
+    suspend fun snsSignUp(
+        data: SnsSignUpRequest
+    ): NetworkResult<String>
+
     // 비밀번호 재설정
     suspend fun resetPassword(
         data: ResetPasswordRequest
@@ -49,6 +56,11 @@ interface MemberRepository {
     suspend fun signIn(
         data: SignInRequest
     ): NetworkResult<SignInData>
+
+    // 계정 연동
+    suspend fun linkAccount(
+        data: LinkAccountRequest
+    ): NetworkResult<String>
 
     // 인증코드 검증
     suspend fun verifyEmailCode(

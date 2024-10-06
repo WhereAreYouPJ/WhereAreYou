@@ -62,6 +62,22 @@ sealed class ROUTE {
     data object SignUp
 
     @Serializable
+    data class KakaoSignUp(
+        val name: String,
+        val email: String,
+        val userId: String
+    )
+
+    @Serializable
+    data class AccountDuplicate(
+        val accountType: String,
+        val email: String,
+        val type: List<String>,
+        val userName: String,
+        val password: String
+    )
+
+    @Serializable
     data object SignUpSuccess
 
     @Serializable

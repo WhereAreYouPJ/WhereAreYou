@@ -27,7 +27,7 @@ import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
-import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.util.CustomPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

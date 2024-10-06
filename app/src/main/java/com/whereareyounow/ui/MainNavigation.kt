@@ -44,6 +44,7 @@ import com.whereareyounow.ui.main.mypage.location.LocationFaboriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
+import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
 import com.whereareyounow.ui.navigation.addFeedScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
@@ -51,6 +52,7 @@ import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.friendsListScreenRoute
+import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.modifyScheduleScreenRoute
@@ -100,14 +102,20 @@ fun MainNavigation(
         // 위치기반 서비스 이용약관
         locationPolicyDetailsScreenRoute(navController)
 
-        // 회원가입 화면
+        // 일반 회원가입
         signUpScreenRoute(navController)
+
+        // 카카오 회원가입
+        kakaoSignUpScreenRoute(navController)
 
         // 회원가입 성공 화면
         signUpSuccessScreenRoute(navController)
 
         // 계정으로 로그인 화면
         signInWithAccountScreenRoute(navController)
+
+        // 계정 연동 화면
+        accountDuplicateScreenRoute(navController)
 
         // 계정 찾기 이메일 인증 화면
         findAccountEmailVerificationScreenRoute(navController)

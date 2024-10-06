@@ -1,4 +1,4 @@
-package com.whereareyounow.domain.usecase.schedule
+package com.whereareyounow.domain.usecase.member
 
 import com.whereareyounow.domain.repository.MemberRepository
 import com.whereareyounow.domain.request.member.UpdateUserNameRequest

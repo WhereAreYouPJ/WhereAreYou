@@ -18,7 +18,9 @@ data class SignUpScreenUIState(
     val inputPassword: String = "",
     val inputPasswordState: SignUpPasswordState = SignUpPasswordState.Idle,
     val inputPasswordCheck: String = "",
-    val inputPasswordCheckState: SignUpPasswordCheckState = SignUpPasswordCheckState.Idle
+    val inputPasswordCheckState: SignUpPasswordCheckState = SignUpPasswordCheckState.Idle,
+    val checkedEmail: String = "",
+    val duplicateType: List<String> = emptyList()
 )
 
 enum class SignUpUserNameState {

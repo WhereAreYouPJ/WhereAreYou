@@ -42,7 +42,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.ui.main.friend.feed.FeedContent
+import com.whereareyounow.ui.main.friend.feed.FeedScreen
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
@@ -100,7 +100,7 @@ private fun FriendScreen(
             upProfile = moveToDetailProfileScreen
         )
     } else {
-        FeedContent()
+        FeedScreen()
     }
 }
 

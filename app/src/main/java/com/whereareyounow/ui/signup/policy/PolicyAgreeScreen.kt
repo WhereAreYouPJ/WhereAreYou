@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.signup
+package com.whereareyounow.ui.signup.policy
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

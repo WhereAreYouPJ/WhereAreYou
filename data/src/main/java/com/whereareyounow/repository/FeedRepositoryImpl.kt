@@ -55,7 +55,6 @@ class FeedRepositoryImpl(
             "title" to title,
             "content" to content
         ) as HashMap<String, RequestBody>
-//        val reqData = Gson().toJson(data).toRequestBody("application/json".toMediaTypeOrNull())
         val multipartList = images.map {
             val reqBody = it.asRequestBody("image/png".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("feedImageInfo", "imageName", reqBody)

@@ -44,6 +44,8 @@ import com.whereareyounow.ui.component.EmailCodeTextField
 import com.whereareyounow.ui.component.EmailTextField
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.component.CheckingButton
+import com.whereareyounow.ui.signup.policy.InstructionContent
+import com.whereareyounow.ui.signup.policy.TopProgressContent
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium12pt
@@ -56,6 +58,7 @@ import kotlinx.coroutines.withContext
 fun SignUpScreen(
     moveToBackScreen: () -> Unit,
     moveToSignUpSuccessScreen: () -> Unit,
+    moveToAccountDuplicateScreen: (String, String, List<String>, String, String) -> Unit,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
@@ -70,7 +73,8 @@ fun SignUpScreen(
         updateInputEmail = viewModel::updateInputEmail,
         updateInputVerificationCode = viewModel::updateInputVerificationCode,
         verifyEmailCode = viewModel::verifyEmailCode,
-        signUp = viewModel::signUp,
+        checkEmailDuplicate = viewModel::checkEmailDuplicate,
+        moveToAccountDuplicateScreen = moveToAccountDuplicateScreen,
         moveToBackScreen = moveToBackScreen,
         moveToSignUpSuccessScreen = moveToSignUpSuccessScreen,
     )
@@ -87,7 +91,8 @@ private fun SignUpScreen(
     updateInputEmail: (String) -> Unit,
     updateInputVerificationCode: (String) -> Unit,
     verifyEmailCode: () -> Unit,
-    signUp: (() -> Unit) -> Unit,
+    checkEmailDuplicate: (String, (String, String, List<String>, String, String) -> Unit, () -> Unit) -> Unit,
+    moveToAccountDuplicateScreen: (String, String, List<String>, String, String) -> Unit,
     moveToBackScreen: () -> Unit,
     moveToSignUpSuccessScreen: () -> Unit
 ) {
@@ -275,7 +280,13 @@ private fun SignUpScreen(
                 Box(modifier = Modifier.padding(start = 15.dp, end = 15.dp)) {
                     // 회원가입 버튼
                     RoundedCornerButton(
-                        onClick = { signUp(moveToSignUpSuccessScreen) }
+                        onClick = {
+                            checkEmailDuplicate(
+                                "normal",
+                                moveToAccountDuplicateScreen,
+                                moveToSignUpSuccessScreen
+                            )
+                        }
                     ) {
                         Text(
                             text = "시작하기",

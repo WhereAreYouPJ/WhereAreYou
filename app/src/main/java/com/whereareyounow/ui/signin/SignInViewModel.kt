@@ -62,7 +62,7 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun signIn(
+    fun normalSignIn(
         moveToHomeScreen: () -> Unit
     ) {
         val requestData = SignInRequest(
@@ -73,7 +73,6 @@ class SignInViewModel @Inject constructor(
         signInUseCase(requestData)
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-                    moveToHomeScreen()
                     data?.let {
                         saveAccessTokenUseCase(data.accessToken)
                         saveRefreshTokenUseCase(data.refreshToken)
@@ -82,6 +81,7 @@ class SignInViewModel @Inject constructor(
                         AuthData.memberSeq = data.memberSeq
                         AuthData.memberCode = data.memberCode
                     }
+                    moveToHomeScreen()
                 }.onError { code, message ->
 
                 }.onException {  }
@@ -157,6 +157,37 @@ class SignInViewModel @Inject constructor(
 //                }
 //            }
 //        }
+    }
+
+    fun kakaoSignIn(
+        name: String,
+        email: String,
+        moveToKakaoSignUpScreen: () -> Unit,
+        moveToHomeScreen: () -> Unit
+    ) {
+        val requestData = SignInRequest(
+            email = email,
+            password = "bmnv4a35d38x4jhz${email}qxidfmaia21cq1p3",
+            loginType = "kakao"
+        )
+        signInUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        saveAccessTokenUseCase(data.accessToken)
+                        saveRefreshTokenUseCase(data.refreshToken)
+                        saveMemberSeqUseCase(data.memberSeq.toString())
+                        saveMemberCodeUseCase(data.memberCode)
+                        AuthData.memberSeq = data.memberSeq
+                        AuthData.memberCode = data.memberCode
+                    }
+                    moveToHomeScreen()
+                }.onError { code, message ->
+                    moveToKakaoSignUpScreen()
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
     }
 
     private fun updateFCMToken(

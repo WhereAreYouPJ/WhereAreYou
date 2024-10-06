@@ -7,9 +7,5 @@ data class UpdateProfileImageRequest(
     @SerializedName("memberSeq")
     val memberSeq: Long,
     @SerializedName("images")
-    val images: File?,
-    @SerializedName("newUserId")
-    val newUserId: String,
-    @SerializedName("newUserName")
-    val newUserName: String
+    val images: File
 )

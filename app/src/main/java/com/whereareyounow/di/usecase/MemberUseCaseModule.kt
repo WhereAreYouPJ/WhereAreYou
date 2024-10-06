@@ -4,15 +4,17 @@ import com.whereareyounow.domain.repository.MemberRepository
 import com.whereareyounow.domain.usecase.member.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberCodeUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
+import com.whereareyounow.domain.usecase.member.LinkAccountUseCase
 import com.whereareyounow.domain.usecase.member.ResetPasswordUseCase
 import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.SignInUseCase
 import com.whereareyounow.domain.usecase.member.SignOutUseCase
 import com.whereareyounow.domain.usecase.member.SignUpUseCase
+import com.whereareyounow.domain.usecase.member.SnsSignUpUseCase
 import com.whereareyounow.domain.usecase.member.UpdateProfileImageUseCase
+import com.whereareyounow.domain.usecase.member.UpdateUserNameUseCase
 import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.VerifyPasswordResetCodeUseCase
-import com.whereareyounow.domain.usecase.schedule.UpdateUserNameUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +32,6 @@ object MemberUseCaseModule {
         return UpdateUserNameUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideUpdateProfileImageUseCase(
         repository: MemberRepository
@@ -38,7 +39,6 @@ object MemberUseCaseModule {
         return UpdateProfileImageUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideSignUpUseCase(
         repository: MemberRepository
@@ -46,7 +46,11 @@ object MemberUseCaseModule {
         return SignUpUseCase(repository)
     }
 
-    @Singleton
+    @Provides
+    fun provideSnsSignUpUseCase(
+        repository: MemberRepository
+    ) = SnsSignUpUseCase(repository)
+
     @Provides
     fun provideResetPasswordUseCase(
         repository: MemberRepository
@@ -54,7 +58,6 @@ object MemberUseCaseModule {
         return ResetPasswordUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideSignOutUseCase(
         repository: MemberRepository
@@ -62,7 +65,6 @@ object MemberUseCaseModule {
         return SignOutUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideSignInUseCase(
         repository: MemberRepository
@@ -70,7 +72,11 @@ object MemberUseCaseModule {
         return SignInUseCase(repository)
     }
 
-    @Singleton
+    @Provides
+    fun provideLinkAccountUseCase(
+        repository: MemberRepository
+    ) = LinkAccountUseCase(repository)
+
     @Provides
     fun provideVerifyEmailCodeUseCase(
         repository: MemberRepository
@@ -78,7 +84,6 @@ object MemberUseCaseModule {
         return VerifyEmailCodeUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideVerifyPasswordResetCodeUseCase(
         repository: MemberRepository
@@ -86,7 +91,6 @@ object MemberUseCaseModule {
         return VerifyPasswordResetCodeUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideSendEmailCodeUseCase(
         repository: MemberRepository
@@ -94,7 +98,6 @@ object MemberUseCaseModule {
         return SendEmailCodeUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideGetUserInfoByMemberCodeUseCase(
         repository: MemberRepository
@@ -102,7 +105,6 @@ object MemberUseCaseModule {
         return GetUserInfoByMemberCodeUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideGetUserInfoByMemberSeqUseCase(
         repository: MemberRepository
@@ -110,7 +112,6 @@ object MemberUseCaseModule {
         return GetUserInfoByMemberSeqUseCase(repository)
     }
 
-    @Singleton
     @Provides
     fun provideCheckEmailDuplicateUseCase(
         repository: MemberRepository

@@ -8,5 +8,5 @@ data class FeedMemberInfo(
     @SerializedName("userName")
     val userName: String,
     @SerializedName("profileImage")
-    val profileImage: String
+    val profileImage: String? = ""
 )
