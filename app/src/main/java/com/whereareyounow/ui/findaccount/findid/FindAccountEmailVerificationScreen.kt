@@ -35,7 +35,7 @@ import com.whereareyounow.ui.component.EmailCodeTextField
 import com.whereareyounow.ui.component.EmailTextField
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
-import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.ui.signup.component.CheckingButton
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.util.CustomPreview

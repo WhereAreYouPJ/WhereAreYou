@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.ui.signup.PolicyAgreeScreen
+import com.whereareyounow.ui.signup.policy.PolicyAgreeScreen
 
 fun NavGraphBuilder.policyAgreeScreenRoute(navController: NavController) = composable<ROUTE.PolicyAgree.Main> {
     PolicyAgreeScreen(

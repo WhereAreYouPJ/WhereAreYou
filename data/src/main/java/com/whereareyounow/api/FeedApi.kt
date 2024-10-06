@@ -45,7 +45,7 @@ interface FeedApi {
     ): Response<ResponseWrapper<FeedSeq>>
 
     // 피드 리스트 조회
-    @GET("book-mark")
+    @GET("feed/list")
     suspend fun getFeedList(
         @Query("memberSeq") memberSeq: Int,
         @Query("page") page: Int,
@@ -53,6 +53,7 @@ interface FeedApi {
     ): Response<ResponseWrapper<FeedListData>>
 
     // 피드 상세 조회
+    @GET("feed/details")
     suspend fun getDetailFeed(
         @Query("memberSeq") memberSeq: Int,
         @Query("feedSeq") feedSeq: Int

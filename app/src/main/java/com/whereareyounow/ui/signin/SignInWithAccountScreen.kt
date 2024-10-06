@@ -31,7 +31,7 @@ import com.whereareyounow.ui.component.CustomTextFieldState
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
-import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium12pt
@@ -59,7 +59,7 @@ fun SignInWithAccountScreen(
         sideEffectFlow = sideEffectFlow,
         updateInputUserId = viewModel::updateInputUserId,
         updateInputPassword = viewModel::updateInputPassword,
-        signIn = viewModel::signIn,
+        signIn = viewModel::normalSignIn,
         updateIsSignInFailed = viewModel::updateIsSignInFailed,
         moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
         moveToMainHomeScreen = moveToMainHomeScreen,

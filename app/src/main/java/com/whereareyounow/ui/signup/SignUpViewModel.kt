@@ -3,14 +3,17 @@ package com.whereareyounow.ui.signup
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.whereareyounow.data.signup.SignUpPasswordCheckState
 import com.whereareyounow.data.signup.SignUpPasswordState
 import com.whereareyounow.data.signup.SignUpScreenSideEffect
 import com.whereareyounow.data.signup.SignUpScreenUIState
 import com.whereareyounow.data.signup.SignUpUserNameState
+import com.whereareyounow.domain.request.member.CheckEmailDuplicateRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.SignUpRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
+import com.whereareyounow.domain.usecase.member.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.SignUpUseCase
 import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
@@ -41,11 +44,7 @@ class SignUpViewModel @Inject constructor(
     private val application: Application,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
-//    private val checkIdDuplicateUseCase: CheckIdDuplicateUseCase,
-//    private val checkEmailDuplicateUseCase: CheckEmailDuplicateUseCase,
-//    private val authenticateEmailUseCase: AuthenticateEmailUseCase,
-//    private val authenticateEmailCodeUseCase: AuthenticateEmailCodeUseCase,
-//    private val signUpUseCase: SignUpUseCase,
+    private val checkEmailDuplicateUseCase: CheckEmailDuplicateUseCase,
     private val inputTextValidator: InputTextValidator,
     private val signUpUseCase: SignUpUseCase,
 ) : AndroidViewModel(application) {
@@ -54,6 +53,36 @@ class SignUpViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
     val sideEffectFlow = MutableSharedFlow<SignUpScreenSideEffect>()
     private var startTimer: Job? = null
+
+    fun initKakaoInfo(name: String, email: String, userId: String) {
+        _uiState.update {
+            it.copy(
+                inputUserName = name,
+                inputEmail = email,
+                inputPassword = "bmnv4a35d38x4jhz${email}qxidfmaia21cq1p3"
+            )
+        }
+    }
+
+    fun kakaoSignUp(
+        moveToSignUpSuccessScreen: () -> Unit
+    ) {
+        val requestData = SignUpRequest(
+            userName = _uiState.value.inputUserName,
+            password = _uiState.value.inputPassword,
+            email = _uiState.value.inputEmail
+        )
+        signUpUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    moveToSignUpSuccessScreen()
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
 
     fun updateInputUserName(userName: String) {
         _uiState.update {
@@ -186,6 +215,38 @@ class SignUpViewModel @Inject constructor(
                 }
             }
             .catch { LogUtil.e("flow error", "verifyEmailCode") }
+            .launchIn(viewModelScope)
+    }
+
+    fun checkEmailDuplicate(
+        accountType: String,
+        moveToAccountDuplicateScreen: (String, String, List<String>, String, String) -> Unit,
+        moveToSignUpSuccessScreen: () -> Unit,
+    ) {
+        val requestData = CheckEmailDuplicateRequest(
+            email = _uiState.value.inputEmail
+        )
+        checkEmailDuplicateUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        if (data.type.isEmpty()) {
+                            moveToSignUpSuccessScreen()
+                        } else {
+                            moveToAccountDuplicateScreen(accountType, data.email, data.type, _uiState.value.inputUserName, _uiState.value.inputPassword)
+                        }
+                        _uiState.update {
+                            it.copy(
+                                checkedEmail = data.email,
+                                duplicateType = data.type
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
             .launchIn(viewModelScope)
     }
 

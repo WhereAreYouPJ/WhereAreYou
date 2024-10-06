@@ -25,9 +25,9 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
         moveToAddFriendScreen = { navController.navigate(ROUTE_ADD_FRIEND) },
         moveToAddGroupScreen = {},
         moveToAddFeedScreen = { navController.navigate(ROUTE.AddFeed) },
-        moveToSignInScreen = {
+        moveToSignInMethodSelectionScreen = {
             navController.popBackStack()
-            navController.navigate(ROUTE_SIGN_IN_WITH_ACCOUNT)
+            navController.navigate(ROUTE.SignInMethodSelection)
         },
         moveToModifyInfoScreen = { navController.navigate(ROUTE_MODIFY_INFO) },
         moveToMyPageScreen = {

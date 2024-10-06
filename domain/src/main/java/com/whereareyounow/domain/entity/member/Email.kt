@@ -4,5 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Email(
     @SerializedName("email")
-    val email: String
+    val email: String,
+    @SerializedName("type")
+    val type: List<String>
 )

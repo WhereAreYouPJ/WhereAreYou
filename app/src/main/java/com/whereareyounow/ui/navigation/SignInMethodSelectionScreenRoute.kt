@@ -12,6 +12,14 @@ fun NavGraphBuilder.signInMethodSelectionScreenRoute(navController: NavControlle
         moveToSignInWithAccountScreen = { navController.navigate(ROUTE.SignInWithAccount) },
         moveToSignUpScreen = { navController.navigate(ROUTE.PolicyAgree.Main) },
         moveToFindAccountScreen = { navController.navigate(ROUTE_FIND_ACCOUNT) },
-        moveToDeveloperScreen = { navController.navigate(ROUTE.Developer) }
+        moveToDeveloperScreen = { navController.navigate(ROUTE.Developer) },
+        moveToKakaoSignUpScreen = { name, email, userId ->
+            navController.navigate(ROUTE.KakaoSignUp(name, email, userId))
+        },
+        moveToMainScreen = {
+            navController.navigate(ROUTE.Main) {
+                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+            }
+        }
     )
 }

@@ -54,7 +54,7 @@ fun MainScreen(
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToAddFeedScreen: () -> Unit,
-    moveToSignInScreen: () -> Unit,
+    moveToSignInMethodSelectionScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
@@ -81,7 +81,7 @@ fun MainScreen(
         moveToAddFriendScreen = moveToAddFriendScreen,
         moveToAddGroupScreen = moveToAddGroupScreen,
         moveToAddFeedScreen = moveToAddFeedScreen,
-        moveToSignInScreen = moveToSignInScreen,
+        moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
         moveToModifyInfoScreen = moveToModifyInfoScreen,
         moveToMyPageScreen = moveToMyPageScreen,
 
@@ -111,7 +111,7 @@ private fun MainScreen(
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToAddFeedScreen: () -> Unit,
-    moveToSignInScreen: () -> Unit,
+    moveToSignInMethodSelectionScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToDetailProfileScreen : (String, String) -> Unit,
@@ -171,7 +171,7 @@ private fun MainScreen(
                     ViewType.MyPage -> {
                         MyPageScreen(
                             paddingValues = it,
-                            moveToSignInScreen = moveToSignInScreen,
+                            moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
                             moveToMyInfoScreen = moveToMyInfoScreen,
                             moveToLocationFavorite = moveToLocationFavorite,
                             moveToFeedBookmarks = moveToFeedBookmarks,

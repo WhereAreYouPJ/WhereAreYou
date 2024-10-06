@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.signup
+package com.whereareyounow.ui.signup.policy
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize

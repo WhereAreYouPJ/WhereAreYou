@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.whereareyounow.data.detailschedule.DetailScheduleScreenUIState
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE
@@ -22,11 +21,8 @@ import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_RESULT
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_SUCCESS
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
-import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_SCHEDULE
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_RESET_PASSWORD
-import com.whereareyounow.data.globalvalue.ROUTE_SEARCH_LOCATION
-import com.whereareyounow.data.globalvalue.ROUTE_SELECT_FRIENDS
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
 import com.whereareyounow.ui.findaccount.findid.FindIdResultScreen
 import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
@@ -48,12 +44,13 @@ import com.whereareyounow.ui.main.mypage.location.LocationFavoriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
-import com.whereareyounow.ui.main.schedule.modifyschedule.ModifyScheduleScreen
+import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
 import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.friendsListScreenRoute
+import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
@@ -99,14 +96,20 @@ fun MainNavigation(
         // 위치기반 서비스 이용약관
         locationPolicyDetailsScreenRoute(navController)
 
-        // 회원가입 화면
+        // 일반 회원가입
         signUpScreenRoute(navController)
+
+        // 카카오 회원가입
+        kakaoSignUpScreenRoute(navController)
 
         // 회원가입 성공 화면
         signUpSuccessScreenRoute(navController)
 
         // 계정으로 로그인 화면
         signInWithAccountScreenRoute(navController)
+
+        // 계정 연동 화면
+        accountDuplicateScreenRoute(navController)
 
         // 계정 찾기 이메일 인증 화면
         findAccountEmailVerificationScreenRoute(navController)
@@ -208,32 +211,6 @@ fun MainNavigation(
                 destinationLongitude = it.arguments?.getDouble("destinationLongitude") ?: 0.0,
                 passedMemberInfosList = it.arguments?.getParcelableArrayList<MemberInfo>("memberInfosList")
                     ?: emptyList<MemberInfo>()
-            )
-        }
-
-        // 일정 정보 수정 화면
-        composable(
-            route = ROUTE_MODIFY_SCHEDULE
-        ) {
-//            val destinationName = it.savedStateHandle.getStateFlow<String?>("destinationName", null).collectAsState().value
-//            val destinationRoadAddress = it.savedStateHandle.getStateFlow<String?>("destinationRoadAddress", null).collectAsState().value
-//            val destinationLatitude = it.savedStateHandle.getStateFlow<Double?>("destinationLatitude", null).collectAsState().value
-//            val destinationLongitude = it.savedStateHandle.getStateFlow<Double?>("destinationLongitude", null).collectAsState().value
-//            val selectedFriendIdsList = it.savedStateHandle.getStateFlow<List<String>?>("selectedFriendIdsList", null).collectAsState().value
-            ModifyScheduleScreen(
-                scheduleId = it.arguments?.getString("scheduleId") ?: "",
-                initialDestinationLatitude = it.arguments?.getDouble("destinationLatitude") ?: 0.0,
-                initialDestinationLongitude = it.arguments?.getDouble("destinationLongitude")
-                    ?: 0.0,
-                initialScheduleDetails = DetailScheduleScreenUIState(),
-                moveToSearchLocationScreen = { navController.navigate(ROUTE_SEARCH_LOCATION) },
-                moveToFriendsListScreen = { selectedFriendIdsList ->
-                    val bundle = bundleOf(
-                        "selectedFriendIdsList" to selectedFriendIdsList
-                    )
-                    navController.navigate(ROUTE_SELECT_FRIENDS, bundle)
-                },
-                moveToBackScreen = { navController.popBackStack() }
             )
         }
 

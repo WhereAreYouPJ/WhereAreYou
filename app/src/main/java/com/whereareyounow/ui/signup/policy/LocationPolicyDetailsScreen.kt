@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.signup
+package com.whereareyounow.ui.signup.policy
 
 import androidx.compose.runtime.Composable
 

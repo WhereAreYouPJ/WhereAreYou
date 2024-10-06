@@ -3,7 +3,6 @@ package com.whereareyounow.ui.findaccount.findpw
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -39,7 +38,7 @@ import com.whereareyounow.ui.component.CustomTextFieldWithTimer
 import com.whereareyounow.ui.component.CustomTopBar
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
-import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.medium14pt

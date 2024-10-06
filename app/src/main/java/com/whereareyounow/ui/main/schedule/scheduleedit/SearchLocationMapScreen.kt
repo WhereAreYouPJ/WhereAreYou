@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -126,7 +125,7 @@ fun SearchLocationMapScreen(
                 ) {
                     Image(
                         modifier = Modifier.size(30.dp),
-                        painter = painterResource(R.drawable.ic_bookmark_outlined),
+                        painter = painterResource(R.drawable.ic_bookmark_outlined_white),
                         contentDescription = null
                     )
                 }

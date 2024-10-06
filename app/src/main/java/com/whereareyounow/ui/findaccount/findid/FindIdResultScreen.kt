@@ -29,7 +29,7 @@ import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.InfinityLoader
 import com.whereareyounow.ui.component.RoundedCornerButton
-import com.whereareyounow.ui.signup.InstructionContent
+import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.getColor

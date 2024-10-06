@@ -10,6 +10,7 @@ import com.whereareyounow.domain.request.feed.GetBookmarkedFeedRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
+import com.whereareyounow.domain.usecase.datastore.ClearAuthDataStoreUseCase
 import com.whereareyounow.domain.usecase.feed.BookmarkFeedUseCase
 import com.whereareyounow.domain.usecase.feed.GetBookmarkedFeedUseCase
 import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,9 +54,9 @@ class MyPageViewModel @Inject constructor(
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
     private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase,
-//    private val bookMarkFeedUseCase : BookmarkFeedUseCase,
-    private val getBookmarkedFeedUseCase : GetBookmarkedFeedUseCase,
-    private val addFeedBookMarkUseCase : BookmarkFeedUseCase
+    private val getFeedBookMarkUseCase : GetBookmarkedFeedUseCase,
+    private val addFeedBookMarkUseCase : BookmarkFeedUseCase,
+    private val clearAuthDataStoreUseCase: ClearAuthDataStoreUseCase,
 ) : AndroidViewModel(application) {
 
     private val _imageUri = MutableStateFlow<String?>(null)
@@ -124,7 +126,7 @@ class MyPageViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            getBookmarkedFeedUseCase(
+            getFeedBookMarkUseCase(
                 GetBookmarkedFeedRequest(
 //                memberSeq = AuthData.memberSeq,
                 memberSeq = 1,
@@ -195,14 +197,15 @@ class MyPageViewModel @Inject constructor(
 
 
     fun signOut(
-        moveToStartScreen: () -> Unit,
+        moveToSignInMethodSelectionScreen: () -> Unit,
     ) {
-//        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(Dispatchers.Default) {
 //            saveRefreshTokenUseCase("")
 //            saveAccessTokenUseCase("")
 //            saveMemberIdUseCase("")
-//            withContext(Dispatchers.Main) { moveToStartScreen() }
-//        }
+            clearAuthDataStoreUseCase()
+            withContext(Dispatchers.Main) { moveToSignInMethodSelectionScreen() }
+        }
     }
 
     fun getMyInfo(memberSeq: Int) {

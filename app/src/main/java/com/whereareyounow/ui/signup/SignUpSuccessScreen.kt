@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.RoundedCornerButton
+import com.whereareyounow.ui.signup.policy.InstructionContent
+import com.whereareyounow.ui.signup.policy.TopProgressContent
 import com.whereareyounow.ui.theme.bold18pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium18pt
