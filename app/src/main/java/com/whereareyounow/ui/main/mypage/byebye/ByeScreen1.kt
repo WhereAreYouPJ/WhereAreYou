@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.tobbar.DefaultTopBar
+import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
@@ -77,9 +78,13 @@ private fun ByeScreen1(
             .padding(top = TOP_BAR_HEIGHT.dp)
     ) {
         // 회원탈퇴 TopBar
-        DefaultTopBar(
-            title = "회원탈퇴"
-        ) {
+//        DefaultTopBar(
+//            title = "회원탈퇴"
+//        ) {
+//            moveToBackScreen()
+//        }
+
+        OneTextOneIconTobBar(title = "회원탈퇴", firstIcon = R.drawable.ic_backarrow) {
             moveToBackScreen()
         }
 

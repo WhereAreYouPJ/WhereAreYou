@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -23,27 +22,26 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
-import com.whereareyounow.ui.main.mypage.myinfo.OneTextOneIconTobBar
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
-fun EditLocationFaboriteScreen(
+fun EditLocationFavoriteScreen(
     moveToBackScreen: () -> Unit
 
 ) {
-    EditLocationFaboriteScreen(
+    EditLocationFavoriteScreen(
         isContent = true,
         moveToBackScreen = moveToBackScreen
     )
 }
 
 @Composable
-private fun EditLocationFaboriteScreen(
+private fun EditLocationFavoriteScreen(
     isContent: Boolean,
     moveToBackScreen: () -> Unit
 ) {
@@ -94,7 +92,7 @@ private fun EditLocationFaboriteScreen(
 
         WithdrawlButton(text = "삭제하기", canMove = defaultTrue) {
             moveToBackScreen()
-            myPageViewModel.DeleteFavoriteLocation(
+            myPageViewModel.deleteFavoriteLocation(
                 1,
                 listOf(1,2)
             )
@@ -105,7 +103,6 @@ private fun EditLocationFaboriteScreen(
 @Composable
 fun DetailFaboriteLocation(
     title: String,
-//    isClickedState: MutableState<Boolean>,
     isClicked: () -> Unit,
     circle : Int
 ) {

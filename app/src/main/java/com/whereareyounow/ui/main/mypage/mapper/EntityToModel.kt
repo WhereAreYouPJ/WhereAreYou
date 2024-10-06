@@ -1,10 +1,19 @@
 package com.whereareyounow.ui.main.mypage.mapper
 
+import com.whereareyounow.domain.entity.feed.BookmarkImageInfo
+import com.whereareyounow.domain.entity.feed.BookmarkedFeed
+import com.whereareyounow.domain.entity.feed.BookmarkedFeedData
+
 import com.whereareyounow.domain.entity.location.LocationFavoriteInfo
 import com.whereareyounow.domain.entity.member.DetailUserInfo
 import com.whereareyounow.domain.entity.member.UserInfo
+import com.whereareyounow.ui.main.mypage.model.BookMarkImageInfoModel
+import com.whereareyounow.ui.main.mypage.model.ContentModel
+import com.whereareyounow.ui.main.mypage.model.FeedBookMarkResponseModel
 import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import com.whereareyounow.ui.main.mypage.model.OtherUserInfoModel
+import com.whereareyounow.ui.main.mypage.model.PageableModel
+import com.whereareyounow.ui.main.mypage.model.SortModel
 import com.whereareyounow.ui.main.mypage.model.UserInfoModel
 
 fun DetailUserInfo.toModel(): UserInfoModel {
@@ -32,43 +41,36 @@ fun UserInfo.toModel() : OtherUserInfoModel {
     )
 }
 
-//// feef book-mark
-//fun GetFeedBookMarkResponse.toModel(): FeedBookMarkResponseModel {
-//    return FeedBookMarkResponseModel(
-//        totalElements = this.totalElements,
-//        totalPages = this.totalPages,
-//        size = this.size,
-//        content = this.content?.map { it.toModel() },
-//        number = this.number,
-//        sort = this.sort.toModel(),
-//        numberOfElements = this.numberOfElements,
-//        pageable = this.pageable.toModel(),
-//        first = this.first,
-//        last = this.last,
-//        empty = this.empty
-//    )
-//}
+// feef book-mark
+fun BookmarkedFeedData.toModel(): FeedBookMarkResponseModel {
+    return FeedBookMarkResponseModel(
+        totalElements = this.totalElements,
+        totalPages = this.totalPages,
+        size = this.size,
+        content = this.content?.map { it.toModel() },
+    )
+}
 //
-//fun Content.toModel(): ContentModel {
-//    return ContentModel(
-//        memberSeq = this.memberSeq,
-//        profileImage = this.profileImage,
-//        startTime = this.startTime,
-//        location = this.location,
-//        title = this.title,
-//        bookMarkImageInfos = this.bookMarkImageInfos?.map { it.toModel() },
-//        content = this.content,
-//        bookMark = this.bookMark
-//    )
-//}
+fun BookmarkedFeed.toModel(): ContentModel {
+    return ContentModel(
+        memberSeq = this.memberSeq,
+        profileImage = this.profileImage,
+        startTime = this.startTime,
+        location = this.location,
+        title = this.title,
+        bookMarkImageInfos = this.bookMarkImageInfos?.map { it.toModel() },
+        content = this.content,
+        bookMark = this.bookMark
+    )
+}
 //
-//fun BookMarkImageInfo.toModel(): BookMarkImageInfoModel {
-//    return BookMarkImageInfoModel(
-//        feedImageSeq = this.feedImageSeq,
-//        feedImageURL = this.feedImageURL,
-//        feedImageOrder = this.feedImageOrder
-//    )
-//}
+fun BookmarkImageInfo.toModel(): BookMarkImageInfoModel {
+    return BookMarkImageInfoModel(
+        feedImageSeq = this.feedImageSeq,
+        feedImageURL = this.feedImageURL,
+        feedImageOrder = this.feedImageOrder
+    )
+}
 //
 //fun Sort.toModel(): SortModel {
 //    return SortModel(

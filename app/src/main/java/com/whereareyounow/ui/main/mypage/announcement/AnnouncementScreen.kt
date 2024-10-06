@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
-import com.whereareyounow.ui.main.mypage.myinfo.OneTextOneIconTobBar
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.clickableNoEffect

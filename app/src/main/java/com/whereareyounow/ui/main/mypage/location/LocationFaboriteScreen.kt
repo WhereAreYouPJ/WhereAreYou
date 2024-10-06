@@ -1,12 +1,11 @@
 package com.whereareyounow.ui.main.mypage.location
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
@@ -34,9 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.EmptyDataIndicator
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
+import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.clickableNoEffect
@@ -45,17 +48,17 @@ import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
-fun LocationFaboriteScreen(
+fun LocationFavoriteScreen(
     moveToBackScreen : () -> Unit,
-    moveToEditLocationFaborite : () -> Unit
+    moveToEditLocationFavorite : () -> Unit
 ) {
+
     val myPageViewModel : MyPageViewModel = hiltViewModel()
-    val locationFaboriteList = myPageViewModel.locationFaboriteList.collectAsState().value
+    val locationFavoriteList = myPageViewModel.locationFaboriteList.collectAsState().value
     val isLoading = myPageViewModel.isLoading.collectAsState().value
 
     val myName = myPageViewModel.name.collectAsState().value
     val myEmail = myPageViewModel.email.collectAsState().value
-    Log.d("sfjlsjfls" , myName!!)
     val popupState = remember {
         PopupState(false, PopupPosition.BottomLeft)
     }
@@ -68,6 +71,7 @@ fun LocationFaboriteScreen(
     val isReadOnly = remember {
         mutableStateOf(true)
     }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -87,44 +91,44 @@ fun LocationFaboriteScreen(
                 popupState = popupState,
                 isModifyClicked = isModifyClicked,
                 isReadOnly = isReadOnly,
-                moveToEditMyInfoScreen = {  moveToEditLocationFaborite() },
+                moveToEditMyInfoScreen = {  moveToEditLocationFavorite() },
                 modifier = Modifier
-                    .clickableNoEffect {
-                        moveToEditLocationFaborite()
-                    }
-                    .align(Alignment.CenterEnd)
+//                    .clickableNoEffect {
+//                        if(locationFavoriteList.isEmpty()) {
+//                            Toast.makeText(context , "추가된 즐겨찾기가 없습니다." , Toast.LENGTH_SHORT).show()
+//                        } else {
+//                            moveToEditLocationFavorite()
+//                        }
+//                    }
+                    .align(Alignment.CenterEnd),
+                favoriteLocationList = locationFavoriteList
+
             )
-
-
-
         }
 
         if(isLoading) {
             CircularProgressIndicator()
         } else {
-            if(locationFaboriteList.isEmpty()) {
-                Gap(120)
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_nolocation),
-                    contentDescription = ""
+            if(locationFavoriteList.isEmpty()) {
+                EmptyDataIndicator(
+                    indicateText = "아직은 즐겨찾기한 위치가 없어요.\n" +
+                            "목록을 생성하여 좀 더 편리하게\n" +
+                            "일정 추가 시 위치를 선택할 수 있어요."
                 )
             } else {
-                locationFaboriteList.forEach { favoriteLocationList ->
+                locationFavoriteList.forEach { favoriteLocationList ->
                     DetailFavoriteLocation(
                         title = favoriteLocationList!!.location!!,
                         isClicked = {
 
                         }
                     )
+                    GrayLine()
                 }
-
             }
         }
-        
 
     }
-
 }
 
 
@@ -137,8 +141,12 @@ fun DeleteIconPopUp(
     isModifyClicked: MutableState<Boolean>,
     isReadOnly: MutableState<Boolean>,
     moveToEditMyInfoScreen: () -> Unit,
+//    toastMessage : () -> Unit,
+    favoriteLocationList : List<LocationFavoriteInfoModel?>
+
 ) {
     val density = LocalDensity.current.density
+    val context = LocalContext.current
     Box(
         contentAlignment = Alignment.CenterEnd,
         modifier = modifier.padding(end = 15.dp, top = 83.dp - 48.dp)
@@ -164,8 +172,15 @@ fun DeleteIconPopUp(
 //                                popupState.isVisible = false
 //                                isModifyClicked.value = true
 //                                isReadOnly.value = false
-                                moveToEditMyInfoScreen()
-                            },
+//                                moveToEditMyInfoScreen()
+                                if(favoriteLocationList.isEmpty()) {
+//                                    toastMessage()
+                                    Toast.makeText(context , "추가된 즐겨찾기가 없습니다." , Toast.LENGTH_SHORT).show()
+                                } else {
+                                    moveToEditMyInfoScreen()
+                                }
+                            }
+                        ,
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {

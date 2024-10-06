@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
@@ -176,49 +177,48 @@ private fun EditMyInfoScreen(
 
 }
 
-@Composable
-fun OneTextOneIconTobBar(
-    title: String,
-    firstIcon: Int,
-    firstIconClicked: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(TOP_BAR_HEIGHT.dp)
-            .drawBehind {
-                val strokeWidth = 1.5.dp.toPx()
-                val y = size.height - strokeWidth / 2
-                drawLine(
-                    color = Color(0xFFC9C9C9),
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
-                    strokeWidth = strokeWidth
-                )
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 15.dp, bottom = 10.dp)
-                .clickableNoEffect {
-                    firstIconClicked()
-                    Log.d("hslhflshfl", "first")
-                }
-                .offset(y = 4.dp),
-            painter = painterResource(id = firstIcon),
-            contentDescription = "",
-            colorFilter = ColorFilter.tint(Color(0xFFACACAC))
-        )
-        Text(
-            text = title,
-            style = medium18pt,
-            color = Color(0xFF000000),
-            modifier = Modifier.offset(y = -2.dp)
-        )
-    }
-}
+//@Composable
+//fun OneTextOneIconTobBar(
+//    title: String,
+//    firstIcon: Int,
+//    firstIconClicked: () -> Unit
+//) {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(TOP_BAR_HEIGHT.dp)
+//            .drawBehind {
+//                val strokeWidth = 1.5.dp.toPx()
+//                val y = size.height - strokeWidth / 2
+//                drawLine(
+//                    color = Color(0xFFC9C9C9),
+//                    start = Offset(0f, y),
+//                    end = Offset(size.width, y),
+//                    strokeWidth = strokeWidth
+//                )
+//            },
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Image(
+//            modifier = Modifier
+//                .align(Alignment.CenterStart)
+//                .padding(start = 15.dp, bottom = 10.dp)
+//                .clickableNoEffect {
+//                    firstIconClicked()
+//                }
+//                .offset(y = 4.dp),
+//            painter = painterResource(id = firstIcon),
+//            contentDescription = "",
+//            colorFilter = ColorFilter.tint(Color(0xFFACACAC))
+//        )
+//        Text(
+//            text = title,
+//            style = medium18pt,
+//            color = Color(0xFF000000),
+//            modifier = Modifier.offset(y = -2.dp)
+//        )
+//    }
+//}
 
 
 @Composable

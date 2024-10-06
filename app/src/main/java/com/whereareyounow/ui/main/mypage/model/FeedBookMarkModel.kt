@@ -4,14 +4,7 @@ data class FeedBookMarkResponseModel(
     val totalElements: Int,
     val totalPages: Int,
     val size: Int,
-    val content: List<ContentModel>?,
-    val number: Int,
-    val sort: SortModel,
-    val numberOfElements: Int,
-    val pageable: PageableModel,
-    val first: Boolean,
-    val last: Boolean,
-    val empty: Boolean
+    val content: List<ContentModel>?
 )
 
 data class ContentModel(

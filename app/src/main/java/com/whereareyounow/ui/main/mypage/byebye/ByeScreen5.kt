@@ -24,6 +24,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.tobbar.DefaultTopBar
+import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 
@@ -57,9 +58,12 @@ private fun ByeScreen5(
     Box(
         modifier = Modifier.fillMaxSize().padding(top = TOP_BAR_HEIGHT.dp)
     ) {
-        DefaultTopBar(
-            title = "회원탈퇴"
-        ) {
+//        DefaultTopBar(
+//            title = "회원탈퇴"
+//        ) {
+//            moveToBackScreen()
+//        }
+        OneTextOneIconTobBar(title = "회원탈퇴", firstIcon = R.drawable.ic_backarrow) {
             moveToBackScreen()
         }
 

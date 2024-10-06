@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.ui.main.mypage.FeedBookMark.FeedBookMarkScreen
+import com.whereareyounow.ui.main.mypage.feedbookmark.FeedBookMarkScreen
 
 fun NavGraphBuilder.feedBookMarkRoute(navController: NavController) = composable<ROUTE.FeedBookMark> {
     FeedBookMarkScreen(

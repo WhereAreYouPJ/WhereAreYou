@@ -4,7 +4,6 @@ import com.whereareyounow.api.FeedApi
 import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
-import com.google.gson.Gson
 import com.whereareyounow.domain.entity.feed.BookmarkSeq
 import com.whereareyounow.domain.entity.feed.BookmarkedFeedData
 import com.whereareyounow.domain.entity.feed.FeedInfo
@@ -22,7 +21,6 @@ import com.whereareyounow.domain.request.feed.GetHidedFeedRequest
 import com.whereareyounow.domain.request.feed.HideFeedRequest
 import com.whereareyounow.domain.request.feed.ModifyFeedRequest
 import com.whereareyounow.domain.request.feed.RestoreHidedFeedRequest
-import com.whereareyounow.util.UriRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
