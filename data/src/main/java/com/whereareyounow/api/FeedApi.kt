@@ -39,8 +39,7 @@ interface FeedApi {
     @Multipart
     @POST("feed")
     suspend fun createFeed(
-        @PartMap partMap: HashMap<String, RequestBody>,
-        @Part("feedImageOrder") orders: List<@JvmSuppressWildcards RequestBody>,
+        @Part("request") reqData: RequestBody,
         @Part images: List<MultipartBody.Part>?
     ): Response<ResponseWrapper<FeedSeq>>
 

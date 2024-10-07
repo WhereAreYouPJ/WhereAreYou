@@ -11,12 +11,12 @@ fun NavGraphBuilder.splashScreenRoute(navController: NavController) = composable
     SplashScreen(
         moveToSignInMethodSelectionScreen = {
             navController.navigate(ROUTE.SignInMethodSelection) {
-                popUpTo(ROUTE_SPLASH) { inclusive = true }
+                popUpTo<ROUTE.Splash> { inclusive = true }
             }
         },
         moveToMainScreen = {
             navController.navigate(ROUTE.Main) {
-                popUpTo(ROUTE_SPLASH) { inclusive = true }
+                popUpTo<ROUTE.Splash> { inclusive = true }
             }
         },
     )

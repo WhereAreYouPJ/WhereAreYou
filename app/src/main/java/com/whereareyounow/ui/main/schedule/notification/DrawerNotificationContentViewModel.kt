@@ -3,7 +3,7 @@ package com.whereareyounow.ui.main.schedule.notification
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.whereareyounow.data.notification.DrawerNotificationContentSideEffect
-import com.whereareyounow.data.notification.DrawerNotificationContentUIState
+import com.whereareyounow.data.notification.NotificationScreenUIState
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,8 +28,8 @@ class DrawerNotificationContentViewModel @Inject constructor(
 //    private val getFriendListUseCase: GetFriendListUseCase,
 ) : AndroidViewModel(application) {
 
-    private val _drawerNotificationContentUIState = MutableStateFlow(DrawerNotificationContentUIState())
-    val drawerNotificationUIState = _drawerNotificationContentUIState.asStateFlow()
+    private val _NotificationScreenUIState = MutableStateFlow(NotificationScreenUIState())
+    val drawerNotificationUIState = _NotificationScreenUIState.asStateFlow()
     val drawerNotificationContentSideEffectFlow = MutableSharedFlow<DrawerNotificationContentSideEffect>()
 
     fun loadFriendRequests() {

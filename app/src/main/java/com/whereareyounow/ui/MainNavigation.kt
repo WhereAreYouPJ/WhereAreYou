@@ -45,7 +45,9 @@ import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
+import com.whereareyounow.ui.navigation.addFeedScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
+import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
 import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
@@ -54,6 +56,7 @@ import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
+import com.whereareyounow.ui.navigation.notificationScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.scheduleModificationScreenRoute
@@ -74,10 +77,13 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE.Splash,
+        startDestination = ROUTE.Notification,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
+        // 개발자 화면
+        developerScreenRoute(navController)
+
         // 스플래시
         splashScreenRoute(navController)
 
@@ -183,6 +189,9 @@ fun MainNavigation(
         // 메인 화면
         mainScreenRoute(navController)
 
+        // 알림 화면
+        notificationScreenRoute(navController)
+
         // 일정 추가 화면
         newScheduleScreenRoute(navController)
 
@@ -220,6 +229,9 @@ fun MainNavigation(
                 moveToBackScreen = { navController.popBackStack() }
             )
         }
+
+        // 피드 추가 화면
+        addFeedScreenRoute(navController)
 
         // 회원 정보 수정 화면
         composable(route = ROUTE_MODIFY_INFO) {

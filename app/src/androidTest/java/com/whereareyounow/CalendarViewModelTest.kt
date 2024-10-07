@@ -61,8 +61,8 @@ class CalendarViewModelTest {
             ViewModelProvider(composeTestRule.activity)[CalendarViewModel::class.java]
         }
         calendarViewModel.updateYear(2024)
-        calendarViewModel.updateMonth(3)
-        calendarViewModel.updateDate(14)
+//        calendarViewModel.updateMonth(3)
+//        calendarViewModel.updateDate(14)
 //        calendarViewModel.updateCurrentMonthCalendarInfo()
         delay(5000)
 //        assertEquals(1, calendarViewModel.uiState.value.selectedMonthCalendarInfoMap[14].scheduleCount)

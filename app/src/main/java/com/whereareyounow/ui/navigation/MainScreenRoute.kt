@@ -1,9 +1,12 @@
 package com.whereareyounow.ui.navigation
 
+import androidx.compose.animation.EnterTransition
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
@@ -15,6 +18,7 @@ import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.util.navigate
 
 fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<ROUTE.Main> {
+    val mainNavController = rememberNavController()
     MainScreen(
         moveToAddScheduleScreen = { year, month, date ->
             navController.navigate(ROUTE.AddSchedule(year, month, date))

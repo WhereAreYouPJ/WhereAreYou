@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.feedlist.FeedListScreenUIState
 import com.whereareyounow.domain.entity.feed.FeedListData
+import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
+import com.whereareyounow.domain.usecase.feed.GetDetailFeedUseCase
 import com.whereareyounow.domain.usecase.feed.GetFeedListUseCase
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
@@ -20,8 +22,9 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedListViewModel @Inject constructor(
+class FeedViewModel @Inject constructor(
     private val getFeedListUseCase: GetFeedListUseCase,
+    private val getDetailFeedUseCase: GetDetailFeedUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedListScreenUIState(FeedListData(
@@ -29,7 +32,7 @@ class FeedListViewModel @Inject constructor(
         totalPages = 0,
         size = 0,
         emptyList()
-    )))
+    ), null))
     val uiState = _uiState.asStateFlow()
 
     fun getFeedList() {
@@ -45,6 +48,29 @@ class FeedListViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 feedListData = data
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
+
+    fun getDetailFeed(feedSeq: Int) {
+        val requestData = GetDetailFeedRequest(
+            memberSeq = AuthData.memberSeq,
+            feedSeq = feedSeq
+        )
+        getDetailFeedUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _uiState.update {
+                            it.copy(
+                                detailFeedData = data
                             )
                         }
                     }

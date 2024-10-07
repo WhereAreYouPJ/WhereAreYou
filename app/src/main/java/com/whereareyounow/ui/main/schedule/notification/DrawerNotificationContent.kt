@@ -3,7 +3,6 @@ package com.whereareyounow.ui.main.schedule.notification
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +43,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.SCREEN_WIDTH
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.data.notification.DrawerNotificationContentUIState
+import com.whereareyounow.data.notification.NotificationScreenUIState
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.util.clickableNoEffect
@@ -52,7 +51,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerNotificationContent(
-    drawerNotificationContentUIState: DrawerNotificationContentUIState,
+    notificationScreenUIState: NotificationScreenUIState,
     updateCalendar: () -> Unit,
     updateBriefCalendar: () -> Unit,
     acceptFriendRequest: (FriendRequest) -> Unit,
@@ -104,7 +103,7 @@ fun DrawerNotificationContent(
                                 )
                                 Spacer(Modifier.weight(1f))
                                 Text(
-                                    text = "${drawerNotificationContentUIState.todayScheduleCount}",
+                                    text = "${notificationScreenUIState.todayScheduleCount}",
                                     color = Color(0xFFF3A204)
                                 )
                                 Spacer(Modifier.width(10.dp))
@@ -138,13 +137,13 @@ fun DrawerNotificationContent(
                         Spacer(Modifier.height(10.dp))
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = "친구요청 ${drawerNotificationContentUIState.friendRequestsList.size}",
+                            text = "친구요청 ${notificationScreenUIState.friendRequestsList.size}",
                             color = Color(0xFF999999),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
                     }
-                    itemsIndexed(drawerNotificationContentUIState.friendRequestsList) { _, friendRequest ->
+                    itemsIndexed(notificationScreenUIState.friendRequestsList) { _, friendRequest ->
                         FriendRequestBox(
                             friendRequest = friendRequest,
                             acceptFriendRequest = {
@@ -170,13 +169,13 @@ fun DrawerNotificationContent(
                         Spacer(Modifier.height(20.dp))
                         Text(
                             modifier = Modifier.padding(start = 20.dp),
-                            text = "일정초대 ${drawerNotificationContentUIState.scheduleRequestsList.size}",
+                            text = "일정초대 ${notificationScreenUIState.scheduleRequestsList.size}",
                             color = Color(0xFF999999),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
                     }
-                    itemsIndexed(drawerNotificationContentUIState.scheduleRequestsList) { _, scheduleRequest ->
+                    itemsIndexed(notificationScreenUIState.scheduleRequestsList) { _, scheduleRequest ->
                         ScheduleRequestBox(
                             scheduleRequest = scheduleRequest,
                             acceptScheduleRequest = {
@@ -232,7 +231,7 @@ fun DrawerNotificationPreview() {
             .fillMaxSize()
     ) {
         DrawerNotificationContent(
-            drawerNotificationContentUIState = DrawerNotificationContentUIState(),
+            notificationScreenUIState = NotificationScreenUIState(),
             updateCalendar = {},
             updateBriefCalendar = {},
             acceptFriendRequest = {},
