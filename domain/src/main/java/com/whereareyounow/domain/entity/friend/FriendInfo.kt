@@ -9,4 +9,6 @@ data class FriendInfo(
     val userName: String,
     @SerializedName("profileImage")
     val profileImage: String,
+    @SerializedName("Favorites")
+    val Favorites : Boolean
 )

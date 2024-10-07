@@ -1,13 +1,29 @@
 package com.whereareyounow.ui.main.friend.addfriend
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.domain.request.friend.SendFriendRequestRequest
+import com.whereareyounow.domain.request.member.GetUserInfoByMemberCodeRequest
+import com.whereareyounow.domain.usecase.friend.SendFriendRequestUseCase
+import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberCodeUseCase
+import com.whereareyounow.domain.util.LogUtil
+import com.whereareyounow.domain.util.onError
+import com.whereareyounow.domain.util.onException
+import com.whereareyounow.domain.util.onSuccess
+import com.whereareyounow.ui.main.mypage.mapper.toModel
+import com.whereareyounow.ui.main.mypage.model.OtherUserInfoModel
 import com.whereareyounow.util.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,8 +35,83 @@ class AddFriendViewModel @Inject constructor(
 //    private val getMemberIdByUserIdUseCase: GetMemberIdByUserIdUseCase,
 //    private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
 //    private val sendFriendRequestUseCase: SendFriendRequestUseCase,
-    private val tokenManager: TokenManager
-) : AndroidViewModel(application) {
+    private val tokenManager: TokenManager,
+    private val getUserInfoByMemberCodeUseCase: GetUserInfoByMemberCodeUseCase,
+    private val sendFriendRequestUseCase: SendFriendRequestUseCase,
+
+
+    ) : AndroidViewModel(application) {
+
+
+    private val _searchedUserInfo = MutableStateFlow<OtherUserInfoModel?>(null)
+    val searcedUserInfo: StateFlow<OtherUserInfoModel?> = _searchedUserInfo
+
+
+    fun requestAddFriend(
+        friendSeq: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sendFriendRequestUseCase(
+                SendFriendRequestRequest(
+                    memberSeq = AuthData.memberSeq.toString(),
+                    friendSeq = friendSeq
+                )
+            ).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    Log.d("sendFriendRequestUseCase", data.toString())
+
+                }.onError { code, message ->
+
+                }.onException {
+
+                }
+            }
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "sendFriendRequestUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(this)
+        }
+    }
+
+    fun searchUser(memberCode: String) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            getUserInfoByMemberCodeUseCase(
+                GetUserInfoByMemberCodeRequest(
+                    memberCode = memberCode
+                )
+            ).onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    Log.d("Sflsjfleifnsfsfsfsfslf", data.toString())
+                    Log.d("Sflsjfleifnsfsfsfsfslf", AuthData.memberCode)
+                    val otherUserModel = data?.toModel()
+                    _searchedUserInfo.value = otherUserModel
+
+                }.onError { code, message ->
+                    Log.d("Sflsjfleifnsfsfsfsfslf", code.toString())
+                    Log.d("Sflsjfleifnsfsfsfsfslf", AuthData.memberCode)
+
+                }.onException {
+                    Log.d("Sflsjfleifnsfsfsfsfslf", it.message ?: "Unknown exception")
+                    Log.d("Sflsjfleifnsfsfsfsfslf", AuthData.memberCode)
+
+                }
+            }
+                .catch {
+                    LogUtil.e(
+                        "flow error",
+                        "getFeedBookMarkUseCase\n${it.message}\n${it.stackTrace}"
+                    )
+                }
+                .launchIn(this)
+        }
+
+
+    }
+
 
     private val _friendInfo = MutableStateFlow<Friend?>(null)
     val friendInfo: StateFlow<Friend?> = _friendInfo
@@ -48,8 +139,9 @@ class AddFriendViewModel @Inject constructor(
     fun searchFriend() {
         viewModelScope.launch {
             friendMemberId = searchMemberIdByUserId()
-            if (friendMemberId != "") { getMemberDetailsByMemberId() }
-            else return@launch
+            if (friendMemberId != "") {
+                getMemberDetailsByMemberId()
+            } else return@launch
         }
     }
 

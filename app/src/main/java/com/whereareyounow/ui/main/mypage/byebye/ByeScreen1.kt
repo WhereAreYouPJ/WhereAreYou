@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.component.tobbar.DefaultTopBar
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.theme.getColor

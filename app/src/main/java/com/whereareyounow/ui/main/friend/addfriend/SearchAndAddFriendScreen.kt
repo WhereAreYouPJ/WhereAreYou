@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.main.friend.addfriend
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,27 +40,31 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
+import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.ui.component.button.BasicTextButton
+import com.whereareyounow.ui.component.button.SizeVariableTextButton
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.friend.FriendViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.ui.theme.notoSanskr
 import com.whereareyounow.util.clickableNoEffect
+import kotlinx.coroutines.delay
 
 @Composable
-fun AddFriendScreen(
-    moveToBackScreen: () -> Unit,
-    viewModel: AddFriendViewModel = hiltViewModel()
+fun SearchAndAddFriendScreen(
+    moveToBackScreen: () -> Unit
 ) {
-    val inputId = viewModel.inputId.collectAsState().value
+    val viewModel: AddFriendViewModel = hiltViewModel()
     val friendInfo = viewModel.friendInfo.collectAsState().value
     val buttonState = viewModel.buttonState.collectAsState().value
-    AddFriendScreen(
-        inputId = inputId,
+    SearchAndAddFriendScreen(
         updateInputId = viewModel::updateInputId,
         clearInputId = viewModel::clearInputId,
         friendInfo = friendInfo,
@@ -69,8 +76,7 @@ fun AddFriendScreen(
 }
 
 @Composable
-private fun AddFriendScreen(
-    inputId: String,
+private fun SearchAndAddFriendScreen(
     updateInputId: (String) -> Unit,
     clearInputId: () -> Unit,
     friendInfo: Friend?,
@@ -79,39 +85,68 @@ private fun AddFriendScreen(
     sendFriendRequest: () -> Unit,
     moveToBackScreen: () -> Unit
 ) {
-    val friendViewModel : FriendViewModel = hiltViewModel()
-
+    val addFriendViewModel: AddFriendViewModel = hiltViewModel()
+    val searchedUserInfo = addFriendViewModel.searcedUserInfo.collectAsState().value
+    val searchedCode = remember {
+        mutableStateOf("")
+    }
+    val addFriendButtonClickedBoolean = remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = TOP_BAR_HEIGHT.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         AddFriendScreenTopBar(moveToBackScreen)
-
         Gap(10)
-
-
-        val searchdId = remember {
-            mutableStateOf("")
-        }
-        FriendIdTextField(
-            inputId = inputId,
+        SearchFriendCode(
             updateInputId = updateInputId,
             clearInputId = clearInputId,
-            searchdId = searchdId
+            searchedCode = searchedCode
         )
-
-        Gap(20)
-
-        if (friendInfo != null) {
-            UserInfoContent(
-                imageUrl = friendInfo.profileImgUrl,
-                userName = friendInfo.name
+        Gap(16)
+        if (searchedUserInfo != null) {
+            SearcedUserInfoContent(
+                imageUrl = searchedUserInfo.profileImage,
+                userName = searchedUserInfo.userName!!
             )
         }
-
+        Spacer(Modifier.weight(1f))
+        if (addFriendButtonClickedBoolean.value) {
+            LaunchedEffect(addFriendButtonClickedBoolean.value) {
+                delay(10000L)
+                addFriendButtonClickedBoolean.value = false
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(start = 15.dp, end = 15.dp)
+                    .background(
+                        color = Color(0xFF333333).copy(alpha = 0.8f),
+                        shape = RoundedCornerShape(16.dp),
+                    ),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "친구 신청이 완료되었습니다.",
+                    style = medium14pt,
+                    color = Color(0xFFFFFFFF),
+                    modifier = Modifier.offset(x = 16.dp)
+                )
+            }
+            Gap(24)
+        }
+        BasicTextButton(
+            text = "친구 신청하기",
+            onClicked = {
+                addFriendViewModel.requestAddFriend(searchedUserInfo!!.memberSeq.toString())
+                addFriendButtonClickedBoolean.value = true
+            }
+        )
+        Gap(BOTTOM_NAVIGATION_BAR_HEIGHT.toInt())
     }
 }
 
@@ -119,61 +154,43 @@ private fun AddFriendScreen(
 fun AddFriendScreenTopBar(
     moveToBackScreen: () -> Unit
 ) {
-
-    OneTextOneIconTobBar(
-        title = "친구 추가",
-        firstIcon = R.drawable.ic_backarrow
-    ) {
+    OneTextOneIconTobBar(title = "친구 추가", firstIcon = R.drawable.ic_backarrow) {
         moveToBackScreen()
     }
-//    CustomTopBar(
-//        title = "친구추가",
-//        onBackButtonClicked = moveToBackScreen
-//    )
 }
 
 @Composable
-fun FriendIdTextField(
-    inputId: String,
+fun SearchFriendCode(
     updateInputId: (String) -> Unit,
     clearInputId: () -> Unit,
-
-    searchdId: MutableState<String>
+    searchedCode: MutableState<String>
 ) {
-    val friendViewModel : FriendViewModel = hiltViewModel()
+    val addFriendViewModel: AddFriendViewModel = hiltViewModel()
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(78.dp)
             .padding(start = 20.dp, end = 20.dp)
     ) {
+
         Text(
             text = "코드 검색",
-            fontFamily = notoSanskr,
-            fontSize = 12.sp,
+            style = medium12pt,
             color = Color(0xFF333333),
-            fontWeight = FontWeight.Medium,
             modifier = Modifier.offset(x = 6.dp)
         )
+
         Gap(4)
 
         Row(
             modifier = Modifier
-
-//                .border(
-//                border = BorderStroke(
-//                    width = 1.dp,
-//                    color = Color(0xFF767676)
-//                ),
-//                shape = RoundedCornerShape(6.dp)
-//            )
-
                 .height(52.dp)
                 .fillMaxWidth()
         ) {
             OutlinedTextField(
-                value = searchdId.value,
+                value = searchedCode.value,
                 onValueChange = {
-                    searchdId.value = it
+                    searchedCode.value = it
                 },
                 placeholder = {
                     Text(
@@ -205,146 +222,72 @@ fun FriendIdTextField(
 
             Gap(8)
 
-            ConfirmButtonDat(
+            SizeVariableTextButton(
                 text = "확인",
                 onClicked = {
-                    friendViewModel.searchUser(
-                        searchdId.value
+                    addFriendViewModel.searchUser(
+                        searchedCode.value
                     )
-                }
+                },
+                buttonWidth = 100,
+                buttonHeight = 52
             )
-
-            Text("ss")
-
-
+        }
+        if (addFriendViewModel.searcedUserInfo.collectAsState().value != null) {
+            Text(addFriendViewModel.searcedUserInfo.collectAsState().value!!.userName!!)
+            Text("${addFriendViewModel.searcedUserInfo.collectAsState().value!!.memberSeq!!}")
         }
 
-
-//        BasicTextField(
-//            value = inputId,
-//            onValueChange = { updateInputId(it) },
-//            textStyle = TextStyle(fontSize = 18.sp),
-//            singleLine = true,
-//            decorationBox = {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .drawBehind {
-//                            val borderSize = 1.dp.toPx()
-//                            drawLine(
-//                                color = Color(0xFF858585),
-//                                start = Offset(0f, size.height),
-//                                end = Offset(size.width, size.height),
-//                                strokeWidth = borderSize
-//                            )
-//                        },
-//                    contentAlignment = Alignment.CenterStart
-//                ) {
-//                    Box {
-//                        Text(
-//                            text = if (inputId == "") "친구 ID" else "",
-//                            fontSize = 18.sp,
-//                            color = Color(0xFFA5A5A5)
-//                        )
-//                        it()
-//                    }
-//                    Box(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        contentAlignment = Alignment.CenterEnd
-//                    ) {
-//                        Image(
-//                            modifier = Modifier.clickableNoEffect {
-//                                clearInputId()
-//                            },
-//                            painter = painterResource(id = R.drawable.baseline_cancel_24),
-//                            contentDescription = null,
-//                            colorFilter = ColorFilter.tint(color = Color(0xFF858585))
-//                        )
-//                    }
-//                }
-//            }
-//        )
     }
 
 }
 
 @Composable
-fun UserInfoContent(
+fun SearcedUserInfoContent(
     imageUrl: String?,
     userName: String
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(
-                border = BorderStroke(
-                    width = (0.5).dp,
-                    color = Color(0xFFC3C3C6)
-                ),
-                shape = RoundedCornerShape(10.dp)
-            )
+            .height(169.dp)
+            .padding(start = 20.dp, end = 20.dp)
+//            .border(
+//                border = BorderStroke(
+//                    width = (0.5).dp,
+//                    color = Color(0xFFC3C3C6)
+//                ),
+//                shape = RoundedCornerShape(10.dp)
+//            )
             .background(
-                color = Color(0xFFF7F7F7),
+                color = Color(0xFFF4F4F4),
                 shape = RoundedCornerShape(10.dp)
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.height(40.dp))
+        Gap(18)
         GlideImage(
             modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(50)),
-            imageModel = { imageUrl ?: R.drawable.idle_profile },
+                .size(100.dp)
+                .clip(RoundedCornerShape(34.4.dp)),
+            imageModel = { imageUrl ?: R.drawable.ic_default_profile_image },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop)
         )
-        Spacer(Modifier.height(40.dp))
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = userName,
-                fontSize = 20.sp
-            )
-        }
-        Spacer(Modifier.height(20.dp))
-    }
-}
-
-
-@Composable
-fun ConfirmButtonDat(
-    text: String,
-    onClicked: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .width(100.dp)
-            .height(52.dp)
-            .clip(RoundedCornerShape(6.dp))
-            .background(getColor().brandColor)
-            .clickableNoEffect {
-                onClicked()
-            },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
+        Gap(8)
         Text(
-            text = text,
-            fontSize = 14.sp,
-            fontFamily = notoSanskr,
-            fontWeight = FontWeight.Medium,
-            color = Color(0xFFFFFFFF)
+            text = userName,
+            style = medium20pt,
+            color = Color(0xFF222222)
         )
     }
 }
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AddFriendScreenPreview1() {
     OnMyWayTheme {
-        AddFriendScreen(
-            inputId = "",
+        SearchAndAddFriendScreen(
             updateInputId = { },
             clearInputId = { },
             friendInfo = null,
@@ -360,8 +303,7 @@ private fun AddFriendScreenPreview1() {
 @Composable
 private fun AddFriendScreenPreview2() {
     OnMyWayTheme {
-        AddFriendScreen(
-            inputId = "가나다라",
+        SearchAndAddFriendScreen(
             updateInputId = { },
             clearInputId = { },
             friendInfo = null,
@@ -376,7 +318,7 @@ private fun AddFriendScreenPreview2() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewUserInfoContent() {
-    UserInfoContent(
+    SearcedUserInfoContent(
         imageUrl = "",
         userName = "sfsf"
     )

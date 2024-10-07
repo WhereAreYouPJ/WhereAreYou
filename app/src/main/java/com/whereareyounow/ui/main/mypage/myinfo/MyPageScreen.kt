@@ -223,7 +223,7 @@ private fun MyPageScreen(
                             .clickableNoEffect {
                                 isProfileClicked.value = !isProfileClicked.value
                             },
-                        imageModel = { profileImageUri ?: R.drawable.idle_profile },
+                        imageModel = { profileImageUri ?: R.drawable.ic_default_profile_image },
                         imageOptions = ImageOptions(contentScale = ContentScale.Crop)
                     )
                     Box(

@@ -2,18 +2,21 @@ package com.whereareyounow.ui.main.friend
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
-import com.whereareyounow.domain.entity.member.UserInfo
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.domain.request.friend.GetFriendListRequest
+import com.whereareyounow.domain.request.friend.SendFriendRequestRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberCodeRequest
+import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
+import com.whereareyounow.domain.usecase.friend.SendFriendRequestUseCase
 import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberCodeUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
+import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.mapper.toModel
 import com.whereareyounow.ui.main.mypage.model.OtherUserInfoModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,63 +36,87 @@ class FriendViewModel @Inject constructor(
 //    private val getMemberIdUseCase: GetMemberIdUseCase,
 //    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
 //    private val getFriendListUseCase: GetFriendListUseCase,
-    private val getUserInfoByMemberCodeUseCase : GetUserInfoByMemberCodeUseCase
+    private val getFriendListUseCase : GetFriendListUseCase
 
 
     ) : AndroidViewModel(application) {
 
-    private val _searchedUserInfo  = MutableStateFlow<OtherUserInfoModel?>(null)
-    val searcedUserInfo : StateFlow<OtherUserInfoModel?> = _searchedUserInfo
+    private val _searchedUserInfo = MutableStateFlow<OtherUserInfoModel?>(null)
+    val searcedUserInfo: StateFlow<OtherUserInfoModel?> = _searchedUserInfo
 
 
-
-    val friendsList = mutableStateListOf<Friend>(
+    //    private val _friendList = MutableStateFlow<List<Friend>>(emptyList())
+    private val _friendList = MutableStateFlow<List<FriendModel>>(
+        listOf(
+            FriendModel(
+                memberSeq = 0,
+                userName = "폐미제조중인데요...?",
+                profileImage = "userId",
+                Favorites = true
+            ),
+            FriendModel(
+                memberSeq = 0,
+                userName = "폐미제조중인데요...?",
+                profileImage = "userId",
+                Favorites = true
+            ),
+            FriendModel(
+                memberSeq = 0,
+                userName = "폐미제조중인데요...?",
+                profileImage = "userId",
+                Favorites = true
+            ),
+            FriendModel(
+                memberSeq = 0,
+                userName = "폐미제조중인데요...?",
+                profileImage = "userId",
+                Favorites = true
+            ),
+            FriendModel(
+                memberSeq = 0,
+                userName = "폐미제조중인데요...?",
+                profileImage = "userId",
+                Favorites = true
+            )
+        )
     )
-    // 이게 찐 위는 짭테스트
-//    val friendsList = mutableStateListOf<Friend>()
+    val friendsList: StateFlow<List<FriendModel>> = _friendList
 
-    fun searchUser(memberCode : String) {
 
+
+
+
+
+    private fun getFriendIdsList(
+        memberSeq : Int
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
-            getUserInfoByMemberCodeUseCase(
-                GetUserInfoByMemberCodeRequest(
-                    memberCode = memberCode
+            getFriendListUseCase(
+                GetFriendListRequest(
+                    memberSeq = memberSeq
                 )
             ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-                    Log.d("Sflsjfleifnsfsfsfsfslf" , data.toString())
-                    Log.d("Sflsjfleifnsfsfsfsfslf" , AuthData.memberCode)
-                    val otherUserModel = data?.toModel()
-                    _searchedUserInfo.value = otherUserModel
-
-                    otherUserModel?.let {
-
-                    }
+                    val myFriendList = data?.map{ it.toModel() } ?: emptyList()
+                    _friendList.value = myFriendList.toList()
 
                 }.onError { code, message ->
-                    Log.d("Sflsjfleifnsfsfsfsfslf" , code.toString())
-                    Log.d("Sflsjfleifnsfsfsfsfslf" , AuthData.memberCode)
 
                 }.onException {
-                    Log.d("Sflsjfleifnsfsfsfsfslf" , it.message ?: "Unknown exception")
-                    Log.d("Sflsjfleifnsfsfsfsfslf" , AuthData.memberCode)
 
                 }
             }
                 .catch {
                     LogUtil.e(
                         "flow error",
-                        "getFeedBookMarkUseCase\n${it.message}\n${it.stackTrace}"
+                        "getFriendListUseCase\n${it.message}\n${it.stackTrace}"
                     )
                 }
                 .launchIn(this)
         }
 
 
-    }
 
-
-    fun getFriendIdsList() {
 //        viewModelScope.launch(Dispatchers.Default) {
 //            // 친구 memberId 리스트를 가져온다.
 //            val accessToken = getAccessTokenUseCase().first()
@@ -149,11 +176,17 @@ class FriendViewModel @Inject constructor(
 
     // 올믹
     data class MyInfo(
-        val image : String?,
-        val name : String
+        val image: String?,
+        val name: String
     )
-    private val _myInfo = MutableStateFlow<MyInfo>( MyInfo("https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" , "유민혁"))
-    val myInfo : MutableStateFlow<MyInfo> = _myInfo
+
+    private val _myInfo = MutableStateFlow<MyInfo>(
+        MyInfo(
+            "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg",
+            "유민혁"
+        )
+    )
+    val myInfo: MutableStateFlow<MyInfo> = _myInfo
     // TODO 준성님개인정보어디서가져오는건지
 //    private fun getMyInfo() {
 //        _myInfo.value =
@@ -161,6 +194,6 @@ class FriendViewModel @Inject constructor(
 
 
     init {
-        getFriendIdsList()
+        getFriendIdsList(memberSeq = AuthData.memberSeq)
     }
 }

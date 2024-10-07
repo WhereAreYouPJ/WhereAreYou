@@ -53,9 +53,9 @@ class MyPageViewModel @Inject constructor(
     private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
     private val getFaboriteLocationUseCase: GetFavoriteLocationUseCase,
-    private val deleteFavoriteLocacionUseCase : DeleteFavoriteLocationUsecase,
-    private val getFeedBookMarkUseCase : GetBookmarkedFeedUseCase,
-    private val addFeedBookMarkUseCase : BookmarkFeedUseCase,
+    private val deleteFavoriteLocacionUseCase: DeleteFavoriteLocationUsecase,
+    private val getFeedBookMarkUseCase: GetBookmarkedFeedUseCase,
+    private val addFeedBookMarkUseCase: BookmarkFeedUseCase,
     private val clearAuthDataStoreUseCase: ClearAuthDataStoreUseCase,
 ) : AndroidViewModel(application) {
 
@@ -78,8 +78,10 @@ class MyPageViewModel @Inject constructor(
     val location: StateFlow<String?> = _location
     private val _streetName = MutableStateFlow<String?>("")
     val streetName: StateFlow<String?> = _streetName
-    private val _locationFavoriteList = MutableStateFlow<List<LocationFavoriteInfoModel?>>(emptyList())
-//    private val _locationFavoriteList = MutableStateFlow<List<LocationFavoriteInfoModel?>>(
+    private val _locationFavoriteList =
+        MutableStateFlow<List<LocationFavoriteInfoModel?>>(emptyList())
+
+    //    private val _locationFavoriteList = MutableStateFlow<List<LocationFavoriteInfoModel?>>(
 //        listOf(
 //            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교0" , streetName = "서울대학교닷거리1"),
 //            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교1" , streetName = "서울대학교닷거리2"),
@@ -89,11 +91,9 @@ class MyPageViewModel @Inject constructor(
 //            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교5" , streetName = "서울대학교닷거리6"),
 //        )
 //    )
-    val locationFaboriteList : StateFlow<List<LocationFavoriteInfoModel?>> = _locationFavoriteList
+    val locationFaboriteList: StateFlow<List<LocationFavoriteInfoModel?>> = _locationFavoriteList
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
-
-
 
 
     private val _feedBookMarkState = MutableStateFlow<FeedBookMarkResponseModel?>(null)
@@ -109,7 +109,7 @@ class MyPageViewModel @Inject constructor(
         getFeedBookMark(
             memberSeq = AuthData.memberSeq
         )
-        addBookMarkFeed(0,0)
+        addBookMarkFeed(0, 0)
 //        getLocationFaborite()
     }
 
@@ -120,31 +120,24 @@ class MyPageViewModel @Inject constructor(
     private val _announcementList = MutableStateFlow<List<Announcement>>(emptyList())
     val announcementList: StateFlow<List<Announcement>> = _announcementList.asStateFlow()
 
-    fun getFeedBookMark(memberSeq: Int) {
-
-
-
+    private fun getFeedBookMark(memberSeq: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-
             getFeedBookMarkUseCase(
                 GetBookmarkedFeedRequest(
-//                memberSeq = AuthData.memberSeq,
-                memberSeq = 1,
-                page = 0,
-                size = 10
-            )
+                    memberSeq = 1,
+                    page = 0,
+                    size = 10
+                )
             ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-                    Log.d("Sflsjfleifnslf" , data.toString())
-
                     data?.let {
                         _feedBookMarkState.value = it.toModel()
                     }
                 }.onError { code, message ->
-                    Log.d("Sflsjfleifnslf" , message.toString())
+                    Log.d("Sflsjfleifnslf", message.toString())
 
                 }.onException {
-                    Log.d("Sflsjfleifnslf" , it.message ?: "Unknown exception")
+                    Log.d("Sflsjfleifnslf", it.message ?: "Unknown exception")
 
                 }
             }
@@ -159,12 +152,11 @@ class MyPageViewModel @Inject constructor(
 
     }
 
-    fun addBookMarkFeed(
-        feedSeq : Int,
-        memberSeq : Int
+    private fun addBookMarkFeed(
+        feedSeq: Int,
+        memberSeq: Int
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-
             addFeedBookMarkUseCase(
                 BookmarkFeedRequest(
                     feedSeq = feedSeq,
@@ -172,16 +164,16 @@ class MyPageViewModel @Inject constructor(
                 )
             ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-                    Log.d("Sflsjfleifnslfsfsfsfsu" , code.toString())
-                    Log.d("Sflsjfleifnslfsfsfsfsu" , message.toString())
-                    Log.d("Sflsjfleifnslfsfsfsfsu" , data.toString())
+                    Log.d("Sflsjfleifnslfsfsfsfsu", code.toString())
+                    Log.d("Sflsjfleifnslfsfsfsfsu", message.toString())
+                    Log.d("Sflsjfleifnslfsfsfsfsu", data.toString())
 
                 }.onError { code, message ->
-                    Log.d("Sflsjfleifnslfsfsfsfer" , message!!)
-                    Log.d("Sflsjfleifnslfsfsfsfer" , code.toString())
+                    Log.d("Sflsjfleifnslfsfsfsfer", message!!)
+                    Log.d("Sflsjfleifnslfsfsfsfer", code.toString())
 
                 }.onException {
-                    Log.d("Sflsjfleifnslfsfsfsfex" , it.message ?: "Unknown exception")
+                    Log.d("Sflsjfleifnslfsfsfsfex", it.message ?: "Unknown exception")
 
                 }
             }
@@ -215,10 +207,7 @@ class MyPageViewModel @Inject constructor(
 //            val memberId = getMemberIdUseCase().first()
 //            val response = getMemberDetailsUseCase(accessToken, memberId)
 //            LogUtil.printNetworkLog("memberId = $memberId", response, "내 정보 가져오기")
-
             getUserInfoByMemberSeqUseCase(GetUserInfoByMemberSeqRequest(memberSeq = memberSeq)).collect {
-//
-//
                 when (it) {
 
                     is NetworkResult.Success -> {
@@ -229,20 +218,15 @@ class MyPageViewModel @Inject constructor(
                             _profileImageUri.value = it.profileImage
                         }
                     }
-
                     is NetworkResult.Error -> {
-
 
                     }
 
                     is NetworkResult.Exception -> {
 
-
                     }
                 }
-
             }
-
         }
     }
 
@@ -354,17 +338,15 @@ class MyPageViewModel @Inject constructor(
     }
 
 
-
-
-    private fun getLocationFavorite(memberSeq : Int) {
+    private fun getLocationFavorite(memberSeq: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getFaboriteLocationUseCase(
                 memberSeq = memberSeq
             ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-                    Log.d("getLocationFaborite" , code.toString())
-                    Log.d("getLocationFaborite" , message.toString())
-                    Log.d("getLocationFaborite" , data.toString())
+                    Log.d("getLocationFaborite", code.toString())
+                    Log.d("getLocationFaborite", message.toString())
+                    Log.d("getLocationFaborite", data.toString())
 
                     val updatedList = data?.map { it.toModel() } ?: emptyList()
                     _locationFavoriteList.value = updatedList.toList()
@@ -372,8 +354,8 @@ class MyPageViewModel @Inject constructor(
                     _isLoading.value = false
 
                 }.onError { code, message ->
-                    Log.d("getLocationFaborite" , code.toString())
-                    Log.d("getLocationFaborite" , message.toString())
+                    Log.d("getLocationFaborite", code.toString())
+                    Log.d("getLocationFaborite", message.toString())
 
                 }.onException { }
             }
@@ -390,8 +372,8 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun deleteFavoriteLocation(
-        memberSeq : Int,
-        locationSeqs : List<Int>
+        memberSeq: Int,
+        locationSeqs: List<Int>
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             deleteFavoriteLocacionUseCase(
@@ -399,13 +381,13 @@ class MyPageViewModel @Inject constructor(
                 locationSeqs = locationSeqs
             ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-                    Log.d("getLocationFaborite" , code.toString())
-                    Log.d("getLocationFaborite" , message.toString())
-                    Log.d("getLocationFaborite" , data.toString())
+                    Log.d("getLocationFaborite", code.toString())
+                    Log.d("getLocationFaborite", message.toString())
+                    Log.d("getLocationFaborite", data.toString())
 
                 }.onError { code, message ->
-                    Log.d("getLocationFaborite" , code.toString())
-                    Log.d("getLocationFaborite" , message.toString())
+                    Log.d("getLocationFaborite", code.toString())
+                    Log.d("getLocationFaborite", message.toString())
 
                 }.onException { }
             }

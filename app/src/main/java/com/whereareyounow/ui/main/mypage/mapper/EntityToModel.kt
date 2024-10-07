@@ -3,10 +3,13 @@ package com.whereareyounow.ui.main.mypage.mapper
 import com.whereareyounow.domain.entity.feed.BookmarkImageInfo
 import com.whereareyounow.domain.entity.feed.BookmarkedFeed
 import com.whereareyounow.domain.entity.feed.BookmarkedFeedData
+import com.whereareyounow.domain.entity.friend.FriendInfo
 
 import com.whereareyounow.domain.entity.location.LocationFavoriteInfo
 import com.whereareyounow.domain.entity.member.DetailUserInfo
 import com.whereareyounow.domain.entity.member.UserInfo
+import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.model.BookMarkImageInfoModel
 import com.whereareyounow.ui.main.mypage.model.ContentModel
 import com.whereareyounow.ui.main.mypage.model.FeedBookMarkResponseModel
@@ -41,7 +44,19 @@ fun UserInfo.toModel() : OtherUserInfoModel {
     )
 }
 
-// feef book-mark
+/**
+ * [친구 목록 조회]
+ */
+fun FriendInfo.toModel() : FriendModel {
+    return FriendModel(
+        memberSeq = this.memberSeq,
+        userName = this.userName,
+        profileImage = this.profileImage,
+        Favorites = this.Favorites
+    )
+}
+
+// 북마크 피드
 fun BookmarkedFeedData.toModel(): FeedBookMarkResponseModel {
     return FeedBookMarkResponseModel(
         totalElements = this.totalElements,
@@ -50,7 +65,6 @@ fun BookmarkedFeedData.toModel(): FeedBookMarkResponseModel {
         content = this.content?.map { it.toModel() },
     )
 }
-//
 fun BookmarkedFeed.toModel(): ContentModel {
     return ContentModel(
         memberSeq = this.memberSeq,
@@ -63,7 +77,6 @@ fun BookmarkedFeed.toModel(): ContentModel {
         bookMark = this.bookMark
     )
 }
-//
 fun BookmarkImageInfo.toModel(): BookMarkImageInfoModel {
     return BookMarkImageInfoModel(
         feedImageSeq = this.feedImageSeq,
@@ -71,22 +84,3 @@ fun BookmarkImageInfo.toModel(): BookMarkImageInfoModel {
         feedImageOrder = this.feedImageOrder
     )
 }
-//
-//fun Sort.toModel(): SortModel {
-//    return SortModel(
-//        empty = this.empty,
-//        sorted = this.sorted,
-//        unsorted = this.unsorted
-//    )
-//}
-//
-//fun Pageable.toModel(): PageableModel {
-//    return PageableModel(
-//        offset = this.offset,
-//        sort = this.sort.toModel(),
-//        paged = this.paged,
-//        pageNumber = this.pageNumber,
-//        pageSize = this.pageSize,
-//        unpaged = this.unpaged
-//    )
-//}
