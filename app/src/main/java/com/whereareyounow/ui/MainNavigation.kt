@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
@@ -29,7 +28,6 @@ import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
-import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
 import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
@@ -44,6 +42,7 @@ import com.whereareyounow.ui.main.mypage.location.LocationFavoriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
+import com.whereareyounow.ui.navigation.friend.searchAndAddFriendScreen
 import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
@@ -214,14 +213,20 @@ fun MainNavigation(
             )
         }
 
-        // 친구 추가 화면
-        composable(route = ROUTE_ADD_FRIEND) {
-            AddFriendScreen(
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
+        /**
+         * [ 친구 검색 및 추가 화면 ]
+         */
+//        composable(route = ROUTE_ADD_FRIEND) {
+//            AddFriendScreen(
+//                moveToBackScreen = { navController.popBackStack() }
+//            )
+//        }
+        searchAndAddFriendScreen(navController)
 
-        // 회원 정보 수정 화면
+
+        /**
+         * [ 회원 정보 수정 화면 ]
+         */
         composable(route = ROUTE_MODIFY_INFO) {
             InfoModificationScreen(
                 moveToBackScreen = {

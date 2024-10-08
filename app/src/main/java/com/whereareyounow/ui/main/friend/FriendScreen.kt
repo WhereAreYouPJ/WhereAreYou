@@ -43,6 +43,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.main.friend.feed.FeedScreen
+import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
@@ -60,7 +61,7 @@ fun FriendScreen(
     moveToDetailProfileScreen: (String, String) -> Unit,
     viewModel: FriendViewModel = hiltViewModel()
 ) {
-    val friendsList = viewModel.friendsList
+    val friendsList = viewModel.friendsList.collectAsState().value
     FriendScreen(
         paddingValues = paddingValues,
         friendsList = friendsList,
@@ -74,15 +75,13 @@ fun FriendScreen(
 @Composable
 private fun FriendScreen(
     paddingValues: PaddingValues,
-    friendsList: List<Friend>,
+    friendsList: List<FriendModel>,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToAddFeedScreen: () -> Unit,
     moveToDetailProfileScreen: (String, String) -> Unit
 ) {
     val isFriendPage = remember { mutableStateOf(false) }
-//    val starExpand = remember { mutableStateOf(false) }
-//    val friendExpand = remember { mutableStateOf(false) }
 
     // 이거 true 되면 프로필 사진 보이게
     val upProfileBoolean = remember { mutableStateOf(false) }
@@ -107,15 +106,12 @@ private fun FriendScreen(
 @Composable
 fun FriendContent(
     paddingValues: PaddingValues,
-    friendsList: List<Friend>,
+    friendsList: List<FriendModel>,
     upProfileBoolean: MutableState<Boolean>,
     upProfile: (String, String) -> Unit
 ) {
-//    val isFriendPage = remember { mutableStateOf(true) }
     val starExpand = remember { mutableStateOf(false) }
     val friendExpand = remember { mutableStateOf(false) }
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,10 +119,10 @@ fun FriendContent(
         Gap(7)
         MyRow()
         GrayLine()
-        Spacer(Modifier.height(10.dp))
+        Gap(10)
         //즐찾친구
         val pinnedFriendList = friendsList.filter {
-            it.isPinned
+            it.Favorites!!
         }
         ClickAleText(
             { starExpand.value = !starExpand.value },
@@ -138,19 +134,17 @@ fun FriendContent(
                 LazyColumn {
                     items(pinnedFriendList.size) {
                         FriendBox(
-                            imageUrl = pinnedFriendList[it].profileImgUrl,
-                            friendName = pinnedFriendList[it].userId,
+                            imageUrl = pinnedFriendList[it].profileImage,
+                            friendName = pinnedFriendList[it].userName,
                             upProfile = upProfile,
-//                            upProfileBoolean = upProfileBoolean
                         )
                     }
                 }
             }
         }
-
-        Spacer(Modifier.height(10.dp))
+        Gap(10)
         GrayLine()
-        Spacer(Modifier.height(10.dp))
+        Gap(10)
         ClickAleText(
             { friendExpand.value = !friendExpand.value },
             "친구",
@@ -161,15 +155,15 @@ fun FriendContent(
                 LazyColumn {
                     items(friendsList.size) { index ->
                         FriendBox(
-                            imageUrl = friendsList[index].profileImgUrl,
-                            friendName = friendsList[index].userId,
+                            imageUrl = friendsList[index].profileImage,
+                            friendName = friendsList[index].userName,
                             upProfile = upProfile,
                         )
                     }
                 }
             }
         }
-        Spacer(Modifier.height(10.dp))
+        Gap(10)
         GrayLine()
     }
 }
@@ -212,15 +206,6 @@ fun FriendScreenTopBar(
             color = friendTextColor
         )
         Spacer(Modifier.width(12.dp))
-//        Text(
-//            modifier = Modifier.clickable {
-//                isFriendPage.value = true
-//
-//            },
-//            text = "친구",
-//            style = medium20pt,
-//            color = friendTextColor
-//        )
         Spacer(modifier = Modifier.weight(1f))
         Image(
             painter = painterResource(id = R.drawable.ic_dodbogi),
@@ -230,42 +215,10 @@ fun FriendScreenTopBar(
             }
         )
 
-//        Icon(
-//            painter = painterResource(id = R.drawable.search_24px),
-//            contentDescription = "",
-//            modifier = Modifier
-//                .clickable {
-//
-//                },
-//            tint = Color(0xFF6236E9)
-//        )
-//        Spacer(Modifier.size(2.dp))
-
-
-//        Icon(
-//            painter = painterResource(id = R.drawable.plus),
-//            contentDescription = "",
-//            modifier = Modifier.clickable {
-//                popupState.isVisible = true
-//                                          },
-//            tint = Color(0xFF6236E9)
-//        )
-//        Spacer(Modifier.size(2.dp))
-        //TODO -> 알림여부에따라서 아이콘보이는거다르게 -> 준성님카톡
-//        Icon(
-//            painter = painterResource(id = R.drawable.icon_bell),
-//            contentDescription = "",
-//            modifier = Modifier.clickable {
-//
-//            },
-//            tint = Color(0xFF6236E9)
-//        )
-//        Spacer(Modifier.size(2.dp))
         Image(
             painter = painterResource(id = R.drawable.ic_bellred),
             contentDescription = ""
         )
-//        Spacer(Modifier.size(2.dp))
 
         Image(
             painter = painterResource(id = R.drawable.ic_plusbrandcolor),
@@ -276,9 +229,6 @@ fun FriendScreenTopBar(
             }
         )
 
-//        FirstIconBadge({
-//            //TODO -> 알림버튼누르면뭐뜨는지부교님
-//        })
         if (popupState.isVisible) {
             AddIconPopUp(
                 isFriendPage = isFriendPage.value,
@@ -290,31 +240,6 @@ fun FriendScreenTopBar(
         }
     }
 }
-
-//@Composable
-//fun FriendContent(
-//    friendsList: List<Friend>
-//) {
-//    LazyColumn {
-//        item {
-//            Box(
-//                modifier = Modifier.height(40.dp),
-//                contentAlignment = Alignment.CenterStart
-//            ) {
-//                Text(
-//                    text = "친구 ${friendsList.size}",
-//                    fontSize = 20.sp
-//                )
-//            }
-//        }
-//        itemsIndexed(friendsList) { _, friend ->
-//            FriendBox(
-//                imageUrl = friend.profileImgUrl,
-//                friendName = friend.name
-//            )
-//        }
-//    }
-//}
 
 // 내사진 로우
 @Composable
@@ -485,17 +410,6 @@ fun FriendBox(
                 imageOptions = ImageOptions(contentScale = ContentScale.Crop)
             )
         }
-//        GlideImage(
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(16.dp))
-//                .size(30.dp)
-//                .clickable {
-//                    upProfile(imageUrl ?: "", friendName)
-////                    upProfileBoolean.value = !upProfileBoolean.value
-//                },
-//            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
-//            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-//        )
         Gap(12)
         Text(
             text = friendName,
@@ -551,64 +465,64 @@ fun ClickAleText(
 }
 
 
-@Composable
-fun sfsfdjslefjsoefin(
-    imageUrl: String?,
-    friendName: String
-) {
-    Dialog(
-        onDismissRequest = {}
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-        ) {
-            Column(
-
-            ) {
-                Spacer(Modifier.size(TOP_BAR_HEIGHT.dp))
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_x),
-                    contentDescription = "",
-                    modifier = Modifier.padding(start = 20.dp, top = 11.dp),
-                    colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))
-                )
-
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 491.dp)
-                ) {
-                    Box(
-//                modifier = Modifier.padding(491.dp)
-                    ) {
-//            GlideImage(
-//                imageModel = "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: painterResource(id = R.drawable.ic_default_profile_image),
-//                contentDescription = ""
+//@Composable
+//fun sfsfdjslefjsoefin(
+//    imageUrl: String?,
+//    friendName: String
+//) {
+//    Dialog(
+//        onDismissRequest = {}
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(Color.White)
+//        ) {
+//            Column(
 //
-//            )
-
-                        GlideImage(
-                            modifier = Modifier
-                                .padding(start = 137.5.dp, end = 137.5.dp)
-                                .size(100.dp)
-                                .clip(RoundedCornerShape(18.dp)),
-                            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
-                        )
-                    }
-                    Text(friendName ?: "유민혁")
-
-
-                }
-
-
-
-                Text("sfsss")
-
-            }
-        }
-    }
-}
+//            ) {
+//                Spacer(Modifier.size(TOP_BAR_HEIGHT.dp))
+//
+//                Image(
+//                    painter = painterResource(id = R.drawable.ic_x),
+//                    contentDescription = "",
+//                    modifier = Modifier.padding(start = 20.dp, top = 11.dp),
+//                    colorFilter = ColorFilter.tint(color = Color(0XFFEEEEEE))
+//                )
+//
+//
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(top = 491.dp)
+//                ) {
+//                    Box(
+////                modifier = Modifier.padding(491.dp)
+//                    ) {
+////            GlideImage(
+////                imageModel = "https://m.segye.com/content/image/2021/11/16/20211116509557.jpg" ?: painterResource(id = R.drawable.ic_default_profile_image),
+////                contentDescription = ""
+////
+////            )
+//
+//                        GlideImage(
+//                            modifier = Modifier
+//                                .padding(start = 137.5.dp, end = 137.5.dp)
+//                                .size(100.dp)
+//                                .clip(RoundedCornerShape(18.dp)),
+//                            imageModel = { imageUrl ?: R.drawable.idle_profile2 },
+//                        )
+//                    }
+//                    Text(friendName ?: "유민혁")
+//
+//
+//                }
+//
+//
+//
+//                Text("sfsss")
+//
+//            }
+//        }
+//    }
+//}

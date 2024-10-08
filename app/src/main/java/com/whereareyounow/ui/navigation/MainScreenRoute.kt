@@ -22,7 +22,7 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
         moveToDetailScheduleScreen = { scheduleId ->
             navController.navigate(ROUTE.DetailSchedule(scheduleSeq = scheduleId))
         },
-        moveToAddFriendScreen = { navController.navigate(ROUTE_ADD_FRIEND) },
+        moveToAddFriendScreen = { navController.navigate(ROUTE.SearchAndAddFriend) },
         moveToAddGroupScreen = {},
         moveToAddFeedScreen = { navController.navigate(ROUTE.AddFeed) },
         moveToSignInMethodSelectionScreen = {

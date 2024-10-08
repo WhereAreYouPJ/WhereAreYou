@@ -168,4 +168,14 @@ sealed class ROUTE {
     @Serializable
     data object FeedStore
 
+    // 친구 추가 화면
+    @Serializable
+    data object SearchAndAddFriend
+
+    /***
+     * [ 마이페이지 ]
+     */
+    @Serializable
+    data object MyPage
+
 }
