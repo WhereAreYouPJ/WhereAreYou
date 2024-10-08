@@ -2,9 +2,9 @@ package com.whereareyounow.data.notification
 
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.domain.entity.schedule.InvitedSchedule
 
 data class NotificationScreenUIState(
-    val todayScheduleCount: Int = 0,
-    val friendRequestsList: List<Pair<FriendRequest, Friend>> = emptyList(),
-    val scheduleRequestsList: List<ScheduleInvitationInfo> = emptyList()
+    val friendRequestList: List<FriendRequest> = emptyList(),
+    val scheduleRequestList: List<InvitedSchedule> = emptyList()
 )

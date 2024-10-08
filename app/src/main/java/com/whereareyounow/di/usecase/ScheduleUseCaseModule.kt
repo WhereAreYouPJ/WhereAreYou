@@ -1,17 +1,18 @@
 package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.ScheduleRepository
-import com.whereareyounow.domain.usecase.schedule.AcceptScheduleRequestUseCase
+import com.whereareyounow.domain.usecase.schedule.AcceptScheduleInvitationUseCase
 import com.whereareyounow.domain.usecase.schedule.CreateNewScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.DeleteScheduleByCreatorUseCase
 import com.whereareyounow.domain.usecase.schedule.DeleteScheduleByInvitorUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDailyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
+import com.whereareyounow.domain.usecase.schedule.GetInvitedScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetMonthlyScheduleUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleDDayUseCase
 import com.whereareyounow.domain.usecase.schedule.GetScheduleListUseCase
 import com.whereareyounow.domain.usecase.schedule.ModifyScheduleInfoUseCase
-import com.whereareyounow.domain.usecase.schedule.RefuseScheduleInvitation
+import com.whereareyounow.domain.usecase.schedule.RefuseScheduleInvitationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,8 +46,8 @@ object ScheduleUseCaseModule {
     @Provides
     fun provideAcceptScheduleRequest(
         repository: ScheduleRepository
-    ): AcceptScheduleRequestUseCase {
-        return AcceptScheduleRequestUseCase(repository)
+    ): AcceptScheduleInvitationUseCase {
+        return AcceptScheduleInvitationUseCase(repository)
     }
 
     @Provides
@@ -62,6 +63,11 @@ object ScheduleUseCaseModule {
     ): GetScheduleListUseCase {
         return GetScheduleListUseCase(repository)
     }
+
+    @Provides
+    fun provideGetInvitedScheduleUseCase(
+        repository: ScheduleRepository
+    ) = GetInvitedScheduleUseCase(repository)
 
     @Provides
     fun provideGetScheduleDDay(
@@ -80,8 +86,8 @@ object ScheduleUseCaseModule {
     @Provides
     fun provideRefuseScheduleInvitation(
         repository: ScheduleRepository
-    ): RefuseScheduleInvitation {
-        return RefuseScheduleInvitation(repository)
+    ): RefuseScheduleInvitationUseCase {
+        return RefuseScheduleInvitationUseCase(repository)
     }
 
     @Provides

@@ -1,6 +1,7 @@
 package com.whereareyounow.ui.navigation
 
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -12,6 +13,7 @@ fun NavGraphBuilder.notificationScreenRoute(navController: NavController) = comp
     val viewModel: NotificationViewModel = hiltViewModel()
 
     NotificationScreen(
+        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
         moveToBackScreen = { navController.popBackStack() }
     )
 }

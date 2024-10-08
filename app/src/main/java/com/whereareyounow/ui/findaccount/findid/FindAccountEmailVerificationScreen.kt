@@ -57,6 +57,7 @@ fun FindAccountEmailVerificationScreen(
         updateInputEmailCode = viewModel::updateInputEmailCode,
         sendEmailCode = viewModel::sendEmailCode,
         verifyEmailCode = viewModel::verifyEmailCode,
+        moveToBackScreen = moveToBackScreen,
     )
 }
 
@@ -68,6 +69,7 @@ private fun FindAccountEmailVerificationScreen(
     updateInputEmailCode: (String) -> Unit,
     sendEmailCode: () -> Unit,
     verifyEmailCode: () -> Unit,
+    moveToBackScreen: () -> Unit,
 ) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
@@ -81,7 +83,7 @@ private fun FindAccountEmailVerificationScreen(
     }
     CustomSurface {
         Column {
-            FindIdScreenTopBar({})
+            FindIdScreenTopBar(moveToBackScreen)
 
             HorizontalDivider()
 

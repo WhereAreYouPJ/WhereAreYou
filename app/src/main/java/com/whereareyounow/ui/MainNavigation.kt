@@ -77,7 +77,7 @@ fun MainNavigation(
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
-        startDestination = ROUTE.Notification,
+        startDestination = ROUTE.Splash,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
