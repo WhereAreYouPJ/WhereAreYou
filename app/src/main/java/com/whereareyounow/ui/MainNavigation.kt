@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE
+import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
@@ -28,6 +29,7 @@ import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
+import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
 import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
@@ -42,9 +44,10 @@ import com.whereareyounow.ui.main.mypage.location.LocationFavoriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
-import com.whereareyounow.ui.navigation.friend.searchAndAddFriendScreen
 import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
+import com.whereareyounow.ui.navigation.addFeedScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
+import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
 import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
@@ -53,6 +56,7 @@ import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
+import com.whereareyounow.ui.navigation.notificationScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.scheduleModificationScreenRoute
@@ -77,6 +81,9 @@ fun MainNavigation(
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
+        // 개발자 화면
+        developerScreenRoute(navController)
+
         // 스플래시
         splashScreenRoute(navController)
 
@@ -182,6 +189,9 @@ fun MainNavigation(
         // 메인 화면
         mainScreenRoute(navController)
 
+        // 알림 화면
+        notificationScreenRoute(navController)
+
         // 일정 추가 화면
         newScheduleScreenRoute(navController)
 
@@ -213,20 +223,17 @@ fun MainNavigation(
             )
         }
 
-        /**
-         * [ 친구 검색 및 추가 화면 ]
-         */
-//        composable(route = ROUTE_ADD_FRIEND) {
-//            AddFriendScreen(
-//                moveToBackScreen = { navController.popBackStack() }
-//            )
-//        }
-        searchAndAddFriendScreen(navController)
+        // 친구 추가 화면
+        composable(route = ROUTE_ADD_FRIEND) {
+            AddFriendScreen(
+                moveToBackScreen = { navController.popBackStack() }
+            )
+        }
 
+        // 피드 추가 화면
+        addFeedScreenRoute(navController)
 
-        /**
-         * [ 회원 정보 수정 화면 ]
-         */
+        // 회원 정보 수정 화면
         composable(route = ROUTE_MODIFY_INFO) {
             InfoModificationScreen(
                 moveToBackScreen = {

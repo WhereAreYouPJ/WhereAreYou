@@ -1,15 +1,15 @@
 package com.whereareyounow.api
 
-import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
+import com.whereareyounow.domain.request.schedule.AcceptScheduleInvitationRequest
 import com.whereareyounow.domain.request.schedule.CreateNewScheduleRequest
 import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
 import com.whereareyounow.domain.request.schedule.ModifyScheduleInfoRequest
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
+import com.whereareyounow.domain.entity.schedule.InvitedSchedule
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.entity.schedule.ScheduleDDay
 import com.whereareyounow.domain.entity.schedule.ScheduleListData
-import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.request.schedule.RefuseScheduleInvitationRequest
 import com.whereareyounow.domain.util.ResponseWrapper
@@ -45,7 +45,7 @@ interface ScheduleApi {
     // 일정 초대 수락
     @POST("schedule/accept")
     suspend fun acceptScheduleRequest(
-        @Body body: AcceptScheduleRequestRequest
+        @Body body: AcceptScheduleInvitationRequest
     ): Response<ResponseWrapper<Unit>>
 
     // 월별 일정 조회
@@ -62,6 +62,11 @@ interface ScheduleApi {
         @Query("page") page: Int,
         @Query("size") size: Int,
     ): Response<ResponseWrapper<ScheduleListData>>
+
+    @GET("schedule/invited-list")
+    suspend fun getInvitedSchedule(
+        @Query("memberSeq") memberSeq: Int
+    ): Response<ResponseWrapper<List<InvitedSchedule>>>
 
     // 일정 D-Day 조회 API
     @GET("schedule/dday")

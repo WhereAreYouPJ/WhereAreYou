@@ -3,17 +3,18 @@ package com.whereareyounow.repository
 import com.whereareyounow.api.ScheduleApi
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.domain.entity.schedule.DetailScheduleInfo
+import com.whereareyounow.domain.entity.schedule.InvitedSchedule
 import com.whereareyounow.domain.entity.schedule.MonthlySchedule
 import com.whereareyounow.domain.entity.schedule.ScheduleDDay
 import com.whereareyounow.domain.entity.schedule.ScheduleListData
-import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.domain.entity.schedule.ScheduleSeq
 import com.whereareyounow.domain.repository.ScheduleRepository
-import com.whereareyounow.domain.request.schedule.AcceptScheduleRequestRequest
+import com.whereareyounow.domain.request.schedule.AcceptScheduleInvitationRequest
 import com.whereareyounow.domain.request.schedule.CreateNewScheduleRequest
 import com.whereareyounow.domain.request.schedule.DeleteScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetDailyScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
+import com.whereareyounow.domain.request.schedule.GetInvitedScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetMonthlyScheduleRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleDDayRequest
 import com.whereareyounow.domain.request.schedule.GetScheduleListRequest
@@ -48,7 +49,7 @@ class ScheduleRepositoryImpl(
     }
 
     override suspend fun acceptScheduleRequest(
-        data: AcceptScheduleRequestRequest
+        data: AcceptScheduleInvitationRequest
     ): NetworkResult<Unit> {
         return handleResult { scheduleApi.acceptScheduleRequest(body = data) }
     }
@@ -69,6 +70,14 @@ class ScheduleRepositoryImpl(
             memberSeq = data.memberSeq,
             page = data.page,
             size = data.size
+        ) }
+    }
+
+    override suspend fun getInvitedSchedule(
+        data: GetInvitedScheduleRequest
+    ): NetworkResult<List<InvitedSchedule>> {
+        return handleResult { scheduleApi.getInvitedSchedule(
+            memberSeq = data.memberSeq
         ) }
     }
 

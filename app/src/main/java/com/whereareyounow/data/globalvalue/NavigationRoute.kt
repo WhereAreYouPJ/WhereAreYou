@@ -35,7 +35,22 @@ const val ROUTE_MY_INFO = "ROUTE_MY_INFO"
 
 sealed class ROUTE {
     @Serializable
-    data object Developer
+    data object Developer {
+        @Serializable
+        data object Screen1
+
+        @Serializable
+        data object Screen2
+
+        @Serializable
+        data object Screen3
+
+        @Serializable
+        data object Screen4
+    }
+
+    @Serializable
+    data object Notification
 
     @Serializable
     data object Splash
@@ -87,7 +102,19 @@ sealed class ROUTE {
     data object FindAccountEmailVerification
 
     @Serializable
-    data object Main
+    data object Main {
+        @Serializable
+        data object Home
+
+        @Serializable
+        data object Schedule
+
+        @Serializable
+        data object Social
+
+        @Serializable
+        data object MyPage
+    }
 
     @Serializable
     data class AddSchedule(

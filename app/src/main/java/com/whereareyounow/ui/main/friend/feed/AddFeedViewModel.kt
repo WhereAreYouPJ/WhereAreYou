@@ -71,7 +71,9 @@ class AddFeedViewModel @Inject constructor(
         }
     }
 
-    fun createFeed() {
+    fun createFeed(
+        moveToBackScreen: () -> Unit,
+    ) {
         val requestBody = CreateFeedRequest(
             scheduleSeq = _uiState.value.selectedSchedule!!.scheduleSeq,
             memberSeq = AuthData.memberSeq,
@@ -100,7 +102,7 @@ class AddFeedViewModel @Inject constructor(
         createFeedUseCase(requestBody, imageList)
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
-
+                    moveToBackScreen()
                 }.onError { code, message ->
 
                 }.onException {  }

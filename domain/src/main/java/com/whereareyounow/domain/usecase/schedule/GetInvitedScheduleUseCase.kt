@@ -1,16 +1,16 @@
 package com.whereareyounow.domain.usecase.schedule
 
 import com.whereareyounow.domain.repository.ScheduleRepository
-import com.whereareyounow.domain.request.schedule.RefuseScheduleInvitationRequest
+import com.whereareyounow.domain.request.schedule.GetInvitedScheduleRequest
 import kotlinx.coroutines.flow.flow
 
-class RefuseScheduleInvitation(
+class GetInvitedScheduleUseCase(
     private val repository: ScheduleRepository
 ) {
     operator fun invoke(
-        data: RefuseScheduleInvitationRequest
+        data: GetInvitedScheduleRequest
     ) = flow {
-        val response = repository.refuseScheduleInvitation(data)
+        val response = repository.getInvitedSchedule(data)
         emit(response)
     }
 }

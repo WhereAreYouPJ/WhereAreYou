@@ -69,7 +69,7 @@ fun AddFeedScreen(
     updateTitle: (String) -> Unit,
     updateContent: (String) -> Unit,
     addImages: (List<String>) -> Unit,
-    createFeed: () -> Unit,
+    createFeed: (() -> Unit) -> Unit,
     moveToBackScreen: () -> Unit,
 ) {
     val takePhotoFromAlbumLauncher =
@@ -376,15 +376,21 @@ fun AddFeedScreen(
                 }
             },
             lastContent = {
-                RoundedCornerButton(onClick = { createFeed() }) {
-                    Text(
-                        text = "게시하기",
-                        color = Color(0xFFFFFFFF),
-                        fontFamily = notoSanskr,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                Box(
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                ) {
+                    RoundedCornerButton(onClick = { createFeed(moveToBackScreen) }) {
+                        Text(
+                            text = "게시하기",
+                            color = Color(0xFFFFFFFF),
+                            fontFamily = notoSanskr,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
                 }
+
+                Spacer(Modifier.height(20.dp))
             }
         )
     }

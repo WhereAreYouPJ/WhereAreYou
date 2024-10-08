@@ -231,7 +231,7 @@ class SignUpViewModel @Inject constructor(
                 networkResult.onSuccess { code, message, data ->
                     data?.let {
                         if (data.type.isEmpty()) {
-                            moveToSignUpSuccessScreen()
+                            signUp(moveToSignUpSuccessScreen)
                         } else {
                             moveToAccountDuplicateScreen(accountType, data.email, data.type, _uiState.value.inputUserName, _uiState.value.inputPassword)
                         }

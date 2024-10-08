@@ -1,5 +1,6 @@
 package com.whereareyounow.repository
 
+import com.google.gson.Gson
 import com.whereareyounow.api.FeedApi
 import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.util.NetworkResult
@@ -42,23 +43,24 @@ class FeedRepositoryImpl(
         data: CreateFeedRequest,
         images: List<File>
     ): NetworkResult<FeedSeq> {
-        val scheduleSeq = data.scheduleSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val memberSeq = data.memberSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val title = data.title.toRequestBody("text/plain".toMediaTypeOrNull())
-        val content = data.content.toRequestBody("text/plain".toMediaTypeOrNull())
-        val feedImageOrders = data.feedImageOrders.map { it.toString().toRequestBody("text/plain".toMediaTypeOrNull()) }
-        val partMap = mutableMapOf(
-            "scheduleSeq" to scheduleSeq,
-            "memberSeq" to memberSeq,
-            "title" to title,
-            "content" to content
-        ) as HashMap<String, RequestBody>
+//        val scheduleSeq = data.scheduleSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+//        val memberSeq = data.memberSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+//        val title = data.title.toRequestBody("text/plain".toMediaTypeOrNull())
+//        val content = data.content.toRequestBody("text/plain".toMediaTypeOrNull())
+//        val feedImageOrders = data.feedImageOrders.map { it.toString().toRequestBody("text/plain".toMediaTypeOrNull()) }
+//        val partMap = mutableMapOf(
+//            "scheduleSeq" to scheduleSeq,
+//            "memberSeq" to memberSeq,
+//            "title" to title,
+//            "content" to content
+//        ) as HashMap<String, RequestBody>
+        val reqData = Gson().toJson(data).toRequestBody("application/json".toMediaTypeOrNull())
         val multipartList = images.map {
             val reqBody = it.asRequestBody("image/png".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("feedImageInfo", "imageName", reqBody)
+            MultipartBody.Part.createFormData("feedImageList", "imageList", reqBody)
         }
         return handleResult {
-            feedApi.createFeed(partMap, feedImageOrders, multipartList)
+            feedApi.createFeed(reqData, multipartList)
         }
     }
 
