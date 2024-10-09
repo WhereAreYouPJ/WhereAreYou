@@ -38,11 +38,8 @@ import javax.inject.Inject
 class ScheduleEditViewModel @Inject constructor(
     private val application: Application,
     private val getDetailScheduleUseCase: GetDetailScheduleUseCase,
-//    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-//    private val getMemberIdUseCase: GetMemberIdUseCase,
     private val createNewScheduleUseCase: CreateNewScheduleUseCase,
     private val modifyScheduleInfoUseCase: ModifyScheduleInfoUseCase,
-//    private val modifyScheduleMemberUseCase: ModifyScheduleMemberUseCase,
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(ScheduleEditScreenUIState())
@@ -121,15 +118,6 @@ class ScheduleEditViewModel @Inject constructor(
     fun updateMemo(memo: String) {
         _uiState.update {
             it.copy(memo = memo)
-        }
-    }
-
-    fun updateDestinationLocation(lat: Double, lng: Double) {
-        _uiState.update {
-            it.copy(
-                destinationLatitude = lat,
-                destinationLongitude = lng
-            )
         }
     }
 

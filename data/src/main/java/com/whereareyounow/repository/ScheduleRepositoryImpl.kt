@@ -106,13 +106,13 @@ class ScheduleRepositoryImpl(
 
     override suspend fun deleteScheduleByInvitor(
         data: DeleteScheduleRequest
-    ): NetworkResult<Unit> {
+    ): NetworkResult<String> {
         return handleResult { scheduleApi.deleteScheduleByInvitor(body = data) }
     }
 
     override suspend fun deleteScheduleByCreator(
         data: DeleteScheduleRequest
-    ): NetworkResult<Unit> {
+    ): NetworkResult<String> {
         return handleResult { scheduleApi.deleteScheduleByCreator(body = data) }
     }
 }

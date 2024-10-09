@@ -5,27 +5,16 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.core.os.bundleOf
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.whereareyounow.data.detailschedule.MemberInfo
-import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
-import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
-import com.whereareyounow.data.globalvalue.ROUTE_FIND_ID_RESULT
-import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_RESULT
-import com.whereareyounow.data.globalvalue.ROUTE_FIND_PASSWORD_SUCCESS
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
-import com.whereareyounow.data.globalvalue.ROUTE_RESET_PASSWORD
-import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
-import com.whereareyounow.ui.findaccount.findaccount.FindIdResultScreen
-import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
-import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
@@ -54,13 +43,13 @@ import com.whereareyounow.ui.navigation.friendsListScreenRoute
 import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
+import com.whereareyounow.ui.navigation.modifyScheduleScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
 import com.whereareyounow.ui.navigation.notificationScreenRoute
 import com.whereareyounow.ui.navigation.passwordResetSuccessScreenRoute
 import com.whereareyounow.ui.navigation.passwordResettingScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
-import com.whereareyounow.ui.navigation.scheduleModificationScreenRoute
 import com.whereareyounow.ui.navigation.searchLocationMapScreenRoute
 import com.whereareyounow.ui.navigation.searchLocationScreenRoute
 import com.whereareyounow.ui.navigation.signInMethodSelectionScreenRoute
@@ -69,7 +58,6 @@ import com.whereareyounow.ui.navigation.signUpScreenRoute
 import com.whereareyounow.ui.navigation.signUpSuccessScreenRoute
 import com.whereareyounow.ui.navigation.splashScreenRoute
 import com.whereareyounow.ui.navigation.termsOfServiceDetailsScreenRoute
-import com.whereareyounow.util.navigate
 
 @Composable
 fun MainNavigation(
@@ -146,7 +134,7 @@ fun MainNavigation(
         detailScheduleScreenRoute(navController)
 
         // 일정 수정 화면
-        scheduleModificationScreenRoute(navController)
+        modifyScheduleScreenRoute(navController)
 
         // 장소 검색 화면
         searchLocationScreenRoute(navController)

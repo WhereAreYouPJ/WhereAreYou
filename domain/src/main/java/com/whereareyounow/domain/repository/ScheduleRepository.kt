@@ -64,9 +64,9 @@ interface ScheduleRepository {
 
     suspend fun deleteScheduleByInvitor(
         data: DeleteScheduleRequest
-    ): NetworkResult<Unit>
+    ): NetworkResult<String>
 
     suspend fun deleteScheduleByCreator(
         data: DeleteScheduleRequest
-    ): NetworkResult<Unit>
+    ): NetworkResult<String>
 }

@@ -465,7 +465,7 @@ fun CalendarScreen(
 
                                 Text(
                                     modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
-                                    text = "일정 삭제",
+                                    text = if (isGroupSelected.value) "그룹 일정 삭제" else "일정 삭제",
                                     color = Color(0xFFFFFFFF),
                                     fontFamily = notoSanskr,
                                     fontWeight = FontWeight.Bold,
@@ -476,7 +476,7 @@ fun CalendarScreen(
 
                                 Text(
                                     modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
-                                    text = if (isGroupSelected.value) "일정을 삭제합니다.\n" +
+                                    text = if (!isGroupSelected.value) "일정을 삭제합니다.\n" +
                                             "연관된 피드가 있을 경우 같이 삭제됩니다." else "일정을 삭제합니다.\n" +
                                             "일정을 만들었을 경우 함께한 인원의 일정과 연관된 피드가 같이 삭제되며,\n" +
                                             "일정에 참여만 했을 경우 자신의 일정과\n" +

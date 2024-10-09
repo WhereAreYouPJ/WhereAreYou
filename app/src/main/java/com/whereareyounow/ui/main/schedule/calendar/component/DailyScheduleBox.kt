@@ -91,13 +91,16 @@ fun DailyScheduleBox(
                 if (info.group) {
                     Box(
                         modifier = Modifier
+                            .width(40.dp)
+                            .height(24.dp)
                             .border(
                                 border = BorderStroke(
                                     width = 1.dp,
                                     color = getColor().brandColor
                                 ),
                                 shape = RoundedCornerShape(50)
-                            )
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "그룹",

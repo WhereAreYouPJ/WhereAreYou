@@ -29,19 +29,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.ui.main.friend.feed.FeedScreen
 import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
@@ -117,7 +113,7 @@ fun FriendContent(
             .fillMaxSize()
     ) {
         Gap(7)
-        MyRow()
+        MyProfileRow()
         GrayLine()
         Gap(10)
         //즐찾친구
@@ -243,7 +239,7 @@ fun FriendScreenTopBar(
 
 // 내사진 로우
 @Composable
-fun MyRow() {
+fun MyProfileRow() {
     val test: FriendViewModel = hiltViewModel()
     val myInfo = test.myInfo.collectAsState().value
     Row(

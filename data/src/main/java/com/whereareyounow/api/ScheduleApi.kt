@@ -90,11 +90,11 @@ interface ScheduleApi {
     @HTTP(method = "DELETE", path = "schedule/invited", hasBody = true)
     suspend fun deleteScheduleByInvitor(
         @Body body: DeleteScheduleRequest
-    ): Response<ResponseWrapper<Unit>>
+    ): Response<ResponseWrapper<String>>
 
     // 일정 삭제(일정 생성자인 경우)
     @HTTP(method = "DELETE", path = "schedule/creator", hasBody = true)
     suspend fun deleteScheduleByCreator(
         @Body body: DeleteScheduleRequest
-    ): Response<ResponseWrapper<Unit>>
+    ): Response<ResponseWrapper<String>>
 }
