@@ -52,8 +52,8 @@ fun CustomTextFieldWithTimer(
             .bringIntoViewRequester(viewRequester),
         value = inputText,
         onValueChange = {
-//            onValueChange(it)
-//            coroutineScope.launch { viewRequester.bringIntoView() }
+            onValueChange(it)
+            coroutineScope.launch { viewRequester.bringIntoView() }
         },
         textStyle = medium14pt,
         singleLine = true,

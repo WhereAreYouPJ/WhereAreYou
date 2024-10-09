@@ -1,18 +1,26 @@
-package com.whereareyounow.ui.findaccount.findid
+package com.whereareyounow.ui.findaccount.findaccount
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.findaccount.FindAccountEmailVerificationScreenSideEffect
 import com.whereareyounow.data.findaccount.FindAccountEmailVerificationScreenUIState
+import com.whereareyounow.domain.request.member.CheckEmailDuplicateRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
+import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
+import com.whereareyounow.domain.request.member.VerifyPasswordResetCodeRequest
+import com.whereareyounow.domain.usecase.member.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
+import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
+import com.whereareyounow.domain.usecase.member.VerifyPasswordResetCodeUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.globalvalue.type.EmailButtonState
-import com.whereareyounow.globalvalue.type.EmailState
+import com.whereareyounow.globalvalue.type.EmailCodeButtonState
+import com.whereareyounow.globalvalue.type.EmailCodeState
+import com.whereareyounow.globalvalue.type.FindAccountEmailState
 import com.whereareyounow.util.InputTextValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -32,10 +40,8 @@ class FindAccountViewModel @Inject constructor(
     private val application: Application,
     private val inputTextValidator: InputTextValidator,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
-//    private val authenticateEmailUseCase: AuthenticateEmailUseCase,
-//    private val authenticateEmailCodeUseCase: AuthenticateEmailCodeUseCase,
-//    private val findIdUseCase: FindIdUseCase
-
+    private val checkEmailDuplicateUseCase: CheckEmailDuplicateUseCase,
+    private val verifyPasswordResetCodeUseCase: VerifyPasswordResetCodeUseCase
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(FindAccountEmailVerificationScreenUIState())
@@ -47,7 +53,7 @@ class FindAccountViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 inputEmail = email,
-                inputEmailState = if (inputTextValidator.validateEmail(email).result) EmailState.Idle else EmailState.Invalid
+                inputEmailState = if (inputTextValidator.validateEmail(email).result) FindAccountEmailState.Idle else FindAccountEmailState.Invalid
             )
         }
     }
@@ -58,17 +64,49 @@ class FindAccountViewModel @Inject constructor(
         }
     }
 
+    fun checkEmailDuplicate() {
+        val requestData = CheckEmailDuplicateRequest(
+            email = _uiState.value.inputEmail
+        )
+        checkEmailDuplicateUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        if (data.type.isEmpty()) {
+                            _uiState.update {
+                                it.copy(
+                                    inputEmailState = FindAccountEmailState.NonExist
+                                )
+                            }
+                        } else {
+                            _uiState.update {
+                                it.copy(
+                                    email = data.email,
+                                    typeList = data.type
+                                )
+                            }
+                            sendEmailCode()
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
+
     fun sendEmailCode() {
         if (inputTextValidator.validateEmail(_uiState.value.inputEmail).result) {
             _uiState.update {
                 it.copy(
-                    inputEmailState = EmailState.Valid
+                    inputEmailState = FindAccountEmailState.Valid
                 )
             }
         } else {
             _uiState.update {
                 it.copy(
-                    inputEmailState = EmailState.Invalid
+                    inputEmailState = FindAccountEmailState.Invalid
                 )
             }
             return
@@ -80,7 +118,7 @@ class FindAccountViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             requestButtonState = EmailButtonState.RequestDone,
-                            inputEmailState = EmailState.Valid
+                            inputEmailState = FindAccountEmailState.Valid
                         )
                     }
                     // 인증 코드를 발송하고 5분이 지나지 않았으면 다시 발송할 수 없다.
@@ -111,6 +149,28 @@ class FindAccountViewModel @Inject constructor(
     }
 
     fun verifyEmailCode() {
-
+        val requestData = VerifyPasswordResetCodeRequest(
+            email = _uiState.value.inputEmail,
+            code = _uiState.value.inputEmailCode
+        )
+        verifyPasswordResetCodeUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    _uiState.update {
+                        it.copy(
+                            emailCodeButtonState = EmailCodeButtonState.Inactive,
+                            inputEmailCodeState = EmailCodeState.Valid
+                        )
+                    }
+                }.onError { code, message ->
+                    _uiState.update {
+                        it.copy(
+                            inputEmailCodeState = EmailCodeState.Invalid
+                        )
+                    }
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
     }
 }

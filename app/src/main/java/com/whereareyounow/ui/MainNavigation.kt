@@ -13,7 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.findpw.ResultState
 import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_FIND_ACCOUNT
@@ -24,12 +23,10 @@ import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
 import com.whereareyounow.data.globalvalue.ROUTE_RESET_PASSWORD
 import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
-import com.whereareyounow.ui.findaccount.findid.FindIdResultScreen
-import com.whereareyounow.ui.findaccount.findpw.FindPasswordScreen
+import com.whereareyounow.ui.findaccount.findaccount.FindIdResultScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResetSuccessScreen
 import com.whereareyounow.ui.findaccount.findpw.PasswordResettingScreen
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
-import com.whereareyounow.ui.main.friend.addfriend.AddFriendScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
 import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
@@ -51,12 +48,16 @@ import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
 import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
+import com.whereareyounow.ui.navigation.findAccountResultScreenRoute
+import com.whereareyounow.ui.navigation.findPasswordScreenRoute
 import com.whereareyounow.ui.navigation.friendsListScreenRoute
 import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
 import com.whereareyounow.ui.navigation.notificationScreenRoute
+import com.whereareyounow.ui.navigation.passwordResetSuccessScreenRoute
+import com.whereareyounow.ui.navigation.passwordResettingScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.scheduleModificationScreenRoute
@@ -120,71 +121,17 @@ fun MainNavigation(
         // 계정 찾기 이메일 인증 화면
         findAccountEmailVerificationScreenRoute(navController)
 
-        // 아이디 찾기 결과 화면
-        composable(route = ROUTE_FIND_ID_RESULT) {
-            FindIdResultScreen(
-                searchedUserId = it.arguments?.getString("searchedUserId") ?: "",
-                moveToResetPasswordScreen = { userId ->
-                    val bundle = bundleOf(
-                        "userId" to userId
-                    )
-                    navController.popBackStack(ROUTE_FIND_ACCOUNT, true)
-                    navController.navigate(ROUTE_RESET_PASSWORD, bundle)
-                },
-                moveToSignInScreen = {
-                    navController.popBackStack(
-                        ROUTE_SIGN_IN_WITH_ACCOUNT,
-                        false
-                    )
-                }
-            )
-        }
+        // 계정 찾기 결과 화면
+        findAccountResultScreenRoute(navController)
 
-        // 비밀번호 찾기 화면
-        composable(route = ROUTE_RESET_PASSWORD) {
-            FindPasswordScreen(
-                moveToSignInScreen = { navController.popBackStack() },
-                moveToPasswordResettingScreen = { userId, resultState ->
-                    val bundle = bundleOf(
-                        "userId" to userId,
-                        "resultState" to resultState.name
-                    )
-                    navController.popBackStack(ROUTE_SIGN_IN_WITH_ACCOUNT, false)
-                    navController.navigate(ROUTE_FIND_PASSWORD_RESULT, bundle)
-                },
-            )
-        }
+        // 비밀번호 찾기 이메일 인증 화면
+        findPasswordScreenRoute(navController)
 
-        // 비밀번호 찾기 결과 화면
-        composable(route = ROUTE_FIND_PASSWORD_RESULT) {
-            PasswordResettingScreen(
-                userId = it.arguments?.getString("userId") ?: "",
-                resultState = ResultState.valueOf(it.arguments?.getString("resultState") ?: "OK"),
-                moveToSignInScreen = {
-                    navController.popBackStack(
-                        ROUTE_SIGN_IN_WITH_ACCOUNT,
-                        false
-                    )
-                },
-                moveToPasswordResetSuccessScreen = {
-                    navController.navigate(ROUTE_FIND_PASSWORD_SUCCESS) {
-                        popUpTo(ROUTE_SIGN_IN_WITH_ACCOUNT) { inclusive = false }
-                    }
-                }
-            )
-        }
+        // 비밀번호 재설정 화면
+        passwordResettingScreenRoute(navController)
 
         // 비밀번호 찾기 성공 화면
-        composable(route = ROUTE_FIND_PASSWORD_SUCCESS) {
-            PasswordResetSuccessScreen(
-                moveToSignInScreen = {
-                    navController.popBackStack(
-                        ROUTE_SIGN_IN_WITH_ACCOUNT,
-                        false
-                    )
-                }
-            )
-        }
+        passwordResetSuccessScreenRoute(navController)
 
         // 메인 화면
         mainScreenRoute(navController)
@@ -224,11 +171,11 @@ fun MainNavigation(
         }
 
         // 친구 추가 화면
-        composable(route = ROUTE_ADD_FRIEND) {
-            AddFriendScreen(
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
+//        composable(route = ROUTE_ADD_FRIEND) {
+//            AddFriendScreen(
+//                moveToBackScreen = { navController.popBackStack() }
+//            )
+//        }
 
         // 피드 추가 화면
         addFeedScreenRoute(navController)

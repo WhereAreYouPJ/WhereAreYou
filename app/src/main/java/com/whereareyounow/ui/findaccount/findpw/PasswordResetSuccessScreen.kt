@@ -21,12 +21,13 @@ import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.ui.theme.medium18pt
+import com.whereareyounow.ui.theme.notoSanskr
 import com.whereareyounow.util.CustomPreview
 
 
 @Composable
 fun PasswordResetSuccessScreen(
-    moveToSignInScreen: () -> Unit,
+    moveToSignInMethodSelectionScreen: () -> Unit,
 ) {
     CustomSurface {
         Column {
@@ -46,22 +47,24 @@ fun PasswordResetSuccessScreen(
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
                     text = "시작화면에서 로그인해주세요.\n최초 로그인 이후 접속 시, 자동 로그인이 활성화됩니다.",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     style = TextStyle(
-                        lineHeight = 18.sp
+                        lineHeight = 20.sp
                     ),
-                    color = Color(0xFF999999)
+                    color = Color(0xFF666666)
                 )
 
                 Spacer(Modifier.weight(1f))
 
                 RoundedCornerButton(
-                    onClick = { moveToSignInScreen() }
+                    onClick = { moveToSignInMethodSelectionScreen() }
                 ) {
                     Text(
                         text = "로그인하기",
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFFF2F2F2)
+                        color = Color(0xFFF2F2F2),
+                        fontFamily = notoSanskr,
+                        fontSize = 18.sp
                     )
                 }
 
@@ -92,6 +95,6 @@ private fun PasswordResetSuccessScreenTopBar() {
 @Composable
 private fun PasswordResetSuccessScreenPreview() {
     PasswordResetSuccessScreen(
-        moveToSignInScreen = {}
+        moveToSignInMethodSelectionScreen = {}
     )
 }

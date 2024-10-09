@@ -10,14 +10,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HorizontalDivider() {
+fun HorizontalDivider(
+    color: Color = Color(0xFFC9C9C9)
+) {
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
             .drawBehind {
                 val borderSize = 1.dp.toPx()
                 drawLine(
-                    color = Color(0xFFC9C9C9),
+                    color = color,
                     start = Offset(0f, size.height),
                     end = Offset(size.width, size.height),
                     strokeWidth = borderSize

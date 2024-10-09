@@ -81,7 +81,7 @@ private fun FindAccountScreen(
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.TopStart),
-                        text = "아이디 찾기",
+                        text = "계정 찾기",
                         color = Color(0xFF222222),
                         style = medium14pt
                     )

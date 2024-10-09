@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.findaccount.findid
+package com.whereareyounow.ui.findaccount.findaccount
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

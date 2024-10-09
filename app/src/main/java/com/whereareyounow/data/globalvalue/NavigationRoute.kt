@@ -1,6 +1,5 @@
 package com.whereareyounow.data.globalvalue
 
-import com.whereareyounow.domain.entity.schedule.Friend
 import kotlinx.serialization.Serializable
 
 const val ROUTE_MODIFY_INFO = "ROUTE_MODIFY_INFO"
@@ -100,6 +99,23 @@ sealed class ROUTE {
 
     @Serializable
     data object FindAccountEmailVerification
+
+    @Serializable
+    data class FindAccountResult(
+        val email: String,
+        val typeList: List<String>
+    )
+
+    @Serializable
+    data object FindPassword
+
+    @Serializable
+    data class PasswordReset(
+        val email: String
+    )
+
+    @Serializable
+    data object PasswordResetSuccess
 
     @Serializable
     data object Main {
