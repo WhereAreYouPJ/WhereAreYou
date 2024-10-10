@@ -54,6 +54,8 @@ fun FeedScreen(
     FeedListScreen(
         uiState = uiState,
         getDetailFeed = viewModel::getDetailFeed,
+        bookmarkFeed = viewModel::bookmarkFeed,
+        deleteFeedBookmark = viewModel::deleteBookmarkFeed,
         isContent = true
     )
 }
@@ -62,6 +64,8 @@ fun FeedScreen(
 private fun FeedListScreen(
     uiState: FeedListScreenUIState,
     getDetailFeed: (Int, Int) -> Unit,
+    bookmarkFeed: (Int) -> Unit,
+    deleteFeedBookmark: (Int) -> Unit,
     isContent: Boolean
 ) {
     val isDetailContent = remember { mutableStateOf(false) }
@@ -195,7 +199,15 @@ private fun FeedListScreen(
                             Spacer(Modifier.weight(1f))
 
                             Image(
-                                modifier = Modifier.size(30.dp),
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clickableNoEffect {
+                                        if (item.feedInfo[0].bookmarkInfo) {
+                                            deleteFeedBookmark(item.feedInfo[0].feedInfo.feedSeq)
+                                        } else {
+                                            bookmarkFeed(item.feedInfo[0].feedInfo.feedSeq)
+                                        }
+                                    },
                                 painter = painterResource(if (item.feedInfo[0].bookmarkInfo) R.drawable.ic_bookmark_filled_brandcolor else R.drawable.ic_bookmark_outlined_black),
                                 contentDescription = null
                             )

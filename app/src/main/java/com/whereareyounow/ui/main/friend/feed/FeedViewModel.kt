@@ -5,8 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.feedlist.FeedListScreenUIState
 import com.whereareyounow.domain.entity.feed.FeedListData
+import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
+import com.whereareyounow.domain.request.feed.DeleteFeedBookmarkRequest
 import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
+import com.whereareyounow.domain.usecase.feed.BookmarkFeedUseCase
+import com.whereareyounow.domain.usecase.feed.DeleteFeedBookmarkUseCase
 import com.whereareyounow.domain.usecase.feed.GetDetailFeedUseCase
 import com.whereareyounow.domain.usecase.feed.GetFeedListUseCase
 import com.whereareyounow.domain.util.onError
@@ -24,7 +28,9 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val getFeedListUseCase: GetFeedListUseCase,
-    private val getDetailFeedUseCase: GetDetailFeedUseCase
+    private val getDetailFeedUseCase: GetDetailFeedUseCase,
+    private val bookmarkFeedUseCase: BookmarkFeedUseCase,
+    private val deleteFeedBookmarkUseCase: DeleteFeedBookmarkUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FeedListScreenUIState(FeedListData(
@@ -75,6 +81,84 @@ class FeedViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 detailFeedData = data
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
+
+    fun bookmarkFeed(feedSeq: Int) {
+        val requestData = BookmarkFeedRequest(
+            feedSeq = feedSeq,
+            memberSeq = AuthData.memberSeq
+        )
+        bookmarkFeedUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _uiState.update {
+                            val newFeedList = _uiState.value.feedListData.content.map { scheduleFeedInfo ->
+                                scheduleFeedInfo.copy(
+                                    feedInfo = scheduleFeedInfo.feedInfo.map { feedDetailInfo ->
+                                        if (feedDetailInfo.feedInfo.feedSeq == feedSeq) {
+                                            feedDetailInfo.copy(
+                                                bookmarkInfo = true
+                                            )
+                                        } else {
+                                            feedDetailInfo
+                                        }
+                                    }
+                                )
+                            }
+
+                            it.copy(
+                                feedListData = it.feedListData.copy(
+                                    content = newFeedList
+                                )
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
+
+    fun deleteBookmarkFeed(feedSeq: Int) {
+        val requestData = DeleteFeedBookmarkRequest(
+            bookMarkFeedSeq = feedSeq,
+            memberSeq = AuthData.memberSeq
+        )
+        deleteFeedBookmarkUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _uiState.update {
+                            val newFeedList = _uiState.value.feedListData.content.map { scheduleFeedInfo ->
+                                scheduleFeedInfo.copy(
+                                    feedInfo = scheduleFeedInfo.feedInfo.map { feedDetailInfo ->
+                                        if (feedDetailInfo.feedInfo.feedSeq == feedSeq) {
+                                            feedDetailInfo.copy(
+                                                bookmarkInfo = false
+                                            )
+                                        } else {
+                                            feedDetailInfo
+                                        }
+                                    }
+                                )
+                            }
+
+                            it.copy(
+                                feedListData = it.feedListData.copy(
+                                    content = newFeedList
+                                )
                             )
                         }
                     }
