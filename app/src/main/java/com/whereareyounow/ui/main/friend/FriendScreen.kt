@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +39,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
+import com.whereareyounow.data.cached.FriendList
 import com.whereareyounow.ui.main.friend.feed.FeedScreen
 import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
@@ -89,7 +92,6 @@ private fun FriendScreen(
     )
     if (isFriendPage.value) {
         FriendContent(
-            paddingValues = paddingValues,
             friendsList = friendsList,
             upProfileBoolean = upProfileBoolean,
             upProfile = moveToDetailProfileScreen
@@ -101,7 +103,6 @@ private fun FriendScreen(
 
 @Composable
 fun FriendContent(
-    paddingValues: PaddingValues,
     friendsList: List<FriendModel>,
     upProfileBoolean: MutableState<Boolean>,
     upProfile: (String, String) -> Unit
@@ -109,58 +110,59 @@ fun FriendContent(
     val starExpand = remember { mutableStateOf(false) }
     val friendExpand = remember { mutableStateOf(false) }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
-        Gap(7)
+        Spacer(Modifier.height(10.dp))
+
         MyProfileRow()
+
         GrayLine()
-        Gap(10)
-        //즐찾친구
-        val pinnedFriendList = friendsList.filter {
-            it.Favorites!!
-        }
-        ClickAleText(
-            { starExpand.value = !starExpand.value },
-            "즐겨찾기",
-            "${pinnedFriendList.size}",
-            starExpand
-        ) {
-            if (starExpand.value) {
-                LazyColumn {
-                    items(pinnedFriendList.size) {
-                        FriendBox(
-                            imageUrl = pinnedFriendList[it].profileImage,
-                            friendName = pinnedFriendList[it].userName,
-                            upProfile = upProfile,
-                        )
+
+        Spacer(Modifier.height(10.dp))
+
+        LazyColumn {
+            item {
+                ClickAleText(
+                    { starExpand.value = !starExpand.value },
+                    "즐겨찾기",
+                    "${FriendList.list.filter { it.isFavorite }.size}",
+                    starExpand
+                ) {
+                    if (starExpand.value) {
+                        FriendList.list.filter { it.isFavorite }.forEachIndexed { idx, item ->
+                            FriendBox(
+                                imageUrl = item.profileImgUrl,
+                                friendName = item.name,
+                                upProfile = upProfile,
+                            )
+                        }
                     }
                 }
-            }
-        }
-        Gap(10)
-        GrayLine()
-        Gap(10)
-        ClickAleText(
-            { friendExpand.value = !friendExpand.value },
-            "친구",
-            "${friendsList.size}",
-            friendExpand
-        ) {
-            if (friendExpand.value) {
-                LazyColumn {
-                    items(friendsList.size) { index ->
-                        FriendBox(
-                            imageUrl = friendsList[index].profileImage,
-                            friendName = friendsList[index].userName,
-                            upProfile = upProfile,
-                        )
+
+                Gap(10)
+                GrayLine()
+                Gap(10)
+
+                ClickAleText(
+                    { friendExpand.value = !friendExpand.value },
+                    "친구",
+                    "${friendsList.size}",
+                    friendExpand
+                ) {
+                    if (friendExpand.value) {
+                        FriendList.list.filter { !it.isFavorite }.forEachIndexed { idx, item ->
+                            FriendBox(
+                                imageUrl = item.profileImgUrl,
+                                friendName = item.name,
+                                upProfile = upProfile,
+                            )
+                        }
                     }
                 }
+
+                Gap(10)
             }
         }
-        Gap(10)
-        GrayLine()
     }
 }
 
@@ -245,24 +247,25 @@ fun MyProfileRow() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(89.dp)
+            .height(80.dp)
             .padding(start = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        GlideImage(
             modifier = Modifier
                 .size(56.dp)
-                .clip(RoundedCornerShape(18.dp))
-        ) {
-            GlideImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(18.dp)),
-                imageModel = { myInfo.image ?: R.drawable.idle_profile2 },
-            )
-        }
-        Gap(12)
-        Text(myInfo.name, style = medium14pt , color = Color(0xFF222222))
+                .clip(RoundedCornerShape(18.dp)),
+            imageModel = { myInfo.image ?: R.drawable.ic_profile },
+        )
+
+        Spacer(Modifier.width(6.dp))
+
+        Text(
+            modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
+            text = myInfo.name,
+            style = medium14pt,
+            color = Color(0xFF222222)
+        )
     }
 }
 
@@ -368,9 +371,9 @@ fun AddIconPopUp(
 fun GrayLine() {
     Box(
         modifier = Modifier
-            .background(Color(0xFFDDDDDD))
             .fillMaxWidth()
             .height(1.dp)
+            .background(getColor().thinnest)
     )
 }
 
@@ -386,27 +389,23 @@ fun FriendBox(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, bottom = 10.dp),
+            .height(62.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        GlideImage(
             modifier = Modifier
                 .size(50.dp)
                 .clip(RoundedCornerShape(16.dp))
-        ) {
-            GlideImage(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(16.dp))
-                    .size(50.dp)
-                    .clickable {
-                        upProfile(imageUrl ?: "", friendName)
+                .clickable {
+                    upProfile(imageUrl ?: "", friendName)
 //                    upProfileBoolean.value = !upProfileBoolean.value
-                    },
-                imageModel = { imageUrl ?: R.drawable.idle_profile2 },
-                imageOptions = ImageOptions(contentScale = ContentScale.Crop)
-            )
-        }
+                },
+            imageModel = { imageUrl ?: R.drawable.ic_profile },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop)
+        )
+
         Gap(12)
+
         Text(
             text = friendName,
             color = Color(0xFF222222),
@@ -443,7 +442,8 @@ fun ClickAleText(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text1,
+                modifier = Modifier.padding(start = 4.dp),
+                text = text1,
                 style = medium14pt,
                 color = Color(0xFF222222)
             )

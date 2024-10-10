@@ -59,9 +59,13 @@ class FeedViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun getDetailFeed(feedSeq: Int) {
+    fun getDetailFeed(
+        scheduleSeq: Int,
+        feedSeq: Int
+    ) {
         val requestData = GetDetailFeedRequest(
             memberSeq = AuthData.memberSeq,
+            scheduleSeq = scheduleSeq,
             feedSeq = feedSeq
         )
         getDetailFeedUseCase(requestData)

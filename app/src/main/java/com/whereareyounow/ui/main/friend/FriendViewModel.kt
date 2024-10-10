@@ -32,14 +32,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendViewModel @Inject constructor(
     private val application: Application,
-//    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-//    private val getMemberIdUseCase: GetMemberIdUseCase,
-//    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
-//    private val getFriendListUseCase: GetFriendListUseCase,
     private val getFriendListUseCase : GetFriendListUseCase
-
-
-    ) : AndroidViewModel(application) {
+) : AndroidViewModel(application) {
 
     private val _searchedUserInfo = MutableStateFlow<OtherUserInfoModel?>(null)
     val searcedUserInfo: StateFlow<OtherUserInfoModel?> = _searchedUserInfo

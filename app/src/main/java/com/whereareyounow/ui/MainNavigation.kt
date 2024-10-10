@@ -39,6 +39,7 @@ import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
 import com.whereareyounow.ui.navigation.findAccountResultScreenRoute
 import com.whereareyounow.ui.navigation.findPasswordScreenRoute
+import com.whereareyounow.ui.navigation.friend.searchAndAddFriendScreen
 import com.whereareyounow.ui.navigation.friendsListScreenRoute
 import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
@@ -159,11 +160,7 @@ fun MainNavigation(
         }
 
         // 친구 추가 화면
-//        composable(route = ROUTE_ADD_FRIEND) {
-//            AddFriendScreen(
-//                moveToBackScreen = { navController.popBackStack() }
-//            )
-//        }
+        searchAndAddFriendScreen(navController)
 
         // 피드 추가 화면
         addFeedScreenRoute(navController)

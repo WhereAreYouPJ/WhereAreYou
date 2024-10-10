@@ -22,6 +22,7 @@ import com.whereareyounow.domain.request.feed.GetHidedFeedRequest
 import com.whereareyounow.domain.request.feed.HideFeedRequest
 import com.whereareyounow.domain.request.feed.ModifyFeedRequest
 import com.whereareyounow.domain.request.feed.RestoreHidedFeedRequest
+import com.whereareyounow.util.UriRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -41,7 +42,7 @@ class FeedRepositoryImpl(
 
     override suspend fun createFeed(
         data: CreateFeedRequest,
-        images: List<File>
+        images: List<Any>
     ): NetworkResult<FeedSeq> {
 //        val scheduleSeq = data.scheduleSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 //        val memberSeq = data.memberSeq.toString().toRequestBody("text/plain".toMediaTypeOrNull())
@@ -55,9 +56,8 @@ class FeedRepositoryImpl(
 //            "content" to content
 //        ) as HashMap<String, RequestBody>
         val reqData = Gson().toJson(data).toRequestBody("application/json".toMediaTypeOrNull())
-        val multipartList = images.map {
-            val reqBody = it.asRequestBody("image/png".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("feedImageList", "imageList", reqBody)
+        val multipartList = images.mapIndexed { idx, it ->
+            (it as UriRequestBody).toMultipartBody("feedImageList")
         }
         return handleResult {
             feedApi.createFeed(reqData, multipartList)
@@ -78,6 +78,7 @@ class FeedRepositoryImpl(
         return handleResult {
             feedApi.getDetailFeed(
                 memberSeq = data.memberSeq,
+                scheduleSeq = data.scheduleSeq,
                 feedSeq = data.feedSeq
             )
         }

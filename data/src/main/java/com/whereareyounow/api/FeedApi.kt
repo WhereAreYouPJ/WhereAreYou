@@ -55,6 +55,7 @@ interface FeedApi {
     @GET("feed/details")
     suspend fun getDetailFeed(
         @Query("memberSeq") memberSeq: Int,
+        @Query("scheduleSeq") scheduleSeq: Int,
         @Query("feedSeq") feedSeq: Int
     ): Response<ResponseWrapper<FeedInfo>>
 

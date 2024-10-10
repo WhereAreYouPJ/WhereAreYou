@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.notoSanskr
+import com.whereareyounow.util.UriRequestBody
 import com.whereareyounow.util.calendar.parseLocalDate
 import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.PopupPosition
@@ -68,16 +70,18 @@ fun AddFeedScreen(
     updateSelectedSchedule: (ScheduleListItem) -> Unit,
     updateTitle: (String) -> Unit,
     updateContent: (String) -> Unit,
-    addImages: (List<String>) -> Unit,
+    addImages: (List<UriRequestBody>) -> Unit,
+    removeImage: (String) -> Unit,
     createFeed: (() -> Unit) -> Unit,
     moveToBackScreen: () -> Unit,
 ) {
+    val context = LocalContext.current
     val takePhotoFromAlbumLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(4)) { uri ->
+        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uriList ->
             Log.e("PickImage", "success")
-            Log.e("PickImage", "${uri}")
-            uri.let {
-                addImages(uri.map { it.toString() })
+            Log.e("PickImage", "${uriList}")
+            uriList.let {
+                addImages(uriList.map { UriRequestBody(context, Uri.parse(it.toString())) })
             }
         }
     val isExpanded = remember { mutableStateOf(false) }
@@ -288,7 +292,7 @@ fun AddFeedScreen(
                                 ) {
                                     GlideImage(
                                         modifier = Modifier.fillMaxSize(),
-                                        imageModel = { item },
+                                        imageModel = { item.originalUri },
                                         imageOptions = ImageOptions(
                                             contentScale = ContentScale.Crop
                                         )
@@ -299,7 +303,7 @@ fun AddFeedScreen(
                                             .align(Alignment.TopEnd)
                                             .padding(top = 10.dp, end = 10.dp)
                                             .size(22.dp)
-                                            .clickableNoEffect {  },
+                                            .clickableNoEffect { removeImage(item.originalUri) },
                                         painter = painterResource(R.drawable.ic_close),
                                         contentDescription = null
                                     )
@@ -322,9 +326,9 @@ fun AddFeedScreen(
 
                             if (uiState.content == "") {
                                 Text(
-                                    text = "어떤 일이 있었나요?    ",
+                                    text = "어떤 일이 있었나요?",
                                     color = getColor().dark,
-                                    style = medium16pt
+                                    style = medium14pt
                                 )
                             }
                         }

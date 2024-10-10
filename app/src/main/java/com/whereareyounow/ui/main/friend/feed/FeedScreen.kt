@@ -61,7 +61,7 @@ fun FeedScreen(
 @Composable
 private fun FeedListScreen(
     uiState: FeedListScreenUIState,
-    getDetailFeed: (Int) -> Unit,
+    getDetailFeed: (Int, Int) -> Unit,
     isContent: Boolean
 ) {
     val isDetailContent = remember { mutableStateOf(false) }
@@ -145,7 +145,7 @@ private fun FeedListScreen(
                                     shape = RoundedCornerShape(14.dp)
                                 )
                                 .clickableNoEffect {
-                                    getDetailFeed(item.feedInfo[0].feedInfo.feedSeq)
+                                    getDetailFeed(item.scheduleInfo.scheduleSeq, item.feedInfo[0].feedInfo.feedSeq)
                                     isDetailContent.value = true
                                 }
                                 .padding(start = 10.dp, end = 10.dp),

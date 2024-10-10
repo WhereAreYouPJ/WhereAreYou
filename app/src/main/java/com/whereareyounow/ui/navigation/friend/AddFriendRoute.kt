@@ -7,9 +7,7 @@ import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.ui.main.friend.addfriend.SearchAndAddFriendScreen
 
 fun NavGraphBuilder.searchAndAddFriendScreen(navController: NavController) = composable<ROUTE.SearchAndAddFriend> {
-
     SearchAndAddFriendScreen(
         moveToBackScreen = { navController.popBackStack() }
     )
-
 }

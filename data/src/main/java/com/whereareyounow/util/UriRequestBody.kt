@@ -15,8 +15,10 @@ class UriRequestBody(context: Context, private val uri: Uri): RequestBody() {
     private val contentResolver = context.contentResolver
     private var fileName = ""
     private var size = -1L
+    var originalUri = ""
 
     init {
+        originalUri = uri.toString()
         contentResolver.query(
             uri,
             arrayOf(MediaStore.Images.Media.SIZE, MediaStore.Images.Media.DISPLAY_NAME),

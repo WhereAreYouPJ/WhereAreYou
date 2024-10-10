@@ -5,7 +5,9 @@ import com.whereareyounow.domain.request.friend.DeleteFriendRequest
 import com.whereareyounow.domain.request.friend.SendFriendRequestRequest
 import com.whereareyounow.domain.entity.friend.FriendInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
+import com.whereareyounow.domain.request.friend.AddFriendToFavoriteRequest
 import com.whereareyounow.domain.request.friend.RefuseFriendRequestRequest
+import com.whereareyounow.domain.request.friend.RemoveFriendFromFavoriteRequest
 import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,13 +18,25 @@ import retrofit2.http.Query
 
 interface FriendApi {
 
-    // 친구 MemberId 목록
+    // 친구 즐겨찾기 추가
+    @POST("friend/favorites")
+    suspend fun addFriendToFavorite(
+        @Body body: AddFriendToFavoriteRequest
+    ): Response<ResponseWrapper<String>>
+
+    // 친구 즐겨찾기 제거
+    @HTTP(method = "DELETE", path = "friend/favorites", hasBody = true)
+    suspend fun removeFriendFromFavorite(
+        @Body body: RemoveFriendFromFavoriteRequest
+    ): Response<ResponseWrapper<String>>
+
+    // 친구 리스트 조회
     @GET("friend")
     suspend fun getFriendList(
         @Query("memberSeq") memberSeq: Int
     ): Response<ResponseWrapper<List<FriendInfo>>>
 
-    // 친구 요청 거절
+    // 친구 삭제
     @HTTP(method = "DELETE", path = "friend", hasBody = true)
     suspend fun deleteFriend(
         @Body body: DeleteFriendRequest

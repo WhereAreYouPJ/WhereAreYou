@@ -2,10 +2,12 @@ package com.whereareyounow.di.usecase
 
 import com.whereareyounow.domain.repository.FriendRepository
 import com.whereareyounow.domain.usecase.friend.AcceptFriendRequestUseCase
+import com.whereareyounow.domain.usecase.friend.AddFriendToFavoriteUseCase
 import com.whereareyounow.domain.usecase.friend.DeleteFriendUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendRequestListUseCase
 import com.whereareyounow.domain.usecase.friend.RefuseFriendRequestUseCase
+import com.whereareyounow.domain.usecase.friend.RemoveFriendFromFavoriteUseCase
 import com.whereareyounow.domain.usecase.friend.SendFriendRequestUseCase
 import dagger.Module
 import dagger.Provides
@@ -15,6 +17,16 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object FriendUseCaseModule {
+
+    @Provides
+    fun provideAddFriendToFavoriteUseCase(
+        repository: FriendRepository
+    ) = AddFriendToFavoriteUseCase(repository)
+
+    @Provides
+    fun provideRemoveFriendFromFavoriteUseCase(
+        repository: FriendRepository
+    ) = RemoveFriendFromFavoriteUseCase(repository)
 
     @Provides
     fun provideGetFriendListUseCase(

@@ -10,7 +10,7 @@ class CreateFeedUseCase(
 ) {
     operator fun invoke(
         data: CreateFeedRequest,
-        images: List<File>
+        images: List<Any>
     ) = flow {
         val response = repository.createFeed(data, images)
         emit(response)

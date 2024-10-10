@@ -10,12 +10,14 @@ import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.cached.FriendList
 import com.whereareyounow.domain.entity.schedule.Friend
 import com.whereareyounow.domain.request.friend.GetFriendListRequest
+import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.usecase.datastore.GetMemberCodeUseCase
 import com.whereareyounow.domain.usecase.datastore.GetMemberSeqUseCase
 import com.whereareyounow.domain.usecase.datastore.GetRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.datastore.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.datastore.SaveRefreshTokenUseCase
 import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
+import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
@@ -41,6 +43,7 @@ class SplashViewModel @Inject constructor(
     private val getMemberSeqUseCase: GetMemberSeqUseCase,
     private val getMemberCodeUseCase: GetMemberCodeUseCase,
     private val getFriendListUseCase: GetFriendListUseCase,
+    private val getUserInfoByMemberSeqUseCase: GetUserInfoByMemberSeqUseCase
 //    private val getRefreshTokenUseCase: GetRefreshTokenUseCase,
 //    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
 //    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
@@ -124,9 +127,26 @@ class SplashViewModel @Inject constructor(
                                 number = idx,
                                 memberSeq = item.memberSeq,
                                 name = item.userName,
-                                profileImgUrl = item.profileImage
+                                profileImgUrl = item.profileImage,
+                                isFavorite = item.Favorites
                             )
                         })
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+
+        val requestData2 = GetUserInfoByMemberSeqRequest(AuthData.memberSeq)
+        getUserInfoByMemberSeqUseCase(requestData2)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        AuthData.userName = data.userName
+                        AuthData.email = data.email
+                        AuthData.profileImage = data.profileImage
                     }
                 }.onError { code, message ->
 

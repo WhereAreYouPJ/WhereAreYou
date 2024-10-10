@@ -15,6 +15,7 @@ import com.whereareyounow.domain.usecase.schedule.GetScheduleListUseCase
 import com.whereareyounow.domain.util.onError
 import com.whereareyounow.domain.util.onException
 import com.whereareyounow.domain.util.onSuccess
+import com.whereareyounow.util.UriRequestBody
 import com.whereareyounow.util.calendar.parseLocalDate
 import com.whereareyounow.util.copy
 import com.whereareyounow.util.getFileExtension
@@ -47,6 +48,14 @@ class AddFeedViewModel @Inject constructor(
         }
     }
 
+    fun removeImage(uri: String) {
+        _uiState.update {
+            it.copy(
+                imageUris = it.imageUris.filter { it.originalUri != uri }
+            )
+        }
+    }
+
     fun updateTitle(title: String) {
         _uiState.update {
             it.copy(
@@ -63,7 +72,7 @@ class AddFeedViewModel @Inject constructor(
         }
     }
 
-    fun addImages(uriList: List<String>) {
+    fun addImages(uriList: List<UriRequestBody>) {
         _uiState.update {
             it.copy(
                 imageUris = it.imageUris.plus(uriList)
@@ -81,24 +90,7 @@ class AddFeedViewModel @Inject constructor(
             content = _uiState.value.content,
             feedImageOrders = (1 ..  _uiState.value.imageUris.size).toList()
         )
-        val imageList = _uiState.value.imageUris.mapIndexed { idx, item ->
-            val fileExtension = getFileExtension(application, item.toUri())
-            val fileName = "temporary_file" + if (fileExtension != null) ".$fileExtension" else ""
-            val imageFile = File(application.cacheDir, fileName)
-            imageFile.createNewFile()
-            try {
-                val oStream = FileOutputStream(imageFile)
-                val inputStream = application.contentResolver.openInputStream(item.toUri())
-                inputStream?.let {
-                    copy(inputStream, oStream)
-                }
-                oStream.flush()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-            imageFile
-        }
+        val imageList = _uiState.value.imageUris
         createFeedUseCase(requestBody, imageList)
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->

@@ -30,7 +30,7 @@ interface FeedRepository {
 
     suspend fun createFeed(
         data: CreateFeedRequest,
-        images: List<File>
+        images: List<Any>
     ): NetworkResult<FeedSeq>
 
     suspend fun getFeedList(

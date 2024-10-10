@@ -12,5 +12,5 @@ data class Friend(
     var userId: String = "",
     @SerializedName("profileImage")
     var profileImgUrl: String? = null,
-    var isPinned: Boolean = false
+    var isFavorite: Boolean = false
 )

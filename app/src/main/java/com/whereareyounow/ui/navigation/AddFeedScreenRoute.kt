@@ -20,6 +20,7 @@ fun NavGraphBuilder.addFeedScreenRoute(navController: NavController) = composabl
         updateContent = viewModel::updateContent,
         addImages = viewModel::addImages,
         createFeed = viewModel::createFeed,
+        removeImage = viewModel::removeImage,
         moveToBackScreen = { navController.popBackStack() }
     )
 }

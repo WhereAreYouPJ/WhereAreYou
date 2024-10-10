@@ -13,5 +13,5 @@ data class CreateFeedRequest(
     @SerializedName("content")
     val content: String,
     @SerializedName("feedImageOrders")
-    val feedImageOrders: List<Int>
+    val feedImageOrders: List<Int>,
 )

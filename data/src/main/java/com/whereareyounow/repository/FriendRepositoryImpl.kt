@@ -5,10 +5,12 @@ import com.whereareyounow.domain.entity.friend.FriendInfo
 import com.whereareyounow.domain.entity.friend.FriendRequest
 import com.whereareyounow.domain.repository.FriendRepository
 import com.whereareyounow.domain.request.friend.AcceptFriendRequestRequest
+import com.whereareyounow.domain.request.friend.AddFriendToFavoriteRequest
 import com.whereareyounow.domain.request.friend.DeleteFriendRequest
 import com.whereareyounow.domain.request.friend.GetFriendListRequest
 import com.whereareyounow.domain.request.friend.GetFriendRequestListRequest
 import com.whereareyounow.domain.request.friend.RefuseFriendRequestRequest
+import com.whereareyounow.domain.request.friend.RemoveFriendFromFavoriteRequest
 import com.whereareyounow.domain.request.friend.SendFriendRequestRequest
 import com.whereareyounow.domain.util.NetworkResult
 import com.whereareyounow.util.NetworkResultHandler
@@ -16,6 +18,18 @@ import com.whereareyounow.util.NetworkResultHandler
 class FriendRepositoryImpl(
     private val friendApi: FriendApi
 ) : FriendRepository, NetworkResultHandler {
+
+    override suspend fun addFriendToFavorite(
+        data: AddFriendToFavoriteRequest
+    ): NetworkResult<String> {
+        return handleResult { friendApi.addFriendToFavorite(data) }
+    }
+
+    override suspend fun removeFriendFromFavorite(
+        data: RemoveFriendFromFavoriteRequest
+    ): NetworkResult<String> {
+        return handleResult { friendApi.removeFriendFromFavorite(data)}
+    }
 
     override suspend fun getFriendList(
         data: GetFriendListRequest
