@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
-import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.notoSanskr
 
@@ -35,9 +35,7 @@ private fun UserGuideScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
         Gap(2)
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -47,18 +45,14 @@ private fun UserGuideScreen(
                 painter = painterResource(id = R.drawable.ic_backarrow),
                 contentDescription = ""
             )
-
             Gap(7)
-
             Text(
                 text = "공지사항",
                 style = medium18pt,
                 modifier = Modifier.offset(y = 6.dp)
             )
         }
-
         Gap(18)
-
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 18.dp , end = 18.dp , top = 4.dp)
         ) {
@@ -71,9 +65,7 @@ private fun UserGuideScreen(
                 fontFamily = notoSanskr
             )
         }
-
         Gap(2)
-
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 18.dp , end = 18.dp , bottom = 4.dp)
         ) {
@@ -86,10 +78,7 @@ private fun UserGuideScreen(
                 fontFamily = notoSanskr
             )
         }
-
-
     }
-
 }
 
 @Preview

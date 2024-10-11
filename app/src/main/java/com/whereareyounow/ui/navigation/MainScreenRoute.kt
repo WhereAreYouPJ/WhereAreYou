@@ -6,11 +6,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.whereareyounow.data.ViewType
 import com.whereareyounow.data.globalvalue.ROUTE
-import com.whereareyounow.data.globalvalue.ROUTE_ADD_FRIEND
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
-import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
-import com.whereareyounow.data.globalvalue.ROUTE_SIGN_IN_WITH_ACCOUNT
 import com.whereareyounow.ui.main.MainScreen
 import com.whereareyounow.util.navigate
 
@@ -40,17 +37,16 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
                 "friendImagrUrl" to friendImagrUrl,
                 "friendName" to friendName
             )
-//                    friendViewModel.friendsList[]
             navController.navigate(ROUTE_DETAIL_PROFILE , bundle)
         },
         moveToMyInfoScreen = {
-            navController.navigate(ROUTE_MY_INFO)
+            navController.navigate(ROUTE.MyInfo)
         },
         moveToLocationFavorite = { navController.navigate(ROUTE.LocationFaborite) },
         moveToFeedBookmarks = { navController.navigate(ROUTE.FeedBookMark) },
         moveToFeedSaved = { navController.navigate(ROUTE.FeedStore) },
         moveToAccoument = {navController.navigate(ROUTE.Announcement)},
         moveToAsk = {navController.navigate(ROUTE.Ask)},
-        moveToBye = { navController.navigate(ROUTE.Bye1) }
+        moveToBye = { navController.navigate(ROUTE.WithDrawal1) }
     )
 }

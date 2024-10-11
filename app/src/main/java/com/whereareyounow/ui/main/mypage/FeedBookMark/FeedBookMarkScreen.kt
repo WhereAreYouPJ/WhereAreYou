@@ -43,7 +43,7 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium10pt
 import com.whereareyounow.ui.theme.medium12pt
@@ -72,15 +72,12 @@ private fun FeedBookMarkScreen(
     moveToBackScreen: () -> Unit
 ) {
     val myPageViewModel: MyPageViewModel = hiltViewModel()
-
     val data = myPageViewModel.feedBookMarkState.collectAsState().value
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = TOP_BAR_HEIGHT.dp)
     ) {
-
         item{
             OneTextOneIconTobBar(
                 title = "피드 책갈피",
@@ -109,14 +106,11 @@ private fun FeedBookMarkScreen(
 //                                .fillMaxSize(),
 //                            contentAlignment = Alignment.Center
 //                        ) {
-//
 //                            Image(
 //                                modifier = Modifier.width(300.dp),
 //                                painter = painterResource(R.drawable.img_feed_empty),
 //                                contentDescription = null
 //                            )
-//
-//
 //                            Text(
 //                                text = "아직은 피드에 책갈피를 하지 않았어요.\n" +
 //                                        "특별한 추억을 오래도록 기억할 수 있게\n" +
@@ -127,12 +121,8 @@ private fun FeedBookMarkScreen(
 //                            )
 //                        }
 //                    }
-//
 //                }
-//
-//
 //            }
-//
 //        } else {
 //            items(data!!.totalPages){ index ->
             items(100){ index ->
@@ -143,13 +133,6 @@ private fun FeedBookMarkScreen(
                 Column(
                     modifier = Modifier
                         .padding(start = 15.dp, end = 15.dp)
-//                    .border(
-//                        border = BorderStroke(
-//                            width = 1.dp,
-//                            color = getColor().brandColor
-//                        ),
-//                        shape = RoundedCornerShape(14.dp)
-//                    )
                         .fillMaxWidth()
                         .wrapContentHeight()
 
@@ -158,7 +141,6 @@ private fun FeedBookMarkScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .height(74.dp)
-//                        .padding(start = 10.dp, top = 14.dp, bottom = 10.dp)
                             .border(
                                 border = BorderStroke(
                                     width = 1.dp,
@@ -183,6 +165,7 @@ private fun FeedBookMarkScreen(
                             Row{
                                 Text(
                                 text = "2024.06.05",
+                                    //위에꺼지우고
 //                                    text = formatStartTime(data.content!![index].startTime),
                                     style = medium14pt,
                                     color = Color(0xFF767676)
@@ -211,7 +194,6 @@ private fun FeedBookMarkScreen(
                                     }
                                 )
                             }
-
                         }
                     }
                     Gap(10)
@@ -223,7 +205,6 @@ private fun FeedBookMarkScreen(
                         initialPage = 0
                     )
                     val isVisible = remember { mutableStateOf(false) }
-
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
@@ -311,19 +292,10 @@ private fun FeedBookMarkScreen(
                         )
                     }
                     Gap(6)
-
-
-
                 }
             }
-
-
-
             // 아래 중괄호가 else 문 끝
 //        }
-
-
-
     }
 
 }

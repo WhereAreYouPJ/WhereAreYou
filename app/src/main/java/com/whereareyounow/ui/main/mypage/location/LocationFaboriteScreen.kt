@@ -38,7 +38,6 @@ import com.whereareyounow.ui.component.EmptyDataIndicator
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
@@ -49,21 +48,14 @@ import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
 fun LocationFavoriteScreen(
-    moveToBackScreen : () -> Unit,
-    moveToEditLocationFavorite : () -> Unit
+    moveToBackScreen: () -> Unit,
+    moveToEditLocationFavorite: () -> Unit
 ) {
-
-    val myPageViewModel : MyPageViewModel = hiltViewModel()
+    val myPageViewModel: MyPageViewModel = hiltViewModel()
     val locationFavoriteList = myPageViewModel.locationFaboriteList.collectAsState().value
     val isLoading = myPageViewModel.isLoading.collectAsState().value
-
-    val myName = myPageViewModel.name.collectAsState().value
-    val myEmail = myPageViewModel.email.collectAsState().value
     val popupState = remember {
         PopupState(false, PopupPosition.BottomLeft)
-    }
-    val isVerifyed = remember {
-        mutableStateOf(false)
     }
     val isModifyClicked = remember {
         mutableStateOf(false)
@@ -71,15 +63,12 @@ fun LocationFavoriteScreen(
     val isReadOnly = remember {
         mutableStateOf(true)
     }
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = TOP_BAR_HEIGHT.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         OneTextTwoIconTobBar(
             title = "위치 즐겨찾기",
             firstIconClicked = moveToBackScreen,
@@ -89,27 +78,16 @@ fun LocationFavoriteScreen(
         ) {
             DeleteIconPopUp(
                 popupState = popupState,
-                isModifyClicked = isModifyClicked,
-                isReadOnly = isReadOnly,
-                moveToEditMyInfoScreen = {  moveToEditLocationFavorite() },
+                moveToEditMyInfoScreen = { moveToEditLocationFavorite() },
                 modifier = Modifier
-//                    .clickableNoEffect {
-//                        if(locationFavoriteList.isEmpty()) {
-//                            Toast.makeText(context , "추가된 즐겨찾기가 없습니다." , Toast.LENGTH_SHORT).show()
-//                        } else {
-//                            moveToEditLocationFavorite()
-//                        }
-//                    }
                     .align(Alignment.CenterEnd),
                 favoriteLocationList = locationFavoriteList
-
             )
         }
-
-        if(isLoading) {
+        if (isLoading) {
             CircularProgressIndicator()
         } else {
-            if(locationFavoriteList.isEmpty()) {
+            if (locationFavoriteList.isEmpty()) {
                 EmptyDataIndicator(
                     indicateText = "아직은 즐겨찾기한 위치가 없어요.\n" +
                             "목록을 생성하여 좀 더 편리하게\n" +
@@ -127,23 +105,16 @@ fun LocationFavoriteScreen(
                 }
             }
         }
-
     }
 }
-
-
 
 
 @Composable
 fun DeleteIconPopUp(
     modifier: Modifier = Modifier,
     popupState: PopupState,
-    isModifyClicked: MutableState<Boolean>,
-    isReadOnly: MutableState<Boolean>,
     moveToEditMyInfoScreen: () -> Unit,
-//    toastMessage : () -> Unit,
-    favoriteLocationList : List<LocationFavoriteInfoModel?>
-
+    favoriteLocationList: List<LocationFavoriteInfoModel?>
 ) {
     val density = LocalDensity.current.density
     val context = LocalContext.current
@@ -169,18 +140,14 @@ fun DeleteIconPopUp(
                         modifier = Modifier
                             .fillMaxSize()
                             .clickableNoEffect {
-//                                popupState.isVisible = false
-//                                isModifyClicked.value = true
-//                                isReadOnly.value = false
-//                                moveToEditMyInfoScreen()
-                                if(favoriteLocationList.isEmpty()) {
-//                                    toastMessage()
-                                    Toast.makeText(context , "추가된 즐겨찾기가 없습니다." , Toast.LENGTH_SHORT).show()
+                                if (favoriteLocationList.isEmpty()) {
+                                    Toast
+                                        .makeText(context, "추가된 즐겨찾기가 없습니다.", Toast.LENGTH_SHORT)
+                                        .show()
                                 } else {
                                     moveToEditMyInfoScreen()
                                 }
-                            }
-                        ,
+                            },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
@@ -195,7 +162,6 @@ fun DeleteIconPopUp(
                             style = medium14pt,
                             color = Color.White
                         )
-
                     }
                 }
             }
@@ -206,11 +172,8 @@ fun DeleteIconPopUp(
 @Composable
 fun DetailFavoriteLocation(
     title: String,
-//    isClickedState: MutableState<Boolean>,
     isClicked: () -> Unit,
 ) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -231,6 +194,5 @@ fun DetailFavoriteLocation(
                 isClicked()
             }
         )
-
     }
 }

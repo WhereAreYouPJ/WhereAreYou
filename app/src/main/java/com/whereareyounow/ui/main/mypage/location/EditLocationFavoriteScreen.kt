@@ -22,17 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.button.padding_yes.VariableButtonColorTextDefaultSizeButton
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun EditLocationFavoriteScreen(
     moveToBackScreen: () -> Unit
-
 ) {
     EditLocationFavoriteScreen(
         isContent = true,
@@ -55,8 +54,6 @@ private fun EditLocationFavoriteScreen(
                 false, false, false, false, false, false, false, false, false, false
             )
         }
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,30 +64,22 @@ private fun EditLocationFavoriteScreen(
             firstIcon = R.drawable.ic_back,
             firstIconClicked = { moveToBackScreen() }
         )
-
-//        Gap(20)
-
         //즐겨찾기 사이즈 일단은 아무거나 데이터 있는게 없음 []이래됨.
-        val sfsf = myPageViewModel.locationFaboriteList.collectAsState().value
-
+        val data = myPageViewModel.locationFaboriteList.collectAsState().value
         val circles = listOf(
             R.drawable.ic_circlechecked,
             R.drawable.ic_emptycircle,
         )
-//        val circle = if (selectedStates[index]) circles[0] else circles[1]
-        sfsf.forEachIndexed { index , love ->
+        data.forEachIndexed { index , love ->
             DetailFaboriteLocation(
                 title = love!!.location!!,
-//                isClickedState = selectedStates[index],
                 isClicked = { selectedStates[index] = !selectedStates[index] },
                 circle = if (selectedStates[index]) circles[0] else circles[1]
             )
             GrayLine()
         }
-
         Spacer(modifier = Modifier.weight(1f))
-
-        WithdrawlButton(text = "삭제하기", canMove = defaultTrue) {
+        VariableButtonColorTextDefaultSizeButton(text = "삭제하기", isVerified = defaultTrue) {
             moveToBackScreen()
             myPageViewModel.deleteFavoriteLocation(
                 1,
@@ -106,8 +95,6 @@ fun DetailFaboriteLocation(
     isClicked: () -> Unit,
     circle : Int
 ) {
-
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,7 +115,6 @@ fun DetailFaboriteLocation(
                 isClicked()
             }
         )
-
     }
 }
 

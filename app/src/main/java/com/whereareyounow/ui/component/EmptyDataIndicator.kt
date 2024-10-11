@@ -15,9 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
-import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.medium14pt
-import org.w3c.dom.Text
 
 @Composable
 fun EmptyDataIndicator(
@@ -27,7 +26,6 @@ fun EmptyDataIndicator(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 15.dp, end = 15.dp),
-//                    horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -39,13 +37,11 @@ fun EmptyDataIndicator(
                     .fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-
                 Image(
                     modifier = Modifier.width(300.dp),
                     painter = painterResource(R.drawable.img_feed_empty),
                     contentDescription = null
                 )
-
                 Text(
                     text = indicateText,
                     style = medium14pt,
@@ -54,6 +50,5 @@ fun EmptyDataIndicator(
                 )
             }
         }
-
     }
 }

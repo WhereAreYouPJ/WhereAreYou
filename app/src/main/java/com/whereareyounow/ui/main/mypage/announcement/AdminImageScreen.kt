@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.notoSanskr
@@ -35,16 +35,13 @@ fun AdminImageScreen(
 ) {
     val scrollState = rememberScrollState()
     val currentDate : String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(top = TOP_BAR_HEIGHT.dp)
     ) {
-
         Gap(4)
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,9 +61,7 @@ fun AdminImageScreen(
                 style = medium18pt,
             )
         }
-
         Gap(20)
-
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 18.dp , end = 18.dp , top = 4.dp)
         ) {
@@ -78,9 +73,7 @@ fun AdminImageScreen(
                 fontFamily = notoSanskr
             )
         }
-
         Gap(2)
-
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 18.dp , end = 18.dp , bottom = 4.dp)
         ) {
@@ -92,7 +85,6 @@ fun AdminImageScreen(
                 fontFamily = notoSanskr
             )
         }
-
         Row(
             modifier = Modifier.fillMaxWidth().padding(start = 18.dp , end = 18.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -103,12 +95,7 @@ fun AdminImageScreen(
                 style = medium14pt
             )
         }
-
-
         Gap(16)
-
-
-
         Image(
             painter = painterResource(id = R.drawable.ic_realangrygonee),
             contentDescription = "",
@@ -119,23 +106,3 @@ fun AdminImageScreen(
         )
     }
 }
-
-//@Composable
-//fun ScrollableImage() {
-//    val scrollState = rememberScrollState()
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .verticalScroll(scrollState)
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_realangrygonee),
-//            contentDescription = "",
-//            contentScale = ContentScale.FillWidth,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .wrapContentHeight()
-//        )
-//    }
-//}

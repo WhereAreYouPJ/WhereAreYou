@@ -134,16 +134,19 @@ sealed class ROUTE {
 
     // 회원 탈퇴
     @Serializable
-    data object Bye1
+    data object WithDrawal1
     @Serializable
-    data object Bye2
+    data object WithDrawal2
     @Serializable
-    data object Bye3
+    data object WithDrawal3
     @Serializable
-    data object Bye4
+    data object WithDrawal4
     @Serializable
-    data object Bye5
+    data object WithDrawal5
 
+    // 내정보
+    @Serializable
+    data object MyInfo
     // 내 정보 수정
     @Serializable
     data object EditMyInfo

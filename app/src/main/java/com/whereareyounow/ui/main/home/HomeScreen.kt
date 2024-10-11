@@ -76,12 +76,13 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.ViewType
 import com.whereareyounow.ui.main.MainViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium10pt
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
+import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -705,8 +706,8 @@ fun SeventhScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
-                    Text(sevenDataModel[0].title1, fontSize = 18.sp)
-                    Text(sevenDataModel[0].subTitle1, fontSize = 14.sp, color = Color(0xFF999999))
+                    Text(sevenDataModel[0].title1, style = medium18pt , color = Color(0xFF444444))
+                    Text(sevenDataModel[0].subTitle1, style = medium14pt, color = Color(0xFF999999))
                 }
                 Spacer(Modifier.weight(1f))
                 Button(

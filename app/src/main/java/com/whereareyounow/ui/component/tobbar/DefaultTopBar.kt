@@ -38,7 +38,7 @@ fun DefaultTopBar(
                     end = Offset(size.width, y),
                     strokeWidth = strokeWidth
                 )
-            },
+            }
     ) {
         Image(
             modifier = Modifier
@@ -56,7 +56,6 @@ fun DefaultTopBar(
             painter = painterResource(id = R.drawable.ic_titlebye),
             contentDescription = null,
         )
-
     }
 }
 

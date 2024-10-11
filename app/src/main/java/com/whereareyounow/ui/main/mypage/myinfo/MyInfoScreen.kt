@@ -34,10 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
+import com.whereareyounow.ui.component.button.padding_yes.VariableButtonColorTextDefaultSizeButton
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
-import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.clickableNoEffect
@@ -92,7 +92,6 @@ private fun MyInfoScreen(
             .fillMaxSize()
             .padding(top = SYSTEM_STATUS_BAR_HEIGHT.dp),
     ) {
-
         OneTextTwoIconTobBar(
             title = "내 정보 관리",
             firstIconClicked = moveToMyPageScreen,
@@ -109,15 +108,10 @@ private fun MyInfoScreen(
                     .clickableNoEffect {
                         moveToEditMyInfoScreen()
                     }
-//                    .clickableNoEffect {
-//                        isReadOnly.value = false
-//                    }
                     .align(Alignment.CenterEnd)
             )
         }
-
         Gap(34)
-
         InputMyInfoBox(
             title = "이름",
             content = myName,
@@ -126,11 +120,8 @@ private fun MyInfoScreen(
             unfocusedBorderColor = Color.Transparent,
             borderDp = 1f,
             borderColor = Color(0xFFD4D4D4)
-
         )
-
         Gap(10)
-
         InputMyInfoBox(
             title = "이메일",
             content = myEmail,
@@ -140,13 +131,11 @@ private fun MyInfoScreen(
             borderDp = 1f,
             borderColor = Color(0xFFD4D4D4)
         )
-
         Spacer(modifier = Modifier.weight(1f))
-
         if (isModifyClicked.value) {
-            WithdrawlButton(
+            VariableButtonColorTextDefaultSizeButton(
                 "수정하기",
-                canMove = isModifyClicked,
+                isVerified = isModifyClicked,
                 onClicked = {
                     isReadOnly.value = true
                 }
@@ -154,9 +143,7 @@ private fun MyInfoScreen(
         } else {
 
         }
-
     }
-
 }
 
 @Composable
@@ -174,7 +161,6 @@ fun InputMyInfoBox(
             .fillMaxWidth()
             .padding(start = 15.dp, end = 15.dp)
     ) {
-
         Row(
             modifier = Modifier
                 .width(35.dp)
@@ -188,10 +174,7 @@ fun InputMyInfoBox(
                 color = Color(0xFF333333)
             )
         }
-
         Gap(2)
-
-
         OutlinedTextField(
             value = content!!,
             onValueChange = {
@@ -217,6 +200,64 @@ fun InputMyInfoBox(
             textStyle = medium14pt
         )
 
+    }
+}
+
+
+
+@Composable
+fun EditMyInfoBox(
+    title: String,
+    content: MutableState<String?>,
+    isReadOnly: MutableState<Boolean>,
+    focusedBorderColor : Color,
+    unfocusedBorderColor : Color,
+    borderDp : Float,
+    borderColor : Color
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 15.dp, end = 15.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .width(35.dp)
+                .height(24.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = medium12pt,
+                color = Color(0xFF333333)
+            )
+        }
+        Gap(2)
+        OutlinedTextField(
+            value = content.value!!,
+            onValueChange = {
+                content.value = it
+            },
+            readOnly = isReadOnly.value,
+            modifier = Modifier
+                .border(
+                    border = BorderStroke(
+                        width = borderDp.dp,
+                        color = borderColor
+                    ),
+                    shape = RoundedCornerShape(6.dp)
+                )
+                .height(52.dp)
+                .fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = focusedBorderColor,
+                unfocusedBorderColor = unfocusedBorderColor,
+                focusedTextColor = Color(0xFF666666),
+                unfocusedTextColor = Color(0xFF666666)
+            ),
+            textStyle = medium14pt
+        )
     }
 }
 
@@ -251,9 +292,6 @@ fun ModifierIconPopUp(
                         modifier = Modifier
                             .fillMaxSize()
                             .clickableNoEffect {
-//                                popupState.isVisible = false
-//                                isModifyClicked.value = true
-//                                isReadOnly.value = false
                                 moveToEditMyInfoScreen()
                             },
                         verticalArrangement = Arrangement.Center,
@@ -270,7 +308,6 @@ fun ModifierIconPopUp(
                             style = medium14pt,
                             color = Color.White
                         )
-
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.main.mypage.byebye
+package com.whereareyounow.ui.main.mypage.withdrawl
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -33,52 +33,44 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.component.tobbar.DefaultTopBar
+import com.whereareyounow.ui.component.button.padding_yes.VariableButtonColorTextDefaultSizeButton
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
-fun ByeScreen2(
+fun WithDrawalScreen2(
     moveToBackScreen: () -> Unit,
-    moveToByeScreen3: () -> Unit,
+    moveToWithDrawalScreen3: () -> Unit,
 ) {
-    ByeScreen2(
+    WithDrawalScreen2(
         isContent = true,
         moveToBackScreen = moveToBackScreen,
-        moveToByeScreen3 = moveToByeScreen3
+        moveToWithDrawalScreen3 = moveToWithDrawalScreen3
     )
 }
 
 @Composable
-private fun ByeScreen2(
+private fun WithDrawalScreen2(
     isContent: Boolean,
     moveToBackScreen: () -> Unit,
-    moveToByeScreen3: () -> Unit
+    moveToWithDrawalScreen3: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = TOP_BAR_HEIGHT.dp)
             .imePadding()
     ) {
-        // 회원탈퇴
-//        DefaultTopBar(
-//            title = "회원탈퇴"
-//        ) {
-//            moveToBackScreen()
-//        }
         OneTextOneIconTobBar(title = "회원탈퇴", firstIcon = R.drawable.ic_backarrow) {
             moveToBackScreen()
         }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = TOP_BAR_HEIGHT.dp, start = 15.dp, end = 15.dp)
+                .padding(top = TOP_BAR_HEIGHT.dp)
                 .verticalScroll(scrollState)
         ) {
             val selectedStates =
@@ -90,7 +82,6 @@ private fun ByeScreen2(
             val canMove = remember {
                 mutableStateOf(false)
             }
-//            canMove.value = ( selectedStates.contains(true) || isChecked.value && inputReason.value.length > 10 )
             if (isGuitarChecked.value) {
                 if (inputReason.value.length > 10) {
                     canMove.value = true
@@ -115,30 +106,23 @@ private fun ByeScreen2(
                 "개인정보 보호 문제",
                 "서비스에 불만이 생겨서",
             )
-
-
             Gap(30)
-
-            ByeScreenTopTitleAndImage(
+            WithDrawlScreenTopTitleAndImage(
                 title = "좋은 추억은 많이 남기셨나요?",
                 titleStyle = medium20pt,
                 titleColor = Color.Black,
                 titleImage = R.drawable.ic_iwantsleep
             )
-
             Gap(7)
-
-            ByeScreenTopContent(
+            WithDrawlScreenTopTContent(
                 content = "회원님께서 계정을 삭제하시게 된 이유를 알려주시면,\n" +
                         "귀중한 의견을 반영하여 더욱 노력하겠습니다",
                 contentStyle = medium14pt,
                 contentColor = Color(0xFF767676)
             )
-
             Gap(20)
-
             reasons.forEachIndexed { index, reason ->
-                Spacer(Modifier.height(10.dp))
+                Gap(10)
                 DetailByeReaseons(
                     reason = reason,
                     reasonStyle = medium14pt,
@@ -147,9 +131,7 @@ private fun ByeScreen2(
                     isClicked = { selectedStates[index] = !selectedStates[index] }
                 )
             }
-
-            Spacer(Modifier.height(10.dp))
-
+            Gap(10)
             if (!isGuitarChecked.value) {
                 DetailByeReaseons(
                     reason = "기타(직접입력)",
@@ -167,24 +149,20 @@ private fun ByeScreen2(
                     isClicked = { isGuitarChecked.value = !isGuitarChecked.value }
                 )
             }
-
             Spacer(modifier = Modifier.weight(1f))
-
-            WithdrawlButton(
+            VariableButtonColorTextDefaultSizeButton(
                 text = "다음",
-                canMove = canMove,
+                isVerified = canMove,
                 onClicked = {
                     if (canMove.value) {
-                        moveToByeScreen3()
+                        moveToWithDrawalScreen3()
                     } else {
 
                     }
                 }
             )
-
         }
     }
-
 }
 
 @Composable
@@ -198,6 +176,7 @@ fun DetailByeReaseons(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(start = 15.dp, end = 15.dp)
             .height(50.dp)
             .border(
                 border = BorderStroke(
@@ -237,6 +216,7 @@ fun InputDetailByeReaseons(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(start = 15.dp, end = 15.dp)
             .wrapContentHeight()
             .border(
                 border = BorderStroke(
@@ -252,8 +232,6 @@ fun InputDetailByeReaseons(
             .focusable(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -297,8 +275,6 @@ fun InputDetailByeReaseons(
                 unfocusedContainerColor = Color(0xFFEEEEEE)
             ),
             modifier = Modifier
-//                .imePadding()
-//                .focusable()
                 .height(140.dp)
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp)

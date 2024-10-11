@@ -2,11 +2,9 @@ package com.whereareyounow.ui.main.mypage.myinfo
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,24 +27,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.globalvalue.SYSTEM_STATUS_BAR_HEIGHT
-import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.button.padding_yes.VariableButtonColorTextDefaultSizeButton
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
-import com.whereareyounow.ui.main.mypage.byebye.WithdrawlButton
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
-import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
 
@@ -67,14 +60,11 @@ private fun EditMyInfoScreen(
     isContent: Boolean,
     moveToMyInfoScreen: () -> Unit,
     moveToBackScreen: () -> Unit
-
 ) {
     val myPageViewModel: MyPageViewModel = hiltViewModel()
     val myName = myPageViewModel.name.collectAsState().value
     val myEmail = myPageViewModel.email.collectAsState().value
     val myEmailCodeIsVerifyed = myPageViewModel.isVerifyed.collectAsState().value
-
-
     val defaultFalse = remember {
         mutableStateOf(false)
     }
@@ -102,52 +92,32 @@ private fun EditMyInfoScreen(
     val emailVerifyeString = remember {
         mutableStateOf(myEmailCodeIsVerifyed)
     }
-
-
     if(myEmailCodeIsVerifyed == "SUCCESS") {
         defaultTrue.value = true
     }
 
-
     val borderColor = if (emailVerifyed.value) getColor().brandColor else Color(0xFFE13131)
-
-    fun emailVerify(
-//        authCode : MutableState<String>
-    ) {
-        if(authCode.value != "123456") {
-            emailVerifyed.value = false
-        } else {
-            emailVerifyed.value = true
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = SYSTEM_STATUS_BAR_HEIGHT.dp),
     ) {
-
         OneTextOneIconTobBar(
             title = "내 정보 관리",
             firstIcon = R.drawable.ic_back,
             firstIconClicked = { moveToBackScreen() }
         )
-
         Gap(34)
-
-        InputMyInfoBox(
+        EditMyInfoBox(
             title = "이름",
-            content = myName,
+            content = myNameState,
             isReadOnly = defaultFalse,
             focusedBorderColor = Color.Transparent,
             unfocusedBorderColor = Color.Transparent,
             borderDp = 1f,
-//            borderColor = getColor().brandColor
             borderColor = Color(0xFFD4D4D4)
         )
-
         Gap(10)
-
         InputEditMyInfoBox(
             title = "이메일",
             content = myEmailState,
@@ -163,63 +133,19 @@ private fun EditMyInfoScreen(
             verifyEmailCode = { myPageViewModel.emailVerify(email = myEmailState.value!! , code = authCode.value) },
             emailVerifyeString = emailVerifyeString
         )
-
         Spacer(Modifier.weight(1f))
-        WithdrawlButton(
+        VariableButtonColorTextDefaultSizeButton(
             "수정하기",
-            canMove = defaultTrue,
+            isVerified = defaultTrue,
             onClicked = {
+                myPageViewModel.updateUserName(
+                    changedUserName = myNameState.value!!
+                )
                 moveToBackScreen()
             }
         )
     }
-
-
 }
-
-//@Composable
-//fun OneTextOneIconTobBar(
-//    title: String,
-//    firstIcon: Int,
-//    firstIconClicked: () -> Unit
-//) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(TOP_BAR_HEIGHT.dp)
-//            .drawBehind {
-//                val strokeWidth = 1.5.dp.toPx()
-//                val y = size.height - strokeWidth / 2
-//                drawLine(
-//                    color = Color(0xFFC9C9C9),
-//                    start = Offset(0f, y),
-//                    end = Offset(size.width, y),
-//                    strokeWidth = strokeWidth
-//                )
-//            },
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Image(
-//            modifier = Modifier
-//                .align(Alignment.CenterStart)
-//                .padding(start = 15.dp, bottom = 10.dp)
-//                .clickableNoEffect {
-//                    firstIconClicked()
-//                }
-//                .offset(y = 4.dp),
-//            painter = painterResource(id = firstIcon),
-//            contentDescription = "",
-//            colorFilter = ColorFilter.tint(Color(0xFFACACAC))
-//        )
-//        Text(
-//            text = title,
-//            style = medium18pt,
-//            color = Color(0xFF000000),
-//            modifier = Modifier.offset(y = -2.dp)
-//        )
-//    }
-//}
-
 
 @Composable
 fun InputEditMyInfoBox(
@@ -244,12 +170,10 @@ fun InputEditMyInfoBox(
             .fillMaxWidth()
             .padding(start = 15.dp, end = 15.dp)
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-
             Row(
                 modifier = Modifier
                     .width(35.dp)
@@ -264,9 +188,7 @@ fun InputEditMyInfoBox(
                     color = Color(0xFF333333)
                 )
             }
-
             Gap(2)
-
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -294,9 +216,7 @@ fun InputEditMyInfoBox(
                     ),
                     textStyle = medium14pt
                 )
-
                 Gap(4)
-
                 Row(
                     modifier = Modifier
                         .width(100.dp)
@@ -337,15 +257,10 @@ fun InputEditMyInfoBox(
                     )
                 }
             }
-
-
             if(emailAuthCall.value) {
-
                 Gap(10)
-
                 // timer
                 val timer = remember { mutableIntStateOf(300) }
-
                 LaunchedEffect(timer.value) {
                     if (timer.value > 0) {
                         kotlinx.coroutines.delay(1000L)
@@ -355,7 +270,6 @@ fun InputEditMyInfoBox(
                 val minutes = timer.intValue / 60
                 val seconds = timer.intValue % 60
                 val timerText = String.format("%02d:%02d", minutes, seconds)
-
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -383,13 +297,12 @@ fun InputEditMyInfoBox(
                             .height(52.dp)
                             .width(241.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = focusedBorderColor,
-                            unfocusedBorderColor = unfocusedBorderColor,
+                            focusedBorderColor = verifyButtonColor,
+                            unfocusedBorderColor = verifyButtonColor,
                             focusedTextColor = Color(0xFF666666),
                             unfocusedTextColor = Color(0xFF666666)
                         ),
                         textStyle = medium14pt,
-
                         trailingIcon = {
                             if (timer.value > 0) {
                                 Text(
@@ -405,11 +318,8 @@ fun InputEditMyInfoBox(
                                 )
                             }
                         }
-
                     )
-
                     Gap(4)
-
                     Row(
                         modifier = Modifier
                             .width(100.dp)
@@ -433,9 +343,7 @@ fun InputEditMyInfoBox(
                         )
                     }
                 }
-
                 Gap(4)
-
                 Row(
                     modifier = Modifier
                         .width(331.dp)
@@ -451,8 +359,6 @@ fun InputEditMyInfoBox(
                     )
                 }
             }
-
-
         }
     }
 }

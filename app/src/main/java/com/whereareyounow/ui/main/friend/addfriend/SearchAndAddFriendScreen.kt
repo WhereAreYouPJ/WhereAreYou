@@ -1,11 +1,9 @@
 package com.whereareyounow.ui.main.friend.addfriend
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,11 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -43,18 +38,14 @@ import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.domain.entity.schedule.Friend
-import com.whereareyounow.ui.component.button.BasicTextButton
-import com.whereareyounow.ui.component.button.SizeVariableTextButton
+import com.whereareyounow.ui.component.button.padding_yes.BasicTextButton
+import com.whereareyounow.ui.component.button.padding_no.SizeVariableTextButton
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
-import com.whereareyounow.ui.main.friend.FriendViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.main.mypage.withdrawl.Gap
 import com.whereareyounow.ui.theme.OnMyWayTheme
-import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
-import com.whereareyounow.ui.theme.notoSanskr
-import com.whereareyounow.util.clickableNoEffect
 import kotlinx.coroutines.delay
 
 @Composable

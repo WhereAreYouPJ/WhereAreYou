@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.main.mypage.byebye
+package com.whereareyounow.ui.main.mypage.withdrawl
 
 import android.app.Activity
 import androidx.compose.foundation.Image
@@ -23,18 +23,18 @@ import androidx.compose.ui.unit.dp
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.component.tobbar.DefaultTopBar
+import com.whereareyounow.ui.component.button.padding_yes.VariableButtonColorTextDefaultSizeButton
 import com.whereareyounow.ui.component.tobbar.OneTextOneIconTobBar
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
 
 @Composable
-fun ByeScreen5(
+fun WithDrawalScreen5(
     moveToBackScreen : () -> Unit,
     moveToLoginScreen : () -> Unit
 
 ) {
-    ByeScreen5(
+    WithDrawalScreen5(
         isContent = true,
         moveToBackScreen = moveToBackScreen,
         moveToLoginScreen = moveToLoginScreen
@@ -43,11 +43,10 @@ fun ByeScreen5(
 
 
 @Composable
-private fun ByeScreen5(
+private fun WithDrawalScreen5(
     isContent : Boolean,
     moveToBackScreen : () -> Unit,
     moveToLoginScreen : () -> Unit
-
 ) {
     val contexxt = LocalContext.current
     val density = LocalDensity.current
@@ -58,46 +57,33 @@ private fun ByeScreen5(
     Box(
         modifier = Modifier.fillMaxSize().padding(top = TOP_BAR_HEIGHT.dp)
     ) {
-//        DefaultTopBar(
-//            title = "회원탈퇴"
-//        ) {
-//            moveToBackScreen()
-//        }
         OneTextOneIconTobBar(title = "회원탈퇴", firstIcon = R.drawable.ic_backarrow) {
             moveToBackScreen()
         }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = TOP_BAR_HEIGHT.dp , start = 15.dp , end = 15.dp)
         ) {
-
             Spacer(Modifier.height(30.dp))
-
-            ByeScreenTopTitle(
+            WithDrawlScreenTopTitle(
                 title = "회원탈퇴가 완료되었어요.",
                 titleStyle = medium20pt,
                 titleColor = Color.Black
             )
-
             Gap(5)
-
-            ByeScreenTopContent(
+            WithDrawlScreenTopTContent(
                 content = "온마이웨이를 이용해주셔서 감사했습니다. \n" +
                         "더 좋은 서비스를 제공하는 온마이웨이가 되겠습니다.\n" +
                         "나중에 다시 만나요!",
                 contentStyle = medium14pt,
                 contentColor = Color(0xFF767676)
             )
-
             Image(
                 painter = painterResource(id = R.drawable.ic_byebyecompleted),
                 contentDescription = "",
             )
             Spacer(Modifier.weight(1f))
-
-
             Image(
                 painter = painterResource(id = R.drawable.ic_omgomgomg),
                 contentDescription = "",
@@ -106,19 +92,14 @@ private fun ByeScreen5(
                     .fillMaxWidth()
                     .scale(1.1f)
             )
-
-            WithdrawlButton(
+            VariableButtonColorTextDefaultSizeButton(
                 text = "확인",
-                canMove = canMove,
+                isVerified = canMove,
                 onClicked = {
                     (contexxt as? Activity)?.finish()
                 }
             )
-
         }
     }
-
-
-
 }
 

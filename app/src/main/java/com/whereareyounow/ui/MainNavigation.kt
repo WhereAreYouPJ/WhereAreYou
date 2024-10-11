@@ -32,26 +32,29 @@ import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
 import com.whereareyounow.ui.main.mypage.announcement.AnnouncementScreen
 import com.whereareyounow.ui.main.mypage.ask.AskScreen
-import com.whereareyounow.ui.main.mypage.byebye.ByeScreen1
-import com.whereareyounow.ui.main.mypage.byebye.ByeScreen2
-import com.whereareyounow.ui.main.mypage.byebye.ByeScreen3
-import com.whereareyounow.ui.main.mypage.byebye.ByeScreen4
-import com.whereareyounow.ui.main.mypage.byebye.ByeScreen5
+import com.whereareyounow.ui.main.mypage.withdrawl.WithDrawalScreen2
+import com.whereareyounow.ui.main.mypage.withdrawl.WithDrawalScreen3
+import com.whereareyounow.ui.main.mypage.withdrawl.WithDrawalScreen4
+import com.whereareyounow.ui.main.mypage.withdrawl.WithDrawalScreen5
 import com.whereareyounow.ui.main.mypage.location.EditLocationFavoriteScreen
 import com.whereareyounow.ui.main.mypage.location.LocationFavoriteScreen
 import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
 import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
-import com.whereareyounow.ui.navigation.friend.searchAndAddFriendScreen
 import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
 import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
+import com.whereareyounow.ui.navigation.friend.searchAndAddFriendScreen
 import com.whereareyounow.ui.navigation.friendsListScreenRoute
 import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
+import com.whereareyounow.ui.navigation.mypage.announcement.announcementRoute
+import com.whereareyounow.ui.navigation.mypage.ask.askRoute
+import com.whereareyounow.ui.navigation.mypage.myinfo.editMyInfo
+import com.whereareyounow.ui.navigation.mypage.myinfo.myInfo
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
 import com.whereareyounow.ui.navigation.policyAgreeScreenRoute
 import com.whereareyounow.ui.navigation.privacyPolicyDetailsScreenRoute
@@ -64,6 +67,11 @@ import com.whereareyounow.ui.navigation.signUpScreenRoute
 import com.whereareyounow.ui.navigation.signUpSuccessScreenRoute
 import com.whereareyounow.ui.navigation.splashScreenRoute
 import com.whereareyounow.ui.navigation.termsOfServiceDetailsScreenRoute
+import com.whereareyounow.ui.navigation.mypage.withdrawl.withDrawlRoute1
+import com.whereareyounow.ui.navigation.mypage.withdrawl.withDrawlRoute2
+import com.whereareyounow.ui.navigation.mypage.withdrawl.withDrawlRoute3
+import com.whereareyounow.ui.navigation.mypage.withdrawl.withDrawlRoute4
+import com.whereareyounow.ui.navigation.mypage.withdrawl.withDrawlRoute5
 import com.whereareyounow.util.navigate
 
 @Composable
@@ -216,11 +224,6 @@ fun MainNavigation(
         /**
          * [ 친구 검색 및 추가 화면 ]
          */
-//        composable(route = ROUTE_ADD_FRIEND) {
-//            AddFriendScreen(
-//                moveToBackScreen = { navController.popBackStack() }
-//            )
-//        }
         searchAndAddFriendScreen(navController)
 
 
@@ -245,71 +248,32 @@ fun MainNavigation(
         }
 
         // 내 정보 화면
-        composable(route = ROUTE_MY_INFO) {
-            MyInfoScreen(
-                moveToMyPageScreen = { navController.popBackStack() },
-                moveToEditMyInfoScreen = { navController.navigate(ROUTE.EditMyInfo) }
-            )
-        }
+        myInfo(navController)
 
         // 내 정보 수정 화면
-        composable<ROUTE.EditMyInfo> {
-            EditMyInfoScreen(
-                moveToMyInfoScreen = { navController.popBackStack() },
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
+        editMyInfo(navController)
 
         // 공지사항 화면
-        composable<ROUTE.Announcement> {
-            AnnouncementScreen(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToAdminImageScreen = { navController.navigate(ROUTE.AdminImageScreen) }
-            )
-        }
+        announcementRoute(navController)
 
         // 1 : 1 이용문의
-        composable<ROUTE.Ask> {
-            AskScreen(
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
+        askRoute(navController)
 
         // 회원탈퇴1
-        composable<ROUTE.Bye1> {
-            ByeScreen1(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToByeScreen2 = { navController.navigate(ROUTE.Bye2) }
-            )
-        }
+        withDrawlRoute1(navController)
+
         // 회원탈퇴2
-        composable<ROUTE.Bye2> {
-            ByeScreen2(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToByeScreen3 = { navController.navigate(ROUTE.Bye3) }
-            )
-        }
+        withDrawlRoute2(navController)
+
         // 회원탈퇴3
-        composable<ROUTE.Bye3> {
-            ByeScreen3(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToByeScreen4 = { navController.navigate(ROUTE.Bye4) }
-            )
-        }
+        withDrawlRoute3(navController)
+
         // 회원탈퇴4
-        composable<ROUTE.Bye4> {
-            ByeScreen4(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToByeScreen5 = { navController.navigate(ROUTE.Bye5) }
-            )
-        }
+        withDrawlRoute4(navController)
+
         // 회원탈퇴5
-        composable<ROUTE.Bye5> {
-            ByeScreen5(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToLoginScreen = { }
-            )
-        }
+        withDrawlRoute5(navController)
+
         // 어드민 페이지 이미지 스크린
         composable<ROUTE.AdminImageScreen> {
             AdminImageScreen(
