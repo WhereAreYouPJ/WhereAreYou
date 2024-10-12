@@ -27,15 +27,14 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DimBackground(
-    isDimBackgroundShowing: MutableState<Boolean>,
-    anchoredDraggableState: AnchoredDraggableState<AnchoredDraggableContentState>
+    anchoredDraggableState: AnchoredDraggableState<AnchoredDraggableContentState>,
+    closeBottomDialog: () -> Unit,
 ) {
     val density = LocalDensity.current.density
-    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height((TOTAL_SCREEN_HEIGHT * density).dp)
+            .height(((TOTAL_SCREEN_HEIGHT + SYSTEM_STATUS_BAR_HEIGHT) * density).dp)
             .offset {
                 IntOffset(x = 0, y = (-SYSTEM_STATUS_BAR_HEIGHT * density).roundToInt())
             }
@@ -44,13 +43,6 @@ fun DimBackground(
                         ((anchoredDraggableState.anchors.maxAnchor()) - (anchoredDraggableState.anchors.minAnchor()))
             )
             .background(color = Color(0xAA000000))
-            .clickableNoEffect {
-                coroutineScope.launch {
-                    if (anchoredDraggableState.targetValue == AnchoredDraggableContentState.Open) {
-                        anchoredDraggableState.animateTo(AnchoredDraggableContentState.Closed)
-                    }
-                    isDimBackgroundShowing.value = false
-                }
-            }
+            .clickableNoEffect { closeBottomDialog() }
     )
 }

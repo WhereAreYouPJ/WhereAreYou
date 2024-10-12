@@ -61,7 +61,6 @@ import java.nio.charset.StandardCharsets
 
 @Composable
 fun MyPageScreen(
-    paddingValues: PaddingValues,
     moveToSignInMethodSelectionScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
     moveToLocationFavorite: () -> Unit,

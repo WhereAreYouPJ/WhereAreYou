@@ -8,5 +8,7 @@ data class FriendRequest(
     @SerializedName("senderSeq")
     val senderSeq: Int,
     @SerializedName("createTime")
-    val createTime: String
+    val createTime: String,
+    @SerializedName("userName")
+    val userName: String,
 )

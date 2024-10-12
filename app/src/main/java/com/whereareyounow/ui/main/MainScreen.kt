@@ -1,5 +1,6 @@
 package com.whereareyounow.ui.main
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,8 @@ fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToAddFeedScreen: () -> Unit,
     moveToSignInMethodSelectionScreen: () -> Unit,
+    moveToNotificationScreen: () -> Unit,
+    moveToMapScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
@@ -82,6 +85,8 @@ fun MainScreen(
         moveToAddGroupScreen = moveToAddGroupScreen,
         moveToAddFeedScreen = moveToAddFeedScreen,
         moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
+        moveToNotificationScreen = moveToNotificationScreen,
+        moveToMapScreen = moveToMapScreen,
         moveToModifyInfoScreen = moveToModifyInfoScreen,
         moveToMyPageScreen = moveToMyPageScreen,
 
@@ -100,6 +105,7 @@ fun MainScreen(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun MainScreen(
     viewType: ViewType,
@@ -112,6 +118,8 @@ private fun MainScreen(
     moveToAddGroupScreen: () -> Unit,
     moveToAddFeedScreen: () -> Unit,
     moveToSignInMethodSelectionScreen: () -> Unit,
+    moveToNotificationScreen: () -> Unit,
+    moveToMapScreen: () -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToDetailProfileScreen : (String, String) -> Unit,
@@ -124,67 +132,56 @@ private fun MainScreen(
     moveToBye : () -> Unit
 ) {
     CustomSurface {
-        Scaffold(
-            topBar = {},
-            bottomBar = {
-                HomeNavigationBar(
-                    viewType,
-                    navigationItemContentList,
-                    updateViewType = updateViewType
-                )
-            },
-            floatingActionButton = {},
-            containerColor = Color(0xFFFFFFFF),
+        Column(
+            modifier = Modifier.weight(1f)
         ) {
+            when (viewType) {
+                ViewType.Home -> {
+                    HomeScreen(
+                        customSurfaceState = it,
+                        moveToNotificationScreen = moveToNotificationScreen,
+                        moveToMapScreen = moveToMapScreen,
+                    )
+                }
 
-            Column(
-                modifier = Modifier
-                    .padding(bottom = it.calculateBottomPadding())
-            ) {
+                ViewType.Calendar -> {
+                    CalendarScreen(
+                        customSurfaceState = it,
+                        moveToAddScheduleScreen = moveToAddScheduleScreen,
+                        moveToDetailScheduleScreen = moveToDetailScheduleScreen,
+                    )
+                }
 
-                when (viewType) {
-                    ViewType.Home -> {
-                        HomeScreen(
-                            paddingValues = it,
+                ViewType.Friends -> {
+                    FriendScreen(
+                        moveToAddFriendScreen = moveToAddFriendScreen,
+                        moveToAddGroupScreen = moveToAddGroupScreen,
+                        moveToAddFeedScreen = moveToAddFeedScreen,
+                        moveToDetailProfileScreen = moveToDetailProfileScreen
+                    )
+                }
 
-                        )
-                    }
-
-                    ViewType.Calendar -> {
-                        CalendarScreen(
-                            paddingValues = it,
-                            moveToAddScheduleScreen = moveToAddScheduleScreen,
-                            moveToDetailScheduleScreen = moveToDetailScheduleScreen,
-                        )
-                    }
-
-                    ViewType.Friends -> {
-                        FriendScreen(
-                            paddingValues = it,
-                            moveToAddFriendScreen = moveToAddFriendScreen,
-                            moveToAddGroupScreen = moveToAddGroupScreen,
-                            moveToAddFeedScreen = moveToAddFeedScreen,
-                            moveToDetailProfileScreen = moveToDetailProfileScreen
-                        )
-                    }
-
-                    ViewType.MyPage -> {
-                        MyPageScreen(
-                            paddingValues = it,
-                            moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
-                            moveToMyInfoScreen = moveToMyInfoScreen,
-                            moveToLocationFavorite = moveToLocationFavorite,
-                            moveToFeedBookmarks = moveToFeedBookmarks,
-                            moveToFeedSaved = moveToFeedSaved,
-                            moveToAccoument = moveToAccoument,
-                            moveToAsk = moveToAsk,
-                            moveToBye = moveToBye,
+                ViewType.MyPage -> {
+                    MyPageScreen(
+                        moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
+                        moveToMyInfoScreen = moveToMyInfoScreen,
+                        moveToLocationFavorite = moveToLocationFavorite,
+                        moveToFeedBookmarks = moveToFeedBookmarks,
+                        moveToFeedSaved = moveToFeedSaved,
+                        moveToAccoument = moveToAccoument,
+                        moveToAsk = moveToAsk,
+                        moveToBye = moveToBye,
 
                         )
-                    }
                 }
             }
         }
+
+        HomeNavigationBar(
+            viewType,
+            navigationItemContentList,
+            updateViewType = updateViewType
+        )
     }
 }
 

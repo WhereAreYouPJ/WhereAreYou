@@ -50,6 +50,7 @@ import com.whereareyounow.data.calendar.CalendarScreenSideEffect
 import com.whereareyounow.data.calendar.CalendarScreenUIState
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.globalvalue.type.AnchoredDraggableContentState
+import com.whereareyounow.ui.component.CustomSurfaceState
 import com.whereareyounow.ui.component.DimBackground
 import com.whereareyounow.ui.component.ScrollablePicker
 import com.whereareyounow.ui.main.schedule.calendar.component.DailyScheduleBottomDialog
@@ -72,7 +73,7 @@ import java.time.LocalDate
 
 @Composable
 fun CalendarScreen(
-    paddingValues: PaddingValues,
+    customSurfaceState: CustomSurfaceState,
     moveToAddScheduleScreen: (Int, Int, Int) -> Unit,
     moveToDetailScheduleScreen: (Int) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
@@ -80,6 +81,7 @@ fun CalendarScreen(
     val uiState = viewModel.uiState.collectAsState().value
     val sideEffectFlow = viewModel.calendarScreenSideEffectFlow
     LaunchedEffect(Unit) {
+        customSurfaceState.statusBarColor = Color.Transparent
         viewModel.updateCurrentMonthCalendarInfo()
     }
     CalendarScreen(
@@ -417,10 +419,17 @@ fun CalendarScreen(
             }
         }
 
-        if (isDimBackgroundShowing.value) {
+        if (((dailyScheduleAnchoredDraggableState.anchors.maxAnchor()) - (dailyScheduleAnchoredDraggableState.offset)) /
+            ((dailyScheduleAnchoredDraggableState.anchors.maxAnchor()) - (dailyScheduleAnchoredDraggableState.anchors.minAnchor())) > 0.05f) {
             DimBackground(
-                isDimBackgroundShowing = isDimBackgroundShowing,
-                anchoredDraggableState = dailyScheduleAnchoredDraggableState
+                anchoredDraggableState = dailyScheduleAnchoredDraggableState,
+                closeBottomDialog = {
+                    coroutineScope.launch {
+                        if (dailyScheduleAnchoredDraggableState.targetValue == AnchoredDraggableContentState.Open) {
+                            dailyScheduleAnchoredDraggableState.animateTo(AnchoredDraggableContentState.Closed)
+                        }
+                    }
+                }
             )
         }
 

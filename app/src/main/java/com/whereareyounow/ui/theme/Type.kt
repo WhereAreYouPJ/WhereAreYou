@@ -6,6 +6,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 
@@ -175,6 +176,10 @@ val bold18pt = TextStyle(
     fontSize = (baseFontSize + 8).sp,
     fontWeight = FontWeight.Bold,
     fontFamily = notoSanskr,
+//    lineHeightStyle = LineHeightStyle(
+//        alignment = LineHeightStyle.Alignment.Center,
+//        trim = LineHeightStyle.Trim.Both
+//    ),
     platformStyle = PlatformTextStyle(false)
 )
 val medium20pt = TextStyle(

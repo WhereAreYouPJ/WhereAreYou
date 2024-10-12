@@ -5,10 +5,9 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-import kotlin.math.absoluteValue
 
 // year년 month월에 몇일까지 있는지 return
 fun getLastDayOfMonth(year: Int, month: Int, flag: Type = Type.Current): Int {
@@ -126,13 +125,28 @@ fun getCalendarFromString(string: String): Calendar {
     return Calendar.getInstance().apply { time = date }
 }
 
-fun getMinuteDiffWithCurrentTime(time: String): Int {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-    val t = dateFormat.parse(time)
-    val currentDate = Date()
-    val diffInMillis = t.time - currentDate.time
-    val minutes = diffInMillis / (1000 * 60)
-    return minutes.toInt().absoluteValue
+// 알림 화면에서 '분 전', '시간 전', '일 전' 계산
+fun getTimeDiffWithCurrentTime(time: String): String {
+    var startTime = LocalDateTime.now()
+    try {
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+        startTime = LocalDateTime.parse(time, dateFormat)
+    } catch (e: Throwable) {
+        val newDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        startTime = LocalDateTime.parse(time)
+    }
+    val minutesDiff = ChronoUnit.MINUTES.between(startTime, LocalDateTime.now())  // 총 분 차이 계산
+    return when {
+        minutesDiff < 60 -> "$minutesDiff 분 전"
+        minutesDiff < 24 * 60 -> {
+            val hours = minutesDiff / 60
+            "$hours 시간 전"
+        }
+        else -> {
+            val days = minutesDiff / (24 * 60)
+            "$days 일 전"
+        }
+    }
 }
 
 fun compareDate(dateTime1: LocalDateTime, dateTime2: LocalDateTime): Boolean {

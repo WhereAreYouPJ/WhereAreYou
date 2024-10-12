@@ -1,4 +1,4 @@
-package com.whereareyounow.ui.main.schedule.calendar.component
+package com.whereareyounow.ui.main.home.component
 
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.tween
@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,9 +22,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -38,21 +39,19 @@ import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.globalvalue.globalDensity
 import com.whereareyounow.globalvalue.type.AnchoredDraggableContentState
 import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.notoSanskr
 import com.whereareyounow.util.clickableNoEffect
+import com.whereareyounow.util.drawColoredShadow
+import java.time.LocalDate
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DailyScheduleBottomDialog(
+fun HomeBottomDialog(
     anchoredDraggableState: AnchoredDraggableState<AnchoredDraggableContentState>,
-    selectedMonth: Int,
-    selectedDate: Int,
-    dailyScheduleList: List<DailyScheduleInfo>,
-    isGroup: MutableState<Boolean>,
-    isDeleteDialogShowing: MutableState<Boolean>,
-    deleteTargetScheduleSeq: MutableState<Int>,
-    moveToDetailScheduleScreen: (Int) -> Unit,
+    dailyScheduleList: List<DailyScheduleInfo>
 ) {
     Column(
         modifier = Modifier
@@ -66,12 +65,16 @@ fun DailyScheduleBottomDialog(
                         .roundToInt())
                 )
             }
+            .drawColoredShadow(
+                borderRadius = 20.dp,
+                shadowRadius = 10.dp
+            )
             .background(
-                color = Color.White,
+                color = Color(0xFFFFFFFF),
                 shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
             )
             .clickableNoEffect {}
-            .padding(start = 15.dp, end = 15.dp)
+            .padding(start = 22.dp, end = 22.dp)
     ) {
         Spacer(Modifier.height(6.dp))
 
@@ -85,47 +88,70 @@ fun DailyScheduleBottomDialog(
                 .anchoredDraggable(anchoredDraggableState, Orientation.Vertical)
         )
 
-        Spacer(Modifier.height(14.dp))
+        Spacer(Modifier.height(10.dp))
 
         Text(
-            modifier = Modifier.padding(start = 6.dp, top = 2.dp, end = 6.dp, bottom = 2.dp),
-            text = "${selectedMonth}월 ${selectedDate}일",
+            modifier = Modifier
+                .padding(6.dp, 2.dp, 6.dp, 2.dp)
+                .alpha(((anchoredDraggableState.anchors.maxAnchor()) - (anchoredDraggableState.offset)) /
+                        ((anchoredDraggableState.anchors.maxAnchor()) - (anchoredDraggableState.anchors.minAnchor()))),
+            text = "${LocalDate.now().monthValue}월 ${LocalDate.now().dayOfMonth}일",
             color = getColor().brandText,
             fontFamily = notoSanskr,
             fontWeight = FontWeight.Medium,
             fontSize = 22.sp
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(14.dp))
 
         LazyColumn(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .alpha(((anchoredDraggableState.anchors.maxAnchor()) - (anchoredDraggableState.offset)) /
+                        ((anchoredDraggableState.anchors.maxAnchor()) - (anchoredDraggableState.anchors.minAnchor())))
         ) {
             itemsIndexed(dailyScheduleList) { idx, item ->
-                Column(
-                    modifier = Modifier.clickableNoEffect { moveToDetailScheduleScreen(item.scheduleSeq) }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(46.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Spacer(Modifier.height(6.dp))
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(6.dp, 0.dp, 6.dp, 0.dp),
+                            text = item.title,
+                            color = Color(0xFF444444),
+                            style = medium18pt
+                        )
 
-                    DailyScheduleBox(
-                        info = item,
-                        deleteTargetScheduleSeq = deleteTargetScheduleSeq,
-                        openDialog = {
-                            isGroup.value = item.group
-                            isDeleteDialogShowing.value = true
-                        }
-                    )
+                        Text(
+                            modifier = Modifier.padding(6.dp, 0.dp, 6.dp, 0.dp),
+                            text = item.location,
+                            color = Color(0xFF999999),
+                            style = medium14pt
+                        )
+                    }
 
-                    Spacer(Modifier.height(6.dp))
-                }
-
-                if (idx != dailyScheduleList.size - 1) {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(getColor().thinnest)
-                    )
+                            .width(100.dp)
+                            .height(42.dp)
+                            .background(
+                                color = getColor().brandColor,
+                                shape = RoundedCornerShape(6.dp),
+                            )
+                            .clickableNoEffect { },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "위치 확인하기",
+                            color = Color(0xFFFFFFFF),
+                            style = medium14pt
+                        )
+                    }
                 }
             }
         }
@@ -135,7 +161,7 @@ fun DailyScheduleBottomDialog(
 // anchoredDraggableState의 offset은 pixel단위로 측정됨.
 // y offset이 0일 때 statusbar 바로 아래부터 시작됨.
 @OptIn(ExperimentalFoundationApi::class)
-fun getDailyScheduleAnchoredDraggableState() = AnchoredDraggableState(
+fun getHomeAnchoredDraggableState() = AnchoredDraggableState(
     initialValue = AnchoredDraggableContentState.Closed,
     positionalThreshold = { it: Float -> it * 1f },
     velocityThreshold = { 100f },
@@ -145,7 +171,7 @@ fun getDailyScheduleAnchoredDraggableState() = AnchoredDraggableState(
     updateAnchors(
         DraggableAnchors {
             AnchoredDraggableContentState.Open at (TOTAL_SCREEN_HEIGHT - 428f - SYSTEM_STATUS_BAR_HEIGHT - SYSTEM_NAVIGATION_BAR_HEIGHT - BOTTOM_NAVIGATION_BAR_HEIGHT) * globalDensity
-            AnchoredDraggableContentState.Closed at (TOTAL_SCREEN_HEIGHT - SYSTEM_STATUS_BAR_HEIGHT - SYSTEM_NAVIGATION_BAR_HEIGHT - BOTTOM_NAVIGATION_BAR_HEIGHT) * globalDensity
+            AnchoredDraggableContentState.Closed at (TOTAL_SCREEN_HEIGHT - SYSTEM_STATUS_BAR_HEIGHT - SYSTEM_NAVIGATION_BAR_HEIGHT - BOTTOM_NAVIGATION_BAR_HEIGHT - 40f) * globalDensity
         }
     )
 }

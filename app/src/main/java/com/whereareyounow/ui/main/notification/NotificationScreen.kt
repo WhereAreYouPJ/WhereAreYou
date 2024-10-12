@@ -34,12 +34,17 @@ import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.medium20pt
+import com.whereareyounow.util.calendar.getTimeDiffWithCurrentTime
 import com.whereareyounow.util.calendar.parseLocalDate
 import com.whereareyounow.util.clickableNoEffect
 
 @Composable
 fun NotificationScreen(
     uiState: NotificationScreenUIState,
+    acceptScheduleInvitation: (Int) -> Unit,
+    refuseScheduleInvitation: (Int) -> Unit,
+    acceptFriendRequest: (Int, Int) -> Unit,
+    refuseFriendRequest: (Int) -> Unit,
     moveToBackScreen: () -> Unit,
 ) {
     CustomSurface {
@@ -131,7 +136,7 @@ fun NotificationScreen(
                             Spacer(Modifier.weight(1f))
 
                             Text(
-                                text = "0분전",
+                                text = getTimeDiffWithCurrentTime(scheduleRequest.startTime),
                                 color = Color(0xFF999999),
                                 style = medium14pt
                             )
@@ -187,7 +192,7 @@ fun NotificationScreen(
                                         color = getColor().brandColor,
                                         shape = RoundedCornerShape(6.dp)
                                     )
-                                    .clickableNoEffect { },
+                                    .clickableNoEffect { acceptScheduleInvitation(scheduleRequest.scheduleSeq) },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -210,7 +215,7 @@ fun NotificationScreen(
                                         ),
                                         shape = RoundedCornerShape(6.dp)
                                     )
-                                    .clickableNoEffect { },
+                                    .clickableNoEffect { refuseScheduleInvitation(scheduleRequest.scheduleSeq) },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -285,23 +290,89 @@ fun NotificationScreen(
                             Spacer(Modifier.weight(1f))
 
                             Text(
-                                text = "0분전",
+                                text = getTimeDiffWithCurrentTime(request.createTime),
                                 color = Color(0xFF999999),
                                 style = medium14pt
                             )
                         }
 
-                        Modifier.height(10.dp)
+                        Spacer(Modifier.height(10.dp))
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-//                            GlideImage(
-//                                modifier = Modifier.size(64.dp),
-//                                imageModel = { request. }
-//                            )
+                            GlideImage(
+                                modifier = Modifier.size(64.dp),
+                                imageModel = { R.drawable.ic_profile }
+                            )
+
+                            Spacer(Modifier.width(6.dp))
+
+                            Column {
+                                Text(
+                                    modifier = Modifier.padding(6.dp, 0.dp, 6.dp, 0.dp),
+                                    text = request.userName,
+                                    color = Color(0xFF222222),
+                                    style = medium18pt
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(6.dp, 0.dp, 6.dp, 0.dp),
+                                    text = "1q2w3e",
+                                    color = Color(0xFF999999),
+                                    style = medium14pt
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(14.dp))
+
+                        Row {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(46.dp)
+                                    .background(
+                                        color = getColor().brandColor,
+                                        shape = RoundedCornerShape(6.dp)
+                                    )
+                                    .clickableNoEffect { acceptFriendRequest(request.friendRequestSeq, request.senderSeq) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "친구 수락하기",
+                                    color = Color(0xFFFFFFFF),
+                                    style = medium16pt
+                                )
+                            }
+
+                            Spacer(Modifier.width(8.dp))
+
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(46.dp)
+                                    .border(
+                                        border = BorderStroke(
+                                            width = 1.dp,
+                                            color = Color(0xFF999999)
+                                        ),
+                                        shape = RoundedCornerShape(6.dp)
+                                    )
+                                    .clickableNoEffect { refuseFriendRequest(request.friendRequestSeq) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "친구 거절하기",
+                                    color = Color(0xFF222222),
+                                    style = medium16pt
+                                )
+                            }
                         }
                     }
+
+                    Spacer(Modifier.height(6.dp))
                 }
             }
         }

@@ -12,13 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,10 +30,11 @@ import com.whereareyounow.data.globalvalue.SYSTEM_NAVIGATION_BAR_HEIGHT
 
 @Composable
 fun CustomSurface(
-    content: @Composable ColumnScope.(Boolean) -> Unit
+    content: @Composable ColumnScope.(CustomSurfaceState) -> Unit
 ) {
     val view = LocalView.current
     val context = LocalContext.current
+    val customSurfaceState = remember { CustomSurfaceState() }
     val isImeKeyboardShowing = remember { mutableStateOf(false) }
     LaunchedEffect(view) {
         val activity = context.findActivity()
@@ -64,27 +68,27 @@ fun CustomSurface(
         }
     }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
+        modifier = Modifier.fillMaxSize()
     ) {
         Spacer(
             Modifier
                 .fillMaxWidth()
                 .height((SYSTEM_STATUS_BAR_HEIGHT).dp)
+                .background(customSurfaceState.statusBarColor)
         )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            content(isImeKeyboardShowing.value)
+            content(customSurfaceState)
         }
         if (!isImeKeyboardShowing.value) {
             Spacer(
                 Modifier
                     .fillMaxWidth()
                     .height((SYSTEM_NAVIGATION_BAR_HEIGHT).dp)
+                    .background(customSurfaceState.systemNavBarColor)
             )
         }
     }
@@ -97,4 +101,10 @@ fun Context.findActivity(): Activity? {
         context = context.baseContext
     }
     return null
+}
+
+class CustomSurfaceState {
+    var isImeKeyboardShowing: Boolean by mutableStateOf(false)
+    var statusBarColor: Color by mutableStateOf(Color(0xFFFFFFFF))
+    var systemNavBarColor: Color by mutableStateOf(Color(0xFFFFFFFF))
 }

@@ -85,11 +85,14 @@ class NotificationViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun acceptFriendRequest() {
+    fun acceptFriendRequest(
+        friendRequestSeq: Int,
+        senderSeq: Int,
+    ) {
         val requestData = AcceptFriendRequestRequest(
-            friendRequestSeq = 1,
-            memberSeq = 1,
-            senderSeq = 1
+            friendRequestSeq = friendRequestSeq,
+            memberSeq = AuthData.memberSeq,
+            senderSeq = senderSeq
         )
         acceptFriendRequestUseCase(requestData)
             .onEach { networkResult ->
@@ -103,9 +106,11 @@ class NotificationViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun refuseFriendRequest() {
+    fun refuseFriendRequest(
+        friendRequestSeq: Int
+    ) {
         val requestData = RefuseFriendRequestRequest(
-            friendRequestSeq = 1
+            friendRequestSeq = friendRequestSeq,
         )
         refuseFriendRequestUseCase(requestData)
             .onEach { networkResult ->

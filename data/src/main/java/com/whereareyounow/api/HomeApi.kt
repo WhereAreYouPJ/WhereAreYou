@@ -1,5 +1,6 @@
 package com.whereareyounow.api
 
+import com.whereareyounow.domain.entity.home.ImageUrl
 import com.whereareyounow.domain.util.ResponseWrapper
 import retrofit2.Response
 import retrofit2.http.GET
@@ -11,5 +12,5 @@ interface HomeApi {
     @GET("admin/image")
     suspend fun getHomeImageList(
         @Query("memberSeq") memberSeq: Int
-    ): Response<ResponseWrapper<List<String>>>
+    ): Response<ResponseWrapper<List<ImageUrl>>>
 }

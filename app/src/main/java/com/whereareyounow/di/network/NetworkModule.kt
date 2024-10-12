@@ -5,6 +5,7 @@ import com.whereareyounow.BuildConfig
 import com.whereareyounow.api.FCMApi
 import com.whereareyounow.api.FeedApi
 import com.whereareyounow.api.FriendApi
+import com.whereareyounow.api.HomeApi
 import com.whereareyounow.api.LocationApi
 import com.whereareyounow.api.MemberApi
 import com.whereareyounow.api.ScheduleApi
@@ -132,5 +133,12 @@ object NetworkModule {
     @Provides
     fun provideFeedApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): FeedApi {
         return retrofit.create(FeedApi::class.java)
+    }
+
+    // Home Api
+    @Singleton
+    @Provides
+    fun provideHomeApi(@RemoteAccessTokenAutoAdded retrofit: Retrofit): HomeApi {
+        return retrofit.create(HomeApi::class.java)
     }
 }

@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.whereareyounow.R
 import com.whereareyounow.data.notification.ScheduleInvitationInfo
-import com.whereareyounow.util.calendar.getMinuteDiffWithCurrentTime
+import com.whereareyounow.util.calendar.getTimeDiffWithCurrentTime
 
 @Composable
 fun ScheduleRequestBox(
@@ -36,7 +36,7 @@ fun ScheduleRequestBox(
     acceptScheduleRequest: () -> Unit,
     refuseScheduleRequest: () -> Unit
 ) {
-    val timePassed = getMinuteDiffWithCurrentTime(scheduleRequest.invitedTime.split(".")[0])
+    val timePassed = getTimeDiffWithCurrentTime(scheduleRequest.invitedTime.split(".")[0])
     var hour = scheduleRequest.hour.toInt()
     val minute = scheduleRequest.minute.toInt()
     val AMPM: String = if (hour < 12) "오전" else { hour -= 12; "오후"}
@@ -88,13 +88,11 @@ fun ScheduleRequestBox(
                         letterSpacing = 0.05.em,
                         color = Color(0xFF030408)
                     )
+
                     Spacer(Modifier.weight(1f))
+
                     Text(
-                        text = when {
-                            timePassed < 60 -> "${timePassed}분"
-                            timePassed < 1440 -> "${timePassed / 60}시간"
-                            else -> "${timePassed / 1440}일"
-                        },
+                        text = timePassed,
                         fontSize = 14.sp,
                         style = TextStyle(
                             lineHeight = 14.sp
@@ -165,19 +163,19 @@ fun ScheduleRequestBox(
 @Preview(showBackground = true)
 @Composable
 private fun ScheduleRequestBoxPreview() {
-    ScheduleRequestBox(
-        scheduleRequest = ScheduleInvitationInfo(
-            scheduleId = "",
-            title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            inviterUserName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            year = "2023",
-            month = "12",
-            date = "12",
-            hour = "13",
-            minute = "45",
-            invitedTime = ""
-        ),
-        acceptScheduleRequest = {},
-        refuseScheduleRequest = {}
-    )
+//    ScheduleRequestBox(
+//        scheduleRequest = ScheduleInvitationInfo(
+//            scheduleId = "",
+//            title = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+//            inviterUserName = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+//            year = "2023",
+//            month = "12",
+//            date = "12",
+//            hour = "13",
+//            minute = "45",
+//            invitedTime = ""
+//        ),
+//        acceptScheduleRequest = {},
+//        refuseScheduleRequest = {}
+//    )
 }

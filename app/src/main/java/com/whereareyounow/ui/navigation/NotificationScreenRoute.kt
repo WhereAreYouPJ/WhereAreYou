@@ -14,6 +14,10 @@ fun NavGraphBuilder.notificationScreenRoute(navController: NavController) = comp
 
     NotificationScreen(
         uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
+        acceptScheduleInvitation = viewModel::acceptScheduleInvitation,
+        refuseScheduleInvitation = viewModel::refuseScheduleInvitation,
+        acceptFriendRequest = viewModel::acceptFriendRequest,
+        refuseFriendRequest = viewModel::refuseFriendRequest,
         moveToBackScreen = { navController.popBackStack() }
     )
 }

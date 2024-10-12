@@ -33,6 +33,12 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
             navController.popBackStack()
             navController.navigate(ROUTE.SignInMethodSelection)
         },
+        moveToNotificationScreen = {
+            navController.navigate(ROUTE.Notification)
+        },
+        moveToMapScreen = {
+            navController.navigate(ROUTE.ScheduleMap)
+        },
         moveToModifyInfoScreen = { navController.navigate(ROUTE_MODIFY_INFO) },
         moveToMyPageScreen = {
             // TODO

@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowCompat
+import com.whereareyounow.globalvalue.globalDensity
 
 //private val DarkColorScheme = darkColorScheme(
 //    primary = Purple80,
@@ -73,6 +74,7 @@ fun OnMyWayTheme(
         LocalIndication provides rippleIndication,
         LocalRippleTheme provides CustomRippleTheme
     ) {
+        globalDensity = LocalDensity.current.density
         content()
     }
 

@@ -133,6 +133,9 @@ sealed class ROUTE {
     }
 
     @Serializable
+    data object ScheduleMap
+
+    @Serializable
     data class AddSchedule(
         val year: Int,
         val month: Int,

@@ -53,7 +53,6 @@ import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
 fun FriendScreen(
-    paddingValues: PaddingValues,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
     moveToAddFeedScreen: () -> Unit,
@@ -62,7 +61,6 @@ fun FriendScreen(
 ) {
     val friendsList = viewModel.friendsList.collectAsState().value
     FriendScreen(
-        paddingValues = paddingValues,
         friendsList = friendsList,
         moveToAddFriendScreen = moveToAddFriendScreen,
         moveToAddGroupScreen = moveToAddGroupScreen,
@@ -73,7 +71,6 @@ fun FriendScreen(
 
 @Composable
 private fun FriendScreen(
-    paddingValues: PaddingValues,
     friendsList: List<FriendModel>,
     moveToAddFriendScreen: () -> Unit,
     moveToAddGroupScreen: () -> Unit,
