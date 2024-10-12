@@ -9,6 +9,7 @@ import com.whereareyounow.domain.entity.feed.HideFeedSeq
 import com.whereareyounow.domain.entity.feed.HidedFeedData
 import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.feed.DeleteFeedBookmarkRequest
+import com.whereareyounow.domain.request.feed.DeleteFeedRequest
 import com.whereareyounow.domain.request.feed.HideFeedRequest
 import com.whereareyounow.domain.request.feed.ModifyFeedRequest
 import com.whereareyounow.domain.request.feed.RestoreHidedFeedRequest
@@ -43,6 +44,12 @@ interface FeedApi {
         @Part images: List<MultipartBody.Part>?
     ): Response<ResponseWrapper<FeedSeq>>
 
+    // 피드 삭제
+    @HTTP(method = "DELETE", path = "feed", hasBody = true)
+    suspend fun deleteFeed(
+        @Body body: DeleteFeedRequest
+    ): Response<ResponseWrapper<String>>
+
     // 피드 리스트 조회
     @GET("feed/list")
     suspend fun getFeedList(
@@ -71,13 +78,13 @@ interface FeedApi {
     @POST("hide-feed")
     suspend fun hideFeed(
         @Body body: HideFeedRequest
-    ): Response<ResponseWrapper<HideFeedSeq>>
+    ): Response<ResponseWrapper<String>>
 
     // 숨긴 피드 복원
     @HTTP(method = "DELETE", path = "hide-feed", hasBody = true)
     suspend fun restoreHidedFeed(
         @Body body: RestoreHidedFeedRequest
-    ): Response<ResponseWrapper<Unit>>
+    ): Response<ResponseWrapper<String>>
 
     // 피드 책갈피 조회
     @GET("book-mark")
@@ -91,7 +98,7 @@ interface FeedApi {
     @POST("book-mark")
     suspend fun bookmarkFeed(
         @Body body: BookmarkFeedRequest
-    ): Response<ResponseWrapper<BookmarkSeq>>
+    ): Response<ResponseWrapper<String>>
 
     // 피드 책갈피 복원(삭제)
     @HTTP(method = "DELETE", path = "book-mark", hasBody = true)

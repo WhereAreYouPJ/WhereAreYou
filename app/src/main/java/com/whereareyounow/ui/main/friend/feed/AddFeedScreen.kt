@@ -51,6 +51,7 @@ import com.whereareyounow.data.addfeed.AddFeedScreenUIState
 import com.whereareyounow.domain.entity.schedule.ScheduleListItem
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.CustomTopBar
+import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.component.ScrollableContent
 import com.whereareyounow.ui.theme.getColor
@@ -190,45 +191,50 @@ fun AddFeedScreen(
                                             )
                                         }
 
-                                        item.second.forEachIndexed { idx, item ->
+                                        item.second.forEachIndexed { idx, schedule ->
                                             Column(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .clickableNoEffect {
-                                                        updateSelectedSchedule(item)
+                                                        updateSelectedSchedule(schedule)
                                                         isExpanded.value = false
                                                     }
                                                     .padding(6.dp)
                                             ) {
                                                 Text(
                                                     modifier = Modifier.padding(6.dp, 2.dp, 6.dp, 2.dp),
-                                                    text = item.title,
+                                                    text = schedule.title,
                                                     color = Color(0xFF444444),
                                                     style = medium16pt
                                                 )
 
                                                 Text(
                                                     modifier = Modifier.padding(6.dp, 2.dp, 6.dp, 2.dp),
-                                                    text = item.scheduleSeq.toString(),
+                                                    text = schedule.scheduleSeq.toString(),
                                                     color = Color(0xFF999999),
                                                     style = medium14pt
                                                 )
                                             }
 
+
+                                            if (idx != item.second.size - 1) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .height(1.dp)
+                                                        .background(getColor().thinnest)
+                                                )
+                                            }
+                                        }
+
+                                        if (idx != uiState.scheduleListMap.size - 1) {
                                             Box(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .height(1.dp)
-                                                    .background(getColor().thinnest)
+                                                    .height(6.dp)
+                                                    .background(Color(0xFFEEEEEE))
                                             )
                                         }
-
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(6.dp)
-                                                .background(Color(0xFFEEEEEE))
-                                        )
                                     }
                                 }
                             }
@@ -380,8 +386,10 @@ fun AddFeedScreen(
                 }
             },
             lastContent = {
+                HorizontalDivider(getColor().thinnest)
+
                 Box(
-                    modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 12.dp)
                 ) {
                     RoundedCornerButton(onClick = { createFeed(moveToBackScreen) }) {
                         Text(

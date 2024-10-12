@@ -4,6 +4,7 @@ import com.whereareyounow.domain.repository.FeedRepository
 import com.whereareyounow.domain.usecase.feed.BookmarkFeedUseCase
 import com.whereareyounow.domain.usecase.feed.CreateFeedUseCase
 import com.whereareyounow.domain.usecase.feed.DeleteFeedBookmarkUseCase
+import com.whereareyounow.domain.usecase.feed.DeleteFeedUseCase
 import com.whereareyounow.domain.usecase.feed.GetBookmarkedFeedUseCase
 import com.whereareyounow.domain.usecase.feed.GetDetailFeedUseCase
 import com.whereareyounow.domain.usecase.feed.GetFeedListUseCase
@@ -29,6 +30,11 @@ object FeedUseCaseModule {
     fun provideCreateFeedUseCase(
         repository: FeedRepository
     ) = CreateFeedUseCase(repository)
+
+    @Provides
+    fun provideDeleteFeedUseCase(
+        repository: FeedRepository
+    ) = DeleteFeedUseCase(repository)
 
     @Provides
     fun provideGetFeedListUseCase(

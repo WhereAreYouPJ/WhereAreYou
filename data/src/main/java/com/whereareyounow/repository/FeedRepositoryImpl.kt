@@ -15,6 +15,7 @@ import com.whereareyounow.domain.entity.feed.HidedFeedData
 import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.feed.CreateFeedRequest
 import com.whereareyounow.domain.request.feed.DeleteFeedBookmarkRequest
+import com.whereareyounow.domain.request.feed.DeleteFeedRequest
 import com.whereareyounow.domain.request.feed.GetBookmarkedFeedRequest
 import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
@@ -64,6 +65,12 @@ class FeedRepositoryImpl(
         }
     }
 
+    override suspend fun deleteFeed(data: DeleteFeedRequest): NetworkResult<String> {
+        return handleResult {
+            feedApi.deleteFeed(body = data)
+        }
+    }
+
     override suspend fun getFeedList(data: GetFeedListRequest): NetworkResult<FeedListData> {
         return handleResult {
             feedApi.getFeedList(
@@ -94,13 +101,13 @@ class FeedRepositoryImpl(
         }
     }
 
-    override suspend fun hideFeed(data: HideFeedRequest): NetworkResult<HideFeedSeq> {
+    override suspend fun hideFeed(data: HideFeedRequest): NetworkResult<String> {
         return handleResult {
             feedApi.hideFeed(body = data)
         }
     }
 
-    override suspend fun restoreHidedFeed(data: RestoreHidedFeedRequest): NetworkResult<Unit> {
+    override suspend fun restoreHidedFeed(data: RestoreHidedFeedRequest): NetworkResult<String> {
         return handleResult {
             feedApi.restoreHidedFeed(body = data)
         }
@@ -116,7 +123,7 @@ class FeedRepositoryImpl(
         }
     }
 
-    override suspend fun bookmarkFeed(data: BookmarkFeedRequest): NetworkResult<BookmarkSeq> {
+    override suspend fun bookmarkFeed(data: BookmarkFeedRequest): NetworkResult<String> {
         return handleResult {
             feedApi.bookmarkFeed(body = data)
         }

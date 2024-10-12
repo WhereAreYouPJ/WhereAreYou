@@ -147,7 +147,7 @@ private fun MainScreen(
                         HomeScreen(
                             paddingValues = it,
 
-                            )
+                        )
                     }
 
                     ViewType.Calendar -> {

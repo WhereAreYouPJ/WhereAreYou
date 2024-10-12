@@ -108,7 +108,6 @@ fun HomeScreen(
     val testSecondImage = viewModel.secondImage.collectAsState().value
     val testSeventhData = viewModel.sevenData.collectAsState().value
     val density = LocalDensity.current
-
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = SheetState(
             initialValue = SheetValue.Expanded,
@@ -119,7 +118,6 @@ fun HomeScreen(
     )
 
     HomeScreen(
-        isContent = true,
         testSecondImage,
         testThirdData,
         testFourthData,
@@ -133,16 +131,15 @@ fun HomeScreen(
             mainViewModel.updateViewType(ViewType.MyPage)
         },
         sheetState = scaffoldState,
-        alarmBoolean = true
+        alarmBoolean = true,
+        isContent = true,
     )
-//    sepeateTest()
 }
 
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
-    isContent: Boolean,
     testSecondImage: List<HomeViewModel.SecondDataModel>,
     testThirdData: List<HomeViewModel.ThirdDataModel>,
     testFourthData: List<HomeViewModel.FourthDataModel>,
@@ -151,8 +148,8 @@ private fun HomeScreen(
     onMyIconClick: () -> Unit,
     onAlarmIconClick: () -> Unit,
     sheetState: BottomSheetScaffoldState,
-    // 서버알림 데이터에서따로봅아올거임 예삐
-    alarmBoolean: Boolean
+    alarmBoolean: Boolean,
+    isContent: Boolean,
 ) {
     val horizontalPagerState = rememberPagerState(
         pageCount = {

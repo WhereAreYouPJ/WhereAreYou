@@ -11,6 +11,7 @@ import com.whereareyounow.domain.entity.feed.HidedFeedData
 import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.feed.CreateFeedRequest
 import com.whereareyounow.domain.request.feed.DeleteFeedBookmarkRequest
+import com.whereareyounow.domain.request.feed.DeleteFeedRequest
 import com.whereareyounow.domain.request.feed.GetBookmarkedFeedRequest
 import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
@@ -33,6 +34,10 @@ interface FeedRepository {
         images: List<Any>
     ): NetworkResult<FeedSeq>
 
+    suspend fun deleteFeed(
+        data: DeleteFeedRequest
+    ): NetworkResult<String>
+
     suspend fun getFeedList(
         data: GetFeedListRequest
     ): NetworkResult<FeedListData>
@@ -47,11 +52,11 @@ interface FeedRepository {
 
     suspend fun hideFeed(
         data: HideFeedRequest
-    ): NetworkResult<HideFeedSeq>
+    ): NetworkResult<String>
 
     suspend fun restoreHidedFeed(
         data: RestoreHidedFeedRequest
-    ): NetworkResult<Unit>
+    ): NetworkResult<String>
 
     suspend fun getBookmarkedFeed(
         data: GetBookmarkedFeedRequest
@@ -59,7 +64,7 @@ interface FeedRepository {
 
     suspend fun bookmarkFeed(
         data: BookmarkFeedRequest
-    ): NetworkResult<BookmarkSeq>
+    ): NetworkResult<String>
 
     suspend fun deleteFeedBookmark(
         data: DeleteFeedBookmarkRequest
