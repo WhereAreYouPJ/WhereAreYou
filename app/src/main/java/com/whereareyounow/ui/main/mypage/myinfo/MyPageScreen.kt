@@ -2,30 +2,27 @@ package com.whereareyounow.ui.main.mypage.myinfo
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,33 +31,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.cached.AuthData
-import com.whereareyounow.data.globalvalue.CALENDAR_VIEW_HEIGHT
-import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
-import com.whereareyounow.ui.main.friend.GrayLine
+import com.whereareyounow.ui.component.CustomSurfaceState
+import com.whereareyounow.ui.component.HorizontalDivider
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.ui.theme.medium18pt
 import com.whereareyounow.ui.theme.medium20pt
 import com.whereareyounow.util.clickableNoEffect
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun MyPageScreen(
+    customSurfaceState: CustomSurfaceState,
     moveToSignInMethodSelectionScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
     moveToLocationFavorite: () -> Unit,
@@ -71,6 +67,13 @@ fun MyPageScreen(
     moveToBye: () -> Unit,
     viewModel: MyPageViewModel = hiltViewModel()
 ) {
+    val brandColor = getColor().brandColor
+    DisposableEffect(Unit) {
+        customSurfaceState.statusBarColor = brandColor
+        onDispose {
+            customSurfaceState.statusBarColor = Color(0xFFFFFFFF)
+        }
+    }
 
     val name = viewModel.name.collectAsState().value
     val email = viewModel.email.collectAsState().value
@@ -94,7 +97,6 @@ fun MyPageScreen(
         moveToAsk = moveToAsk,
         moveToBye = moveToBye
     )
-
 }
 
 @Composable
@@ -115,308 +117,235 @@ private fun MyPageScreen(
     moveToAsk: () -> Unit,
     moveToBye: () -> Unit
 ) {
-    // 여기 스테튵바 색상
-    val systemUiController = rememberSystemUiController()
-
-
     LaunchedEffect(Unit) {
         getMyInfo(AuthData.memberSeq)
     }
-
     val density = LocalDensity.current.density
-    var isWarningDialogShowing by remember { mutableStateOf(false) }
+    val isWarningDialogShowing = remember { mutableStateOf(false) }
+    val isPhotoDialogShowing = remember { mutableStateOf(false) }
     val isProfileClicked = remember { mutableStateOf(false) }
-    var warningState by remember { mutableStateOf(WarningState.SignOut) }
     val clickedIndication = remember { MutableInteractionSource() }
-
-    if (isWarningDialogShowing) {
-        MyPageWarningDialog(
-            warningTitle = when (warningState) {
-                WarningState.SignOut -> "로그아웃?"
-//                WarningState.DeleteCalendar -> "캘린더를 삭제하시겠습니까?"
-                WarningState.Withdrawal -> "회원탈퇴"
-            },
-            warningText = when (warningState) {
-                WarningState.SignOut -> "로그아웃을 진행하시겠습니까?"
-//                WarningState.DeleteCalendar -> "모든 일정 정보가 삭제됩니다."
-                WarningState.Withdrawal -> "회원을 탈퇴하시겠습니까?"
-            },
-            okText = when (warningState) {
-                WarningState.SignOut -> "확인"
-//                WarningState.DeleteCalendar -> "삭제"
-                WarningState.Withdrawal -> "확인"
-            },
-            onDismissRequest = { isWarningDialogShowing = false },
-            onConfirm = {
-                isWarningDialogShowing = false
-                when (warningState) {
-                    WarningState.SignOut -> signOut(moveToSignInMethodSelectionScreen)
-//                    WarningState.DeleteCalendar -> deleteCalendar()
-                    WarningState.Withdrawal -> withdrawAccount(moveToSignInMethodSelectionScreen)
-                }
-            }
-        )
-    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0XFFF0F0F0))
     ) {
-
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(bottomEnd = 18.dp, bottomStart = 18.dp))
                 .fillMaxWidth()
-                .height(280.dp)
-                .background(Color(0XFF6236E9))
+                .height(240.dp)
+                .background(getColor().brandColor)
         )
 
-        Box(
-            modifier = Modifier
-                .padding(start = 17.dp, end = 18.dp, top = 253.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color.White)
-                .fillMaxWidth()
-                .height(57.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "내코드",
-                    style = medium14pt,
-                    color = Color(0xFF222222)
-                )
-                Gap(6)
-                Text(
-                    text = AuthData.memberCode,
-                    style = medium16pt,
-                    color = getColor().brandColor
-                )
-            }
-        }
-
-        // 273 , 239
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Gap(13)
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height((CALENDAR_VIEW_HEIGHT / density).dp),
+                    .padding(46.dp)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
+                Box {
                     GlideImage(
                         modifier = Modifier
-                            .size(110.dp)
-                            .clip(RoundedCornerShape(34.4.dp))
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(34.dp))
                             .clickableNoEffect {
-                                isProfileClicked.value = !isProfileClicked.value
+                                isPhotoDialogShowing.value = true
                             },
-                        imageModel = { profileImageUri ?: R.drawable.ic_default_profile_image },
+                        imageModel = { profileImageUri ?: R.drawable.ic_profile },
                         imageOptions = ImageOptions(contentScale = ContentScale.Crop)
                     )
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 82.dp)
-                            .align(Alignment.BottomEnd)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_mypage_camera),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                        )
-                    }
-                }
-//239
-                Spacer(Modifier.height(6.dp))
-                fun encodeUrl(url: String): String {
-                    return URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
-                }
-                if (isProfileClicked.value) {
-                    Column(
-                        modifier = Modifier.height(37.dp)
-                    ) {
-                        // 준성이 이미지
-                        Row(
-                            modifier = Modifier
-                                .padding(start = 92.dp, end = 92.dp)
-                                .height(38.dp)
-                                .clip(
-                                    RoundedCornerShape(10.dp)
-                                )
-                                .fillMaxWidth()
-                                .background(Color(0xFF514675))
-                                .clickableNoEffect {
 
-                                },
-                        ) {
-                            Text(
-                                text = "사진 보관함",
-                                style = medium14pt,
-                                color = Color.White,
-                                modifier = Modifier.padding(
-                                    start = 14.dp,
-                                    top = 8.dp,
-                                    bottom = 10.dp
-                                )
-                            )
-                            Gap(72)
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_picturesved),
-                                contentDescription = "",
-                                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, end = 13.dp)
-                            )
-                        }
-                    }
-                } else {
-                    Row(
+                    Image(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(38.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = name,
-                            style = medium20pt,
-                            color = Color(0xFFFFFFFF),
-                            letterSpacing = 0.05.em
-                        )
-                    }
+                            .align(Alignment.BottomEnd)
+                            .size(24.dp)
+                            .offset(x = 6.dp, y = 0.dp),
+                        painter = painterResource(id = R.drawable.ic_mypage_camera),
+                        contentDescription = null,
+                    )
                 }
-                Gap(3)
+
+                Spacer(Modifier.height(10.dp))
+
+                Text(
+                    text = name,
+                    style = medium20pt,
+                    color = Color(0xFFFFFFFF),
+                )
             }
         }
-        Gap(14)
 
-        // 내정보관리부터
         Column(
             modifier = Modifier
-                .padding(top = ((CALENDAR_VIEW_HEIGHT + TOP_BAR_HEIGHT) / density).dp + 14.dp)
+                .padding(start = 15.dp, top = 210.dp, end = 15.dp)
                 .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Spacer(Modifier.size(30.dp))
-
-            // 내 정보 관리 , 위치 즐겨찾기 , 피드 책갈피 , 피드 보관함
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 17.dp, end = 18.dp)
-                    .clip(
-                        shape = RoundedCornerShape(
-                            topStart = 14.dp,
-                            topEnd = 14.dp,
-                            bottomStart = 14.dp,
-                            bottomEnd = 14.dp
-                        )
-                    )
-                    .background(Color.White)
-                    .height(192.dp)
+                    .height(57.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color(0xFFFFFFFF)),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val firstMypageList = listOf("내 정보 관리", "위치 즐겨찾기", "피드 책갈피", "피드 보관함")
+                    Text(
+                        text = "내 코드",
+                        style = medium14pt,
+                        color = Color(0xFF222222)
+                    )
 
-                    firstMypageList.forEach {
-                        // top 11 bottom 12
-                        Spacer(Modifier.size(11.dp))
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 12.dp)
-                                .clickable(
-                                    interactionSource = remember { clickedIndication },
-                                    indication = null
-                                ) {
+                    Spacer(Modifier.width(6.dp))
 
-                                    when (it) {
-                                        "내 정보 관리" -> moveToMyInfoScreen()
-                                        "위치 즐겨찾기" -> moveToLocationFavorite()
-                                        "피드 책갈피" -> moveToFeedBookmarks()
-                                        "피드 보관함" -> moveToFeedSaved()
-                                    }
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(it, style = medium16pt)
-                        }
-                        Spacer(Modifier.size(12.dp))
-                        if (it != "피드 보관함") {
-
-                            GrayLine()
-                        }
-                    }
+                    Text(
+                        text = AuthData.memberCode,
+                        style = medium16pt,
+                        color = getColor().brandColor
+                    )
                 }
             }
-            Spacer(Modifier.size(20.dp))
+
+            Spacer(Modifier.height(14.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(51.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
+                    )
+                    .clickableNoEffect { moveToMyInfoScreen() },
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 14.dp, bottom = 12.dp),
+                    text = "내 정보 관리",
+                    color = Color(0xFF222222),
+                    style = medium16pt
+                )
+            }
+
+            HorizontalDivider(getColor().thinnest)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                    )
+                    .clickableNoEffect { moveToLocationFavorite() },
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 14.dp, bottom = 12.dp),
+                    text = "위치 즐겨찾기",
+                    color = Color(0xFF222222),
+                    style = medium16pt
+                )
+            }
+
+            HorizontalDivider(getColor().thinnest)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                    )
+                    .clickableNoEffect { moveToFeedBookmarks() },
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 14.dp, bottom = 12.dp),
+                    text = "피드 책갈피",
+                    color = Color(0xFF222222),
+                    style = medium16pt
+                )
+            }
+
+            HorizontalDivider(getColor().thinnest)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(51.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp)
+                    )
+                    .clickableNoEffect { moveToMyInfoScreen() },
+                contentAlignment = Alignment.TopStart
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 14.dp, top = 12.dp),
+                    text = "내 정보 관리",
+                    color = Color(0xFF222222),
+                    style = medium16pt
+                )
+            }
+
+            Spacer(Modifier.size(12.dp))
+
             // 공지사항 , 1:1 이용문의
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 17.dp, end = 18.dp)
-                    .clip(
-                        shape = RoundedCornerShape(
-                            topStart = 14.dp,
-                            topEnd = 14.dp,
-                            bottomStart = 14.dp,
-                            bottomEnd = 14.dp
-                        )
+                    .height(51.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
                     )
-                    .background(Color.White)
+                    .clickableNoEffect { moveToAccoument() },
+                contentAlignment = Alignment.BottomStart
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    val firstMypageList = listOf("공지사항", "1:1 이용문의")
-
-                    firstMypageList.forEach {
-                        // top 11 bottom 12
-                        Spacer(Modifier.size(11.dp))
-                        Row(
-                            modifier = Modifier
-
-                                .fillMaxWidth()
-                                .padding(start = 12.dp)
-                                .clickable(
-                                    interactionSource = remember { clickedIndication },
-                                    indication = null
-                                ) {
-                                    when (it) {
-                                        "공지사항" -> moveToAccoument()
-                                        "1:1 이용문의" -> moveToAsk()
-                                    }
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(it, style = medium16pt)
-                        }
-                        Spacer(Modifier.size(12.dp))
-                        if (it != "1:1 이용문의") {
-
-                            GrayLine()
-                        }
-                    }
-                }
+                Text(
+                    modifier = Modifier.padding(start = 14.dp, bottom = 12.dp),
+                    text = "공지사항",
+                    color = Color(0xFF222222),
+                    style = medium16pt
+                )
             }
+
+            HorizontalDivider(getColor().thinnest)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(51.dp)
+                    .background(
+                        color = Color(0xFFFFFFFF),
+                        shape = RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp)
+                    )
+                    .clickableNoEffect { moveToAsk() },
+                contentAlignment = Alignment.TopStart
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 14.dp, top = 12.dp),
+                    text = "내 정보 관리",
+                    color = Color(0xFF222222),
+                    style = medium16pt
+                )
+            }
+
             Spacer(Modifier.weight(1f))
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 119.dp, end = 120.dp, bottom = 20.dp),
+                    .padding(bottom = 20.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -424,10 +353,7 @@ private fun MyPageScreen(
                     modifier = Modifier
                         .width(64.dp)
                         .height(28.dp)
-                        .clickableNoEffect {
-                            warningState = WarningState.SignOut
-                            isWarningDialogShowing = true
-                        },
+                        .clickableNoEffect { isWarningDialogShowing.value = true },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -436,19 +362,21 @@ private fun MyPageScreen(
                         color = Color(0xFFBEBEBE)
                     )
                 }
+
                 Spacer(Modifier.size(4.dp))
+
                 Image(
                     painter = painterResource(id = R.drawable.ic_vertical_small_grayline),
-                    contentDescription = ""
+                    contentDescription = null
                 )
+
                 Spacer(Modifier.size(4.dp))
+
                 Box(
                     modifier = Modifier
                         .width(64.dp)
                         .height(28.dp)
-                        .clickableNoEffect {
-                            moveToBye()
-                        },
+                        .clickableNoEffect { moveToBye() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -460,89 +388,59 @@ private fun MyPageScreen(
             }
         }
     }
-}
 
+    if (isWarningDialogShowing.value) {
+        MyPageWarningDialog(
+            onDismissRequest = { isWarningDialogShowing.value = false },
+            onConfirm = { signOut(moveToSignInMethodSelectionScreen) }
+        )
+    }
 
-
-@Composable
-fun MyPageWarningDialog(
-    warningTitle: String,
-    warningText: String,
-    okText: String,
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-) {
-    val density = LocalDensity.current.density
-    Dialog(
-        onDismissRequest = onDismissRequest,
-        properties = DialogProperties(),
-
+    if (isPhotoDialogShowing.value) {
+        Popup(
+            onDismissRequest = { isPhotoDialogShowing.value = false },
+            properties = PopupProperties(
+                usePlatformDefaultWidth = false,
+            )
         ) {
-        CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 120.dp)
-            ) {
-                Column(
+            OnMyWayTheme {
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = Color(0xFF333333),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .padding(start = 16.dp, end = 15.dp)
-                        .height(164.dp)
+                        .fillMaxSize()
+//                        .background(Color(0x33000000))
+                        .clickableNoEffect { isPhotoDialogShowing.value = false },
+                    contentAlignment = Alignment.TopCenter
                 ) {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp, top = 20.dp)
+                            .padding(top = 160.dp)
+                            .width(190.dp)
+                            .height(38.dp)
+                            .background(
+                                color = Color(0xFF514675),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickableNoEffect { },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
+                        Spacer(Modifier.width(14.dp))
+
                         Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = warningTitle,
-                            style = medium18pt,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            text = "사진 보관함",
+                            color = Color(0xFFFFFFFF),
+                            style = medium14pt
                         )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp, top = 8.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = warningText,
-                            style = medium14pt,
-                            color = Color(0xFFA0A0A0)
+
+                        Spacer(Modifier.weight(1f))
+
+                        Image(
+                            modifier = Modifier.size(22.dp),
+                            painter = painterResource(R.drawable.ic_picture),
+                            contentDescription = null
                         )
-                    }
-                    Spacer(Modifier.height(24.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 24.dp),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Text(
-                            text = "취소",
-                            style = medium14pt,
-                            color = Color.White,
-                            modifier = Modifier.clickableNoEffect {
-                                onDismissRequest()
-                            }
-                        )
-                        Spacer(Modifier.width(24.dp))
-                        Text(
-                            text = okText,
-                            style = medium14pt,
-                            color = Color(0xFFE09EFF),
-                            modifier = Modifier.clickableNoEffect {
-                                onConfirm()
-                            }
-                        )
+
+                        Spacer(Modifier.width(14.dp))
                     }
                 }
             }
@@ -550,7 +448,87 @@ fun MyPageWarningDialog(
     }
 }
 
-enum class WarningState {
-    SignOut,
-    Withdrawal
+
+
+@Composable
+fun MyPageWarningDialog(
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        OnMyWayTheme {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickableNoEffect { onDismissRequest() }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 160.dp)
+                        .fillMaxWidth()
+                        .height(164.dp)
+                        .padding(start = 15.dp, end = 15.dp)
+                        .background(
+                            color = Color(0xFF333333),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .clickableNoEffect {}
+                        .padding(start = 10.dp, end = 10.dp)
+                ) {
+                    Spacer(Modifier.height(20.dp))
+
+                    Text(
+                        modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
+                        text = "로그아웃",
+                        style = medium18pt,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFFFFFFF)
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Text(
+                        modifier = Modifier.padding(6.dp, 4.dp, 6.dp, 4.dp),
+                        text = "로그아웃을 진행하시겠습니까?",
+                        style = medium14pt,
+                        color = Color(0xFFA0A0A0)
+                    )
+
+                    Spacer(Modifier.height(24.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 24.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 8.dp, top = 4.dp, 6.dp, 4.dp)
+                                .clickableNoEffect { onDismissRequest() },
+                            text = "취소",
+                            style = medium14pt,
+                            color = Color.White
+                        )
+
+                        Spacer(Modifier.width(10.dp))
+
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 8.dp, top = 4.dp, 6.dp, 4.dp)
+                                .clickableNoEffect { onConfirm() },
+                            text = "확인",
+                            style = medium14pt,
+                            color = Color(0xFFE09EFF),
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

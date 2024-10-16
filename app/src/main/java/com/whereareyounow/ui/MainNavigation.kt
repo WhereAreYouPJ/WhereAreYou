@@ -2,6 +2,9 @@ package com.whereareyounow.ui
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,6 +35,7 @@ import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
 import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
 import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
 import com.whereareyounow.ui.navigation.addFeedScreenRoute
+import com.whereareyounow.ui.navigation.detailScheduleMapScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.developerScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
@@ -68,8 +72,8 @@ fun MainNavigation(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
         startDestination = ROUTE.Splash,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None }
+        enterTransition = { fadeIn(animationSpec = tween(300)) },
+        exitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {
         // 개발자 화면
         developerScreenRoute(navController)
@@ -147,17 +151,7 @@ fun MainNavigation(
         friendsListScreenRoute(navController)
 
         // 상세 일정 정보 지도 화면
-        composable(
-            route = ROUTE_DETAIL_SCHEDULE_MAP
-        ) {
-            DetailScheduleMapScreen(
-                scheduleId = it.arguments?.getString("scheduleId") ?: "",
-                destinationLatitude = it.arguments?.getDouble("destinationLatitude") ?: 0.0,
-                destinationLongitude = it.arguments?.getDouble("destinationLongitude") ?: 0.0,
-                passedMemberInfosList = it.arguments?.getParcelableArrayList<MemberInfo>("memberInfosList")
-                    ?: emptyList<MemberInfo>()
-            )
-        }
+        detailScheduleMapScreenRoute(navController)
 
         // 친구 추가 화면
         searchAndAddFriendScreen(navController)

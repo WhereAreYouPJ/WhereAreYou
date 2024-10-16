@@ -57,7 +57,7 @@ fun MainScreen(
     moveToAddFeedScreen: () -> Unit,
     moveToSignInMethodSelectionScreen: () -> Unit,
     moveToNotificationScreen: () -> Unit,
-    moveToMapScreen: () -> Unit,
+    moveToMapScreen: (Int) -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
@@ -119,7 +119,7 @@ private fun MainScreen(
     moveToAddFeedScreen: () -> Unit,
     moveToSignInMethodSelectionScreen: () -> Unit,
     moveToNotificationScreen: () -> Unit,
-    moveToMapScreen: () -> Unit,
+    moveToMapScreen: (Int) -> Unit,
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToDetailProfileScreen : (String, String) -> Unit,
@@ -163,6 +163,7 @@ private fun MainScreen(
 
                 ViewType.MyPage -> {
                     MyPageScreen(
+                        customSurfaceState = it,
                         moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
                         moveToMyInfoScreen = moveToMyInfoScreen,
                         moveToLocationFavorite = moveToLocationFavorite,
@@ -171,8 +172,7 @@ private fun MainScreen(
                         moveToAccoument = moveToAccoument,
                         moveToAsk = moveToAsk,
                         moveToBye = moveToBye,
-
-                        )
+                    )
                 }
             }
         }

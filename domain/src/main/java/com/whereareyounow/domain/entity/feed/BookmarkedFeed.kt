@@ -17,7 +17,7 @@ data class BookmarkedFeed(
     @SerializedName("bookMarkImageInfos")
     val bookMarkImageInfos: List<BookmarkImageInfo>,
     @SerializedName("bookMarkFriendInfos")
-    val bookMarkFriendInfos: List<BookmarkFriendInfo>,
+    val bookMarkFriendInfos: List<FeedMemberInfo>,
     @SerializedName("content")
     val content: String,
     @SerializedName("bookMark")

@@ -53,14 +53,16 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     customSurfaceState: CustomSurfaceState,
     moveToNotificationScreen: () -> Unit,
-    moveToMapScreen: () -> Unit,
+    moveToMapScreen: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
         customSurfaceState.statusBarColor = Color.Transparent
+        viewModel.getBannerImageList()
+        viewModel.getDailyScheduleInfo()
+        viewModel.getScheduleDday()
     }
-    val density = LocalDensity.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     HomeScreen(
@@ -72,16 +74,15 @@ fun HomeScreen(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HomeScreen(
     uiState: HomeScreenData,
     moveToNotificationScreen: () -> Unit,
-    moveToMapScreen: () -> Unit,
+    moveToMapScreen: (Int) -> Unit,
     isContent: Boolean,
 ) {
     val homeAnchoredDraggableState = remember { getHomeAnchoredDraggableState() }
-    val isDimBackgroundShowing = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     Box(
@@ -202,7 +203,7 @@ private fun HomeScreen(
         }
 
         if (((homeAnchoredDraggableState.anchors.maxAnchor()) - (homeAnchoredDraggableState.offset)) /
-            ((homeAnchoredDraggableState.anchors.maxAnchor()) - (homeAnchoredDraggableState.anchors.minAnchor())) > 0.1f) {
+            ((homeAnchoredDraggableState.anchors.maxAnchor()) - (homeAnchoredDraggableState.anchors.minAnchor())) > 0.03f) {
             DimBackground(
                 anchoredDraggableState = homeAnchoredDraggableState,
                 closeBottomDialog = {
@@ -219,6 +220,7 @@ private fun HomeScreen(
             HomeBottomDialog(
                 anchoredDraggableState = homeAnchoredDraggableState,
                 dailyScheduleList = uiState.dailyScheduleList,
+                moveToMapScreen = moveToMapScreen
             )
         }
     }

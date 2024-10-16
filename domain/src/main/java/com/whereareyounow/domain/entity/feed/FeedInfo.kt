@@ -7,6 +7,6 @@ data class FeedInfo(
     val scheduleInfo: FeedScheduleInfo,
     @SerializedName("scheduleFeedInfo")
     val feedInfo: List<FeedDetailInfo>,
-    @SerializedName("userName")
-    val userNameList: List<String>
+    @SerializedName("scheduleFriendInfo")
+    val userNameList: List<FeedMemberInfo>
 )

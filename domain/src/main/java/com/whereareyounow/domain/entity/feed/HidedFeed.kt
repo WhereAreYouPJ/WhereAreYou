@@ -18,5 +18,7 @@ data class HidedFeed(
     @SerializedName("content")
     val content: String,
     @SerializedName("bookMark")
-    val bookMark: Boolean
+    val bookMark: Boolean,
+    @SerializedName("feedFriendInfos")
+    val feedMemberInfos: List<FeedMemberInfo>
 )

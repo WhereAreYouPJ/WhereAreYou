@@ -9,6 +9,8 @@ data class FriendRequest(
     val senderSeq: Int,
     @SerializedName("createTime")
     val createTime: String,
+    @SerializedName("profileImage")
+    val profileImage: String?,
     @SerializedName("userName")
     val userName: String,
 )

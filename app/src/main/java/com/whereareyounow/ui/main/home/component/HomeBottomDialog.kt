@@ -51,7 +51,8 @@ import kotlin.math.roundToInt
 @Composable
 fun HomeBottomDialog(
     anchoredDraggableState: AnchoredDraggableState<AnchoredDraggableContentState>,
-    dailyScheduleList: List<DailyScheduleInfo>
+    dailyScheduleList: List<DailyScheduleInfo>,
+    moveToMapScreen: (Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -143,7 +144,7 @@ fun HomeBottomDialog(
                                 color = getColor().brandColor,
                                 shape = RoundedCornerShape(6.dp),
                             )
-                            .clickableNoEffect { },
+                            .clickableNoEffect { moveToMapScreen(item.scheduleSeq) },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(

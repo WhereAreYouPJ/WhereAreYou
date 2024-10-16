@@ -118,6 +118,11 @@ sealed class ROUTE {
     data object PasswordResetSuccess
 
     @Serializable
+    data class DetailScheduleMap(
+        val scheduleSeq: Int
+    )
+
+    @Serializable
     data object Main {
         @Serializable
         data object Home

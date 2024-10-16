@@ -40,6 +40,7 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
 import com.whereareyounow.data.cached.FriendList
+import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.friend.feed.FeedScreen
 import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
@@ -173,7 +174,8 @@ fun FriendScreenTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 6.dp),
+            .height(TOP_BAR_HEIGHT.dp)
+            .padding(start = 20.dp, end = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
@@ -200,28 +202,35 @@ fun FriendScreenTopBar(
             style = medium20pt,
             color = friendTextColor
         )
-        Spacer(Modifier.width(12.dp))
+
         Spacer(modifier = Modifier.weight(1f))
-        Image(
-            painter = painterResource(id = R.drawable.ic_dodbogi),
-            contentDescription = "",
-            modifier = Modifier.clickableNoEffect {
 
-            }
-        )
+        if (isFriendPage.value) {
+            Image(
+                modifier = Modifier
+                    .size(34.dp)
+                    .clickableNoEffect {
+
+                    },
+                painter = painterResource(id = R.drawable.ic_dodbogi),
+                contentDescription = null,
+            )
+        }
 
         Image(
+            modifier = Modifier.size(34.dp),
             painter = painterResource(id = R.drawable.ic_bellred),
-            contentDescription = ""
+            contentDescription = null
         )
 
         Image(
-            painter = painterResource(id = R.drawable.ic_plusbrandcolor),
-            contentDescription = "",
-            modifier = Modifier.clickableNoEffect {
+            modifier = Modifier
+                .size(34.dp)
+                .clickableNoEffect {
                 popupState.isVisible = true
-
-            }
+            },
+            painter = painterResource(id = R.drawable.ic_plusbrandcolor),
+            contentDescription = null,
         )
 
         if (popupState.isVisible) {

@@ -137,57 +137,63 @@ private fun FeedListScreen(
             ) {
                 itemsIndexed(uiState.feedListData.content) { idx, item ->
                     Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(74.dp)
-                                .border(
-                                    border = BorderStroke(
-                                        width = (1.5).dp,
-                                        color = getColor().brandColor
-                                    ),
-                                    shape = RoundedCornerShape(14.dp)
-                                )
-                                .clickableNoEffect {
-                                    getDetailFeed(item.scheduleInfo.scheduleSeq, item.feedInfo[0].feedInfo.feedSeq)
-                                    isDetailContent.value = true
-                                }
-                                .padding(start = 10.dp, end = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            GlideImage(
+                        Box {
+                            Row(
                                 modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(RoundedCornerShape(14.dp)),
-                                imageModel = {
-                                    if (item.feedInfo[0].memberInfo.profileImage.isNullOrEmpty()) R.drawable.ic_profile
-                                    else item.feedInfo[0].memberInfo.profileImage
-                                }
-                            )
-                            Column {
-                                Row {
-                                    Text(
-                                        modifier = Modifier.padding(6.dp, 6.dp, 2.dp, 2.dp),
-                                        text = parseLocalDate(item.scheduleInfo.startTime).toString().replace("-", "."),
-                                        color = Color(0xFF767676),
-                                        style = medium14pt
+                                    .fillMaxWidth()
+                                    .height(74.dp)
+                                    .border(
+                                        border = BorderStroke(
+                                            width = (1.5).dp,
+                                            color = getColor().brandColor
+                                        ),
+                                        shape = RoundedCornerShape(14.dp)
                                     )
-
-                                    Text(
-                                        modifier = Modifier.padding(6.dp, 6.dp, 6.dp, 2.dp),
-                                        text = item.scheduleInfo.location,
-                                        color = Color(0xFF767676),
-                                        style = medium14pt
-                                    )
-                                }
-                                Text(
-                                    modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 4.dp),
-                                    text = item.feedInfo[0].feedInfo.title,
-                                    color = Color(0xFF222222),
-                                    style = medium16pt
+                                    .clickableNoEffect {
+                                        getDetailFeed(
+                                            item.scheduleInfo.scheduleSeq,
+                                            item.feedInfo[0].feedInfo.feedSeq
+                                        )
+                                        isDetailContent.value = true
+                                    }
+                                    .padding(start = 10.dp, end = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                GlideImage(
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(RoundedCornerShape(14.dp)),
+                                    imageModel = {
+                                        if (item.feedInfo[0].memberInfo.profileImage.isNullOrEmpty()) R.drawable.ic_profile
+                                        else item.feedInfo[0].memberInfo.profileImage
+                                    }
                                 )
+                                Column {
+                                    Row {
+                                        Text(
+                                            modifier = Modifier.padding(6.dp, 6.dp, 2.dp, 2.dp),
+                                            text = parseLocalDate(item.scheduleInfo.startTime).toString().replace("-", "."),
+                                            color = Color(0xFF767676),
+                                            style = medium14pt
+                                        )
+
+                                        Text(
+                                            modifier = Modifier.padding(6.dp, 6.dp, 6.dp, 2.dp),
+                                            text = item.scheduleInfo.location,
+                                            color = Color(0xFF767676),
+                                            style = medium14pt
+                                        )
+                                    }
+                                    Text(
+                                        modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 4.dp),
+                                        text = item.feedInfo[0].feedInfo.title,
+                                        color = Color(0xFF222222),
+                                        style = medium16pt
+                                    )
+                                }
                             }
                         }
+
 
                         Spacer(Modifier.height(10.dp))
 

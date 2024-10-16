@@ -2,20 +2,30 @@ package com.whereareyounow.ui.main.schedule.detailschedule
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.detailschedule.DetailScheduleMapScreenSideEffect
 import com.whereareyounow.data.detailschedule.DetailScheduleMapScreenUIState
-import com.whereareyounow.data.detailschedule.MemberInfo
+import com.whereareyounow.domain.request.schedule.GetDetailScheduleRequest
+import com.whereareyounow.domain.usecase.schedule.GetDetailScheduleUseCase
+import com.whereareyounow.domain.util.onError
+import com.whereareyounow.domain.util.onException
+import com.whereareyounow.domain.util.onSuccess
 import com.whereareyounow.util.LocationUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailScheduleMapViewModel @Inject constructor(
     private val application: Application,
+    private val getDetailScheduleUseCase: GetDetailScheduleUseCase,
 //    private val getAccessTokenUseCase: GetAccessTokenUseCase,
 //    private val getMemberIdUseCase: GetMemberIdUseCase,
 //    private val getUserLocationUseCase: GetUserLocationUseCase,
@@ -24,25 +34,34 @@ class DetailScheduleMapViewModel @Inject constructor(
     private val locationUtil: LocationUtil,
 ) : AndroidViewModel(application) {
 
-    private lateinit var scheduleId: String
-    private val _detailScheduleMapScreenUIState = MutableStateFlow(DetailScheduleMapScreenUIState())
-    val detailScheduleMapScreenUIState = _detailScheduleMapScreenUIState.asStateFlow()
+    private val _uiState = MutableStateFlow(DetailScheduleMapScreenUIState())
+    val uiState = _uiState.asStateFlow()
     val detailScheduleMapScreenSideEffect = MutableSharedFlow<DetailScheduleMapScreenSideEffect>()
 
     fun updateScheduleInfo(
-        scheduleId: String,
-        destinationLatitude: Double,
-        destinationLongitude: Double,
-        memberInfosList: List<MemberInfo>
+        scheduleSeq: Int
     ) {
-        this.scheduleId = scheduleId
-        _detailScheduleMapScreenUIState.update { state ->
-            state.copy(
-                destinationLatitude = destinationLatitude,
-                destinationLongitude = destinationLongitude,
-                memberInfosList = memberInfosList
-            )
-        }
+        val requestData = GetDetailScheduleRequest(
+            scheduleSeq = scheduleSeq,
+            memberSeq = AuthData.memberSeq
+        )
+        getDetailScheduleUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _uiState.update {
+                            it.copy(
+                                x = data.x,
+                                y = data.y,
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
         getUsersLocation()
     }
 
@@ -82,8 +101,6 @@ class DetailScheduleMapViewModel @Inject constructor(
 
     fun sendUserLocation() {
 //        locationUtil.getCurrentLocation {
-//            val accessToken = getAccessTokenUseCase().first()
-//            val memberId = getMemberIdUseCase().first()
 //            val request = com.whereareyounow.domain.request.location.SendUserLocationRequest(
 //                memberId,
 //                it.latitude,
@@ -125,4 +142,13 @@ class DetailScheduleMapViewModel @Inject constructor(
 //        }
     }
 
+    init {
+        locationUtil.getCurrentLocation {
+//            val request = com.whereareyounow.domain.request.location.SendUserLocationRequest(
+//                memberId,
+//                it.latitude,
+//                it.longitude
+//            )
+        }
+    }
 }

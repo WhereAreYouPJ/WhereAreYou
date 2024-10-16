@@ -38,7 +38,7 @@ class FeedViewModel @Inject constructor(
         totalPages = 0,
         size = 0,
         emptyList()
-    ), null))
+    ), null, 0))
     val uiState = _uiState.asStateFlow()
 
     fun getFeedList() {
@@ -51,9 +51,21 @@ class FeedViewModel @Inject constructor(
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
                     data?.let {
+                        val newFeedGroupList = data.content.map { feedInfo ->
+                            val newFeedList = feedInfo.feedInfo.sortedWith(
+                                compareBy(
+                                    { it.memberInfo.memberSeq == AuthData.memberSeq }
+                                )
+                            )
+                            feedInfo.copy(
+                                feedInfo = newFeedList
+                            )
+                        }
                         _uiState.update {
                             it.copy(
-                                feedListData = data
+                                feedListData = data.copy(
+                                    content = newFeedGroupList
+                                )
                             )
                         }
                     }
@@ -133,7 +145,7 @@ class FeedViewModel @Inject constructor(
 
     fun deleteBookmarkFeed(feedSeq: Int) {
         val requestData = DeleteFeedBookmarkRequest(
-            bookMarkFeedSeq = feedSeq,
+            feedSeq = feedSeq,
             memberSeq = AuthData.memberSeq
         )
         deleteFeedBookmarkUseCase(requestData)

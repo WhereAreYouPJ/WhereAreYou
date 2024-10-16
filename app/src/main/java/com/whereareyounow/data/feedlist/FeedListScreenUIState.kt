@@ -5,5 +5,6 @@ import com.whereareyounow.domain.entity.feed.FeedListData
 
 data class FeedListScreenUIState(
     val feedListData: FeedListData,
-    val detailFeedData: FeedInfo?
+    val detailFeedData: FeedInfo?,
+    val selectedFeedMemberSeq: Int,
 )

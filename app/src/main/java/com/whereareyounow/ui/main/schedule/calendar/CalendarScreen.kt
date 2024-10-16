@@ -139,7 +139,7 @@ fun CalendarScreen(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(start = 20.dp, end = 11.dp)
+                    .padding(start = 20.dp, end = 15.dp)
                     .height(TOP_BAR_HEIGHT.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -420,7 +420,7 @@ fun CalendarScreen(
         }
 
         if (((dailyScheduleAnchoredDraggableState.anchors.maxAnchor()) - (dailyScheduleAnchoredDraggableState.offset)) /
-            ((dailyScheduleAnchoredDraggableState.anchors.maxAnchor()) - (dailyScheduleAnchoredDraggableState.anchors.minAnchor())) > 0.05f) {
+            ((dailyScheduleAnchoredDraggableState.anchors.maxAnchor()) - (dailyScheduleAnchoredDraggableState.anchors.minAnchor())) > 0.03f) {
             DimBackground(
                 anchoredDraggableState = dailyScheduleAnchoredDraggableState,
                 closeBottomDialog = {

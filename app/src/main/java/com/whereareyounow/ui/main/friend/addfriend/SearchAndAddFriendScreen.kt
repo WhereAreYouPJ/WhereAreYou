@@ -270,7 +270,7 @@ fun SearcedUserInfoContent(
             modifier = Modifier
                 .size(100.dp)
                 .clip(RoundedCornerShape(34.4.dp)),
-            imageModel = { imageUrl ?: R.drawable.ic_default_profile_image },
+            imageModel = { imageUrl ?: R.drawable.ic_profile },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop)
         )
         Gap(8)

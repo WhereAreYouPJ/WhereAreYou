@@ -37,7 +37,7 @@ fun NavGraphBuilder.mainScreenRoute(navController: NavController) = composable<R
             navController.navigate(ROUTE.Notification)
         },
         moveToMapScreen = {
-            navController.navigate(ROUTE.ScheduleMap)
+            navController.navigate(ROUTE.DetailScheduleMap(it))
         },
         moveToModifyInfoScreen = { navController.navigate(ROUTE_MODIFY_INFO) },
         moveToMyPageScreen = {

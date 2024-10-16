@@ -44,18 +44,17 @@ fun DetailFeedScreen(
     feedInfo: FeedInfo?
 ) {
     feedInfo?.let {
-        val selectedFeedIdx = remember { mutableIntStateOf(0) }
         LazyRow(
             contentPadding = PaddingValues(15.dp)
         ) {
-            itemsIndexed(feedInfo.feedInfo) { idx, item ->
+            itemsIndexed(feedInfo.userNameList) { idx, item ->
                 Row(
                     modifier = Modifier
                         .width(100.dp)
                         .height(34.dp)
                         .drawColoredShadow(
-                            shadowRadius = 2.dp,
-                            alpha = 0.15f,
+                            shadowRadius = 3.dp,
+                            alpha = 0.1f,
                             borderRadius = 16.dp
                         )
                         .clip(RoundedCornerShape(50))
@@ -77,14 +76,14 @@ fun DetailFeedScreen(
                             modifier = Modifier
                                 .size(26.dp)
                                 .clip(RoundedCornerShape(10.dp)),
-                            imageModel = { item.memberInfo.profileImage ?: R.drawable.ic_profile }
+                            imageModel = { R.drawable.ic_profile }
                         )
                     }
 
                     Spacer(Modifier.width(6.dp))
 
                     Text(
-                        text = item.memberInfo.userName
+                        text = item.userName
                     )
                 }
 

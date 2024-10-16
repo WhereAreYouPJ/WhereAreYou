@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,7 +59,6 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
-import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
@@ -70,18 +68,12 @@ import com.whereareyounow.util.popupmenu.PopupState
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun DetailScheduleMapScreen(
-    scheduleId: String,
-    destinationLatitude: Double,
-    destinationLongitude: Double,
-    passedMemberInfosList: List<MemberInfo>,
+    scheduleSeq: Int,
     viewModel: DetailScheduleMapViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
         viewModel.updateScheduleInfo(
-            scheduleId = scheduleId,
-            destinationLatitude = destinationLatitude,
-            destinationLongitude = destinationLongitude,
-            memberInfosList = passedMemberInfosList
+            scheduleSeq = scheduleSeq
         )
     }
 
@@ -92,7 +84,7 @@ fun DetailScheduleMapScreen(
         }
     }
 
-    val detailScheduleMapScreenUIState = viewModel.detailScheduleMapScreenUIState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
     val context = LocalContext.current
     val density = LocalDensity.current.density
     val locationServiceRequestLauncher = rememberLauncherForActivityResult(
@@ -109,23 +101,23 @@ fun DetailScheduleMapScreen(
 
     val cameraPositionState = rememberCameraPositionState {
         this.position = CameraPosition(
-            LatLng(destinationLatitude, destinationLongitude),
+            LatLng(uiState.x, uiState.y),
             NaverMapConstants.DefaultCameraPosition.zoom,
             0.0,
             0.0
         )
     }
     val popupState = remember { PopupState(false, PopupPosition.TopLeft) }
-//    LaunchedEffect(detailScheduleMapScreenUIState) {
-//        if (detailScheduleMapScreenUIState.memberInfosList.isNotEmpty()) {
-//            cameraPositionState.position = CameraPosition(
-//                LatLng(detailScheduleMapScreenUIState.memberInfosList[0].latitude ?: 0.0, detailScheduleMapScreenUIState.memberInfosList[0].longitude ?: 0.0),
-//                NaverMapConstants.DefaultCameraPosition.zoom,
-//                0.0,
-//                0.0
-//            )
-//        }
-//    }
+    LaunchedEffect(uiState.x) {
+        if (uiState.memberInfosList.isNotEmpty()) {
+            cameraPositionState.position = CameraPosition(
+                LatLng(uiState.memberInfosList[0].latitude ?: 0.0, uiState.memberInfosList[0].longitude ?: 0.0),
+                NaverMapConstants.DefaultCameraPosition.zoom,
+                0.0,
+                0.0
+            )
+        }
+    }
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(maxZoom = 20.0, minZoom = 5.0)
@@ -154,8 +146,8 @@ fun DetailScheduleMapScreen(
         ) {
             CircleOverlay(
                 center = LatLng(
-                    detailScheduleMapScreenUIState.destinationLatitude,
-                    detailScheduleMapScreenUIState.destinationLongitude
+                    uiState.x,
+                    uiState.y
                 ),
                 color = Color(0x22FF0000),
                 radius = 300.0
@@ -163,14 +155,14 @@ fun DetailScheduleMapScreen(
             Marker(
                 state = rememberMarkerState(
                     position = LatLng(
-                        detailScheduleMapScreenUIState.destinationLatitude,
-                        detailScheduleMapScreenUIState.destinationLongitude
+                        uiState.x,
+                        uiState.y
                     )
                 ),
                 icon = OverlayImage.fromResource(R.drawable.destination),
                 captionText = "목적지"
             )
-            for (info in detailScheduleMapScreenUIState.memberInfosList) {
+            for (info in uiState.memberInfosList) {
                 if (info.longitude != null && info.latitude != null) {
                     val state = rememberMarkerState(
                         position = LatLng(
@@ -268,8 +260,8 @@ fun DetailScheduleMapScreen(
                                     isUserListShowing = false
                                     cameraPositionState.position = CameraPosition(
                                         LatLng(
-                                            detailScheduleMapScreenUIState.destinationLatitude,
-                                            detailScheduleMapScreenUIState.destinationLongitude
+                                            uiState.x,
+                                            uiState.y
                                         ),
                                         NaverMapConstants.DefaultCameraPosition.zoom,
                                         0.0,
@@ -330,7 +322,7 @@ fun UserList(
     cameraPositionState: CameraPositionState,
     viewModel: DetailScheduleMapViewModel = hiltViewModel()
 ) {
-    val detailScheduleMapScreenUIState = viewModel.detailScheduleMapScreenUIState.collectAsState().value
+    val detailScheduleMapScreenUIState = viewModel.uiState.collectAsState().value
     val context = LocalContext.current
     Column(
         modifier = Modifier

@@ -303,7 +303,7 @@ fun NotificationScreen(
                         ) {
                             GlideImage(
                                 modifier = Modifier.size(64.dp),
-                                imageModel = { R.drawable.ic_profile }
+                                imageModel = { request.profileImage ?: R.drawable.ic_profile }
                             )
 
                             Spacer(Modifier.width(6.dp))
