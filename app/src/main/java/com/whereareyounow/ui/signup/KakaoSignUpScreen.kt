@@ -141,11 +141,7 @@ private fun KakaoSignUpScreen(
 
             Spacer(Modifier.weight(1f))
 
-            RoundedCornerButton(onClick = { checkEmailDuplicate(
-                "kakao",
-                moveToAccountDuplicateScreen,
-                moveToSignUpSuccessScreen
-            ) }) {
+            RoundedCornerButton(onClick = { kakaoSignUp() }) {
                 Text(
                     text = "시작하기",
                     color = Color(0xFFFFFFFF),

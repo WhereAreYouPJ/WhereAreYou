@@ -59,7 +59,7 @@ class SignUpViewModel @Inject constructor(
             it.copy(
                 inputUserName = name,
                 inputEmail = email,
-                inputPassword = "bmnv4a35d38x4jhz${email}qxidfmaia21cq1p3"
+                inputPassword = "bmnv4a35d38x4jhz${email.replace("@", "").replace(".", "")}qxidfmaia21cq1p3"
             )
         }
     }

@@ -173,37 +173,3 @@ class DetailScheduleViewModel @Inject constructor(
     }
 }
 
-fun Bitmap.getCircledBitmap(context: Context, size: Int): Bitmap {
-    val croppedBitmap =
-        if (this.width == this.height) {
-            this
-        } else if (this.width > this.height) {
-            val horizontalCenter = this.width / 2
-            val verticalCenter = this.height / 2
-            Bitmap.createBitmap(this, horizontalCenter - verticalCenter, 0, verticalCenter * 2, verticalCenter * 2)
-        } else {
-            val horizontalCenter = this.width / 2
-            val verticalCenter = this.height / 2
-            Bitmap.createBitmap(this, 0, verticalCenter - horizontalCenter, horizontalCenter * 2, horizontalCenter * 2)
-        }
-
-    val locationBackground = ContextCompat.getDrawable(context, R.drawable.location_background)!!
-    val backgroundOutput = Bitmap.createBitmap(size, ((size.toFloat() / locationBackground.intrinsicWidth) * locationBackground.intrinsicHeight).toInt(), Bitmap.Config.ARGB_8888)
-    val rect = Rect(0, 0, size, ((size.toFloat() / locationBackground.intrinsicWidth) * locationBackground.intrinsicHeight).toInt())
-    val mainCanvas = Canvas(backgroundOutput)
-    locationBackground.setBounds(0, 0, mainCanvas.width, mainCanvas.height)
-    locationBackground.draw(mainCanvas)
-
-    val resizedBitmap = Bitmap.createScaledBitmap(croppedBitmap, size, size, false)
-    val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(output)
-    val paint = Paint()
-    paint.isAntiAlias = true
-    canvas.drawARGB(0, 0, 0, 0)
-    canvas.drawCircle(size / 2f, size / 2f, (size - 10) / 2f, paint)
-    paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-    canvas.drawBitmap(resizedBitmap, rect, rect, paint)
-    mainCanvas.drawBitmap(output, rect, rect, null)
-
-    return backgroundOutput
-}

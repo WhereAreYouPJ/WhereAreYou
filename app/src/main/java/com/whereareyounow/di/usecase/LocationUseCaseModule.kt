@@ -5,6 +5,8 @@ import com.whereareyounow.domain.repository.SearchLocationRepository
 import com.whereareyounow.domain.usecase.location.SearchLocationAddressUseCase
 import com.whereareyounow.domain.usecase.location.DeleteFavoriteLocationUsecase
 import com.whereareyounow.domain.usecase.location.GetFavoriteLocationUseCase
+import com.whereareyounow.domain.usecase.location.GetUserLocationUseCase
+import com.whereareyounow.domain.usecase.location.SendUserLocationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,20 +17,20 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object LocationUseCaseModule {
 
-//    @Provides
-//    fun provideGetUserLocationUseCase(
-//        repository: LocationRepository
-//    ): GetUserLocationUseCase {
-//        return GetUserLocationUseCase(repository)
-//    }
-//
-//    @Provides
-//    fun provideSendUserLocationUseCase(
-//        repository: LocationRepository
-//    ): SendUserLocationUseCase {
-//        return SendUserLocationUseCase(repository)
-//    }
-//
+    @Provides
+    fun provideGetUserLocationUseCase(
+        repository: LocationRepository
+    ): GetUserLocationUseCase {
+        return GetUserLocationUseCase(repository)
+    }
+
+    @Provides
+    fun provideSendUserLocationUseCase(
+        repository: LocationRepository
+    ): SendUserLocationUseCase {
+        return SendUserLocationUseCase(repository)
+    }
+
     @Provides
     fun provideSearchLocationAddressUseCase(
         repository: SearchLocationRepository

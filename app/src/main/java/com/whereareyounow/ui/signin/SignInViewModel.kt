@@ -167,7 +167,7 @@ class SignInViewModel @Inject constructor(
     ) {
         val requestData = SignInRequest(
             email = email,
-            password = "bmnv4a35d38x4jhz${email}qxidfmaia21cq1p3",
+            password = "bmnv4a35d38x4jhz${email.replace("@", "").replace(".", "")}qxidfmaia21cq1p3",
             loginType = "kakao"
         )
         signInUseCase(requestData)

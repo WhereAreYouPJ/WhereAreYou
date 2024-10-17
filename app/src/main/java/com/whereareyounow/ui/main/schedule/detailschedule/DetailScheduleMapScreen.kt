@@ -59,6 +59,7 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
+import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.ui.theme.nanumSquareNeo
 import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
@@ -109,15 +110,18 @@ fun DetailScheduleMapScreen(
     }
     val popupState = remember { PopupState(false, PopupPosition.TopLeft) }
     LaunchedEffect(uiState.x) {
-        if (uiState.memberInfosList.isNotEmpty()) {
-            cameraPositionState.position = CameraPosition(
-                LatLng(uiState.memberInfosList[0].latitude ?: 0.0, uiState.memberInfosList[0].longitude ?: 0.0),
-                NaverMapConstants.DefaultCameraPosition.zoom,
-                0.0,
-                0.0
-            )
-        }
+        cameraPositionState.position = CameraPosition(
+            LatLng(
+                uiState.x,
+                uiState.y
+            ),
+//                LatLng(uiState.memberInfosList[0].latitude ?: 0.0, uiState.memberInfosList[0].longitude ?: 0.0),
+            NaverMapConstants.DefaultCameraPosition.zoom,
+            0.0,
+            0.0
+        )
     }
+    LogUtil.e("", "${uiState.x}, ${uiState.y}")
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(maxZoom = 20.0, minZoom = 5.0)
@@ -158,30 +162,35 @@ fun DetailScheduleMapScreen(
                         uiState.x,
                         uiState.y
                     )
-                ),
+                ).apply {
+                    position = LatLng(
+                        uiState.x,
+                        uiState.y
+                    )
+                },
                 icon = OverlayImage.fromResource(R.drawable.destination),
                 captionText = "목적지"
             )
-            for (info in uiState.memberInfosList) {
-                if (info.longitude != null && info.latitude != null) {
+            for (userLocation in uiState.memberLocationList) {
+                if (userLocation.x != null && userLocation.x != null) {
                     val state = rememberMarkerState(
                         position = LatLng(
-                            info.latitude!!,
-                            info.longitude!!
+                            userLocation.x!!,
+                            userLocation.y!!
                         )
                     ).apply {
-                        position = LatLng(info.latitude!!, info.longitude!!)
+                        position = LatLng(userLocation.x!!, userLocation.y!!)
                     }
                     Marker(
                         state = state,
-                        icon = when (info.imageBitmap != null) {
-                            true -> OverlayImage.fromBitmap(info.imageBitmap!!)
+                        icon = when (userLocation.profileImage != null) {
+                            true -> OverlayImage.fromBitmap(userLocation.profileImage!!)
                             false -> OverlayImage.fromBitmap(
                                 BitmapFactory.decodeResource(context.resources, R.drawable.idle_profile)
                                     .getCircledBitmap(context.applicationContext, (context.resources.displayMetrics.density * 40).toInt())
                             )
                         },
-                        captionText = "${info.name}"
+                        captionText = "${userLocation.userName}"
                     )
                 }
             }
@@ -237,77 +246,77 @@ fun DetailScheduleMapScreen(
 
                 Spacer(Modifier.weight(1f))
 
-                Box {
-                    Row(
-                        modifier = Modifier
-                            .width(150.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(Color(0xFFFFD97E))
-                    ) {
-                        CustomPopup(
-                            popupState = popupState,
-                            onDismissRequest = { popupState.isVisible = false }
-                        ) {
-                            CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
-                                UserList(cameraPositionState)
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .clickableNoEffect {
-                                    isUserListShowing = false
-                                    cameraPositionState.position = CameraPosition(
-                                        LatLng(
-                                            uiState.x,
-                                            uiState.y
-                                        ),
-                                        NaverMapConstants.DefaultCameraPosition.zoom,
-                                        0.0,
-                                        0.0
-                                    )
-                                }
-                                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "목적지",
-                                fontSize = 14.sp,
-                                fontFamily = nanumSquareNeo,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF463119),
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .width(0.5.dp)
-                                .fillMaxHeight()
-                                .background(Color(0xFF000000))
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .clickableNoEffect {
-//                                    isUserListShowing = !isUserListShowing
-                                    popupState.isVisible = true
-                                }
-                                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "멤버",
-                                fontSize = 14.sp,
-                                fontFamily = nanumSquareNeo,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF463119),
-                            )
-                        }
-                    }
-                }
+//                Box {
+//                    Row(
+//                        modifier = Modifier
+//                            .width(150.dp)
+//                            .clip(RoundedCornerShape(50))
+//                            .background(Color(0xFFFFD97E))
+//                    ) {
+//                        CustomPopup(
+//                            popupState = popupState,
+//                            onDismissRequest = { popupState.isVisible = false }
+//                        ) {
+//                            CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+//                                UserList(cameraPositionState)
+//                            }
+//                        }
+//                        Box(
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .fillMaxHeight()
+//                                .clickableNoEffect {
+//                                    isUserListShowing = false
+//                                    cameraPositionState.position = CameraPosition(
+//                                        LatLng(
+//                                            uiState.x,
+//                                            uiState.y
+//                                        ),
+//                                        NaverMapConstants.DefaultCameraPosition.zoom,
+//                                        0.0,
+//                                        0.0
+//                                    )
+//                                }
+//                                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text(
+//                                text = "목적지",
+//                                fontSize = 14.sp,
+//                                fontFamily = nanumSquareNeo,
+//                                fontWeight = FontWeight.Bold,
+//                                color = Color(0xFF463119),
+//                            )
+//                        }
+//
+//                        Box(
+//                            modifier = Modifier
+//                                .width(0.5.dp)
+//                                .fillMaxHeight()
+//                                .background(Color(0xFF000000))
+//                        )
+//
+//                        Box(
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .fillMaxHeight()
+//                                .clickableNoEffect {
+////                                    isUserListShowing = !isUserListShowing
+//                                    popupState.isVisible = true
+//                                }
+//                                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text(
+//                                text = "멤버",
+//                                fontSize = 14.sp,
+//                                fontFamily = nanumSquareNeo,
+//                                fontWeight = FontWeight.Bold,
+//                                color = Color(0xFF463119),
+//                            )
+//                        }
+//                    }
+//                }
             }
         }
 //        if (isUserListShowing) {
@@ -317,75 +326,75 @@ fun DetailScheduleMapScreen(
 }
 
 
-@Composable
-fun UserList(
-    cameraPositionState: CameraPositionState,
-    viewModel: DetailScheduleMapViewModel = hiltViewModel()
-) {
-    val detailScheduleMapScreenUIState = viewModel.uiState.collectAsState().value
-    val context = LocalContext.current
-    Column(
-        modifier = Modifier
-            .width(200.dp)
-            .height(300.dp)
-            .background(
-                color = Color(0xFFFFFFFF),
-                shape = RoundedCornerShape(10.dp)
-            )
-    ) {
-        Text(
-            modifier = Modifier.padding(start = 20.dp, top = 20.dp),
-            text = "멤버",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(Modifier.height(20.dp))
-        LazyColumn {
-            itemsIndexed(detailScheduleMapScreenUIState.memberInfosList) { _, memberInfo ->
-                Row(
-                    modifier = Modifier
-                        .clickableNoEffect {
-                            if (memberInfo.latitude != null && memberInfo.longitude != null) {
-                                cameraPositionState.position = CameraPosition(
-                                    LatLng(memberInfo.latitude!!, memberInfo.longitude!!),
-                                    NaverMapConstants.DefaultCameraPosition.zoom,
-                                    0.0,
-                                    0.0
-                                )
-                            } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "${memberInfo.name}의 위치가 존재하지 않습니다.",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                            }
-                        }
-                        .padding(start = 20.dp, top = 10.dp, bottom = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    GlideImage(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .size(30.dp),
-                        imageModel = { memberInfo.profileImage ?: R.drawable.idle_profile },
-                        imageOptions = ImageOptions(contentScale = ContentScale.FillHeight)
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = memberInfo.name,
-                        fontSize = 18.sp,
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height((0.6).dp)
-                        .background(color = Color(0xFFC2C2C2))
-                )
-            }
-        }
-    }
-}
+//@Composable
+//fun UserList(
+//    cameraPositionState: CameraPositionState,
+//    viewModel: DetailScheduleMapViewModel = hiltViewModel()
+//) {
+//    val detailScheduleMapScreenUIState = viewModel.uiState.collectAsState().value
+//    val context = LocalContext.current
+//    Column(
+//        modifier = Modifier
+//            .width(200.dp)
+//            .height(300.dp)
+//            .background(
+//                color = Color(0xFFFFFFFF),
+//                shape = RoundedCornerShape(10.dp)
+//            )
+//    ) {
+//        Text(
+//            modifier = Modifier.padding(start = 20.dp, top = 20.dp),
+//            text = "멤버",
+//            fontSize = 20.sp,
+//            fontWeight = FontWeight.Bold,
+//        )
+//        Spacer(Modifier.height(20.dp))
+//        LazyColumn {
+//            itemsIndexed(detailScheduleMapScreenUIState.memberLocationList) { _, memberInfo ->
+//                Row(
+//                    modifier = Modifier
+//                        .clickableNoEffect {
+//                            if (memberInfo.latitude != null && memberInfo.longitude != null) {
+//                                cameraPositionState.position = CameraPosition(
+//                                    LatLng(memberInfo.latitude!!, memberInfo.longitude!!),
+//                                    NaverMapConstants.DefaultCameraPosition.zoom,
+//                                    0.0,
+//                                    0.0
+//                                )
+//                            } else {
+//                                Toast
+//                                    .makeText(
+//                                        context,
+//                                        "${memberInfo.name}의 위치가 존재하지 않습니다.",
+//                                        Toast.LENGTH_SHORT
+//                                    )
+//                                    .show()
+//                            }
+//                        }
+//                        .padding(start = 20.dp, top = 10.dp, bottom = 10.dp)
+//                        .fillMaxWidth(),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    GlideImage(
+//                        modifier = Modifier
+//                            .clip(RoundedCornerShape(50))
+//                            .size(30.dp),
+//                        imageModel = { memberInfo.profileImage ?: R.drawable.idle_profile },
+//                        imageOptions = ImageOptions(contentScale = ContentScale.FillHeight)
+//                    )
+//                    Spacer(Modifier.width(10.dp))
+//                    Text(
+//                        text = memberInfo.name,
+//                        fontSize = 18.sp,
+//                    )
+//                }
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height((0.6).dp)
+//                        .background(color = Color(0xFFC2C2C2))
+//                )
+//            }
+//        }
+//    }
+//}
