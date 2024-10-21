@@ -64,7 +64,7 @@ fun CustomTextField(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(42.dp)
+                    .height(44.dp)
                     .border(
                         border = when (textFieldState) {
                             CustomTextFieldState.Unsatisfied -> {

@@ -20,9 +20,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,13 +38,15 @@ import com.whereareyounow.util.drawColoredShadow
 
 @Composable
 fun DetailFeedScreen(
-    feedInfo: FeedInfo?
+    feedInfo: FeedInfo?,
+    selectedFeedMemberSeq: Int,
+    updateSelectedMemberSeq: (Int) -> Unit,
 ) {
     feedInfo?.let {
         LazyRow(
             contentPadding = PaddingValues(15.dp)
         ) {
-            itemsIndexed(feedInfo.userNameList) { idx, item ->
+            itemsIndexed(feedInfo.memberInfoList) { idx, item ->
                 Row(
                     modifier = Modifier
                         .width(100.dp)
@@ -61,11 +60,12 @@ fun DetailFeedScreen(
                         .border(
                             border = BorderStroke(
                                 width = (1.6).dp,
-                                color = if (idx == 0) getColor().brandSubColor else getColor().thin
+                                color = if (idx == selectedFeedMemberSeq) getColor().brandSubColor else getColor().thin
                             ),
                             shape = RoundedCornerShape(50)
                         )
-                        .background(Color.White),
+                        .background(Color.White)
+                        .clickableNoEffect { updateSelectedMemberSeq(idx) },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -113,8 +113,8 @@ fun DetailFeedScreen(
                         .size(50.dp)
                         .clip(RoundedCornerShape(14.dp)),
                     imageModel = {
-                        if (it.feedInfo[0].memberInfo.profileImage.isNullOrEmpty()) R.drawable.ic_profile
-                        else it.feedInfo[0].memberInfo.profileImage
+                        if (it.feedInfo[selectedFeedMemberSeq].memberInfo.profileImage.isNullOrEmpty()) R.drawable.ic_profile
+                        else it.feedInfo[selectedFeedMemberSeq].memberInfo.profileImage
                     }
                 )
                 Column {
@@ -135,7 +135,7 @@ fun DetailFeedScreen(
                     }
                     Text(
                         modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 4.dp),
-                        text = it.feedInfo[0].feedInfo.title,
+                        text = it.feedInfo[selectedFeedMemberSeq].feedInfo.title,
                         color = Color(0xFF222222),
                         style = medium16pt
                     )
@@ -144,7 +144,7 @@ fun DetailFeedScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            FeedImagePager(imageList = it.feedInfo[0].feedImageInfos.map { it.feedImageUrl })
+            FeedImagePager(imageList = it.feedInfo[selectedFeedMemberSeq].feedImageInfos.map { it.feedImageUrl })
 
             Spacer(Modifier.height(6.dp))
 
@@ -153,7 +153,7 @@ fun DetailFeedScreen(
 
                 Image(
                     modifier = Modifier.size(30.dp),
-                    painter = painterResource(if (it.feedInfo[0].bookmarkInfo) R.drawable.ic_bookmark_filled_brandcolor else R.drawable.ic_bookmark_outlined_black),
+                    painter = painterResource(if (it.feedInfo[selectedFeedMemberSeq].bookmarkInfo) R.drawable.ic_bookmark_filled_brandcolor else R.drawable.ic_bookmark_outlined_black),
                     contentDescription = null
                 )
             }
@@ -171,7 +171,7 @@ fun DetailFeedScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(10.dp),
-                    text = it.feedInfo[0].feedInfo.content,
+                    text = it.feedInfo[selectedFeedMemberSeq].feedInfo.content,
                     color = Color(0xFF666666),
                     style = medium14pt
                 )

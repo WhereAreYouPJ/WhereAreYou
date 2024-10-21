@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,7 +37,7 @@ import com.whereareyounow.data.globalvalue.BOTTOM_NAVIGATION_BAR_HEIGHT
 import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.main.friend.FriendScreen
 import com.whereareyounow.ui.main.home.HomeScreen
-import com.whereareyounow.ui.main.mypage.myinfo.MyPageScreen
+import com.whereareyounow.ui.main.mypage.MyPageScreen
 import com.whereareyounow.ui.main.schedule.calendar.CalendarViewModel
 import com.whereareyounow.ui.main.schedule.calendar.CalendarScreen
 import com.whereareyounow.ui.theme.OnMyWayTheme
@@ -61,7 +59,7 @@ fun MainScreen(
     moveToModifyInfoScreen: () -> Unit,
     moveToMyPageScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorite : () -> Unit,
+    moveToFavoriteLocationScreen : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
     moveToFeedSaved : () -> Unit,
     moveToAccoument : () -> Unit,
@@ -92,7 +90,7 @@ fun MainScreen(
 
         // 새로 추가 된 것 일 : { "내 정보 관리" , "위치 즐겨찾기" , "피드 책갈피" , "피드 보관함" }
         moveToMyInfoScreen = moveToMyInfoScreen,
-        moveToLocationFavorite = moveToLocationFavorite,
+        moveToFavoriteLocationScreen = moveToFavoriteLocationScreen,
         moveToFeedBookmarks = moveToFeedBookmarks,
         moveToFeedSaved = moveToFeedSaved,
 
@@ -124,7 +122,7 @@ private fun MainScreen(
     moveToMyPageScreen: () -> Unit,
     moveToDetailProfileScreen : (String, String) -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorite : () -> Unit,
+    moveToFavoriteLocationScreen : () -> Unit,
     moveToFeedBookmarks : () -> Unit,
     moveToFeedSaved : () -> Unit,
     moveToAccoument : () -> Unit,
@@ -166,7 +164,7 @@ private fun MainScreen(
                         customSurfaceState = it,
                         moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
                         moveToMyInfoScreen = moveToMyInfoScreen,
-                        moveToLocationFavorite = moveToLocationFavorite,
+                        moveToFavoriteLocationScreen = moveToFavoriteLocationScreen,
                         moveToFeedBookmarks = moveToFeedBookmarks,
                         moveToFeedSaved = moveToFeedSaved,
                         moveToAccoument = moveToAccoument,

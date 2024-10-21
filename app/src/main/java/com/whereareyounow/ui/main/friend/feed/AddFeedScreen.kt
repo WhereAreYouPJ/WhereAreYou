@@ -92,13 +92,6 @@ fun AddFeedScreen(
             onBackButtonClicked = moveToBackScreen
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color(0xFFC9C9C9))
-        )
-
         ScrollableContent(
             modifier = Modifier.fillMaxSize(),
             content = {

@@ -48,7 +48,7 @@ interface MemberApi {
         @Body body: SignUpRequest
     ): Response<ResponseWrapper<String>>
 
-    // 소셜 로그인
+    // 소셜 회원가입
     @POST("member/sns")
     suspend fun snsSignUp(
         @Body body: SnsSignUpRequest

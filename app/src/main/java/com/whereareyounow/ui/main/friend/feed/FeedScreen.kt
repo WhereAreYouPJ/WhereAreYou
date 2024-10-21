@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skydoves.landscapist.glide.GlideImage
@@ -37,11 +38,15 @@ import com.whereareyounow.R
 import com.whereareyounow.data.feedlist.FeedListScreenUIState
 import com.whereareyounow.ui.main.friend.feed.component.DetailFeedScreen
 import com.whereareyounow.ui.main.friend.feed.component.FeedImagePager
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
 import com.whereareyounow.util.calendar.parseLocalDate
 import com.whereareyounow.util.clickableNoEffect
+import com.whereareyounow.util.popupmenu.CustomPopup
+import com.whereareyounow.util.popupmenu.PopupPosition
+import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
 fun FeedScreen(
@@ -56,6 +61,7 @@ fun FeedScreen(
         getDetailFeed = viewModel::getDetailFeed,
         bookmarkFeed = viewModel::bookmarkFeed,
         deleteFeedBookmark = viewModel::deleteBookmarkFeed,
+        updateSelectedMemberSeq = viewModel::updateSelectedMemberSeq,
         isContent = true
     )
 }
@@ -66,9 +72,11 @@ private fun FeedListScreen(
     getDetailFeed: (Int, Int) -> Unit,
     bookmarkFeed: (Int) -> Unit,
     deleteFeedBookmark: (Int) -> Unit,
+    updateSelectedMemberSeq: (Int) -> Unit,
     isContent: Boolean
 ) {
     val isDetailContent = remember { mutableStateOf(false) }
+    val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
     BackHandler(
         enabled = isDetailContent.value
     ) {
@@ -184,12 +192,93 @@ private fun FeedListScreen(
                                             style = medium14pt
                                         )
                                     }
-                                    Text(
-                                        modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 4.dp),
-                                        text = item.feedInfo[0].feedInfo.title,
-                                        color = Color(0xFF222222),
-                                        style = medium16pt
-                                    )
+
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.padding(start = 6.dp, end = 6.dp, bottom = 4.dp),
+                                            text = item.feedInfo[0].feedInfo.title,
+                                            color = Color(0xFF222222),
+                                            style = medium16pt
+                                        )
+
+                                        Spacer(Modifier.weight(1f))
+
+                                        Box {
+                                            Image(
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                                    .clickableNoEffect {
+                                                        popupState.isVisible = true
+                                                    },
+                                                painter = painterResource(R.drawable.ic_vertical_three_dot),
+                                                contentDescription = null
+                                            )
+
+                                            CustomPopup(
+                                                popupState = popupState,
+                                                onDismissRequest = { popupState.isVisible = false }
+                                            ) {
+                                                OnMyWayTheme {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .width(160.dp)
+                                                            .height(100.dp)
+                                                            .clip(RoundedCornerShape(10.dp))
+                                                            .background(color = Color(0xFF7262A8)),
+                                                        contentAlignment = Alignment.Center
+                                                    ) {
+                                                        Column {
+                                                            Text(
+                                                                modifier = Modifier
+                                                                    .height(30.dp)
+                                                                    .clickableNoEffect {  }
+                                                                    .padding(start = 14.dp, top = 4.dp),
+                                                                text = "피드 삭제",
+                                                                color = Color(0xFFFFFFFF),
+                                                                style = medium14pt
+                                                            )
+
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .background(Color(0xFF7262A8))
+                                                                    .height(1.dp)
+                                                                    .fillMaxWidth()
+                                                            )
+
+                                                            Text(
+                                                                modifier = Modifier
+                                                                    .height(30.dp)
+                                                                    .clickableNoEffect {  }
+                                                                    .padding(start = 14.dp, top = 4.dp),
+                                                                text = "피드 수정",
+                                                                color = Color(0xFFFFFFFF),
+                                                                style = medium14pt
+                                                            )
+
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .background(Color(0xFF7262A8))
+                                                                    .height(1.dp)
+                                                                    .fillMaxWidth()
+                                                            )
+
+                                                            Text(
+                                                                modifier = Modifier
+                                                                    .height(30.dp)
+                                                                    .clickableNoEffect {  }
+                                                                    .padding(start = 14.dp, top = 4.dp),
+                                                                text = "피드 숨김",
+                                                                color = Color(0xFFFFFFFF),
+                                                                style = medium14pt
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -244,6 +333,10 @@ private fun FeedListScreen(
             }
         }
     } else {
-        DetailFeedScreen(uiState.detailFeedData)
+        DetailFeedScreen(
+            feedInfo = uiState.detailFeedData,
+            selectedFeedMemberSeq = uiState.selectedFeedMemberSeq,
+            updateSelectedMemberSeq = updateSelectedMemberSeq
+        )
     }
 }

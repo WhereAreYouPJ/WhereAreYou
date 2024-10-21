@@ -67,7 +67,7 @@ private fun ByeScreen1(
 
 ) {
     val viewModel: MyPageViewModel = hiltViewModel()
-    val myName = viewModel.name.collectAsState().value
+    val myName = ""
     val canMove = remember {
         mutableStateOf(false)
     }

@@ -50,7 +50,7 @@ class ScheduleRepositoryImpl(
 
     override suspend fun acceptScheduleRequest(
         data: AcceptScheduleInvitationRequest
-    ): NetworkResult<Unit> {
+    ): NetworkResult<String> {
         return handleResult { scheduleApi.acceptScheduleRequest(body = data) }
     }
 

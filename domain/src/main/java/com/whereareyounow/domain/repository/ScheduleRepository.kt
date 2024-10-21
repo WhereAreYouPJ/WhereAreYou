@@ -36,7 +36,7 @@ interface ScheduleRepository {
 
     suspend fun acceptScheduleRequest(
         data: AcceptScheduleInvitationRequest
-    ): NetworkResult<Unit>
+    ): NetworkResult<String>
 
     suspend fun getMonthlySchedule(
         data: GetMonthlyScheduleRequest

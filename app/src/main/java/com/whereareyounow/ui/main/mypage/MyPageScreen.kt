@@ -1,8 +1,7 @@
-package com.whereareyounow.ui.main.mypage.myinfo
+package com.whereareyounow.ui.main.mypage
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,11 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
@@ -44,8 +39,6 @@ import com.whereareyounow.R
 import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.ui.component.CustomSurfaceState
 import com.whereareyounow.ui.component.HorizontalDivider
-import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
@@ -59,7 +52,7 @@ fun MyPageScreen(
     customSurfaceState: CustomSurfaceState,
     moveToSignInMethodSelectionScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorite: () -> Unit,
+    moveToFavoriteLocationScreen: () -> Unit,
     moveToFeedBookmarks: () -> Unit,
     moveToFeedSaved: () -> Unit,
     moveToAccoument: () -> Unit,
@@ -75,56 +68,31 @@ fun MyPageScreen(
         }
     }
 
-    val name = viewModel.name.collectAsState().value
-    val email = viewModel.email.collectAsState().value
-    val profileImageUri = viewModel.profileImageUri.collectAsState().value
-    val testst = AuthData.memberSeq
-
     MyPageScreen(
-        name = name!!,
-        email = email!!,
-        profileImageUri = profileImageUri,
-        getMyInfo = viewModel::getMyInfo,
         signOut = viewModel::signOut,
-        deleteCalendar = viewModel::deleteCalendar,
-        withdrawAccount = viewModel::withdrawAccount,
         moveToSignInMethodSelectionScreen = moveToSignInMethodSelectionScreen,
         moveToMyInfoScreen = moveToMyInfoScreen,
-        moveToLocationFavorite = moveToLocationFavorite,
-        moveToFeedBookmarks = moveToFeedBookmarks,
-        moveToFeedSaved = moveToFeedSaved,
-        moveToAccoument = moveToAccoument,
-        moveToAsk = moveToAsk,
-        moveToBye = moveToBye
+        moveToFavoriteLocationScreen = moveToFavoriteLocationScreen,
+        moveToBookmarkedFeedScreen = moveToFeedBookmarks,
+        moveToNoticeScreen = moveToAccoument,
+        moveToContactScreen = moveToAsk,
+        moveToWithdrawalScreen = moveToBye
     )
 }
 
 @Composable
 private fun MyPageScreen(
-    name: String,
-    email: String,
-    profileImageUri: String?,
-    getMyInfo: (memberSeq: Int) -> Unit,
     signOut: (() -> Unit) -> Unit,
-    deleteCalendar: () -> Unit,
-    withdrawAccount: (() -> Unit) -> Unit,
     moveToSignInMethodSelectionScreen: () -> Unit,
     moveToMyInfoScreen: () -> Unit,
-    moveToLocationFavorite: () -> Unit,
-    moveToFeedBookmarks: () -> Unit,
-    moveToFeedSaved: () -> Unit,
-    moveToAccoument: () -> Unit,
-    moveToAsk: () -> Unit,
-    moveToBye: () -> Unit
+    moveToFavoriteLocationScreen: () -> Unit,
+    moveToBookmarkedFeedScreen: () -> Unit,
+    moveToNoticeScreen: () -> Unit,
+    moveToContactScreen: () -> Unit,
+    moveToWithdrawalScreen: () -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        getMyInfo(AuthData.memberSeq)
-    }
-    val density = LocalDensity.current.density
     val isWarningDialogShowing = remember { mutableStateOf(false) }
     val isPhotoDialogShowing = remember { mutableStateOf(false) }
-    val isProfileClicked = remember { mutableStateOf(false) }
-    val clickedIndication = remember { MutableInteractionSource() }
 
     Box(
         modifier = Modifier
@@ -158,7 +126,7 @@ private fun MyPageScreen(
                             .clickableNoEffect {
                                 isPhotoDialogShowing.value = true
                             },
-                        imageModel = { profileImageUri ?: R.drawable.ic_profile },
+                        imageModel = { AuthData.profileImage ?: R.drawable.ic_profile },
                         imageOptions = ImageOptions(contentScale = ContentScale.Crop)
                     )
 
@@ -175,7 +143,7 @@ private fun MyPageScreen(
                 Spacer(Modifier.height(10.dp))
 
                 Text(
-                    text = name,
+                    text = AuthData.userName,
                     style = medium20pt,
                     color = Color(0xFFFFFFFF),
                 )
@@ -245,7 +213,7 @@ private fun MyPageScreen(
                     .background(
                         color = Color(0xFFFFFFFF),
                     )
-                    .clickableNoEffect { moveToLocationFavorite() },
+                    .clickableNoEffect { moveToFavoriteLocationScreen() },
                 contentAlignment = Alignment.BottomStart
             ) {
                 Text(
@@ -265,7 +233,7 @@ private fun MyPageScreen(
                     .background(
                         color = Color(0xFFFFFFFF),
                     )
-                    .clickableNoEffect { moveToFeedBookmarks() },
+                    .clickableNoEffect { moveToBookmarkedFeedScreen() },
                 contentAlignment = Alignment.BottomStart
             ) {
                 Text(
@@ -291,7 +259,7 @@ private fun MyPageScreen(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 14.dp, top = 12.dp),
-                    text = "내 정보 관리",
+                    text = "피드 보관함",
                     color = Color(0xFF222222),
                     style = medium16pt
                 )
@@ -308,7 +276,7 @@ private fun MyPageScreen(
                         color = Color(0xFFFFFFFF),
                         shape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp)
                     )
-                    .clickableNoEffect { moveToAccoument() },
+                    .clickableNoEffect { moveToNoticeScreen() },
                 contentAlignment = Alignment.BottomStart
             ) {
                 Text(
@@ -329,12 +297,12 @@ private fun MyPageScreen(
                         color = Color(0xFFFFFFFF),
                         shape = RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp)
                     )
-                    .clickableNoEffect { moveToAsk() },
+                    .clickableNoEffect { moveToContactScreen() },
                 contentAlignment = Alignment.TopStart
             ) {
                 Text(
                     modifier = Modifier.padding(start = 14.dp, top = 12.dp),
-                    text = "내 정보 관리",
+                    text = "1:1 이용문의",
                     color = Color(0xFF222222),
                     style = medium16pt
                 )
@@ -376,7 +344,7 @@ private fun MyPageScreen(
                     modifier = Modifier
                         .width(64.dp)
                         .height(28.dp)
-                        .clickableNoEffect { moveToBye() },
+                        .clickableNoEffect { moveToWithdrawalScreen() },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

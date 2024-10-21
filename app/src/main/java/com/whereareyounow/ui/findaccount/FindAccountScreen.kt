@@ -56,8 +56,6 @@ private fun FindAccountScreen(
                 onBackButtonClicked = moveToBackScreen
             )
 
-            HorizontalDivider()
-
             Spacer(Modifier.height(34.dp))
 
             Column(

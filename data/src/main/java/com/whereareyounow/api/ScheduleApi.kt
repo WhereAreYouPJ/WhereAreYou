@@ -46,7 +46,7 @@ interface ScheduleApi {
     @POST("schedule/accept")
     suspend fun acceptScheduleRequest(
         @Body body: AcceptScheduleInvitationRequest
-    ): Response<ResponseWrapper<Unit>>
+    ): Response<ResponseWrapper<String>>
 
     // 월별 일정 조회
     @GET("schedule/month")

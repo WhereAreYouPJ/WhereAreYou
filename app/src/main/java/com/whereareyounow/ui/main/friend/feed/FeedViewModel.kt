@@ -7,6 +7,7 @@ import com.whereareyounow.data.feedlist.FeedListScreenUIState
 import com.whereareyounow.domain.entity.feed.FeedListData
 import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.feed.DeleteFeedBookmarkRequest
+import com.whereareyounow.domain.request.feed.DeleteFeedRequest
 import com.whereareyounow.domain.request.feed.GetDetailFeedRequest
 import com.whereareyounow.domain.request.feed.GetFeedListRequest
 import com.whereareyounow.domain.usecase.feed.BookmarkFeedUseCase
@@ -90,9 +91,17 @@ class FeedViewModel @Inject constructor(
             .onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
                     data?.let {
+                        val newMemberList = data.memberInfoList.sortedWith(
+                            compareBy(
+                                { !data.feedInfo.map { it.memberInfo.memberSeq }.contains(it.memberSeq) },
+                                { it.memberSeq != AuthData.memberSeq },
+                            )
+                        )
                         _uiState.update {
                             it.copy(
-                                detailFeedData = data
+                                detailFeedData = data.copy(
+                                    memberInfoList = newMemberList
+                                )
                             )
                         }
                     }
@@ -180,6 +189,21 @@ class FeedViewModel @Inject constructor(
             }
             .catch {  }
             .launchIn(viewModelScope)
+    }
+
+    fun deleteFeed(feedSeq: Int) {
+        val requestData = DeleteFeedRequest(
+            memberSeq = AuthData.memberSeq,
+            feedSeq = feedSeq
+        )
+    }
+
+    fun updateSelectedMemberSeq(memberSeq: Int) {
+        _uiState.update {
+            it.copy(
+                selectedFeedMemberSeq = memberSeq
+            )
+        }
     }
 
     init {

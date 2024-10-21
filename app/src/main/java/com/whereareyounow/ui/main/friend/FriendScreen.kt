@@ -44,6 +44,7 @@ import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
 import com.whereareyounow.ui.main.friend.feed.FeedScreen
 import com.whereareyounow.ui.main.friend.model.FriendModel
 import com.whereareyounow.ui.main.mypage.byebye.Gap
+import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium20pt
@@ -227,8 +228,8 @@ fun FriendScreenTopBar(
             modifier = Modifier
                 .size(34.dp)
                 .clickableNoEffect {
-                popupState.isVisible = true
-            },
+                    popupState.isVisible = true
+                },
             painter = painterResource(id = R.drawable.ic_plusbrandcolor),
             contentDescription = null,
         )
@@ -295,52 +296,45 @@ fun AddIconPopUp(
                 popupState.isVisible = false
             }
         ) {
-            CompositionLocalProvider(LocalDensity provides Density(density, fontScale = 1f)) {
+            OnMyWayTheme {
                 Box(
                     modifier = Modifier
                         .width(160.dp)
-                        .height((if (isFriendPage) 68 else 34).dp)
+                        .height((if (isFriendPage) 68 else 38).dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(color = Color(0xFF7262A8))
+                        .background(color = Color(0xFF7262A8)),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.Start
-                    ) {
+                    Column {
                         if (isFriendPage) {
                             Text(
                                 modifier = Modifier
-                                    .padding(
-                                        start = 14.dp,
-                                        top = 8.dp,
-                                        bottom = 6.dp
-                                    )
-                                    .clickable {
+                                    .height(30.dp)
+                                    .clickableNoEffect {
                                         popupState.isVisible = false
                                         moveToAddFriendScreen()
-                                    },
+                                    }
+                                    .padding(start = 14.dp, top = 4.dp),
                                 text = "친구 추가",
                                 style = medium14pt,
                                 color = Color.White
                             )
+
                             Box(
                                 modifier = Modifier
-                                    .background(Color.Gray)
+                                    .background(Color(0xFF7262A8))
                                     .height(1.dp)
                                     .fillMaxWidth()
                             )
+
                             Text(
                                 modifier = Modifier
-                                    .padding(
-                                        start = 14.dp,
-                                        bottom = 10.dp,
-                                        top = 4.dp
-                                    )
-                                    .clickable {
+                                    .height(30.dp)
+                                    .clickableNoEffect {
                                         popupState.isVisible = false
                                         moveToAddGroupScreen()
-                                    },
+                                    }
+                                    .padding(start = 14.dp, top = 4.dp),
                                 text = "친구 관리",
                                 style = medium14pt,
                                 color = Color.White
@@ -348,15 +342,12 @@ fun AddIconPopUp(
                         } else {
                             Text(
                                 modifier = Modifier
-                                    .padding(
-                                        start = 14.dp,
-                                        top = 8.dp,
-                                        bottom = 6.dp
-                                    )
-                                    .clickable {
+                                    .height(30.dp)
+                                    .clickableNoEffect {
                                         popupState.isVisible = false
                                         moveToAddFeedScreen()
-                                    },
+                                    }
+                                    .padding(start = 14.dp, top = 4.dp),
                                 text = "새 피드 작성",
                                 style = medium14pt,
                                 color = Color.White

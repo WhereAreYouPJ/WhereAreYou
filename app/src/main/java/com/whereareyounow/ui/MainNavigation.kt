@@ -1,7 +1,5 @@
 package com.whereareyounow.ui
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,12 +10,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.whereareyounow.data.detailschedule.MemberInfo
 import com.whereareyounow.data.globalvalue.ROUTE
 import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_PROFILE
-import com.whereareyounow.data.globalvalue.ROUTE_DETAIL_SCHEDULE_MAP
 import com.whereareyounow.data.globalvalue.ROUTE_MODIFY_INFO
-import com.whereareyounow.data.globalvalue.ROUTE_MY_INFO
 import com.whereareyounow.ui.main.friend.DetailProfileScreen
 import com.whereareyounow.ui.main.mypage.InfoModificationScreen
 import com.whereareyounow.ui.main.mypage.announcement.AdminImageScreen
@@ -29,15 +24,13 @@ import com.whereareyounow.ui.main.mypage.byebye.ByeScreen3
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen4
 import com.whereareyounow.ui.main.mypage.byebye.ByeScreen5
 import com.whereareyounow.ui.main.mypage.location.EditLocationFavoriteScreen
-import com.whereareyounow.ui.main.mypage.location.LocationFavoriteScreen
-import com.whereareyounow.ui.main.mypage.myinfo.EditMyInfoScreen
-import com.whereareyounow.ui.main.mypage.myinfo.MyInfoScreen
-import com.whereareyounow.ui.main.schedule.detailschedule.DetailScheduleMapScreen
+import com.whereareyounow.ui.main.mypage.location.FavoriteLocationScreen
 import com.whereareyounow.ui.navigation.accountDuplicateScreenRoute
 import com.whereareyounow.ui.navigation.addFeedScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleMapScreenRoute
 import com.whereareyounow.ui.navigation.detailScheduleScreenRoute
 import com.whereareyounow.ui.navigation.developerScreenRoute
+import com.whereareyounow.ui.navigation.favoriteLocationScreenRoute
 import com.whereareyounow.ui.navigation.feedBookMarkRoute
 import com.whereareyounow.ui.navigation.feedStoreRoute
 import com.whereareyounow.ui.navigation.findAccountEmailVerificationScreenRoute
@@ -49,6 +42,8 @@ import com.whereareyounow.ui.navigation.kakaoSignUpScreenRoute
 import com.whereareyounow.ui.navigation.locationPolicyDetailsScreenRoute
 import com.whereareyounow.ui.navigation.mainScreenRoute
 import com.whereareyounow.ui.navigation.modifyScheduleScreenRoute
+import com.whereareyounow.ui.navigation.myInfoEditScreenRoute
+import com.whereareyounow.ui.navigation.myInfoScreenRoute
 import com.whereareyounow.ui.navigation.newScheduleScreenRoute
 import com.whereareyounow.ui.navigation.notificationScreenRoute
 import com.whereareyounow.ui.navigation.passwordResetSuccessScreenRoute
@@ -178,20 +173,13 @@ fun MainNavigation(
         }
 
         // 내 정보 화면
-        composable(route = ROUTE_MY_INFO) {
-            MyInfoScreen(
-                moveToMyPageScreen = { navController.popBackStack() },
-                moveToEditMyInfoScreen = { navController.navigate(ROUTE.EditMyInfo) }
-            )
-        }
+        myInfoScreenRoute(navController)
 
         // 내 정보 수정 화면
-        composable<ROUTE.EditMyInfo> {
-            EditMyInfoScreen(
-                moveToMyInfoScreen = { navController.popBackStack() },
-                moveToBackScreen = { navController.popBackStack() }
-            )
-        }
+        myInfoEditScreenRoute(navController)
+
+        // 위치 즐겨찾기 화면
+        favoriteLocationScreenRoute(navController)
 
         // 공지사항 화면
         composable<ROUTE.Announcement> {
@@ -247,12 +235,6 @@ fun MainNavigation(
         composable<ROUTE.AdminImageScreen> {
             AdminImageScreen(
                 moveToBackScreen = { navController.popBackStack() }
-            )
-        }
-        composable<ROUTE.LocationFaborite> {
-            LocationFavoriteScreen(
-                moveToBackScreen = { navController.popBackStack() },
-                moveToEditLocationFavorite = { navController.navigate(ROUTE.EditLocationFaborite) }
             )
         }
         // 위치 즐겨찾기 편집 화면

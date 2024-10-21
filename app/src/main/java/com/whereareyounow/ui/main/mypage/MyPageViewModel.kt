@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
+import com.whereareyounow.data.myinfo.MyInfoScreenUIState
 import com.whereareyounow.domain.request.feed.BookmarkFeedRequest
 import com.whereareyounow.domain.request.feed.GetBookmarkedFeedRequest
 import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -41,14 +43,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
     private val application: Application,
-//    private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
-//    private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
-//    private val saveMemberIdUseCase: SaveMemberIdUseCase,
-//    private val getAccessTokenUseCase: GetAccessTokenUseCase,
-//    private val getMemberIdUseCase: GetMemberIdUseCase,
-//    private val getMemberDetailsUseCase: GetMemberDetailsUseCase,
-//    private val deleteMemberUseCase: DeleteMemberUseCase,
-//    private val resetCalendarUseCase: ResetCalendarUseCase,
     private val getUserInfoByMemberSeqUseCase: GetUserInfoByMemberSeqUseCase,
     private val verifyEmailCodeUseCase: VerifyEmailCodeUseCase,
     private val sendEmailCodeUseCase: SendEmailCodeUseCase,
@@ -59,17 +53,31 @@ class MyPageViewModel @Inject constructor(
     private val clearAuthDataStoreUseCase: ClearAuthDataStoreUseCase,
 ) : AndroidViewModel(application) {
 
-    private val _imageUri = MutableStateFlow<String?>(null)
-    val imageUri: StateFlow<String?> = _imageUri
-    private val _name = MutableStateFlow<String?>("")
-    val name: StateFlow<String?> = _name
-    private val _email = MutableStateFlow<String?>("")
-    val email: StateFlow<String?> = _email
-    private val _profileImageUri =
-        MutableStateFlow<String?>("https://m.segye.com/content/image/2021/11/16/20211116509557.jpg")
-    val profileImageUri: StateFlow<String?> = _profileImageUri
-    private val _isVerifyed = MutableStateFlow<String?>("FALSE")
-    val isVerifyed: StateFlow<String?> = _isVerifyed
+    private val _uiState = MutableStateFlow(MyInfoScreenUIState())
+    val uiState = _uiState.asStateFlow()
+
+    fun getMyInfo() {
+        val requestData = GetUserInfoByMemberSeqRequest(
+            memberSeq = AuthData.memberSeq
+        )
+        getUserInfoByMemberSeqUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        _uiState.update {
+                            it.copy(
+                                name = data.userName,
+                                email = data.email
+                            )
+                        }
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .onEach {  }
+    }
 
 
     private val _locationSeq = MutableStateFlow<Int?>(0)
@@ -212,11 +220,11 @@ class MyPageViewModel @Inject constructor(
 
                     is NetworkResult.Success -> {
                         val userInfo = it.data?.toModel()
-                        userInfo?.let {
-                            _name.value = it.userName
-                            _email.value = it.email
-                            _profileImageUri.value = it.profileImage
-                        }
+//                        userInfo?.let {
+//                            _name.value = it.userName
+//                            _email.value = it.email
+//                            _profileImageUri.value = it.profileImage
+//                        }
                     }
                     is NetworkResult.Error -> {
 
@@ -271,7 +279,7 @@ class MyPageViewModel @Inject constructor(
             ).onEach { networkResult ->
                 networkResult.onSuccess { code, message, data ->
                     data?.let {
-                        _isVerifyed.value = data
+//                        _isVerifyed.value = data
                     }
                 }.onError { code, message ->
 
@@ -401,6 +409,9 @@ class MyPageViewModel @Inject constructor(
         }
     }
 
+    init {
+        getMyInfo()
+    }
 }
 
 

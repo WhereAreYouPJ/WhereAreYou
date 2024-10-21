@@ -5,5 +5,5 @@ object AuthData {
     var memberCode: String = ""
     var userName: String = ""
     var email: String = ""
-    var profileImage: String = ""
+    var profileImage: String? = null
 }

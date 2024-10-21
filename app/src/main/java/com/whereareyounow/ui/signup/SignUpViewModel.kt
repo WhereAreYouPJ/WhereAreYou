@@ -12,10 +12,12 @@ import com.whereareyounow.data.signup.SignUpUserNameState
 import com.whereareyounow.domain.request.member.CheckEmailDuplicateRequest
 import com.whereareyounow.domain.request.member.SendEmailCodeRequest
 import com.whereareyounow.domain.request.member.SignUpRequest
+import com.whereareyounow.domain.request.member.SnsSignUpRequest
 import com.whereareyounow.domain.request.member.VerifyEmailCodeRequest
 import com.whereareyounow.domain.usecase.member.CheckEmailDuplicateUseCase
 import com.whereareyounow.domain.usecase.member.SendEmailCodeUseCase
 import com.whereareyounow.domain.usecase.member.SignUpUseCase
+import com.whereareyounow.domain.usecase.member.SnsSignUpUseCase
 import com.whereareyounow.domain.usecase.member.VerifyEmailCodeUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
@@ -47,6 +49,7 @@ class SignUpViewModel @Inject constructor(
     private val checkEmailDuplicateUseCase: CheckEmailDuplicateUseCase,
     private val inputTextValidator: InputTextValidator,
     private val signUpUseCase: SignUpUseCase,
+    private val snsSignUpUseCase: SnsSignUpUseCase,
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(SignUpScreenUIState())
@@ -67,21 +70,29 @@ class SignUpViewModel @Inject constructor(
     fun kakaoSignUp(
         moveToSignUpSuccessScreen: () -> Unit
     ) {
-        val requestData = SignUpRequest(
-            userName = _uiState.value.inputUserName,
-            password = _uiState.value.inputPassword,
-            email = _uiState.value.inputEmail
-        )
-        signUpUseCase(requestData)
-            .onEach { networkResult ->
-                networkResult.onSuccess { code, message, data ->
-                    moveToSignUpSuccessScreen()
-                }.onError { code, message ->
-
-                }.onException {  }
+        viewModelScope.launch {
+            if (_uiState.value.inputUserNameState == SignUpUserNameState.Invalid) {
+                sideEffectFlow.emit(SignUpScreenSideEffect.Toast("이름을 확인해주세요."))
+                return@launch
             }
-            .catch {  }
-            .launchIn(viewModelScope)
+            val requestData = SnsSignUpRequest(
+                userName = _uiState.value.inputUserName,
+                password = _uiState.value.inputPassword,
+                email = _uiState.value.inputEmail,
+                loginType = "kakako",
+                fcmToken = "a"
+            )
+            snsSignUpUseCase(requestData)
+                .onEach { networkResult ->
+                    networkResult.onSuccess { code, message, data ->
+                        moveToSignUpSuccessScreen()
+                    }.onError { code, message ->
+
+                    }.onException {  }
+                }
+                .catch {  }
+                .launchIn(viewModelScope)
+        }
     }
 
     fun updateInputUserName(userName: String) {
@@ -90,7 +101,6 @@ class SignUpViewModel @Inject constructor(
                 inputUserName = userName,
                 inputUserNameState = if (inputTextValidator.validateUserName(userName).result) SignUpUserNameState.Valid else SignUpUserNameState.Invalid
             )
-
         }
     }
 
@@ -231,7 +241,11 @@ class SignUpViewModel @Inject constructor(
                 networkResult.onSuccess { code, message, data ->
                     data?.let {
                         if (data.type.isEmpty()) {
-                            signUp(moveToSignUpSuccessScreen)
+                            if (accountType == "normal") {
+                                signUp(moveToSignUpSuccessScreen)
+                            } else {
+                                kakaoSignUp(moveToSignUpSuccessScreen)
+                            }
                         } else {
                             moveToAccountDuplicateScreen(accountType, data.email, data.type, _uiState.value.inputUserName, _uiState.value.inputPassword)
                         }

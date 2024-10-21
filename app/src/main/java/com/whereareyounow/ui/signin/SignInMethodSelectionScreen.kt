@@ -81,7 +81,7 @@ private fun SignInMethodSelectionScreen(
     moveToDeveloperScreen: () -> Unit,
     moveToKakaoSignUpScreen: (String, String, String) -> Unit,
     moveToMainScreen: () -> Unit,
-    kakaoSignIn: (String, String, () -> Unit, () -> Unit) -> Unit,
+    kakaoSignIn: (String, () -> Unit, () -> Unit) -> Unit,
     tmp: Boolean
 ) {
     val context = LocalContext.current
@@ -157,7 +157,6 @@ private fun SignInMethodSelectionScreen(
 
                                                 if (user.id != null) {
                                                     kakaoSignIn(
-                                                        user.kakaoAccount!!.profile!!.nickname!!,
                                                         user.kakaoAccount!!.email!!,
                                                         { moveToKakaoSignUpScreen(user.kakaoAccount!!.profile!!.nickname!!, user.kakaoAccount!!.email!!, user.id.toString()) },
                                                         moveToMainScreen
@@ -182,7 +181,6 @@ private fun SignInMethodSelectionScreen(
 
                                         if (user.id != null) {
                                             kakaoSignIn(
-                                                user.kakaoAccount!!.profile!!.nickname!!,
                                                 user.kakaoAccount!!.email!!,
                                                 { moveToKakaoSignUpScreen(user.kakaoAccount!!.profile!!.nickname!!, user.kakaoAccount!!.email!!, user.id.toString()) },
                                                 moveToMainScreen
@@ -209,7 +207,6 @@ private fun SignInMethodSelectionScreen(
 
                                         if (user.id != null) {
                                             kakaoSignIn(
-                                                user.kakaoAccount!!.profile!!.nickname!!,
                                                 user.kakaoAccount!!.email!!,
                                                 { moveToKakaoSignUpScreen(user.kakaoAccount!!.profile!!.nickname!!, user.kakaoAccount!!.email!!, user.id.toString()) },
                                                 moveToMainScreen

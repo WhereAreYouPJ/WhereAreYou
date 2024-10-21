@@ -90,77 +90,9 @@ class SignInViewModel @Inject constructor(
                 LogUtil.e("flow error", "signInUseCase\n${it.message}\n${it.stackTrace}")
             }
             .launchIn(viewModelScope)
-//        viewModelScope.launch {
-//            _signInScreenUIState.update {
-//                it.copy(
-//                    isSignInLoading = true,
-//                    isSignInFailed = false
-//                )
-//            }
-//
-//            var isSignInFailed = false
-//            val isSigningIn = viewModelScope.launch { delay(2000L) }
-//            val signIn = launch(Dispatchers.Default) {
-//                val request = SignInRequest(
-//                    _signInScreenUIState.value.inputUserId,
-//                    _signInScreenUIState.value.inputPassword
-//                )
-//                val response = signInUseCase(request)
-//                LogUtil.printNetworkLog(request, response, "로그인")
-//                when (response) {
-//                    is NetworkResult.Success -> {
-//                        response.data?.let { data ->
-//                            saveAccessTokenUseCase("Bearer " + data.accessToken)
-//                            saveRefreshTokenUseCase(data.refreshToken)
-//                            saveMemberIdUseCase(data.memberId)
-//
-//                            getFriendIdsList(
-//                                accessToken = "Bearer " + data.accessToken,
-//                                memberId = data.memberId
-//                            )
-//
-//                            FirebaseMessaging.getInstance().token.addOnCompleteListener(
-//                                OnCompleteListener { task ->
-//                                    if (!task.isSuccessful) {
-//                                        Log.e("FCM", "Fetching FCM registration token failed")
-//                                        return@OnCompleteListener
-//                                    }
-//
-//                                    updateFCMToken(
-//                                        fcmToken = task.result,
-//                                        accessToken = "Bearer " + data.accessToken,
-//                                        memberId = data.memberId
-//                                    )
-//                                }
-//                            )
-//                        }
-//                    }
-//                    is NetworkResult.Error -> {
-//                        isSignInFailed = true
-//                    }
-//                    is NetworkResult.Exception -> { signInScreenSideEffectFlow.emit(SignInScreenSideEffect.Toast("오류가 발생했습니다.")) }
-//                }
-//            }
-//
-//            signIn.join()
-//            isSigningIn.join()
-//            if (!isSignInFailed) {
-//                withContext(Dispatchers.Main) {
-//                    moveToHomeScreen()
-//                }
-//            } else {
-//                _signInScreenUIState.update {
-//                    it.copy(
-//                        isSignInLoading = false,
-//                        isSignInFailed = isSignInFailed
-//                    )
-//                }
-//            }
-//        }
     }
 
     fun kakaoSignIn(
-        name: String,
         email: String,
         moveToKakaoSignUpScreen: () -> Unit,
         moveToHomeScreen: () -> Unit

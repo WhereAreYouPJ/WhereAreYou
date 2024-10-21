@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,100 +35,37 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.whereareyounow.R
 import com.whereareyounow.data.globalvalue.TOP_BAR_HEIGHT
+import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.component.EmptyDataIndicator
 import com.whereareyounow.ui.component.tobbar.OneTextTwoIconTobBar
 import com.whereareyounow.ui.main.friend.GrayLine
 import com.whereareyounow.ui.main.mypage.MyPageViewModel
-import com.whereareyounow.ui.main.mypage.byebye.Gap
 import com.whereareyounow.ui.main.mypage.model.LocationFavoriteInfoModel
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
+import com.whereareyounow.util.DraggableList
 import com.whereareyounow.util.clickableNoEffect
 import com.whereareyounow.util.popupmenu.CustomPopup
 import com.whereareyounow.util.popupmenu.PopupPosition
 import com.whereareyounow.util.popupmenu.PopupState
 
 @Composable
-fun LocationFavoriteScreen(
+fun FavoriteLocationScreen(
     moveToBackScreen : () -> Unit,
     moveToEditLocationFavorite : () -> Unit
 ) {
-
-    val myPageViewModel : MyPageViewModel = hiltViewModel()
-    val locationFavoriteList = myPageViewModel.locationFaboriteList.collectAsState().value
-    val isLoading = myPageViewModel.isLoading.collectAsState().value
-
-    val myName = myPageViewModel.name.collectAsState().value
-    val myEmail = myPageViewModel.email.collectAsState().value
-    val popupState = remember {
-        PopupState(false, PopupPosition.BottomLeft)
-    }
-    val isVerifyed = remember {
-        mutableStateOf(false)
-    }
-    val isModifyClicked = remember {
-        mutableStateOf(false)
-    }
-    val isReadOnly = remember {
-        mutableStateOf(true)
-    }
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = TOP_BAR_HEIGHT.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
+    CustomSurface {
         OneTextTwoIconTobBar(
             title = "위치 즐겨찾기",
-            firstIconClicked = moveToBackScreen,
+            firstIconClicked = {  },
             firstIcon = R.drawable.ic_back,
-            secondIconClicked = { popupState.isVisible = true },
+            secondIconClicked = {  },
             secondIcon = R.drawable.ic_plusbrandcolor
-        ) {
-            DeleteIconPopUp(
-                popupState = popupState,
-                isModifyClicked = isModifyClicked,
-                isReadOnly = isReadOnly,
-                moveToEditMyInfoScreen = {  moveToEditLocationFavorite() },
-                modifier = Modifier
-//                    .clickableNoEffect {
-//                        if(locationFavoriteList.isEmpty()) {
-//                            Toast.makeText(context , "추가된 즐겨찾기가 없습니다." , Toast.LENGTH_SHORT).show()
-//                        } else {
-//                            moveToEditLocationFavorite()
-//                        }
-//                    }
-                    .align(Alignment.CenterEnd),
-                favoriteLocationList = locationFavoriteList
+        )
 
-            )
-        }
-
-        if(isLoading) {
-            CircularProgressIndicator()
-        } else {
-            if(locationFavoriteList.isEmpty()) {
-                EmptyDataIndicator(
-                    indicateText = "아직은 즐겨찾기한 위치가 없어요.\n" +
-                            "목록을 생성하여 좀 더 편리하게\n" +
-                            "일정 추가 시 위치를 선택할 수 있어요."
-                )
-            } else {
-                locationFavoriteList.forEach { favoriteLocationList ->
-                    DetailFavoriteLocation(
-                        title = favoriteLocationList!!.location!!,
-                        isClicked = {
-
-                        }
-                    )
-                    GrayLine()
-                }
-            }
-        }
-
+        DraggableList(
+            mutableStateListOf("가", "나", "다", "라", "마", "바", "사", "아", "자", "차")
+        )
     }
 }
 
@@ -173,9 +111,11 @@ fun DeleteIconPopUp(
 //                                isModifyClicked.value = true
 //                                isReadOnly.value = false
 //                                moveToEditMyInfoScreen()
-                                if(favoriteLocationList.isEmpty()) {
+                                if (favoriteLocationList.isEmpty()) {
 //                                    toastMessage()
-                                    Toast.makeText(context , "추가된 즐겨찾기가 없습니다." , Toast.LENGTH_SHORT).show()
+                                    Toast
+                                        .makeText(context, "추가된 즐겨찾기가 없습니다.", Toast.LENGTH_SHORT)
+                                        .show()
                                 } else {
                                     moveToEditMyInfoScreen()
                                 }

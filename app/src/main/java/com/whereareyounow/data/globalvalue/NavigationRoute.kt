@@ -171,6 +171,9 @@ sealed class ROUTE {
     )
 
     @Serializable
+    data object MyInfo
+
+    @Serializable
     data class AddFriend(
         val friendList: List<Int>
     )
@@ -205,7 +208,7 @@ sealed class ROUTE {
 
     // 위치 즐겨찾기
     @Serializable
-    data object LocationFaborite
+    data object FavoriteLocation
 
     // 위치 즐겨찾기 편집화면
     @Serializable
