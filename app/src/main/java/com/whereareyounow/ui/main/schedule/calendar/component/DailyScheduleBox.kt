@@ -22,14 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.domain.entity.schedule.DailyScheduleInfo
 import com.whereareyounow.globalvalue.type.ScheduleColor
 import com.whereareyounow.ui.theme.getColor
+import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.ui.theme.medium16pt
+import com.whereareyounow.util.calendar.isWithinOneHour
 import com.whereareyounow.util.calendar.parseLocalDate
 import com.whereareyounow.util.calendar.parseLocalDateTime
 import com.whereareyounow.util.clickableNoEffect
+import java.time.LocalDateTime
 
 @Composable
 fun DailyScheduleBox(
@@ -134,14 +138,18 @@ fun DailyScheduleBox(
 
         Spacer(Modifier.weight(1f))
 
-        Text(
-            modifier = Modifier
-                .clickableNoEffect {
-                    deleteTargetScheduleSeq.value = info.scheduleSeq
-                    openDialog()
-                }
-                .padding(end = 6.dp),
-            text = "삭제"
-        )
+        if (!isWithinOneHour(parseLocalDateTime(info.startTime), LocalDateTime.now()) || AuthData.memberSeq == info.creator) {
+            Text(
+                modifier = Modifier
+                    .clickableNoEffect {
+                        deleteTargetScheduleSeq.value = info.scheduleSeq
+                        openDialog()
+                    }
+                    .padding(end = 6.dp),
+                text = "삭제",
+                color = Color(0xFF767676),
+                style = medium12pt
+            )
+        }
     }
 }

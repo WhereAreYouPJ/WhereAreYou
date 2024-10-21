@@ -1,16 +1,23 @@
 package com.whereareyounow.ui.signin
 
 import android.app.Application
+import androidx.compose.ui.util.fastMapIndexed
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.whereareyounow.data.cached.AuthData
+import com.whereareyounow.data.cached.FriendList
 import com.whereareyounow.data.signin.SignInScreenSideEffect
 import com.whereareyounow.data.signin.SignInScreenUIState
+import com.whereareyounow.domain.entity.schedule.Friend
+import com.whereareyounow.domain.request.friend.GetFriendListRequest
+import com.whereareyounow.domain.request.member.GetUserInfoByMemberSeqRequest
 import com.whereareyounow.domain.request.member.SignInRequest
 import com.whereareyounow.domain.usecase.datastore.SaveAccessTokenUseCase
 import com.whereareyounow.domain.usecase.datastore.SaveMemberCodeUseCase
 import com.whereareyounow.domain.usecase.datastore.SaveMemberSeqUseCase
 import com.whereareyounow.domain.usecase.datastore.SaveRefreshTokenUseCase
+import com.whereareyounow.domain.usecase.friend.GetFriendListUseCase
+import com.whereareyounow.domain.usecase.member.GetUserInfoByMemberSeqUseCase
 import com.whereareyounow.domain.usecase.member.SignInUseCase
 import com.whereareyounow.domain.util.LogUtil
 import com.whereareyounow.domain.util.onError
@@ -33,7 +40,9 @@ class SignInViewModel @Inject constructor(
     private val saveAccessTokenUseCase: SaveAccessTokenUseCase,
     private val saveRefreshTokenUseCase: SaveRefreshTokenUseCase,
     private val saveMemberSeqUseCase: SaveMemberSeqUseCase,
-    private val saveMemberCodeUseCase: SaveMemberCodeUseCase
+    private val saveMemberCodeUseCase: SaveMemberCodeUseCase,
+    private val getFriendListUseCase: GetFriendListUseCase,
+    private val getUserInfoByMemberSeqUseCase: GetUserInfoByMemberSeqUseCase
 //    private val saveMemberIdUseCase: SaveMemberIdUseCase,
 //    private val updateFCMTokenUseCase: UpdateFCMTokenUseCase,
 //    private val getFriendIdsListUseCase: GetFriendIdsListUseCase,
@@ -80,10 +89,15 @@ class SignInViewModel @Inject constructor(
                         saveMemberCodeUseCase(data.memberCode)
                         AuthData.memberSeq = data.memberSeq
                         AuthData.memberCode = data.memberCode
+                        initialize()
                     }
                     moveToHomeScreen()
                 }.onError { code, message ->
-
+                    _uiState.update {
+                        it.copy(
+                            isSignInFailed = true
+                        )
+                    }
                 }.onException {  }
             }
             .catch {
@@ -116,6 +130,47 @@ class SignInViewModel @Inject constructor(
                     moveToHomeScreen()
                 }.onError { code, message ->
                     moveToKakaoSignUpScreen()
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+    }
+
+    private fun initialize() {
+        val requestData = GetFriendListRequest(AuthData.memberSeq)
+        getFriendListUseCase(requestData)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        FriendList.list.clear()
+                        FriendList.list.addAll((data).fastMapIndexed { idx, item ->
+                            Friend(
+                                number = idx,
+                                memberSeq = item.memberSeq,
+                                name = item.userName,
+                                profileImgUrl = item.profileImage,
+                                isFavorite = item.Favorites
+                            )
+                        })
+                    }
+                }.onError { code, message ->
+
+                }.onException {  }
+            }
+            .catch {  }
+            .launchIn(viewModelScope)
+
+        val requestData2 = GetUserInfoByMemberSeqRequest(AuthData.memberSeq)
+        getUserInfoByMemberSeqUseCase(requestData2)
+            .onEach { networkResult ->
+                networkResult.onSuccess { code, message, data ->
+                    data?.let {
+                        AuthData.userName = data.userName
+                        AuthData.email = data.email
+                        AuthData.profileImage = data.profileImage
+                    }
+                }.onError { code, message ->
+
                 }.onException {  }
             }
             .catch {  }

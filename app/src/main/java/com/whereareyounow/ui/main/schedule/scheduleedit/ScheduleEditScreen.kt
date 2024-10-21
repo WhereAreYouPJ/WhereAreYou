@@ -439,7 +439,7 @@ fun ScheduleEditScreen(
                         Spacer(Modifier.height(4.dp))
 
                         LazyRow {
-                            itemsIndexed(listOf("서울대", "여의도공원")) { idx, item ->
+                            itemsIndexed(listOf("")) { idx, item ->
                                 Box(
                                     modifier = Modifier
                                         .padding(end = 4.dp)

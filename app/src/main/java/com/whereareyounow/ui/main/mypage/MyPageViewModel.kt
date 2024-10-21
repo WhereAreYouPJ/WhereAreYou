@@ -89,16 +89,6 @@ class MyPageViewModel @Inject constructor(
     private val _locationFavoriteList =
         MutableStateFlow<List<LocationFavoriteInfoModel?>>(emptyList())
 
-    //    private val _locationFavoriteList = MutableStateFlow<List<LocationFavoriteInfoModel?>>(
-//        listOf(
-//            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교0" , streetName = "서울대학교닷거리1"),
-//            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교1" , streetName = "서울대학교닷거리2"),
-//            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교2" , streetName = "서울대학교닷거리3"),
-//            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교3" , streetName = "서울대학교닷거리4"),
-//            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교4" , streetName = "서울대학교닷거리5"),
-//            LocationFavoriteInfoModel(locationSeq = 0 , location = "서울대학교5" , streetName = "서울대학교닷거리6"),
-//        )
-//    )
     val locationFaboriteList: StateFlow<List<LocationFavoriteInfoModel?>> = _locationFavoriteList
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading

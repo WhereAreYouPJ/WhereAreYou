@@ -85,30 +85,6 @@ class SplashViewModel @Inject constructor(
                 isSignedIn = true
                 initialize()
             } else {
-//                reissueAccessTokenUseCase(refreshToken)
-//                    .onEach { networkResult ->
-//                        networkResult.onSuccess { code, message, data ->
-//                            data?.let {
-//                                saveAccessTokenUseCase(data.accessToken ?: "")
-//                                saveRefreshTokenUseCase(data.refreshToken ?: "")
-//                                getUserData()
-//                            }
-//                            moveToMainScreen()
-//                        }.onError { code, message ->
-//                            when (code) {
-//                                in 400 .. 499 -> {
-//                                    moveToSignInScreen()
-//                                }
-//                                else -> {
-//
-//                                }
-//                            }
-//                        }.onException {
-//
-//                        }
-//                    }
-//                    .catch { LogUtil.e("flow error", "reissueAccessTokenUseCase") }
-//                    .launchIn(viewModelScope)
             }
         }.join()
         return isSignedIn

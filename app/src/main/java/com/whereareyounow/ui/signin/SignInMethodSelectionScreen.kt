@@ -48,6 +48,7 @@ import com.whereareyounow.ui.component.CustomSurface
 import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.medium14pt
+import com.whereareyounow.ui.theme.notoSanskr
 import com.whereareyounow.util.CustomPreview
 import com.whereareyounow.util.clickableNoEffect
 
@@ -258,10 +259,11 @@ private fun KakaoLoginButton(
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = "카카오로 3초 만에 시작하기",
+            text = "카카오로 시작하기",
             color = Color(0xFF222222),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
+            fontFamily = notoSanskr
         )
         Image(
             modifier = Modifier.padding(start = 18.dp, top = 13.dp, bottom = 13.dp),
@@ -293,7 +295,8 @@ private fun EmailLoginButton(
             text = "이메일 로그인",
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            color = getColor().brandText
+            color = getColor().brandText,
+            fontFamily = notoSanskr
         )
     }
 }

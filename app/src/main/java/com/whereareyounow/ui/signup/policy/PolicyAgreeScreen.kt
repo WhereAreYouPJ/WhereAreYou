@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -141,6 +142,7 @@ private fun AgreementSelectionContent(
     moveToPrivacyPolicyDetailsScreen: () -> Unit,
     moveToLocationPolicyDetailScreen: () -> Unit
 ) {
+    val density = LocalDensity.current.density
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -148,8 +150,8 @@ private fun AgreementSelectionContent(
             .clip(GenericShape { size, _ ->
                 moveTo(0f, -100f)
                 lineTo(size.width, -100f)
-                lineTo(size.width, 700f)
-                lineTo(0f, 700f)
+                lineTo(size.width, 180 * density)
+                lineTo(0f,  170 * density)
             })
             .shadow(
                 elevation = 30.dp,

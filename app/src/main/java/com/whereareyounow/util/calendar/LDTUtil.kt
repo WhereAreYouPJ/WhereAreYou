@@ -2,6 +2,7 @@ package com.whereareyounow.util.calendar
 
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -181,4 +182,10 @@ fun parseLocalDate(str: String): LocalDate {
         val ldt =  LocalDateTime.parse(str, dateFormat)
         return LocalDate.of(ldt.year, ldt.monthValue, ldt.dayOfMonth)
     }
+
+}
+
+fun isWithinOneHour(a: LocalDateTime, b: LocalDateTime): Boolean {
+    val duration = Duration.between(a, b).abs() // 두 시각의 차이를 절대값으로 계산
+    return duration.toHours() < 1 // 차이가 1시간 미만인지 판별
 }

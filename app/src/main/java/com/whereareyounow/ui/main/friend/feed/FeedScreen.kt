@@ -35,7 +35,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.skydoves.landscapist.glide.GlideImage
 import com.whereareyounow.R
+import com.whereareyounow.data.cached.AuthData
 import com.whereareyounow.data.feedlist.FeedListScreenUIState
+import com.whereareyounow.globalvalue.type.FeedListDialogType
+import com.whereareyounow.ui.component.CustomDialog
 import com.whereareyounow.ui.main.friend.feed.component.DetailFeedScreen
 import com.whereareyounow.ui.main.friend.feed.component.FeedImagePager
 import com.whereareyounow.ui.theme.OnMyWayTheme
@@ -77,6 +80,8 @@ private fun FeedListScreen(
 ) {
     val isDetailContent = remember { mutableStateOf(false) }
     val popupState = remember { PopupState(false, PopupPosition.BottomLeft) }
+    val feedListDialogType = remember { mutableStateOf(FeedListDialogType.Hide) }
+    val isDialogShowing = remember { mutableStateOf(false) }
     BackHandler(
         enabled = isDetailContent.value
     ) {
@@ -204,7 +209,6 @@ private fun FeedListScreen(
                                         )
 
                                         Spacer(Modifier.weight(1f))
-
                                         Box {
                                             Image(
                                                 modifier = Modifier
@@ -224,34 +228,44 @@ private fun FeedListScreen(
                                                     Box(
                                                         modifier = Modifier
                                                             .width(160.dp)
-                                                            .height(100.dp)
                                                             .clip(RoundedCornerShape(10.dp))
-                                                            .background(color = Color(0xFF7262A8)),
+                                                            .background(color = Color(0xFF7262A8))
+                                                            .padding(top = 4.dp, bottom = 4.dp),
                                                         contentAlignment = Alignment.Center
                                                     ) {
                                                         Column {
+                                                            if (item.feedInfo[0].memberInfo.memberSeq == AuthData.memberSeq) {
+                                                                Text(
+                                                                    modifier = Modifier
+                                                                        .height(30.dp)
+                                                                        .clickableNoEffect {
+
+                                                                        }
+                                                                        .padding(
+                                                                            start = 14.dp,
+                                                                            top = 4.dp
+                                                                        ),
+                                                                    text = "피드 삭제",
+                                                                    color = Color(0xFFFFFFFF),
+                                                                    style = medium14pt
+                                                                )
+
+                                                                Box(
+                                                                    modifier = Modifier
+                                                                        .background(Color(0xFF7262A8))
+                                                                        .height(1.dp)
+                                                                        .fillMaxWidth()
+                                                                )
+                                                            }
+
                                                             Text(
                                                                 modifier = Modifier
                                                                     .height(30.dp)
-                                                                    .clickableNoEffect {  }
-                                                                    .padding(start = 14.dp, top = 4.dp),
-                                                                text = "피드 삭제",
-                                                                color = Color(0xFFFFFFFF),
-                                                                style = medium14pt
-                                                            )
-
-                                                            Box(
-                                                                modifier = Modifier
-                                                                    .background(Color(0xFF7262A8))
-                                                                    .height(1.dp)
-                                                                    .fillMaxWidth()
-                                                            )
-
-                                                            Text(
-                                                                modifier = Modifier
-                                                                    .height(30.dp)
-                                                                    .clickableNoEffect {  }
-                                                                    .padding(start = 14.dp, top = 4.dp),
+                                                                    .clickableNoEffect { }
+                                                                    .padding(
+                                                                        start = 14.dp,
+                                                                        top = 4.dp
+                                                                    ),
                                                                 text = "피드 수정",
                                                                 color = Color(0xFFFFFFFF),
                                                                 style = medium14pt
@@ -267,8 +281,13 @@ private fun FeedListScreen(
                                                             Text(
                                                                 modifier = Modifier
                                                                     .height(30.dp)
-                                                                    .clickableNoEffect {  }
-                                                                    .padding(start = 14.dp, top = 4.dp),
+                                                                    .clickableNoEffect {
+
+                                                                    }
+                                                                    .padding(
+                                                                        start = 14.dp,
+                                                                        top = 4.dp
+                                                                    ),
                                                                 text = "피드 숨김",
                                                                 color = Color(0xFFFFFFFF),
                                                                 style = medium14pt
@@ -337,6 +356,30 @@ private fun FeedListScreen(
             feedInfo = uiState.detailFeedData,
             selectedFeedMemberSeq = uiState.selectedFeedMemberSeq,
             updateSelectedMemberSeq = updateSelectedMemberSeq
+        )
+    }
+
+    if (isDialogShowing.value) {
+        CustomDialog(
+            title = when (feedListDialogType.value) {
+                FeedListDialogType.Delete -> "피드 삭제"
+                FeedListDialogType.Hide -> "피드 숨김"
+            },
+            content = when (feedListDialogType.value) {
+                FeedListDialogType.Delete -> "친구의 피드는 유지되며, 자신의 피드만 영구적으로 삭제합니다."
+                FeedListDialogType.Hide -> "피드를 숨깁니다. 숨긴 피드는 마이페이지에서 복원하거나 영구 삭제할 수 있습니다."
+            },
+            leftText = when (feedListDialogType.value) {
+                FeedListDialogType.Delete -> ""
+                FeedListDialogType.Hide -> ""
+            },
+            onLeftClick = { /*TODO*/ },
+            rightText = when (feedListDialogType.value) {
+                FeedListDialogType.Delete -> ""
+                FeedListDialogType.Hide -> ""
+            },
+            onRightClick = { /*TODO*/ },
+            onDismiss = { isDialogShowing.value }
         )
     }
 }

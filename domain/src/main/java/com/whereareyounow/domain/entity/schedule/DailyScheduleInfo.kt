@@ -18,5 +18,7 @@ data class DailyScheduleInfo(
     @SerializedName("group")
     val group: Boolean,
     @SerializedName("allDay")
-    val allDay: Boolean = false
+    val allDay: Boolean = false,
+    @SerializedName("creator")
+    val creator: Int = 0
 )

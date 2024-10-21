@@ -140,8 +140,6 @@ private fun SignUpScreen(
                 Column {
                     SignUpScreenTopBar(moveToBackScreen = moveToBackScreen)
 
-                    Spacer(Modifier.height(10.dp))
-
                     TopProgressContent(step = 2)
 
                     Spacer(Modifier.height(40.dp))
