@@ -204,7 +204,7 @@ private fun FeedBookMarkScreen(
                                 )
                                 Spacer(Modifier.weight(1f))
                                 Image(
-                                    painter = painterResource(id = R.drawable.ic_vertical_dot),
+                                    painter = painterResource(id = R.drawable.ic_vertical_three_dot),
                                     contentDescription = "",
                                     modifier = Modifier.clickableNoEffect {
 
