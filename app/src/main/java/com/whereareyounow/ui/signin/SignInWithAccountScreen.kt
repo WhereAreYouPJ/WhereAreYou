@@ -34,6 +34,7 @@ import com.whereareyounow.ui.component.RoundedCornerButton
 import com.whereareyounow.ui.signup.policy.InstructionContent
 import com.whereareyounow.ui.theme.OnMyWayTheme
 import com.whereareyounow.ui.theme.bold18pt
+import com.whereareyounow.ui.theme.getColor
 import com.whereareyounow.ui.theme.medium12pt
 import com.whereareyounow.ui.theme.medium14pt
 import com.whereareyounow.util.CustomPreview
@@ -117,6 +118,7 @@ private fun SignInWithAccountScreen(
                 UserIdInputBox(
                     contentDescription = "Email TextField",
                     inputText = uiState.inputEmail,
+                    isSignInFailed = uiState.isSignInFailed,
                     onValueChange = updateInputUserId
                 )
 
@@ -126,19 +128,9 @@ private fun SignInWithAccountScreen(
                 PasswordInputBox(
                     contentDescription = "Password TextField",
                     inputText = uiState.inputPassword,
+                    isSignInFailed = uiState.isSignInFailed,
                     onValueChange = updateInputPassword
                 )
-
-
-                if (uiState.isSignInFailed) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp, top = 20.dp, end = 10.dp, bottom = 20.dp),
-                        text = "아이디 또는 비밀번호가 맞지 않습니다.\n다시 시도해주세요.",
-                        color = Color(0xFFFF0000)
-                    )
-                }
 
                 Spacer(Modifier.height(28.dp))
 
@@ -180,6 +172,7 @@ private fun SignInWithEmailScreenTopBar(
 private fun UserIdInputBox(
     contentDescription: String,
     inputText: String,
+    isSignInFailed: Boolean,
     onValueChange: (String) -> Unit
 ) {
     Text(
@@ -197,7 +190,10 @@ private fun UserIdInputBox(
         inputText = inputText,
         onValueChange = onValueChange,
         warningText = "입력한 회원정보를 다시 확인해 주세요.",
-        textFieldState = CustomTextFieldState.Idle
+        textFieldState = when (isSignInFailed) {
+            true -> CustomTextFieldState.Unsatisfied
+            false -> CustomTextFieldState.Idle
+        },
     )
 }
 
@@ -205,6 +201,7 @@ private fun UserIdInputBox(
 private fun PasswordInputBox(
     contentDescription: String,
     inputText: String,
+    isSignInFailed: Boolean,
     onValueChange: (String) -> Unit
 ) {
     Text(
@@ -222,7 +219,10 @@ private fun PasswordInputBox(
         inputText = inputText,
         onValueChange = onValueChange,
         warningText = "",
-        textFieldState = CustomTextFieldState.Idle,
+        textFieldState = when (isSignInFailed) {
+            true -> CustomTextFieldState.Unsatisfied
+            false -> CustomTextFieldState.Idle
+        },
         isPassword = true
     )
 }

@@ -26,22 +26,26 @@ import com.whereareyounow.util.clickableNoEffect
 fun CustomTopBar(
     modifier: Modifier = Modifier,
     title: String,
+    isBottomLineVisible: Boolean = true,
     onBackButtonClicked: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(TOP_BAR_HEIGHT.dp)
-            .drawBehind {
-                val strokeWidth = 1.dp.toPx()
-                val y = size.height - strokeWidth / 2
-                drawLine(
-                    color = Color(0xFFC9C9C9),
-                    start = Offset(0f, y),
-                    end = Offset(size.width, y),
-                    strokeWidth = strokeWidth
-                )
-            }
+            .then(
+                if (isBottomLineVisible) Modifier.drawBehind {
+                    val strokeWidth = 1.dp.toPx()
+                    val y = size.height - strokeWidth / 2
+                    drawLine(
+                        color = Color(0xFFC9C9C9),
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = strokeWidth
+                    )
+                }
+                else Modifier
+            )
             .padding(start = 15.dp, end = 15.dp),
         contentAlignment = Alignment.Center
     ) {

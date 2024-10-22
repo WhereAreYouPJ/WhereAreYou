@@ -25,9 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -88,6 +90,7 @@ private fun TermsOfServiceScreenTopBar(
 ) {
     CustomTopBar(
         title = "회원가입",
+        isBottomLineVisible = false,
         onBackButtonClicked = onBackButtonClicked
     )
 }
@@ -143,53 +146,70 @@ private fun AgreementSelectionContent(
     moveToLocationPolicyDetailScreen: () -> Unit
 ) {
     val density = LocalDensity.current.density
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .clip(GenericShape { size, _ ->
-                moveTo(0f, -100f)
-                lineTo(size.width, -100f)
-                lineTo(size.width, 180 * density)
-                lineTo(0f,  170 * density)
-            })
-            .shadow(
-                elevation = 30.dp,
-                shape = RoundedCornerShape(24.dp)
+    Box() {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .drawWithContent {
+                    clipRect(
+                        left = 0f,
+                        top = -100f,
+                        right = size.width,
+                        bottom = size.height / 2
+                    ) {
+                        this@drawWithContent.drawContent()
+                    }
+                }
+                .shadow(
+                    elevation = 30.dp,
+                    shape = RoundedCornerShape(24.dp)
+                )
+                .background(
+                    color = Color(0xFFFFFFFF),
+                    shape = RoundedCornerShape(24.dp)
+                )
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+//            .clip(GenericShape { size, _ ->
+//                moveTo(0f, -100f)
+//                lineTo(size.width, -100f)
+//                lineTo(size.width, 180 * density)
+//                lineTo(0f,  170 * density)
+//            })
+                .padding(start = 22.dp, end = 22.dp)
+        ) {
+            Spacer(Modifier.height(26.dp))
+
+            // 모두 동의하기
+            AllAgreementSelectionContent(
+                isAllPolicyAgreed = isTermsOfServiceAgreed,
             )
-            .background(
-                color = Color(0xFFFFFFFF),
-                shape = RoundedCornerShape(24.dp)
+
+            Spacer(Modifier.height(16.dp))
+
+            // 서비스 이용약관
+            TermsOfServiceAgreementSelectionContent(
+                moveToTermsOfServiceDetailsScreen = moveToTermsOfServiceDetailsScreen
             )
-            .padding(start = 22.dp, end = 22.dp)
-    ) {
-        Spacer(Modifier.height(26.dp))
 
-        // 모두 동의하기
-        AllAgreementSelectionContent(
-            isAllPolicyAgreed = isTermsOfServiceAgreed,
-        )
+            Spacer(Modifier.height(2.dp))
 
-        Spacer(Modifier.height(16.dp))
+            // 개인정보 처리방침
+            PrivacyPolicyAgreementSelectionContent(
+                moveToPrivacyPolicyDetailsScreen = moveToPrivacyPolicyDetailsScreen
+            )
 
-        // 서비스 이용약관
-        TermsOfServiceAgreementSelectionContent(
-            moveToTermsOfServiceDetailsScreen = moveToTermsOfServiceDetailsScreen
-        )
+            Spacer(Modifier.height(2.dp))
 
-        Spacer(Modifier.height(2.dp))
-
-        // 개인정보 처리방침
-        PrivacyPolicyAgreementSelectionContent(
-            moveToPrivacyPolicyDetailsScreen = moveToPrivacyPolicyDetailsScreen
-        )
-
-        Spacer(Modifier.height(2.dp))
-
-        // 위치기반 서비스 이용약관
-        LocationPolicyAgreementSelectionContent(
-            moveToLocationPolicyDetailsScreen = moveToLocationPolicyDetailScreen
-        )
+            // 위치기반 서비스 이용약관
+            LocationPolicyAgreementSelectionContent(
+                moveToLocationPolicyDetailsScreen = moveToLocationPolicyDetailScreen
+            )
+        }
     }
 }
 

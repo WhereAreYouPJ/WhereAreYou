@@ -305,6 +305,7 @@ fun SignUpScreenTopBar(
 ) {
     CustomTopBar(
         title = "회원가입",
+        isBottomLineVisible = false,
         onBackButtonClicked = moveToBackScreen
     )
 }

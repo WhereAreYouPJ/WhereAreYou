@@ -92,7 +92,7 @@ fun CustomTextField(
                 )
                 it()
             }
-            if (textFieldState == CustomTextFieldState.Unsatisfied) {
+            if (textFieldState == CustomTextFieldState.Unsatisfied && warningText != "") {
                 Box(
                     modifier = Modifier.padding(start = 2.dp, top = 4.dp, end = 2.dp, bottom = 4.dp)
                 ) {

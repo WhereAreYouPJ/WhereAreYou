@@ -154,7 +154,7 @@ private fun HomeScreen(
                         .height(52.dp)
                         .border(
                             border = BorderStroke(
-                                width = (1.5).dp,
+                                width = 1.dp,
                                 color = if (uiState.dDayScheduleList.isEmpty()) getColor().dark else getColor().brandColor
                             ),
                             shape = RoundedCornerShape(6.dp)
