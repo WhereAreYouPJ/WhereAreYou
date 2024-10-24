@@ -79,7 +79,7 @@ class SignUpViewModel @Inject constructor(
                 userName = _uiState.value.inputUserName,
                 password = _uiState.value.inputPassword,
                 email = _uiState.value.inputEmail,
-                loginType = "kakako",
+                loginType = "kakao",
                 fcmToken = "a"
             )
             snsSignUpUseCase(requestData)

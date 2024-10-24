@@ -1,8 +1,11 @@
 package com.whereareyounow.ui.theme
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.LocalContentColor
@@ -75,6 +78,10 @@ fun OnMyWayTheme(
         LocalRippleTheme provides CustomRippleTheme
     ) {
         globalDensity = LocalDensity.current.density
+        with(LocalDensity.current) {
+            Log.e("navBar", "${WindowInsets.systemBars.getBottom(this).toDp()}")
+            WindowInsets.systemBars.getBottom(this).toDp()
+        }
         content()
     }
 
